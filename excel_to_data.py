@@ -165,6 +165,7 @@ def parse_school_sheet(ws, sheet_name):
         "location": "",
         "intro": "",
         "conditions": [],
+        "majors": [],
         "conversion": [],
         "tuition": "",
         "insurance": "",
@@ -232,6 +233,11 @@ def parse_school_sheet(ws, sheet_name):
     cond = get_val("Điều kiện tuyển sinh", "Điều kiện")
     if cond:
         data["conditions"] = [c.strip() for c in re.split(r'\d+:', cond) if c.strip()][:10]
+    
+    # Các chuyên ngành tuyển sinh
+    majors = get_val("Các chuyên ngành tuyển sinh", "Chuyên ngành tuyển sinh")
+    if majors:
+        data["majors"] = [m.strip() for m in re.split(r'\d+[.:]', majors) if len(m.strip()) > 3][:20]
     
     # Chuyển đổi
     conv = get_val("Thời gian chuyển đổi", "Thời gian chuyển đổi chuyên ngành")

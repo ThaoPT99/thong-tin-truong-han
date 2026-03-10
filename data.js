@@ -9,7 +9,7 @@ const SCHOOLS_DATA = {
     "nameKr": "동의대학교",
     "nameEn": "DongEui Institute Of Technology",
     "system": "D2-6 > D2-2 (Đại học)",
-    "quota": 200,
+    "quota": 60,
     "images": {
       "main": "images/placeholder.svg",
       "catalog": "",
@@ -54,6 +54,12 @@ const SCHOOLS_DATA = {
       "Không phân biệt vùng miền",
       "Có sức khỏe tốt không mắc các bệnh truyền nhiễm",
       "Có chứng chỉ Topik 2 hoặc Sejong2b ( Fastgo có hỗ trợ Sejong2b)"
+    ],
+    "majors": [
+      "Kỹ thuật cơ khí - MECHANICAL ENGINEERING",
+      "Quản lý du lịch quốc tế - INTERNATIONAL TOURISM MANAGEMENT",
+      "Quản trị kinh doanh - BUSINESS ADMINISTRATION",
+      "Kỹ thuật ô tô - AUTOMOTIVE ENGINEERING"
     ],
     "conversion": [
       "6 trong vòng 1 năm.",
@@ -133,7 +139,7 @@ const SCHOOLS_DATA = {
     "nameKr": "연성대학교",
     "nameEn": "Yeonsung University",
     "system": "D2-6 > D2-1 (Cao Đẳng)",
-    "quota": 200,
+    "quota": 60,
     "images": {
       "main": "images/placeholder.svg",
       "catalog": "",
@@ -160,6 +166,10 @@ const SCHOOLS_DATA = {
       "Trượt Visa các hệ D4-1, D2-1, D2-2, D2-3, E9",
       "Không phân biệt vùng miền",
       "Có sức khỏe tốt không mắc các bệnh truyền nhiễm"
+    ],
+    "majors": [
+      "Quản trị kinh doanh - BUSINESS ADMINISTRATION",
+      "Điện - điện tử - ELECTRICAL AND ELECTRONICS ENGINEERING"
     ],
     "conversion": [
       "6 trong vòng 6 tháng > Thi topik trường nếu chưa có chứng chỉ tiếng Topik2",
@@ -246,7 +256,7 @@ const SCHOOLS_DATA = {
     "nameKr": "장안대학교",
     "nameEn": "Jangan University",
     "system": "D2-6 > D2-1 (Cao Đẳng )",
-    "quota": 200,
+    "quota": 100,
     "images": {
       "main": "images/placeholder.svg",
       "catalog": "",
@@ -292,6 +302,10 @@ const SCHOOLS_DATA = {
       "Không phân biệt vùng miền",
       "Có sức khỏe tốt không mắc các bệnh truyền nhiễm",
       "Có chứng chỉ TOPIK 2 hoặc Jejong 2b. (Fastgo có hỗ trợ Sejong 2b) - Với kỳ tháng 03/2026 không yêu cầu chứng chỉ."
+    ],
+    "majors": [
+      "Quản lý khách sạn: Hotel Management (호텔관리학과)",
+      "Làm đẹp: Beauty & Aesthetics ( 미용학과)"
     ],
     "conversion": [
       "6 trong vòng 6 tháng.",
@@ -369,7 +383,7 @@ const SCHOOLS_DATA = {
     "nameKr": "인덕대학교",
     "nameEn": "Induk University Học ít -",
     "system": "D2-6 > D2-1 (Cao Đẳng)",
-    "quota": 100,
+    "quota": 60,
     "images": {
       "main": "images/placeholder.svg",
       "catalog": "",
@@ -396,6 +410,9 @@ const SCHOOLS_DATA = {
       "Trượt Visa các hệ D4-1, D2-1, D2-2, D2-3, E9",
       "Không phân biệt vùng miền",
       "Có sức khỏe tốt không mắc các bệnh truyền nhiễm"
+    ],
+    "majors": [
+      "Khoa Kinh doanh dịch vụ du lịch - DEPARTMENT OF TOURISM & SERVICE MANAGEMENT"
     ],
     "conversion": [
       "6 trong vòng 6 tháng",
@@ -482,7 +499,7 @@ const SCHOOLS_DATA = {
     "nameKr": "오산대학교",
     "nameEn": "Osan University",
     "system": "D2-6 > D2-1 (Cao Đẳng)",
-    "quota": 100,
+    "quota": 70,
     "images": {
       "main": "images/placeholder.svg",
       "catalog": "",
@@ -510,6 +527,12 @@ const SCHOOLS_DATA = {
       "Trượt Visa các hệ D4-1, D2-1, D2-2, D2-3, E9",
       "Không phân biệt vùng miền",
       "Có sức khỏe tốt không mắc các bệnh truyền nhiễm"
+    ],
+    "majors": [
+      "Ngành Kỹ thuật Cơ khí - MECHANICAL ENGINEERING.",
+      "Quản lý Marketing và Truyền thông - MARKETING AND COMMUNICATION MANAGEMENT.",
+      "Ngành Công nghệ công nghiệp",
+      "Ngành Cơ khí"
     ],
     "conversion": [
       "6 trong vòng 6 tháng",
@@ -590,7 +613,7 @@ const SCHOOLS_DATA = {
     "nameKr": "순천제일",
     "nameEn": "Suncheon Jeil College",
     "system": "D2-6 > D2-1 (Cao Đẳng)",
-    "quota": 200,
+    "quota": 60,
     "images": {
       "main": "images/placeholder.svg",
       "catalog": "",
@@ -617,6 +640,12 @@ const SCHOOLS_DATA = {
       "Trượt Visa các hệ D4-1, D2-1, D2-2, D2-3, E9",
       "Không phân biệt vùng miền",
       "Có sức khỏe tốt không mắc các bệnh truyền nhiễm"
+    ],
+    "majors": [
+      "Khoa pha chế cà phê và khoa học ẩm thực - DEPARTMENT OF COFFEE BARISTA AND CULINARY SCIENCE",
+      "Đa phương tiện - MULTI MEDIA",
+      "Công nghệ – Công nghiệp         - TECHNOLOGY – INDUSTRY",
+      "Kỹ thuật cơ khí & ô tô - MECHANICAL & AUTOMOTIVE ENGINEERING"
     ],
     "conversion": [
       "6 trong vòng 6 tháng",
@@ -709,7 +738,7 @@ const SCHOOLS_DATA = {
     "nameKr": "동남보건대학교",
     "nameEn": "Dongnam Health University",
     "system": "D2-6 > D2-1 (Cao Đẳng)",
-    "quota": 200,
+    "quota": 60,
     "images": {
       "main": "images/placeholder.svg",
       "catalog": "",
@@ -737,6 +766,10 @@ const SCHOOLS_DATA = {
       "Trượt Visa các hệ D4-1, D2-1, D2-2, D2-3, E9",
       "Không phân biệt vùng miền",
       "Có sức khỏe tốt không mắc các bệnh truyền nhiễm"
+    ],
+    "majors": [
+      "Chăm sóc sắc đẹp - BEAUTY CARE",
+      "Quản lý du lịch y tế - MEDICAL TOURISM MANAGEMENT"
     ],
     "conversion": [
       "6 trong vòng 6 tháng",
@@ -820,7 +853,7 @@ const SCHOOLS_DATA = {
     "nameKr": "경인여자대학교",
     "nameEn": "Kyungin Women’s University (KIWU)",
     "system": "D2-6 > D2-1 (Cao Đẳng )",
-    "quota": 100,
+    "quota": 40,
     "images": {
       "main": "images/placeholder.svg",
       "catalog": "",
@@ -867,6 +900,9 @@ const SCHOOLS_DATA = {
       "Không phân biệt vùng miền",
       "Có sức khỏe tốt không mắc các bệnh truyền nhiễm",
       "Có chứng chỉ Topik 2 hoặc Sejong2b ( Fastgo có hỗ trợ Sejong2b) - Với kỳ tháng 3/2026 không yêu cầu chứng chỉ tiếng"
+    ],
+    "majors": [
+      "Điều Dưỡng - Nursing ( 간호학과)"
     ],
     "conversion": [
       "6 trong vòng 6 tháng.",
@@ -944,7 +980,7 @@ const SCHOOLS_DATA = {
     "nameKr": "아주자동차대학",
     "nameEn": "Ajou Motor College",
     "system": "D2-6 > D2-1 (Cao Đẳng)",
-    "quota": 200,
+    "quota": 60,
     "images": {
       "main": "images/placeholder.svg",
       "catalog": "",
@@ -972,6 +1008,9 @@ const SCHOOLS_DATA = {
       "Trượt Visa các hệ D4-1, D2-1, D2-2, D2-3, E9",
       "Không phân biệt vùng miền",
       "Có sức khỏe tốt không mắc các bệnh truyền nhiễm"
+    ],
+    "majors": [
+      "Kỹ thuật ô tô toàn cầu - GLOBAL AUTOMOTIVE ENGINEERING"
     ],
     "conversion": [
       "6 trong vòng 6 tháng / Hoặc 1 năm (nếu học sinh có nhu cầu học tiếng thêm 6 tháng)",
@@ -1054,7 +1093,7 @@ const SCHOOLS_DATA = {
     "nameKr": "대원대학교",
     "nameEn": "Daewon College New",
     "system": "D2-6 > D2-1 (Cao Đẳng)",
-    "quota": 100,
+    "quota": 60,
     "images": {
       "main": "images/placeholder.svg",
       "catalog": "",
@@ -1081,6 +1120,10 @@ const SCHOOLS_DATA = {
       "Trượt Visa các hệ D4-1, D2-1, D2-2, D2-3, E9",
       "Không phân biệt vùng miền",
       "Có sức khỏe tốt không mắc các bệnh truyền nhiễm"
+    ],
+    "majors": [
+      "Quản trị kinh doanh - BUSINESS ADMINISTRATION",
+      "Điện - điện tử - ELECTRICAL AND ELECTRONICS ENGINEERING"
     ],
     "conversion": [
       "6 trong vòng 6 tháng > Thi topik trường nếu chưa có chứng chỉ tiếng Topik2",
@@ -1163,7 +1206,7 @@ const SCHOOLS_DATA = {
     "nameKr": "부산여자대학교",
     "nameEn": "Busan Women's  College  New",
     "system": "D2-6 > D2-1 (Cao Đẳng)",
-    "quota": 100,
+    "quota": 60,
     "images": {
       "main": "images/placeholder.svg",
       "catalog": "",
@@ -1205,6 +1248,7 @@ const SCHOOLS_DATA = {
       "Không phân biệt vùng miền",
       "Có sức khỏe tốt không mắc các bệnh truyền nhiễm"
     ],
+    "majors": [],
     "conversion": [
       "6 trong vòng 6 tháng > Thi topik trường nếu chưa có chứng chỉ tiếng Topik2",
       "Sau 6 tháng chuyển tiếp lên chuyên ngành D2",
@@ -1832,17 +1876,94 @@ const EXTRA_SHEETS = {
   "danhSach": {
     "name": "Danh sách trường Hàn",
     "rows": [
-      {"name": "Dong-Eui", "nameKr": "동의대학교", "system": "D2-6 > D2-2 (Đại học)", "quota": 200, "mou": "VTV, HCCT, BCIT", "catalog": "https://drive.google.com/file/d/1MQbj-xk9pruCY02PzuJrf_WbIG_5g9rw/view?usp=drive_link"},
-      {"name": "Ajou-Motor", "nameKr": "아주자동차대학", "system": "D2-6 > D2-1 (Cao Đẳng)", "quota": 200, "mou": "TVU, BCIT", "catalog": "https://drive.google.com/file/d/11jo3OFyMIUoBd7hfQ0rpfEx5T8TFahib/view?usp=sharing"},
-      {"name": "Suncheon Jeil", "nameKr": "순천제일", "system": "D2-6 > D2-1 (Cao Đẳng)", "quota": 200, "mou": "HNC, VTV, TVU, SGT, BCIT, HPC", "catalog": "https://drive.google.com/file/d/1jeLs-moW3bI0St6UxQTlPPxPvaHPWJ_b/view?usp=sharing"},
-      {"name": "Dongnam", "nameKr": "동남보건대학교", "system": "D2-6 > D2-1 (Cao Đẳng)", "quota": 200, "mou": "HNC, HPC, HCCT, SGT, BCIT", "catalog": "https://drive.google.com/file/d/1vHfckqZeJd4u1uyE29S2lRpEaOBjcboa/view?usp=sharing"},
-      {"name": "Induk", "nameKr": "인덕대학교", "system": "D2-6 > D2-1 (Cao Đẳng)", "quota": 100, "mou": "HNC, VTV, TVU, SGT, BCIT", "catalog": "https://drive.google.com/file/d/1_bc1jra3dZGwxyewx7WIVu3npbA-RGRJ/view?usp=sharing"},
-      {"name": "Daewon", "nameKr": "대원대학교", "system": "D2-6 > D2-1 (Cao Đẳng)", "quota": 100, "mou": "", "catalog": "https://drive.google.com/file/d/17MFnGZQOPPJZXYR-2XmrA-1NAzH0v13P/view?usp=sharing"},
-      {"name": "Jangan", "nameKr": "장안대학교", "system": "D2-6 > D2-1 (Cao Đẳng )", "quota": 200, "mou": "", "catalog": "https://drive.google.com/file/d/1jsfqYFqutBEEYEvj1SQencT5CXrl739u/view?usp=sharing"},
-      {"name": "YeonSeong", "nameKr": "연성대학교", "system": "D2-6 > D2-1 (Cao Đẳng)", "quota": 200, "mou": "HNC, HPC, HCCT, SGT, BCIT, VTV, TVU", "catalog": "https://drive.google.com/file/d/1zxrl8VWiFVYxpP26OemGroLqYgo_Dh1j/view?usp=sharing"},
-      {"name": "KyungGin", "nameKr": "경인여자대학교", "system": "D2-6 > D2-1 (Cao Đẳng )", "quota": 100, "mou": "", "catalog": "https://drive.google.com/file/d/13LjLRc-M2OLW1Hb6_jefzRMeLwDdl5LU/view?usp=sharing"},
-      {"name": "Nữ Busan", "nameKr": "부산여자대학교", "system": "D2-6 > D2-1 (Cao Đẳng)", "quota": 100, "mou": "", "catalog": "https://drive.google.com/file/d/1kUaBnz51NrUtELKTHt-ZBhFvt7TYp62s/view?usp=sharing"},
-      {"name": "Osan", "nameKr": "오산대학교", "system": "D2-6 > D2-1 (Cao Đẳng)", "quota": 100, "mou": "HNC, HPC, SGT", "catalog": "https://drive.google.com/file/d/14ClpFkKAHstGFOanMnvrial_ymNzoINW/view?usp=sharing"}
+      {
+        "name": "Dong-Eui",
+        "nameKr": "동의대학교",
+        "system": "D2-6 > D2-2 (Đại học)",
+        "quota": 60,
+        "mou": "VTV, HCCT, BCIT",
+        "catalog": "https://drive.google.com/file/d/1MQbj-xk9pruCY02PzuJrf_WbIG_5g9rw/view?usp=drive_link"
+      },
+      {
+        "name": "YeonSung",
+        "nameKr": "연성대학교",
+        "system": "D2-6 > D2-1 (Cao Đẳng)",
+        "quota": 60,
+        "mou": "HNC, HPC, HCCT, SGT, BCIT, VTV, TVU",
+        "catalog": "https://drive.google.com/file/d/1zxrl8VWiFVYxpP26OemGroLqYgo_Dh1j/view?usp=sharing"
+      },
+      {
+        "name": "JANGAN -",
+        "nameKr": "장안대학교",
+        "system": "D2-6 > D2-1 (Cao Đẳng )",
+        "quota": 100,
+        "mou": "",
+        "catalog": "https://drive.google.com/file/d/1jsfqYFqutBEEYEvj1SQencT5CXrl739u/view?usp=sharing"
+      },
+      {
+        "name": "Induk",
+        "nameKr": "인덕대학교",
+        "system": "D2-6 > D2-1 (Cao Đẳng)",
+        "quota": 60,
+        "mou": "HNC, VTV, TVU, SGT, BCIT",
+        "catalog": "https://drive.google.com/file/d/1_bc1jra3dZGwxyewx7WIVu3npbA-RGRJ/view?usp=sharing"
+      },
+      {
+        "name": "Osan",
+        "nameKr": "오산대학교",
+        "system": "D2-6 > D2-1 (Cao Đẳng)",
+        "quota": 70,
+        "mou": "HNC, HPC, SGT",
+        "catalog": "https://drive.google.com/file/d/14ClpFkKAHstGFOanMnvrial_ymNzoINW/view?usp=sharing"
+      },
+      {
+        "name": "Suncheon Jeil",
+        "nameKr": "순천제일",
+        "system": "D2-6 > D2-1 (Cao Đẳng)",
+        "quota": 60,
+        "mou": "HNC, VTV, TVU, SGT, BCIT, HPC",
+        "catalog": "https://drive.google.com/file/d/1jeLs-moW3bI0St6UxQTlPPxPvaHPWJ_b/view?usp=sharing"
+      },
+      {
+        "name": "Dongnam",
+        "nameKr": "동남보건대학교",
+        "system": "D2-6 > D2-1 (Cao Đẳng)",
+        "quota": 60,
+        "mou": "HNC, HPC, HCCT, SGT, BCIT",
+        "catalog": "https://drive.google.com/file/d/1vHfckqZeJd4u1uyE29S2lRpEaOBjcboa/view?usp=sharing"
+      },
+      {
+        "name": "KyungGin -",
+        "nameKr": "경인여자대학교",
+        "system": "D2-6 > D2-1 (Cao Đẳng )",
+        "quota": 40,
+        "mou": "",
+        "catalog": "https://drive.google.com/file/d/13LjLRc-M2OLW1Hb6_jefzRMeLwDdl5LU/view?usp=sharing"
+      },
+      {
+        "name": "AJOU MOTOR",
+        "nameKr": "아주자동차대학",
+        "system": "D2-6 > D2-1 (Cao Đẳng)",
+        "quota": 60,
+        "mou": "TVU, BCIT",
+        "catalog": "https://drive.google.com/file/d/11jo3OFyMIUoBd7hfQ0rpfEx5T8TFahib/view?usp=sharing"
+      },
+      {
+        "name": "Daewon",
+        "nameKr": "대원대학교",
+        "system": "D2-6 > D2-1 (Cao Đẳng)",
+        "quota": 60,
+        "mou": "",
+        "catalog": "https://drive.google.com/file/d/17MFnGZQOPPJZXYR-2XmrA-1NAzH0v13P/view?usp=sharing"
+      },
+      {
+        "name": "Nữ Busan",
+        "nameKr": "부산여자대학교",
+        "system": "D2-6 > D2-1 (Cao Đẳng)",
+        "quota": 60,
+        "mou": "",
+        "catalog": "https://drive.google.com/file/d/1kUaBnz51NrUtELKTHt-ZBhFvt7TYp62s/view?usp=sharing"
+      }
     ]
   }
 };

@@ -6,17 +6,25 @@ function escapeHtml(str) {
   d.textContent = str;
   return d.innerHTML;
 }
-// Render text có thể có màu: string hoặc [{t, c}]
+
+// Highlight nhẹ nhàng - ít màu, dễ đọc
+function applyHighlights(html) {
+  if (!html || typeof html !== "string") return html;
+  return html
+    .replace(/(Lưu ý:|LƯU Ý:)/g, "<span class='hl-note'>$1</span>")
+    .replace(/(\d[\d.,\s]*(?:KRW|원|won|triệu))/gi, "<span class='hl-money'>$1</span>")
+    .replace(/(học bổng|topik|sejong(?: 2b)?)/gi, "<span class='hl-keyword'>$1</span>");
+}
+
+// Render text - bỏ màu Excel, chỉ dùng highlight từ khóa
 function renderText(val) {
   if (val === undefined || val === null || val === "") return "";
-  if (typeof val === "string") return escapeHtml(val).replace(/\n/g, "<br>");
-  if (Array.isArray(val)) {
-    return val.map(seg => {
-      const t = escapeHtml(seg.t || "").replace(/\n/g, "<br>");
-      return seg.c ? `<span class="text-highlight" style="color:${seg.c}">${t}</span>` : t;
-    }).join("");
-  }
-  return escapeHtml(String(val)).replace(/\n/g, "<br>");
+  let raw = "";
+  if (typeof val === "string") raw = val;
+  else if (Array.isArray(val)) raw = val.map(seg => seg.t || "").join("");
+  else raw = String(val);
+  const out = escapeHtml(raw).replace(/\n/g, "<br>");
+  return applyHighlights(out);
 }
 
 // Bố cục giống Excel: bảng 2 cột (Nhãn | Nội dung)
@@ -40,7 +48,7 @@ function renderSchool(schoolId) {
 
   const row = (label, value) => (value !== undefined && value !== null && value !== "") ? `<tr><td class="col-label">${label}</td><td class="col-value">${value}</td></tr>` : "";
 
-  const listToText = (arr) => arr && arr.length ? arr.map((x, i) => `${i + 1}. ${escapeHtml(String(x)).replace(/\n/g, "<br>")}`).join("<br>") : "";
+  const listToText = (arr) => arr && arr.length ? arr.map((x, i) => `<strong>${i + 1}.</strong> ${applyHighlights(escapeHtml(String(x)).replace(/\n/g, "<br>"))}`).join("<br>") : "";
   const partnersToText = (arr) => arr && arr.length
     ? arr.map(p => `<span class="partner-tag">${p.code}</span> ${p.name}`).join("<br>")
     : "";
@@ -76,6 +84,7 @@ function renderSchool(schoolId) {
           ${row("Vị trí địa lý", locationVal)}
           ${row("Giới thiệu về trường", introVal)}
           ${row("Điều kiện tuyển sinh", listToText(s.conditions))}
+          ${row("Các chuyên ngành tuyển sinh", listToText(s.majors))}
           ${row("Thời gian chuyển đổi", listToText(s.conversion))}
           ${row("Hồ sơ trường Hàn cần lưu ý", docsVal)}
           ${row("Ưu điểm", listToText(s.advantages))}
