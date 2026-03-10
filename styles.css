@@ -52,9 +52,12 @@ body {
 
 .tabs-inner {
     display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 2px;
     padding: 0.5rem;
-    min-width: max-content;
+    max-width: 1000px;
+    margin: 0 auto;
 }
 
 .tab-btn {

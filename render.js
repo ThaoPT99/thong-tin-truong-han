@@ -204,7 +204,7 @@ function init() {
     return;
   }
   try {
-    showSchool("nubusan");
+    showSchool("dong-eui");
   } catch (e) {
     content.innerHTML = `<p class="empty" style="padding:2rem;color:#dc2626;">Lỗi: ${escapeHtml(String(e.message))}</p>`;
     console.error(e);

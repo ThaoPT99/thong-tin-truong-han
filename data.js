@@ -9,7 +9,7 @@ const SCHOOLS_DATA = {
     "nameKr": "동의대학교",
     "nameEn": "DongEui Institute Of Technology",
     "system": "D2-6 > D2-2 (Đại học)",
-    "quota": 60,
+    "quota": 200,
     "images": {
       "main": "images/placeholder.svg",
       "catalog": "",
@@ -133,7 +133,7 @@ const SCHOOLS_DATA = {
     "nameKr": "연성대학교",
     "nameEn": "Yeonsung University",
     "system": "D2-6 > D2-1 (Cao Đẳng)",
-    "quota": 60,
+    "quota": 200,
     "images": {
       "main": "images/placeholder.svg",
       "catalog": "",
@@ -246,7 +246,7 @@ const SCHOOLS_DATA = {
     "nameKr": "장안대학교",
     "nameEn": "Jangan University",
     "system": "D2-6 > D2-1 (Cao Đẳng )",
-    "quota": 100,
+    "quota": 200,
     "images": {
       "main": "images/placeholder.svg",
       "catalog": "",
@@ -369,7 +369,7 @@ const SCHOOLS_DATA = {
     "nameKr": "인덕대학교",
     "nameEn": "Induk University Học ít -",
     "system": "D2-6 > D2-1 (Cao Đẳng)",
-    "quota": 60,
+    "quota": 100,
     "images": {
       "main": "images/placeholder.svg",
       "catalog": "",
@@ -482,7 +482,7 @@ const SCHOOLS_DATA = {
     "nameKr": "오산대학교",
     "nameEn": "Osan University",
     "system": "D2-6 > D2-1 (Cao Đẳng)",
-    "quota": 70,
+    "quota": 100,
     "images": {
       "main": "images/placeholder.svg",
       "catalog": "",
@@ -590,7 +590,7 @@ const SCHOOLS_DATA = {
     "nameKr": "순천제일",
     "nameEn": "Suncheon Jeil College",
     "system": "D2-6 > D2-1 (Cao Đẳng)",
-    "quota": 60,
+    "quota": 200,
     "images": {
       "main": "images/placeholder.svg",
       "catalog": "",
@@ -709,7 +709,7 @@ const SCHOOLS_DATA = {
     "nameKr": "동남보건대학교",
     "nameEn": "Dongnam Health University",
     "system": "D2-6 > D2-1 (Cao Đẳng)",
-    "quota": 60,
+    "quota": 200,
     "images": {
       "main": "images/placeholder.svg",
       "catalog": "",
@@ -820,7 +820,7 @@ const SCHOOLS_DATA = {
     "nameKr": "경인여자대학교",
     "nameEn": "Kyungin Women’s University (KIWU)",
     "system": "D2-6 > D2-1 (Cao Đẳng )",
-    "quota": 40,
+    "quota": 100,
     "images": {
       "main": "images/placeholder.svg",
       "catalog": "",
@@ -944,7 +944,7 @@ const SCHOOLS_DATA = {
     "nameKr": "아주자동차대학",
     "nameEn": "Ajou Motor College",
     "system": "D2-6 > D2-1 (Cao Đẳng)",
-    "quota": 60,
+    "quota": 200,
     "images": {
       "main": "images/placeholder.svg",
       "catalog": "",
@@ -1054,7 +1054,7 @@ const SCHOOLS_DATA = {
     "nameKr": "대원대학교",
     "nameEn": "Daewon College New",
     "system": "D2-6 > D2-1 (Cao Đẳng)",
-    "quota": 60,
+    "quota": 100,
     "images": {
       "main": "images/placeholder.svg",
       "catalog": "",
@@ -1163,7 +1163,7 @@ const SCHOOLS_DATA = {
     "nameKr": "부산여자대학교",
     "nameEn": "Busan Women's  College  New",
     "system": "D2-6 > D2-1 (Cao Đẳng)",
-    "quota": 60,
+    "quota": 100,
     "images": {
       "main": "images/placeholder.svg",
       "catalog": "",
@@ -1832,94 +1832,17 @@ const EXTRA_SHEETS = {
   "danhSach": {
     "name": "Danh sách trường Hàn",
     "rows": [
-      {
-        "name": "Dong-Eui",
-        "nameKr": "동의대학교",
-        "system": "D2-6 > D2-2 (Đại học)",
-        "quota": 60,
-        "mou": "VTV, HCCT, BCIT",
-        "catalog": "https://drive.google.com/file/d/1MQbj-xk9pruCY02PzuJrf_WbIG_5g9rw/view?usp=drive_link"
-      },
-      {
-        "name": "YeonSung",
-        "nameKr": "연성대학교",
-        "system": "D2-6 > D2-1 (Cao Đẳng)",
-        "quota": 60,
-        "mou": "HNC, HPC, HCCT, SGT, BCIT, VTV, TVU",
-        "catalog": "https://drive.google.com/file/d/1zxrl8VWiFVYxpP26OemGroLqYgo_Dh1j/view?usp=sharing"
-      },
-      {
-        "name": "JANGAN -",
-        "nameKr": "장안대학교",
-        "system": "D2-6 > D2-1 (Cao Đẳng )",
-        "quota": 100,
-        "mou": "",
-        "catalog": "https://drive.google.com/file/d/1jsfqYFqutBEEYEvj1SQencT5CXrl739u/view?usp=sharing"
-      },
-      {
-        "name": "Induk",
-        "nameKr": "인덕대학교",
-        "system": "D2-6 > D2-1 (Cao Đẳng)",
-        "quota": 60,
-        "mou": "HNC, VTV, TVU, SGT, BCIT",
-        "catalog": "https://drive.google.com/file/d/1_bc1jra3dZGwxyewx7WIVu3npbA-RGRJ/view?usp=sharing"
-      },
-      {
-        "name": "Osan",
-        "nameKr": "오산대학교",
-        "system": "D2-6 > D2-1 (Cao Đẳng)",
-        "quota": 70,
-        "mou": "HNC, HPC, SGT",
-        "catalog": "https://drive.google.com/file/d/14ClpFkKAHstGFOanMnvrial_ymNzoINW/view?usp=sharing"
-      },
-      {
-        "name": "Suncheon Jeil",
-        "nameKr": "순천제일",
-        "system": "D2-6 > D2-1 (Cao Đẳng)",
-        "quota": 60,
-        "mou": "HNC, VTV, TVU, SGT, BCIT, HPC",
-        "catalog": "https://drive.google.com/file/d/1jeLs-moW3bI0St6UxQTlPPxPvaHPWJ_b/view?usp=sharing"
-      },
-      {
-        "name": "Dongnam",
-        "nameKr": "동남보건대학교",
-        "system": "D2-6 > D2-1 (Cao Đẳng)",
-        "quota": 60,
-        "mou": "HNC, HPC, HCCT, SGT, BCIT",
-        "catalog": "https://drive.google.com/file/d/1vHfckqZeJd4u1uyE29S2lRpEaOBjcboa/view?usp=sharing"
-      },
-      {
-        "name": "KyungGin -",
-        "nameKr": "경인여자대학교",
-        "system": "D2-6 > D2-1 (Cao Đẳng )",
-        "quota": 40,
-        "mou": "",
-        "catalog": "https://drive.google.com/file/d/13LjLRc-M2OLW1Hb6_jefzRMeLwDdl5LU/view?usp=sharing"
-      },
-      {
-        "name": "AJOU MOTOR",
-        "nameKr": "아주자동차대학",
-        "system": "D2-6 > D2-1 (Cao Đẳng)",
-        "quota": 60,
-        "mou": "TVU, BCIT",
-        "catalog": "https://drive.google.com/file/d/11jo3OFyMIUoBd7hfQ0rpfEx5T8TFahib/view?usp=sharing"
-      },
-      {
-        "name": "Daewon",
-        "nameKr": "대원대학교",
-        "system": "D2-6 > D2-1 (Cao Đẳng)",
-        "quota": 60,
-        "mou": "",
-        "catalog": "https://drive.google.com/file/d/17MFnGZQOPPJZXYR-2XmrA-1NAzH0v13P/view?usp=sharing"
-      },
-      {
-        "name": "Nữ Busan",
-        "nameKr": "부산여자대학교",
-        "system": "D2-6 > D2-1 (Cao Đẳng)",
-        "quota": 60,
-        "mou": "",
-        "catalog": "https://drive.google.com/file/d/1kUaBnz51NrUtELKTHt-ZBhFvt7TYp62s/view?usp=sharing"
-      }
+      {"name": "Dong-Eui", "nameKr": "동의대학교", "system": "D2-6 > D2-2 (Đại học)", "quota": 200, "mou": "VTV, HCCT, BCIT", "catalog": "https://drive.google.com/file/d/1MQbj-xk9pruCY02PzuJrf_WbIG_5g9rw/view?usp=drive_link"},
+      {"name": "Ajou-Motor", "nameKr": "아주자동차대학", "system": "D2-6 > D2-1 (Cao Đẳng)", "quota": 200, "mou": "TVU, BCIT", "catalog": "https://drive.google.com/file/d/11jo3OFyMIUoBd7hfQ0rpfEx5T8TFahib/view?usp=sharing"},
+      {"name": "Suncheon Jeil", "nameKr": "순천제일", "system": "D2-6 > D2-1 (Cao Đẳng)", "quota": 200, "mou": "HNC, VTV, TVU, SGT, BCIT, HPC", "catalog": "https://drive.google.com/file/d/1jeLs-moW3bI0St6UxQTlPPxPvaHPWJ_b/view?usp=sharing"},
+      {"name": "Dongnam", "nameKr": "동남보건대학교", "system": "D2-6 > D2-1 (Cao Đẳng)", "quota": 200, "mou": "HNC, HPC, HCCT, SGT, BCIT", "catalog": "https://drive.google.com/file/d/1vHfckqZeJd4u1uyE29S2lRpEaOBjcboa/view?usp=sharing"},
+      {"name": "Induk", "nameKr": "인덕대학교", "system": "D2-6 > D2-1 (Cao Đẳng)", "quota": 100, "mou": "HNC, VTV, TVU, SGT, BCIT", "catalog": "https://drive.google.com/file/d/1_bc1jra3dZGwxyewx7WIVu3npbA-RGRJ/view?usp=sharing"},
+      {"name": "Daewon", "nameKr": "대원대학교", "system": "D2-6 > D2-1 (Cao Đẳng)", "quota": 100, "mou": "", "catalog": "https://drive.google.com/file/d/17MFnGZQOPPJZXYR-2XmrA-1NAzH0v13P/view?usp=sharing"},
+      {"name": "Jangan", "nameKr": "장안대학교", "system": "D2-6 > D2-1 (Cao Đẳng )", "quota": 200, "mou": "", "catalog": "https://drive.google.com/file/d/1jsfqYFqutBEEYEvj1SQencT5CXrl739u/view?usp=sharing"},
+      {"name": "YeonSeong", "nameKr": "연성대학교", "system": "D2-6 > D2-1 (Cao Đẳng)", "quota": 200, "mou": "HNC, HPC, HCCT, SGT, BCIT, VTV, TVU", "catalog": "https://drive.google.com/file/d/1zxrl8VWiFVYxpP26OemGroLqYgo_Dh1j/view?usp=sharing"},
+      {"name": "KyungGin", "nameKr": "경인여자대학교", "system": "D2-6 > D2-1 (Cao Đẳng )", "quota": 100, "mou": "", "catalog": "https://drive.google.com/file/d/13LjLRc-M2OLW1Hb6_jefzRMeLwDdl5LU/view?usp=sharing"},
+      {"name": "Nữ Busan", "nameKr": "부산여자대학교", "system": "D2-6 > D2-1 (Cao Đẳng)", "quota": 100, "mou": "", "catalog": "https://drive.google.com/file/d/1kUaBnz51NrUtELKTHt-ZBhFvt7TYp62s/view?usp=sharing"},
+      {"name": "Osan", "nameKr": "오산대학교", "system": "D2-6 > D2-1 (Cao Đẳng)", "quota": 100, "mou": "HNC, HPC, SGT", "catalog": "https://drive.google.com/file/d/14ClpFkKAHstGFOanMnvrial_ymNzoINW/view?usp=sharing"}
     ]
   }
 };
