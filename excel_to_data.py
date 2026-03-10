@@ -312,6 +312,13 @@ def parse_school_sheet(ws, sheet_name):
     return data
 
 # Sheet mapping
+# Chỉ tiêu D2-6 kỳ 9/2026 - ghi đè Excel
+QUOTA_OVERRIDE = {
+    "dong-eui": 200, "ajou-motor": 200, "suncheon-jeil": 200, "dongnam": 200,
+    "induk": 100, "daewon": 100, "jangan": 200, "yeonseong": 200,
+    "kyunggin": 100, "nubusan": 100, "osan": 100,
+}
+
 SHEET_TO_ID = {
     "Dong-Eui": "dong-eui",
     "YeonSeong ": "yeonseong",
@@ -450,6 +457,8 @@ for sid, s in schools.items():
     s.setdefault("video", {"url": "", "youtubeId": "", "title": ""})
     if not s["images"].get("main"):
         s["images"]["main"] = "images/placeholder.svg"
+    if sid in QUOTA_OVERRIDE:
+        s["quota"] = QUOTA_OVERRIDE[sid]
 
 # Parse các sheet Tài liệu chung
 extra_sheets = {
