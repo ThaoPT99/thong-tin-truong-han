@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <title>Thông tin trường Hàn - Kỳ tháng 9/2026</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-inner">
+            <h1 class="logo">Thông tin trường Hàn</h1>
+            <p class="subtitle">Kỳ tuyển sinh tháng 9/2026</p>
+            <a href="https://docs.google.com/spreadsheets/d/1LkzsRId4jJ4qLCyggEX_Sj2TzrQ4gu-n" target="_blank" class="sheet-link">📋 Mở Google Sheet gốc</a>
+        </div>
+    </header>
+
+    <!-- Chọn trường -->
+    <nav class="school-tabs">
+        <div class="tabs-inner">
+            <button class="tab-btn active" data-school="nubusan">Nữ Busan</button>
+            <button class="tab-btn" data-school="dong-eui">Dong-Eui</button>
+            <button class="tab-btn" data-school="yeonseong">YeonSeong</button>
+            <button class="tab-btn" data-school="jangan">Jangan</button>
+            <button class="tab-btn" data-school="induk">Induk</button>
+            <button class="tab-btn" data-school="osan">Osan</button>
+            <button class="tab-btn" data-school="suncheon-jeil">Suncheon Jeil</button>
+            <button class="tab-btn" data-school="dongnam">Dongnam</button>
+            <button class="tab-btn" data-school="kyunggin">KyungGin</button>
+            <button class="tab-btn" data-school="ajou-motor">Ajou-Motor</button>
+            <button class="tab-btn" data-school="daewon">Daewon</button>
+            <button class="tab-btn" data-school="extra">Tài liệu chung</button>
+        </div>
+    </nav>
+
+    <main class="main">
+        <div id="school-content"></div>
+        <div id="extra-content" class="hidden"></div>
+    </main>
+
+    <footer class="footer">
+        <p>Nguồn: <a href="https://docs.google.com/spreadsheets/d/1LkzsRId4jJ4qLCyggEX_Sj2TzrQ4gu-n" target="_blank">Google Sheet</a> | Cập nhật dữ liệu trong file <code>data.js</code></p>
+    </footer>
+
+    <script src="./data.js"></script>
+    <script src="./render.js"></script>
+</body>
+</html>

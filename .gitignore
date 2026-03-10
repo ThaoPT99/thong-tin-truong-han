@@ -1,0 +1,8 @@
+node_modules/
+excel_export_log.txt
+excel_output.txt
+test_write.txt
+__pycache__/
+*.pyc
+.env
+.DS_Store

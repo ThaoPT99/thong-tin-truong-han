@@ -1,0 +1,14 @@
+{
+  "name": "thong-tin-truong-han",
+  "version": "1.0.0",
+  "description": "Thông tin trường Hàn - Kỳ tháng 9/2026",
+  "scripts": {
+    "start": "serve -s . -l ${PORT:-3000}"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "serve": "^14.2.4"
+  }
+}
