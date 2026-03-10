@@ -149,7 +149,7 @@ function renderExtra() {
         ${(sh.items || []).filter(i => i.type || i.link || i.linkText).map(i =>
           (i.type ? escapeHtml(i.type) + ": " : "") +
           (i.link ? `<a href="${i.link}" target="_blank" rel="noopener">📄 ${escapeHtml(i.linkText || "Mở")}</a>` : escapeHtml(i.linkText || ""))
-        .join("<br>")}
+        ).join("<br>")}
         </td></tr>`).join("")}
       </tbody>
     </table>`;
