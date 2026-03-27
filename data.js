@@ -668,7 +668,7 @@ const SCHOOLS_DATA = {
     "ktx": "- Dự kiến : 1.000.000 KRW/5 tháng\n- Sẽ có Invoice sau khi đỗ phỏng vấn trường",
     "schedule": "",
     "advantages": [
-      "Không yêu cầu chứng chỉ tiếng khi tham gia chương trình trao đổi sinh viên của trường Osan.",
+      "Không yêu cầu chứng chỉ tiếng khi tham gia chương trình trao đổi sinh viên của trường Suncheon Jeil.",
       "Không đóng băng tài chính ( Không mở sổ Kstudy ).",
       "Không Phỏng Vấn ĐSQ.",
       "Tỷ lệ đỗ gần như tuyệt đối nếu có chứng chỉ tiếng Topik 2 hoặc Sejong 2b.",
