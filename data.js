@@ -62,9 +62,8 @@ const SCHOOLS_DATA = {
       "Kỹ thuật ô tô - AUTOMOTIVE ENGINEERING"
     ],
     "conversion": [
-      "6 trong vòng 1 năm.",
-      "Sau 1 năm chuyển tiếp lên chuyên ngành D2",
-      "2 và học tiếp trong vòng 4 năm",
+      "Học D2-6 trong vòng 1 năm.",
+      "Sau 1 năm chuyển tiếp lên chuyên ngành D2-2 và học tiếp trong vòng 4 năm",
       "Điều kiện để tốt nghiệp > Có chứng chỉ Topik 4",
       "Số buổi nghỉ quá 4 buổi (không xin phép) sẽ không được chuyển đổi lên chuyên ngành"
     ],
@@ -416,8 +415,7 @@ const SCHOOLS_DATA = {
     ],
     "conversion": [
       "Học D2-6 trong vòng 6 tháng",
-      "Sau 6 tháng chuyển tiếp lên chuyên ngành D2",
-      "1 và học tiếp trong vòng 2 năm",
+      "Sau 6 tháng chuyển tiếp lên chuyên ngành D2-1 và học tiếp trong vòng 2 năm",
       "Điều kiện để tốt nghiệp > Có chứng chỉ Topik 3",
       "Số buổi nghỉ quá 4 buổi (không xin phép) sẽ không được chuyển đổi lên chuyên ngành"
     ],
@@ -536,8 +534,7 @@ const SCHOOLS_DATA = {
     ],
     "conversion": [
       "Học D2-6 trong vòng 6 tháng",
-      "Sau 6 tháng chuyển tiếp lên chuyên ngành D2",
-      "1 và học tiếp trong vòng 2 năm",
+      "Sau 6 tháng chuyển tiếp lên chuyên ngành D2-1 và học tiếp trong vòng 2 năm",
       "Điều kiện để tốt nghiệp > Có chứng chỉ Topik 3",
       "Số buổi nghỉ quá 4 buổi (không xin phép) sẽ không được chuyển đổi lên chuyên ngành"
     ],
@@ -649,8 +646,7 @@ const SCHOOLS_DATA = {
     ],
     "conversion": [
       "Học D2-6 trong vòng 6 tháng",
-      "Sau 6 tháng chuyển tiếp lên chuyên ngành D2",
-      "1 và học tiếp trong vòng 2 năm",
+      "Sau 6 tháng chuyển tiếp lên chuyên ngành D2-1 và học tiếp trong vòng 2 năm",
       "Điều kiện để tốt nghiệp > Có chứng chỉ Topik 3",
       "Số buổi nghỉ quá 4 buổi (không xin phép) sẽ không được chuyển đổi lên chuyên ngành"
     ],
@@ -773,8 +769,7 @@ const SCHOOLS_DATA = {
     ],
     "conversion": [
       "Học D2-6 trong vòng 6 tháng",
-      "Sau 6 tháng chuyển tiếp lên chuyên ngành D2",
-      "1 và học tiếp trong vòng 2 năm",
+      "Sau 6 tháng chuyển tiếp lên chuyên ngành D2-1 và học tiếp trong vòng 2 năm",
       "Điều kiện để tốt nghiệp > Có chứng chỉ Topik 3",
       "Số buổi nghỉ quá 4 buổi (không xin phép) sẽ không được chuyển đổi lên chuyên ngành"
     ],
@@ -906,8 +901,7 @@ const SCHOOLS_DATA = {
     ],
     "conversion": [
       "Học D2-6 trong vòng 6 tháng.",
-      "Sau 6 tháng chuyển tiếp lên chuyên ngành D2",
-      "1 và học tiếp trong vòng 2 năm",
+      "Sau 6 tháng chuyển tiếp lên chuyên ngành D2-1 và học tiếp trong vòng 2 năm",
       "Điều kiện để tốt nghiệp > Có chứng chỉ Topik 3",
       "Số buổi nghỉ quá 4 buổi (không xin phép) sẽ không được chuyển đổi lên chuyên ngành"
     ],
@@ -1014,8 +1008,7 @@ const SCHOOLS_DATA = {
     ],
     "conversion": [
       "Học D2-6 trong vòng 6 tháng / Hoặc 1 năm (nếu học sinh có nhu cầu học tiếng thêm 6 tháng)",
-      "Sau 6 tháng/1 năm chuyển tiếp lên chuyên ngành D2",
-      "1 và học tiếp trong vòng 2 năm",
+      "Sau 6 tháng/1 năm chuyển tiếp lên chuyên ngành D2-1 và học tiếp trong vòng 2 năm",
       "Điều kiện để tốt nghiệp > Có chứng chỉ Topik 3",
       "Số buổi nghỉ quá 4 buổi (không xin phép) sẽ không được chuyển đổi lên chuyên ngành"
     ],
@@ -1127,8 +1120,7 @@ const SCHOOLS_DATA = {
     ],
     "conversion": [
       "Học D2-6 trong vòng 6 tháng > Thi topik trường nếu chưa có chứng chỉ tiếng Topik2",
-      "Sau 6 tháng chuyển tiếp lên chuyên ngành D2",
-      "1 và học tiếp trong vòng 2 năm",
+      "Sau 6 tháng chuyển tiếp lên chuyên ngành D2-1 và học tiếp trong vòng 2 năm",
       "Điều kiện để tốt nghiệp > Có chứng chỉ Topik 3",
       "Số buổi nghỉ quá 4 buổi (không xin phép) sẽ không được chuyển đổi lên chuyên ngành"
     ],
@@ -1251,8 +1243,7 @@ const SCHOOLS_DATA = {
     "majors": [],
     "conversion": [
       "Học D2-6 trong vòng 6 tháng > Thi topik trường nếu chưa có chứng chỉ tiếng Topik2",
-      "Sau 6 tháng chuyển tiếp lên chuyên ngành D2",
-      "1 và học tiếp trong vòng 2 năm",
+      "Sau 6 tháng chuyển tiếp lên chuyên ngành D2-1 và học tiếp trong vòng 2 năm",
       "Điều kiện để tốt nghiệp > Có chứng chỉ Topik 3",
       "Số buổi nghỉ quá 4 buổi (không xin phép) sẽ không được chuyển đổi lên chuyên ngành"
     ],
