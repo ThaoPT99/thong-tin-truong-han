@@ -172,7 +172,7 @@ const SCHOOLS_DATA = {
       "Điện - điện tử - ELECTRICAL AND ELECTRONICS ENGINEERING"
     ],
     "conversion": [
-      "6 trong vòng 6 tháng > Thi topik trường nếu chưa có chứng chỉ tiếng Topik2",
+      "Học D2-6 trong vòng 6 tháng > Thi topik trường nếu chưa có chứng chỉ tiếng Topik2",
       "Sau 6 tháng chuyển tiếp lên chuyên ngành D2",
       "1 và học tiếp trong vòng 2 năm",
       "Điều kiện để tốt nghiệp > Có chứng chỉ Topik 3",
@@ -308,7 +308,7 @@ const SCHOOLS_DATA = {
       "Làm đẹp: Beauty & Aesthetics ( 미용학과)"
     ],
     "conversion": [
-      "6 trong vòng 6 tháng.",
+      "Học D2-6 trong vòng 6 tháng.",
       "Sau 6 tháng chuyển tiếp lên chuyên ngành D2",
       "1 và học tiếp trong vòng 2 năm",
       "Điều kiện để tốt nghiệp > Có chứng chỉ Topik 3",
@@ -415,7 +415,7 @@ const SCHOOLS_DATA = {
       "Khoa Kinh doanh dịch vụ du lịch - DEPARTMENT OF TOURISM & SERVICE MANAGEMENT"
     ],
     "conversion": [
-      "6 trong vòng 6 tháng",
+      "Học D2-6 trong vòng 6 tháng",
       "Sau 6 tháng chuyển tiếp lên chuyên ngành D2",
       "1 và học tiếp trong vòng 2 năm",
       "Điều kiện để tốt nghiệp > Có chứng chỉ Topik 3",
@@ -535,7 +535,7 @@ const SCHOOLS_DATA = {
       "Ngành Cơ khí"
     ],
     "conversion": [
-      "6 trong vòng 6 tháng",
+      "Học D2-6 trong vòng 6 tháng",
       "Sau 6 tháng chuyển tiếp lên chuyên ngành D2",
       "1 và học tiếp trong vòng 2 năm",
       "Điều kiện để tốt nghiệp > Có chứng chỉ Topik 3",
@@ -648,7 +648,7 @@ const SCHOOLS_DATA = {
       "Kỹ thuật cơ khí & ô tô - MECHANICAL & AUTOMOTIVE ENGINEERING"
     ],
     "conversion": [
-      "6 trong vòng 6 tháng",
+      "Học D2-6 trong vòng 6 tháng",
       "Sau 6 tháng chuyển tiếp lên chuyên ngành D2",
       "1 và học tiếp trong vòng 2 năm",
       "Điều kiện để tốt nghiệp > Có chứng chỉ Topik 3",
@@ -772,7 +772,7 @@ const SCHOOLS_DATA = {
       "Quản lý du lịch y tế - MEDICAL TOURISM MANAGEMENT"
     ],
     "conversion": [
-      "6 trong vòng 6 tháng",
+      "Học D2-6 trong vòng 6 tháng",
       "Sau 6 tháng chuyển tiếp lên chuyên ngành D2",
       "1 và học tiếp trong vòng 2 năm",
       "Điều kiện để tốt nghiệp > Có chứng chỉ Topik 3",
@@ -905,7 +905,7 @@ const SCHOOLS_DATA = {
       "Điều Dưỡng - Nursing ( 간호학과)"
     ],
     "conversion": [
-      "6 trong vòng 6 tháng.",
+      "Học D2-6 trong vòng 6 tháng.",
       "Sau 6 tháng chuyển tiếp lên chuyên ngành D2",
       "1 và học tiếp trong vòng 2 năm",
       "Điều kiện để tốt nghiệp > Có chứng chỉ Topik 3",
@@ -1013,7 +1013,7 @@ const SCHOOLS_DATA = {
       "Kỹ thuật ô tô toàn cầu - GLOBAL AUTOMOTIVE ENGINEERING"
     ],
     "conversion": [
-      "6 trong vòng 6 tháng / Hoặc 1 năm (nếu học sinh có nhu cầu học tiếng thêm 6 tháng)",
+      "Học D2-6 trong vòng 6 tháng / Hoặc 1 năm (nếu học sinh có nhu cầu học tiếng thêm 6 tháng)",
       "Sau 6 tháng/1 năm chuyển tiếp lên chuyên ngành D2",
       "1 và học tiếp trong vòng 2 năm",
       "Điều kiện để tốt nghiệp > Có chứng chỉ Topik 3",
@@ -1126,7 +1126,7 @@ const SCHOOLS_DATA = {
       "Điện - điện tử - ELECTRICAL AND ELECTRONICS ENGINEERING"
     ],
     "conversion": [
-      "6 trong vòng 6 tháng > Thi topik trường nếu chưa có chứng chỉ tiếng Topik2",
+      "Học D2-6 trong vòng 6 tháng > Thi topik trường nếu chưa có chứng chỉ tiếng Topik2",
       "Sau 6 tháng chuyển tiếp lên chuyên ngành D2",
       "1 và học tiếp trong vòng 2 năm",
       "Điều kiện để tốt nghiệp > Có chứng chỉ Topik 3",
@@ -1250,7 +1250,7 @@ const SCHOOLS_DATA = {
     ],
     "majors": [],
     "conversion": [
-      "6 trong vòng 6 tháng > Thi topik trường nếu chưa có chứng chỉ tiếng Topik2",
+      "Học D2-6 trong vòng 6 tháng > Thi topik trường nếu chưa có chứng chỉ tiếng Topik2",
       "Sau 6 tháng chuyển tiếp lên chuyên ngành D2",
       "1 và học tiếp trong vòng 2 năm",
       "Điều kiện để tốt nghiệp > Có chứng chỉ Topik 3",
