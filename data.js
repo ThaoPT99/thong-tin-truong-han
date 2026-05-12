@@ -26,7 +26,7 @@ const SCHOOLS_DATA = {
     "video": {
       "url": "https://www.youtube.com/watch?v=noj5lFV5Feg",
       "youtubeId": "noj5lFV5Feg",
-      "title": "[오산대학교 국제교류원] 한국어학당 호텔조리계열 학과 체험｜오산대학교 Osan University\n[오산대학"
+      "title": ""
     },
     "location": "45 Cheonghak-ro, Osan-si, Gyeonggi-do, Hàn Quốc (cách Seoul 35 km về phía Nam )",
     "intro": "",
@@ -149,7 +149,8 @@ const SCHOOLS_DATA = {
     },
     "links": {
       "website": "",
-      "catalog": "documents/Induk-University-Catalog-(1).pdf"
+      "catalog": "documents/Induk-University-Catalog-(1).pdf",
+      "invoice": "https://drive.google.com/file/d/1AbOCZIBRHMO8LKGGym7lcc4qfcWjNazU/view?usp=sharing"
     },
     "video": {
       "url": "https://www.youtube.com/watch?v=VNYkbySK0vg",
@@ -160,7 +161,7 @@ const SCHOOLS_DATA = {
     "intro": "",
     "conditions": [
       "Dưới 24 tuổi",
-      "Có học bạ cấp 3 ( GPA 5.5 )",
+      "Có học bạ cấp 3 ( GPA 5.0 )",
       "Có bằng tốt nghiệp cấp 3",
       "Số buổi nghỉ không quá 30 buổi",
       "Trượt Visa các hệ D4-1, D2-1, D2-2, D2-3, E9",
@@ -277,18 +278,19 @@ const SCHOOLS_DATA = {
     },
     "links": {
       "website": "",
-      "catalog": "documents/Yeonsung-University-Catalog.pdf"
+      "catalog": "documents/Yeonsung-University-Catalog.pdf",
+      "invoice": "https://drive.google.com/file/d/1KrIVtDkD_siHLxkqTI7wSdVtxBc6SASZ/view?usp=sharing"
     },
     "video": {
       "url": "https://www.youtube.com/watch?v=ICVUWdCIUU4",
       "youtubeId": "ICVUWdCIUU4",
-      "title": "우리의 꿈 in 연성｜연성대학교 Yeonsung University"
+      "title": ""
     },
     "location": "Địa chỉ: 34 Yanghwa-ro 37beon-gil, Manan-gu, Anyang-si, Gyeonggi-do, Hàn Quốc\n\nNằm tại quận Manan, thành phố Anyang (Gyeonggi), thuộc vùng thủ đô Seoul – kết nối thuận tiện bằng tàu, xe buýt, có shuttle bus từ ga Anyang .",
     "intro": "",
     "conditions": [
       "Dưới 24 tuổi",
-      "Có học bạ cấp 3 ( GPA 5.5 )",
+      "Có học bạ cấp 3 ( GPA 5.0 )",
       "Có bằng tốt nghiệp cấp 3",
       "Số buổi nghỉ không quá 30 buổi",
       "Trượt Visa các hệ D4-1, D2-1, D2-2, D2-3, E9",
@@ -416,7 +418,7 @@ const SCHOOLS_DATA = {
     "intro": "",
     "conditions": [
       "Dưới 22 tuổi",
-      "Có học bạ cấp 3 (GPA 5.5)",
+      "Có học bạ cấp 3 (GPA 5.0)",
       "Có bằng tốt nghiệp cấp 3",
       "Số buổi nghỉ không quá 30 buổi",
       "Trượt Visa các hệ D4-1, D2-1, D2-2, D2-3, E9",
@@ -534,19 +536,19 @@ const SCHOOLS_DATA = {
     },
     "links": {
       "website": "",
-      "catalog": "documents/_KyungGin-University-Catalog.pdf"
+      "catalog": "https://drive.google.com/file/d/1koKmGXVjZmSBtiSRcqaMuf3blbO_w4W0/view?usp=sharing"
     },
     "video": {
       "url": "https://www.youtube.com/watch?v=Vup7-eqakBE",
       "youtubeId": "Vup7-eqakBE",
-      "title": "경인의 설립이념, 상징에 대해 알아보아요ㅣ경인여대 오리엔테이션"
+      "title": ""
     },
     "location": "63 Gyeyangsan-ro, Gyesan-dong, Gyeyang-gu, Incheon, Hàn Quốc",
     "intro": "",
     "conditions": [
       "Dưới 24 tuổi",
       "Chỉ dành cho nữ",
-      "Có học bạ cấp 3 ( GPA 5.5 )",
+      "Có học bạ cấp 3 ( GPA 5.0 )",
       "Có bằng tốt nghiệp cấp 3",
       "Số buổi nghỉ không quá 30 buổi",
       "Trượt Visa các hệ D4-1, D2-1, D2-2, D2-3, E9",
@@ -669,13 +671,13 @@ const SCHOOLS_DATA = {
     "video": {
       "url": "https://www.youtube.com/watch?v=2JCs1paO_Zo",
       "youtubeId": "2JCs1paO_Zo",
-      "title": "동남보건대학교 건학50주년 기념식 영상"
+      "title": ""
     },
     "location": "Địa chỉ: 50 Cheoncheon‑ro 74‑gil, Jeongja‑dong, Jangan‑gu, Suwon‑si, Gyeonggi‑do, Hàn Quốc\n\nNằm ở phía bắc Suwon, trên bờ sông Seohocheon, trong khu vực đô thị thuận tiện di chuyển bằng bus và đi tới Seoul rất dễ dàng",
     "intro": "",
     "conditions": [
       "Dưới 24 tuổi",
-      "Có học bạ cấp 3 ( GPA 5.5 )",
+      "Có học bạ cấp 3 ( GPA 5.0 )",
       "Có bằng tốt nghiệp cấp 3",
       "Số buổi nghỉ không quá 30 buổi",
       "Trượt Visa các hệ D4-1, D2-1, D2-2, D2-3, E9",
@@ -792,7 +794,7 @@ const SCHOOLS_DATA = {
     },
     "links": {
       "website": "",
-      "catalog": "documents/Catalog-Dong-Eui.pdf.pdf"
+      "catalog": "https://drive.google.com/file/d/1OvD9XCX6dLBaIR6IKTdgtnfoT-Op3gU-/view?usp=sharing"
     },
     "video": {
       "url": "https://www.youtube.com/watch?v=xqT-_-3l8Yk",
@@ -803,7 +805,7 @@ const SCHOOLS_DATA = {
     "intro": "",
     "conditions": [
       "Dưới 22 tuổi",
-      "Có học bạ cấp 3 ( GPA 5.5 )",
+      "Có học bạ cấp 3 ( GPA 5.0 )",
       "Có bằng tốt nghiệp cấp 3",
       "Số buổi nghỉ không quá 30 buổi",
       "Trượt Visa các hệ D4-1, D2-1, D2-2, D2-3, E9",
@@ -921,18 +923,19 @@ const SCHOOLS_DATA = {
     },
     "links": {
       "website": "",
-      "catalog": "documents/Catalog-SucheonJeil-University.pdf"
+      "catalog": "https://drive.google.com/file/d/1xVMO320agblD8atS_Mvj8jFenFePBDOz/view?usp=sharing",
+      "invoice": "https://drive.google.com/file/d/1qcyCKMkHSUhwHmKkycw2qEiyHZf_-mhA/view?usp=sharing"
     },
     "video": {
-      "url": "https://www.youtube.com/watch?v=kwbtipY_jis",
-      "youtubeId": "kwbtipY_jis",
+      "url": "",
+      "youtubeId": "",
       "title": ""
     },
     "location": "17 Jeildaehak-gil, Deogwol-dong, Suncheon-si, Jeollanam-do, 57997, Hàn Quốc",
     "intro": "",
     "conditions": [
       "Dưới 24 tuổi",
-      "Có học bạ cấp 3 ( GPA 6,3 )",
+      "Có học bạ cấp 3 ( GPA 5.0 )",
       "Có bằng tốt nghiệp cấp 3",
       "Số buổi nghỉ không quá 15 buổi",
       "Trượt Visa các hệ D4-1, D2-1, D2-2, D2-3, E9",
@@ -1054,13 +1057,13 @@ const SCHOOLS_DATA = {
     "video": {
       "url": "https://www.youtube.com/watch?v=dBuO1y3L1U4",
       "youtubeId": "dBuO1y3L1U4",
-      "title": "부산여자대학교 홍보영상"
+      "title": ""
     },
     "location": "Địa chỉ: 516 đường Jinman , Phường Yangjeong, quận Busanjin, Busan, Hàn Quốc\n\nTọa lạc tại vị trí chiến lược giáp Seomyeon, trung tâm Busan thành phố lớn thứ 2 tại Hàn Quốc ( dưới 10 phút di chuyển)",
     "intro": "",
     "conditions": [
       "Dưới 24 tuổi",
-      "Có học bạ cấp 3 ( GPA 6,0 )",
+      "Có học bạ cấp 3 ( GPA 5.0 )",
       "Có bằng tốt nghiệp cấp 3",
       "Số buổi nghỉ không quá 15 buổi",
       "Trượt Visa các hệ D4-1, D2-1, D2-2, D2-3, E9",
@@ -1188,7 +1191,7 @@ const SCHOOLS_DATA = {
     "intro": "",
     "conditions": [
       "Dưới 24 tuổi",
-      "Có học bạ cấp 3 (GPA 5.5)",
+      "Có học bạ cấp 3 (GPA 5.0)",
       "Có bằng tốt nghiệp cấp 3",
       "Số buổi nghỉ không quá 30 buổi",
       "Trượt Visa các hệ D4-1, D2-1, D2-2, D2-3, E9",
@@ -1316,7 +1319,7 @@ const SCHOOLS_DATA = {
     "intro": "",
     "conditions": [
       "Dưới 24 tuổi",
-      "Có học bạ cấp 3 (GPA 5.5)",
+      "Có học bạ cấp 3 (GPA 5.0)",
       "Có bằng tốt nghiệp cấp 3",
       "Số buổi nghỉ không quá 30 buổi",
       "Trượt Visa các hệ D4-1, D2-1, D2-2, D2-3, E9",
@@ -1444,7 +1447,7 @@ const SCHOOLS_DATA = {
     "intro": "",
     "conditions": [
       "Dưới 24 tuổi",
-      "Có học bạ cấp 3 (GPA 5.5)",
+      "Có học bạ cấp 3 (GPA 5.0)",
       "Có bằng tốt nghiệp cấp 3",
       "Số buổi nghỉ không quá 30 buổi",
       "Trượt Visa các hệ D4-1, D2-1, D2-2, D2-3, E9",
@@ -1572,7 +1575,7 @@ const SCHOOLS_DATA = {
     "intro": "",
     "conditions": [
       "Dưới 24 tuổi",
-      "Có học bạ cấp 3 (GPA 5.5)",
+      "Có học bạ cấp 3 (GPA 5.0)",
       "Có bằng tốt nghiệp cấp 3",
       "Số buổi nghỉ không quá 30 buổi",
       "Trượt Visa các hệ D4-1, D2-1, D2-2, D2-3, E9",
@@ -1700,7 +1703,7 @@ const SCHOOLS_DATA = {
     "intro": "",
     "conditions": [
       "Dưới 24 tuổi",
-      "Có học bạ cấp 3 ( GPA 6,0 )",
+      "Có học bạ cấp 3 ( GPA 5,0 )",
       "Có bằng tốt nghiệp cấp 3",
       "Số buổi nghỉ không quá 15 buổi",
       "Trượt Visa các hệ D4-1, D2-1, D2-2, D2-3, E9",
@@ -1828,7 +1831,7 @@ const SCHOOLS_DATA = {
     "intro": "",
     "conditions": [
       "Dưới 24 tuổi",
-      "Có học bạ cấp 3 (GPA 5.5)",
+      "Có học bạ cấp 3 (GPA 5.0)",
       "Có bằng tốt nghiệp cấp 3",
       "Số buổi nghỉ không quá 30 buổi",
       "Trượt Visa các hệ D4-1, D2-1, D2-2, D2-3, E9",
@@ -1928,5 +1931,416 @@ const SCHOOLS_DATA = {
       }
     ],
     "mou": "HN, HNC, HCCT, BGIT, PMDT, DH"
+  }
+};
+
+const EXTRA_SHEETS = {
+  "visaChecklist": {
+    "name": "Check list HS xin Visa D2-6",
+    "items": [
+      {
+        "stt": "1",
+        "noidung": "Application Form Đại Sứ Quán",
+        "luuy": "Theo mẫu của ĐSQ",
+        "link": "",
+        "linkText": "ĐƠN XIN CẤP VISA - MẪU.pdf"
+      },
+      {
+        "stt": "2",
+        "noidung": "Đơn xác nhận lịch sử bị từ chối visa",
+        "luuy": "Theo mẫu của ĐSQ",
+        "link": "",
+        "linkText": "đơn xác nhận từ chối visa.pdf"
+      },
+      {
+        "stt": "3",
+        "noidung": "Thư mời nhập học của trường Hàn",
+        "luuy": "Bản photo",
+        "link": "",
+        "linkText": "Thư mời nhập học mẫu.pdf"
+      },
+      {
+        "stt": "4",
+        "noidung": "Đăng ký kinh doanh trường Hàn",
+        "luuy": "Bản photo",
+        "link": "",
+        "linkText": "ĐKKKD các trường.rar"
+      },
+      {
+        "stt": "5",
+        "noidung": "MOU trường",
+        "luuy": "Bản photo",
+        "link": "",
+        "linkText": ""
+      },
+      {
+        "stt": "6",
+        "noidung": "Quyết định trao đổi sinh viên",
+        "luuy": "Dịch thuật + công thức",
+        "link": "",
+        "linkText": "THƯ TIẾN CỬ HN - YEONSUNG.pdf\nTHƯ TIẾN CỬ HỮU NGHỊ-1.pdf"
+      },
+      {
+        "stt": "7",
+        "noidung": "Giấy khám sức khỏe",
+        "luuy": "Sẽ phải khám sức khỏe:\n1: Khi nộp hồ sơ xin Visa ĐSQ/LSQ lao Phổi\n2: Trước khi xuất cảnh 1 tuần khám lao phổi + Bổ sung viêm gan B",
+        "link": "",
+        "linkText": "Full khám sức khỏe.pdf"
+      },
+      {
+        "stt": "8",
+        "noidung": "Kế hoạch học tập + Giới thiệu bản thân nộp ĐSQ",
+        "luuy": "Cần viết theo chuẩn mẫu Fastgo hướng dẫn - Bản viết tay",
+        "link": "",
+        "linkText": "GTBT+ KHHT Phạm Đình Tùng Dương.docx"
+      },
+      {
+        "stt": "9",
+        "noidung": "Tem tím bằng TN",
+        "luuy": "2 bản",
+        "link": "",
+        "linkText": ""
+      },
+      {
+        "stt": "10",
+        "noidung": "Tem tím học bạ THPT",
+        "luuy": "2 bản",
+        "link": "",
+        "linkText": ""
+      },
+      {
+        "stt": "11",
+        "noidung": "Tem tím bảng điểm ĐH/ CĐ",
+        "luuy": "2 bản",
+        "link": "",
+        "linkText": ""
+      },
+      {
+        "stt": "12",
+        "noidung": "Tem tím Xác nhận sinh viên",
+        "luuy": "2 bản",
+        "link": "",
+        "linkText": ""
+      },
+      {
+        "stt": "13",
+        "noidung": "Sổ tiết kiệm của học sinh",
+        "luuy": "- Đứng tên học sinh \n- Đáo hạn sổ: 1 năm\n- Số tiền tối thiểu: 300 triệu\n- Không yêu cầu sổ lùi\n- Xác nhận số dư đi kèm",
+        "link": "",
+        "linkText": "- Sổ đứng tên HỌC SINH\n- Trừ các ngân hàng: BẮC Á, CHÍNH SÁCH XÃ HỘI"
+      },
+      {
+        "stt": "14",
+        "noidung": "Xác nhận thu nhập, bảng lương và bảo hiểm xã hội",
+        "luuy": "Dịch thuật công chứng",
+        "link": "",
+        "linkText": "XAC NHAN CONG VIEC.pdf"
+      },
+      {
+        "stt": "15",
+        "noidung": "Hợp đồng nghề nghiệp / Giấy xác nhận công việc",
+        "luuy": "Dịch thuật công chứng",
+        "link": "",
+        "linkText": ""
+      },
+      {
+        "stt": "16",
+        "noidung": "Sao kê TK bố",
+        "luuy": "Trước 10 ngày nộp xin Visa - Sao kê trong vòng 6 tháng",
+        "link": "",
+        "linkText": ""
+      },
+      {
+        "stt": "17",
+        "noidung": "Sao kê TK mẹ",
+        "luuy": "Trước 10 ngày nộp xin Visa - Sao kê trong vòng 6 tháng",
+        "link": "",
+        "linkText": ""
+      },
+      {
+        "stt": "18",
+        "noidung": "Sổ đỏ",
+        "luuy": "Càng nhiều càng tốt",
+        "link": "",
+        "linkText": ""
+      },
+      {
+        "stt": "19",
+        "noidung": "Giải trình ĐKKD nếu có",
+        "luuy": "Dịch thuật công chứng",
+        "link": "",
+        "linkText": ""
+      },
+      {
+        "stt": "20",
+        "noidung": "Giải trình sao kê",
+        "luuy": "Dịch thuật công chứng",
+        "link": "",
+        "linkText": ""
+      },
+      {
+        "stt": "21",
+        "noidung": "Giải trình địa chỉ",
+        "luuy": "Dịch thuật công chứng",
+        "link": "",
+        "linkText": ""
+      },
+      {
+        "stt": "22",
+        "noidung": "Cam kết bảo lãnh tài chính",
+        "luuy": "Dịch thuật công chứng",
+        "link": "",
+        "linkText": ""
+      },
+      {
+        "stt": "23",
+        "noidung": "Giấy khai sinh",
+        "luuy": "Dịch thuật công chứng",
+        "link": "",
+        "linkText": ""
+      },
+      {
+        "stt": "24",
+        "noidung": "CTO7",
+        "luuy": "Phải chuẩn form của ĐSQ yêu cầu",
+        "link": "",
+        "linkText": "quy chuẩn CT07.pdf"
+      },
+      {
+        "stt": "25",
+        "noidung": "Photo hộ chiếu",
+        "luuy": "",
+        "link": "",
+        "linkText": ""
+      },
+      {
+        "stt": "26",
+        "noidung": "CCCD Học sinh",
+        "luuy": "Bản photo",
+        "link": "",
+        "linkText": ""
+      },
+      {
+        "stt": "27",
+        "noidung": "CCCD Bố",
+        "luuy": "Bản photo",
+        "link": "",
+        "linkText": ""
+      },
+      {
+        "stt": "28",
+        "noidung": "CCCD Mẹ",
+        "luuy": "Bản photo",
+        "link": "",
+        "linkText": ""
+      },
+      {
+        "stt": "29",
+        "noidung": "Giấy Xác nhận sinh viên ( bản gốc )",
+        "luuy": "",
+        "link": "",
+        "linkText": ""
+      },
+      {
+        "stt": "30",
+        "noidung": "Bảng điểm Cao đẳng / Đại học * bản gốc )",
+        "luuy": "",
+        "link": "",
+        "linkText": ""
+      },
+      {
+        "stt": "31",
+        "noidung": "Học bạ gốc",
+        "luuy": "",
+        "link": "",
+        "linkText": ""
+      },
+      {
+        "stt": "32",
+        "noidung": "Bằng tốt nghiệp gốc",
+        "luuy": "",
+        "link": "",
+        "linkText": ""
+      },
+      {
+        "stt": "33",
+        "noidung": "Bảo hiểm nhân thọ của bố/mẹ",
+        "luuy": "Nên bổ sung nếu có > ĐSQ/LSQ coi đây như 1 tài sản có giá trị",
+        "link": "",
+        "linkText": "bảo hiểm tham khảo.pdf"
+      },
+      {
+        "stt": "33",
+        "noidung": "Mẫu biên lai khi nộp xin Visa thành công",
+        "luuy": "",
+        "link": "",
+        "linkText": "bien lai visa.pdf"
+      },
+      {
+        "stt": "34",
+        "noidung": "Full bộ hồ sơ chuẩn D2-6 nộp ĐSQ tham khảo",
+        "luuy": "",
+        "link": "",
+        "linkText": "3. NGUYỄN HỮU TRUNG D2-6 T9-2025.pdf"
+      },
+      {
+        "stt": "35",
+        "noidung": "Quy trình chứng minh tài chính Visa D2-6",
+        "luuy": "Xem theo hướng dẫn >>>>>",
+        "link": "",
+        "linkText": "Quy trình chứng minh tài chính.pdf"
+      },
+      {
+        "stt": "36",
+        "noidung": "Quy trình làm hồ sơ sau khi nhập cảnh",
+        "luuy": "Xem theo hướng dẫn >>>>>",
+        "link": "",
+        "linkText": "Quy trình làm hồ sơ sau khi nhập cảnh tại Hàn Quốc.pdf"
+      },
+      {
+        "stt": "37",
+        "noidung": "Địa chỉ khám sức khỏe theo ĐSQ quy định",
+        "luuy": "Xem theo hướng dẫn >>>>>",
+        "link": "",
+        "linkText": "Địa chỉ khám sức khỏe.jpg"
+      }
+    ]
+  },
+  "phongVan": {
+    "name": "Tài liệu ôn phỏng vấn trường Hàn",
+    "items": []
+  },
+  "application": {
+    "name": "Application trường Hàn",
+    "schools": []
+  },
+  "tem": {
+    "name": "Thông tin làm tem các trường",
+    "schools": []
+  },
+  "danhSach": {
+    "name": "Danh sách trường Hàn",
+    "rows": [
+      {
+        "name": "Osan",
+        "nameKr": "오산대학교 | Dễ chuyển đổi E7, học ít - Yêu cầu khó, việc làm nhiều - PV siêu khó",
+        "system": "D2-6 > D2-1 (Cao Đẳng)",
+        "quota": 200,
+        "mou": "HNC, HCCT, VTV, SGT, KTTU",
+        "catalog": "documents/Giới-thiệu-trường-Osan.pdf"
+      },
+      {
+        "name": "Induk",
+        "nameKr": "인덕대학교 | Học ít - Việc làm nhiều - Cạnh tranh cao, lương cao - Tỷ lệ Visa không quá tốt",
+        "system": "D2-6 > D2-1 (Cao Đẳng)",
+        "quota": 200,
+        "mou": "HNC, VTV, BGIT, TWU, SDU, DH",
+        "catalog": "documents/Induk-University-Catalog-(1).pdf"
+      },
+      {
+        "name": "YeonSung",
+        "nameKr": "연성대학교 | Việc làm nhiều - Tỷ lệ đỗ cực cao - Gần Seoul",
+        "system": "D2-6 > D2-1 (Cao Đẳng)",
+        "quota": 200,
+        "mou": "HNC, HCCT, BGIT, KTTT, SGT, DA, SDU, KTTU",
+        "catalog": "documents/Yeonsung-University-Catalog.pdf"
+      },
+      {
+        "name": "Sangmyung",
+        "nameKr": "상명대학교 | Trường 4 năm uy tín tại Seoul - Tỷ lệ chuyển E7 tốt - Học nặng hơn",
+        "system": "D2-6 > D2-2 (Đại học 4 năm)",
+        "quota": 200,
+        "mou": "HN, HNC, HCCT, VTV, BGIT, HPC-HP, KTTT, DH",
+        "catalog": "documents/Sangmyung-University-Catalog.pdf"
+      },
+      {
+        "name": "KyungGin",
+        "nameKr": "경인여자대학교 | Tỷ lệ Visa rất tốt - Chuyển đổi E7 tốt - Gần sân bay Incheon - Chỉ dành cho nữ",
+        "system": "D2-6 > D2-1 (Cao Đẳng )",
+        "quota": 200,
+        "mou": "HNC, VTV, BGIT, UTM, SGT, KTTU",
+        "catalog": "https://drive.google.com/file/d/1koKmGXVjZmSBtiSRcqaMuf3blbO_w4W0/view?usp=sharing"
+      },
+      {
+        "name": "Dongnam",
+        "nameKr": "동남보건대학교 | Tỷ lệ Đỗ tuyệt đối - Học khá nhiều - Việc làm thêm khá hạn chế",
+        "system": "D2-6 > D2-1 (Cao Đẳng)",
+        "quota": 200,
+        "mou": "HNC, HPC, HCCT, SGT, BCIT",
+        "catalog": "documents/Dongnam-University-Catalog-.pdf"
+      },
+      {
+        "name": "Dong-Eui",
+        "nameKr": "동의대학교 | Tỷ lệ đỗ cực cao - Việc làm thêm nhiều - Tỷ lệ chuyển đổi E7 tốt - Học khá nặng",
+        "system": "D2-6 > D2-2 (Đại học)",
+        "quota": 200,
+        "mou": "HN, HNC, HCCT, VTV, HPC-HP, PMDT, UTM, SGT, SDU",
+        "catalog": "https://drive.google.com/file/d/1OvD9XCX6dLBaIR6IKTdgtnfoT-Op3gU-/view?usp=sharing"
+      },
+      {
+        "name": "Suncheon Jeil",
+        "nameKr": "순천제일 | Dễ chuyển đổi E7 - Tỷ lệ Visa tốt - Việc làm thêm đa dạng - Trường không hot",
+        "system": "D2-6 > D2-1 (Cao Đẳng)",
+        "quota": 200,
+        "mou": "HN, HNC, HCCT, VTV, HPC-HP, SGT, DH",
+        "catalog": "https://drive.google.com/file/d/1xVMO320agblD8atS_Mvj8jFenFePBDOz/view?usp=sharing"
+      },
+      {
+        "name": "Nữ Busan",
+        "nameKr": "부산여자대학교 | Trường nữ sinh Busan - Chi phí hợp lý - Gần trung tâm thành phố",
+        "system": "D2-6 > D2-1 (Cao Đẳng)",
+        "quota": 200,
+        "mou": "HN, HCCT, VTV, UTM, SGT, DH",
+        "catalog": "documents/Nữ-sinh-Busan-catalog.pdf"
+      },
+      {
+        "name": "Busan Catholic",
+        "nameKr": "부산가톨릭대학교 | Trường Công giáo uy tín tại Busan - Ngành Y tế nổi bật - Tỷ lệ Visa ổn định",
+        "system": "D2-6 > D2-1 (Cao Đẳng)",
+        "quota": 200,
+        "mou": "HNC, HCCT, BGIT, HPC-HP, PMDT, UTM, KTTT, DA",
+        "catalog": "documents/Catholic-University-of-Busan-Catalog.pdf"
+      },
+      {
+        "name": "Gimhae",
+        "nameKr": "김해대학교 | Gần sân bay Gimhae - Chi phí sinh hoạt thấp - Nhiều chuyên ngành kỹ thuật",
+        "system": "D2-6 > D2-1 (Cao Đẳng)",
+        "quota": 200,
+        "mou": "HCCT, VTV, BGIT, HPC-HP, PMDT, UTM, ISPACE, DA, SDU",
+        "catalog": "documents/Gimhae-College-Catalog.pdf"
+      },
+      {
+        "name": "Gwangju",
+        "nameKr": "광주대학교 | Đại học uy tín Gwangju - Chi phí thấp - Khu vực miền Nam nhiều việc làm",
+        "system": "D2-6 > D2-2 (Đại học 4 năm)",
+        "quota": 200,
+        "mou": "HN, HCCT, VTV, BGIT, UTM, KTTT, SGT",
+        "catalog": "documents/Gwangju-University-Catalog.pdf"
+      },
+      {
+        "name": "Nambu",
+        "nameKr": "남부대학교 | Đại học miền Nam Gwangju - Chi phí thấp nhất - Tỷ lệ Visa tốt",
+        "system": "D2-6 > D2-2 (Đại học 4 năm)",
+        "quota": 200,
+        "mou": "HNC, HCCT, VTV, BGIT, HPC-HP, PMDT, UTM, SGT, SDU, KTTU",
+        "catalog": "documents/Nambu-University-Catalog.pdf"
+      },
+      {
+        "name": "Daewon",
+        "nameKr": "대원대학교 | Chi phí thấp - Hỗ trợ E7 liên kết Samsung & Hyundai - Có thể học Online",
+        "system": "D2-6 > D2-1 (Cao Đẳng)",
+        "quota": 200,
+        "mou": "HCCT, BGIT, PMDT, UTM, DH, KTTU",
+        "catalog": "documents/Deawon-catalog-.pdf"
+      },
+      {
+        "name": "Sengmyung",
+        "nameKr": "세명대학교 | Trường địa phương ổn định - Chi phí thấp - Dễ chuyển đổi chuyên ngành",
+        "system": "D2-6 > D2-2 (Đại học 4 năm)",
+        "quota": 200,
+        "mou": "HN, HNC, HCCT, BGIT, PMDT, DH",
+        "catalog": "documents/Semyung-University-Catalog.pdf"
+      }
+    ]
   }
 };
