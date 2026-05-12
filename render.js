@@ -103,7 +103,7 @@ function renderSchool(schoolId) {
 }
 
 function renderExtra() {
-  const link = "https://docs.google.com/spreadsheets/d/1LkzsRId4jJ4qLCyggEX_Sj2TzrQ4gu-n";
+  const SEMESTER_GOOGLE_SHEET = "https://docs.google.com/spreadsheets/d/1H5tFffhJeLETHrNeRLV2l_gpg-KDQITD/edit?usp=sharing&ouid=112929137164133989656&rtpof=true&sd=true";
   let html = `<section class="sheet-view">
     <h2 class="sheet-title">Tài liệu chung</h2>
     <p class="extra-intro"><a href="${link}" target="_blank" rel="noopener">📋 Mở Google Sheet gốc</a></p>`;
@@ -212,8 +212,23 @@ function init() {
     </p>`;
     return;
   }
+  
+  // Cập nhật tiêu đề động từ SEMESTER_INFO
+  if (typeof SEMESTER_INFO !== "undefined") {
+    const ky = SEMESTER_INFO.ky || "3";
+    const nam = SEMESTER_INFO.nam || "2027";
+    document.title = `Thông tin trường Hàn - Kỳ tháng ${ky}/${nam}`;
+    const ogTitle = document.getElementById("og-title");
+    const ogDesc = document.getElementById("og-desc");
+    if (ogTitle) ogTitle.content = `Thông tin trường Hàn - Kỳ tháng ${ky}/${nam}`;
+    if (ogDesc) ogDesc.content = `Kỳ tuyển sinh tháng ${ky}/${nam} - Thông tin trường Hàn`;
+    // Cập nhật subtitle
+    const sub = document.querySelector(".subtitle");
+    if (sub) sub.textContent = `Kỳ tuyển sinh tháng ${ky}/${nam}`;
+  }
+  
   try {
-    showSchool("dong-eui");
+    showSchool("dh-osan");
   } catch (e) {
     content.innerHTML = `<p class="empty" style="padding:2rem;color:#dc2626;">Lỗi: ${escapeHtml(String(e.message))}</p>`;
     console.error(e);

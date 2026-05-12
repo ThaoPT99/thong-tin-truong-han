@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📋</text></svg>">
-    <title>Thông tin trường Hàn - Kỳ tháng 3/2027</title>
-    <!-- Open Graph -->
-    <meta property="og:title" content="Thông tin trường Hàn - Kỳ tháng 3/2027" />
-    <meta property="og:description" content="Kỳ tuyển sinh tháng 3/2027 - Thông tin trường Hàn" />
+    <title>Thông tin trường Hàn</title>
+    <!-- Open Graph - sẽ cập nhật bằng JS -->
+    <meta property="og:title" id="og-title" content="Thông tin trường Hàn" />
+    <meta property="og:description" id="og-desc" content="Thông tin các trường Hàn" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://thong-tin-truong-han.vercel.app/" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -27,18 +27,22 @@
     <!-- Chọn trường -->
     <nav class="school-tabs">
         <div class="tabs-inner">
-            <button class="tab-btn active" data-school="dong-eui">Dong-Eui</button>
-            <button class="tab-btn" data-school="ajou-motor">Ajou-Motor</button>
-            <button class="tab-btn" data-school="suncheon-jeil">Suncheon Jeil</button>
-            <button class="tab-btn" data-school="dongnam">Dongnam</button>
-            <button class="tab-btn" data-school="induk">Induk</button>
-            <button class="tab-btn" data-school="daewon">Daewon</button>
-            <button class="tab-btn" data-school="jangan">Jangan</button>
-            <button class="tab-btn" data-school="yeonseong">YeonSeong</button>
-            <button class="tab-btn" data-school="kyunggin">KyungGin</button>
-            <button class="tab-btn" data-school="nubusan">Nữ Busan</button>
-            <button class="tab-btn" data-school="osan">Osan</button>
-            <button class="tab-btn" data-school="extra">Tài liệu chung</button>
+            <button class="tab-btn active" data-school="dh-osan">Osan</button>
+            <button class="tab-btn" data-school="dh-induk">Induk</button>
+            <button class="tab-btn" data-school="dh-yeonsung">Yeonsung</button>
+            <button class="tab-btn" data-school="dh-sangmyung">Sangmyung</button>
+            <button class="tab-btn" data-school="dh-nu-sinh-kyungin">Nu Sinh Kyungin</button>
+            <button class="tab-btn" data-school="dh-y-te-dongnam">Y Te Dongnam</button>
+            <button class="tab-btn" data-school="dh-dongeui">DongEui</button>
+            <button class="tab-btn" data-school="cd-suncheon-jeil">Suncheon Jeil</button>
+            <button class="tab-btn" data-school="dh-nu-sinh-busan">Nu Sinh Busan</button>
+            <button class="tab-btn" data-school="dh-busan-catholic">Busan Catholic</button>
+            <button class="tab-btn" data-school="dh-gimhae">Gimhae</button>
+            <button class="tab-btn" data-school="dh-gwangju">Gwangju</button>
+            <button class="tab-btn" data-school="dh-nambu">Nambu</button>
+            <button class="tab-btn" data-school="dh-daewon">Daewon</button>
+            <button class="tab-btn" data-school="dh-sengmyung">Sengmyung</button>
+            <button class="tab-btn" data-school="extra">Tai lieu chung</button>
         </div>
     </nav>
 
@@ -48,7 +52,7 @@
     </main>
 
     <footer class="footer">
-        <p>Nguồn: <a href="https://docs.google.com/spreadsheets/d/1LkzsRId4jJ4qLCyggEX_Sj2TzrQ4gu-n" target="_blank">Google Sheet</a> | Cập nhật dữ liệu trong file <code>data.js</code></p>
+        <p>Nguồn: <a href="https://docs.google.com/spreadsheets/d/1H5tFffhJeLETHrNeRLV2l_gpg-KDQITD/edit?usp=sharing&ouid=112929137164133989656&rtpof=true&sd=true" target="_blank">Google Sheet</a> | Cập nhật dữ liệu trong file <code>data.js</code></p>
     </footer>
 
     <script src="./data.js"></script>

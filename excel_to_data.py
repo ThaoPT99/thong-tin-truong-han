@@ -6,17 +6,71 @@ import json
 import os
 import glob
 
-# Tìm file Excel trong Downloads
-paths = glob.glob(os.path.join(os.environ.get('USERPROFILE', ''), 'Downloads', '*truong*Han*.xlsx'))
-path = paths[0] if paths else r'c:\Users\phant\Downloads\Thông tin trường Hàn kỳ tháng 9_2026 (1).xlsx'
-if not os.path.exists(path):
-    path = glob.glob(os.path.join(os.path.dirname(__file__), '*.xlsx'))[0] if glob.glob(os.path.join(os.path.dirname(__file__), '*.xlsx')) else path
+# Tìm file Excel trong thư mục hiện tại hoặc Downloads
+# Ưu tiên file kỳ 3/2027
+import glob as glob_module
+import os
+
+# Tìm file Excel kỳ 3/2027 trước
+possible_files = []
+# Thư mục hiện tại
+possible_files.extend(glob_module.glob(os.path.join(os.path.dirname(__file__), '*3_2027*.xlsx')))
+possible_files.extend(glob_module.glob(os.path.join(os.path.dirname(__file__), '*truong*Han*3*.xlsx')))
+possible_files.extend(glob_module.glob(os.path.join(os.path.dirname(__file__), '*truong*Han*.xlsx')))
+# Downloads
+downloads = os.environ.get('USERPROFILE', '')
+if downloads:
+    possible_files.extend(glob_module.glob(os.path.join(downloads, 'Downloads', '*3_2027*.xlsx')))
+    possible_files.extend(glob_module.glob(os.path.join(downloads, 'Downloads', '*truong*Han*.xlsx')))
+
+# Tìm file phù hợp nhất
+path = None
+for f in possible_files:
+    if os.path.exists(f):
+        # Ưu tiên file có "3_2027" trong tên
+        if '3_2027' in f.lower() or 'thang_3_2027' in f.lower():
+            path = f
+            break
+        
+if not path or not os.path.exists(path):
+    # Fallback - thử các tên có thể
+    for fname in ['Thong_tin_truong_Han_ky_thang_3_2027.xlsx', 'Thong tin truong Han ky thang 3_2027.xlsx']:
+        p = os.path.join(os.path.dirname(__file__), fname)
+        if os.path.exists(p):
+            path = p
+            break
+            
+if not path or not os.path.exists(path):
+    path = possible_files[0] if possible_files else os.path.join(os.path.dirname(__file__), 'Thong_tin_truong_Han_ky_thang_3_2027.xlsx')
 # data_only=False để lấy hyperlink, rich_text=True để đọc màu chữ
 wb = openpyxl.load_workbook(path, data_only=False, rich_text=True)
 
 # Tất cả trường đều liên kết với 7 đối tác này (theo Excel)
-PARTNER_CODES = ['SGT', 'VTV', 'UTM', 'HNC', 'HPC', 'HCCT', 'BCIT']
-PARTNER_ROWS = PARTNER_CODES + ['TVU']  # TVU có thể có ở một số sheet
+# 15 trường VN đối tác - theo đúng Danh sách trong Excel
+PARTNER_CODES = [
+    'HN', 'HNC', 'HCCT', 'VTV', 'BGIT', 'HPC-HP', 'PMDT', 
+    'TWU', 'UTM', 'KTTT', 'SGT', 'ISPACE', 'DA', 'SDU', 'DH'
+]
+PARTNER_ROWS = PARTNER_CODES
+
+# Tên đầy đủ của 15 trường VN
+PARTNER_NAMES = {
+    'HN': 'Cao đẳng Hà Nội',
+    'HNC': 'Cao đẳng Hữu Nghị',
+    'HCCT': 'Cao đẳng Thương mại và Du lịch HN',
+    'VTV': 'Cao đẳng Truyền hình Việt Nam',
+    'BGIT': 'Cao đẳng Công nghiệp Bắc Giang',
+    'HPC-HP': 'Cao đẳng Y tế Hải Phòng',
+    'PMDT': 'Cao đẳng Công nghệ Y Dược Việt Nam',
+    'TWU': 'Đại học Trưng Vương',
+    'UTM': 'ĐH Quản lý và Kinh doanh Hữu Nghị',
+    'KTTT': 'Cao đẳng Kinh tế Kỹ thuật Thương mại',
+    'SGT': 'Cao đẳng Công nghệ Sài Gòn',
+    'ISPACE': 'Cao đẳng Công nghệ i-Space',
+    'DA': 'Cao đẳng Đồng An',
+    'SDU': 'Đại học Sao Đỏ',
+    'DH': 'Cao đẳng Duyên hải',
+}
 
 def _color_to_hex(color_obj):
     """Chuyển màu Excel sang #RRGGBB. Hỗ trợ Font.color, InlineFont.color."""
@@ -152,9 +206,18 @@ def extract_youtube_id(text):
 
 def parse_school_sheet(ws, sheet_name):
     """Parse một sheet trường"""
+    # Xử lý tên sheet mới: "ĐH Osan", "CĐ Suncheon Jeil", etc.
+    clean_name = sheet_name.strip()
+    # Loại bỏ prefix "ĐH ", "CĐ " để lấy tên cơ bản
+    display_name = clean_name
+    if clean_name.startswith("ĐH "):
+        display_name = clean_name[3:].strip()
+    elif clean_name.startswith("CĐ "):
+        display_name = clean_name[3:].strip()
+    
     data = {
-        "id": sheet_name.lower().replace(" ", "-").replace("ữ", "u").replace("ú", "u").strip(),
-        "name": sheet_name.split()[0] if sheet_name else "",
+        "id": clean_name.lower().replace(" ", "-").replace("đ", "d").replace("Đ", "d").replace("ế", "e").replace("ữ", "u").replace("ú", "u").replace("ộ", "o"),
+        "name": display_name,
         "nameKr": "",
         "nameEn": "",
         "system": "",
@@ -289,8 +352,7 @@ def parse_school_sheet(ws, sheet_name):
     # Lịch học (nếu có)
     data["schedule"] = get_val_with_color("Lịch học", "Lịch")
     
-    # Partners - tất cả trường đều có SGT, VTV, UTM, HNC, HPC, HCCT, BCIT
-    # Tìm trong dòng 15-35 (vị trí có thể lệch giữa các sheet)
+    # Partners - tìm trong dòng 15-35
     found = {}
     for r in range(15, min(36, ws.max_row + 1)):
         code = get_cell(ws, r, 1).strip()
@@ -301,10 +363,13 @@ def parse_school_sheet(ws, sheet_name):
                 name_kr = parts[0].strip() if parts else ""
                 name_vn = parts[1].strip() if len(parts) > 1 else val
                 found[code] = {"code": code, "name": name_vn[:60], "nameKr": name_kr[:40]}
-    # Giữ thứ tự SGT, VTV, UTM, HNC, HPC, HCCT, BCIT
+    # Giữ thứ tự theo Danh sách Excel
     for code in PARTNER_CODES:
         if code in found:
             data["partners"].append(found[code])
+        elif code in PARTNER_NAMES:
+            # Nếu không có trong sheet, vẫn thêm từ danh sách chuẩn
+            data["partners"].append({"code": code, "name": PARTNER_NAMES[code], "nameKr": ""})
     
     # Bỏ trường trống
     if not data["name"] and not data["nameEn"]:
@@ -320,19 +385,36 @@ QUOTA_OVERRIDE = {
 }
 
 SHEET_TO_ID = {
-    "Dong-Eui": "dong-eui",
-    "YeonSeong ": "yeonseong",
-    "YeonSeong": "yeonseong",
-    "Jangan": "jangan",
-    "Induk": "induk",
-    "Osan": "osan",
-    "Suncheon Jeil": "suncheon-jeil",
-    "Dongnam": "dongnam",
-    "KyungGin": "kyunggin",
-    "Ajou-Motor": "ajou-motor",
-    "Daewon ": "daewon",
-    "Daewon": "daewon",
-    "Nữ BuSan": "nubusan",
+    # ĐH Osan
+    "ĐH Osan": "dh-osan",
+    # ĐH Induk
+    "ĐH Induk": "dh-induk",
+    # ĐH Yeonsung
+    "ĐH Yeonsung": "dh-yeonsung",
+    # ĐH Sangmyung
+    "ĐH Sangmyung": "dh-sangmyung",
+    # ĐH Nữ sinh Kyungin
+    "ĐH Nữ sinh Kyungin": "dh-nu-sinh-kyungin",
+    # ĐH Y Tế Dongnam
+    "ĐH Y Tế Dongnam": "dh-y-te-dongnam",
+    # ĐH Dongeui
+    "ĐH Dongeui": "dh-dongeui",
+    # CĐ Suncheon Jeil
+    "CĐ Suncheon Jeil": "cd-suncheon-jeil",
+    # ĐH Nữ sinh Busan
+    "ĐH Nữ sinh Busan": "dh-nu-sinh-busan",
+    # ĐH Busan Catholic
+    "ĐH Busan Catholic": "dh-busan-catholic",
+    # ĐH Gimhae
+    "ĐH Gimhae": "dh-gimhae",
+    # ĐH Gwangju
+    "ĐH Gwangju": "dh-gwangju",
+    # ĐH Nambu
+    "ĐH Nambu": "dh-nambu",
+    # ĐH Daewon
+    "ĐH Daewon": "dh-daewon",
+    # ĐH Sengmyung
+    "ĐH Sengmyung": "dh-sengmyung",
 }
 
 def get_cell_link(ws, row, col):
@@ -439,10 +521,14 @@ schools = {}
 for sheet_name in wb.sheetnames:
     sname = sheet_name.strip()
     sid = SHEET_TO_ID.get(sname) or SHEET_TO_ID.get(sheet_name)
+    # Nếu không tìm thấy trong mapping, kiểm tra xem có phải sheet trường không
     if not sid and sname not in ["Danh sách trường Hàn", "Check list  HS xin Visa D2-6", 
-        "Tài liệu ôn phỏng vấn trường Hà", "Appllication trường Hàn", "Thông tin làm tem các trường"]:
-        if any(x in sname for x in ["Dong", "Yeon", "Jangan", "Induk", "Osan", "Suncheon", "Kyung", "Ajou", "Daewon", "Nữ", "Busan"]):
-            sid = sname.lower().replace(" ", "-").replace("ữ", "u")[:25]
+        "Tài liệu ôn phỏng vấn trường Hàn", "Tài liệu ôn PV trường Hàn",
+        "Appllication trường Hàn", "Application trường Hàn", "Thông tin làm tem các trường"]:
+        # Kiểm tra xem có phải sheet trường (bắt đầu bằng ĐH hoặc CĐ)
+        if sname.startswith("ĐH ") or sname.startswith("CĐ "):
+            # Tạo ID từ tên sheet
+            sid = sname.lower().replace(" ", "-").replace("đ", "d").replace("Đ", "d").replace("ế", "e").replace("ữ", "u").replace("ú", "u").replace("ộ", "o")
     if sid:
         d = parse_school_sheet(wb[sheet_name], sname)
         if d and d.get("name"):
@@ -488,9 +574,29 @@ def _flatten(v):
 for row in extra_sheets["danhSach"]["rows"]:
     row["mou"] = _flatten(row.get("mou"))
 
+# Trích thông tin kỳ tuyển sinh từ sheet Danh sách
+def get_semester_info(wb):
+    """Lấy thông tin kỳ tuyển sinh từ sheet đầu tiên"""
+    try:
+        ws = wb["Danh sách trường Hàn"]
+        title = get_cell(ws, 1, 1)
+        if title:
+            # Trích "KỲ THÁNG X/YYYY" từ title
+            import re
+            m = re.search(r'KỲ THÁNG\s*(\d+)/(\d+)', title, re.IGNORECASE)
+            if m:
+                return {"ky": m.group(1), "nam": m.group(2), "title": title}
+    except:
+        pass
+    return {"ky": "3", "nam": "2027", "title": "DANH SÁCH TRƯỜNG HÀN QUỐC - KỲ THÁNG 3/2027"}
+
+semester_info = get_semester_info(wb)
+
 js_content = """// Dữ liệu các trường Hàn - Tự động sinh từ Excel
-// File nguồn: Thông tin trường Hàn kỳ tháng 9_2026.xlsx
+// File nguồn: """ + os.path.basename(path) + """
 // Chạy: python excel_to_data.py
+
+const SEMESTER_INFO = """ + json.dumps(semester_info, ensure_ascii=False) + """;
 
 const SCHOOLS_DATA = """
 js_content += json.dumps(schools, ensure_ascii=False, indent=2)
