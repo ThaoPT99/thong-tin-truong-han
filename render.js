@@ -183,15 +183,30 @@ function renderExtra() {
 function showSchool(schoolId) {
   const content = document.getElementById("school-content");
   const extra = document.getElementById("extra-content");
+  const map = document.getElementById("map-content");
+
   document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
   document.querySelector(`[data-school="${schoolId}"]`)?.classList.add("active");
 
+  // TAB BẢN ĐỒ
+  if (schoolId === "map") {
+    content.classList.add("hidden");
+    extra.classList.add("hidden");
+    map.classList.remove("hidden");
+    return;
+  }
+
+  // TAB TÀI LIỆU CHUNG
   if (schoolId === "extra") {
     content.classList.add("hidden");
+    map.classList.add("hidden");
+
     extra.classList.remove("hidden");
     extra.innerHTML = renderExtra();
   } else {
     extra.classList.add("hidden");
+    map.classList.add("hidden");
+
     content.classList.remove("hidden");
     content.innerHTML = renderSchool(schoolId) || `<p class="empty">Chưa có dữ liệu.</p>`;
   }
@@ -228,7 +243,7 @@ function init() {
   }
   
   try {
-    showSchool("dh-osan");
+    showSchool("map"); // Mặc định mở tab bản đồ
   } catch (e) {
     content.innerHTML = `<p class="empty" style="padding:2rem;color:#dc2626;">Lỗi: ${escapeHtml(String(e.message))}</p>`;
     console.error(e);
