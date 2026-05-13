@@ -252,6 +252,22 @@ body {
     padding: 0.9rem 1.25rem !important;
 }
 .extra-intro { margin-bottom: 1rem; }
+
+.extra-poster-cell {
+    padding: 1rem 1.25rem !important;
+    background: #f8fafc;
+    text-align: center;
+    vertical-align: middle;
+}
+.extra-poster-img {
+    display: block;
+    width: 100%;
+    max-width: min(920px, 100%);
+    height: auto;
+    margin: 0 auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+}
 .summary-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
 .summary-table th, .summary-table td { padding: 0.4rem 0.5rem; border: 1px solid var(--border, #e0e0e0); text-align: left; }
 .summary-table th { background: var(--bg-alt, #f5f5f5); font-weight: 600; }

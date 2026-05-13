@@ -106,7 +106,13 @@ function renderExtra() {
   const SEMESTER_GOOGLE_SHEET = "https://docs.google.com/spreadsheets/d/1H5tFffhJeLETHrNeRLV2l_gpg-KDQITD/edit?usp=sharing&ouid=112929137164133989656&rtpof=true&sd=true";
   let html = `<section class="sheet-view">
     <h2 class="sheet-title">Tài liệu chung</h2>
-    <p class="extra-intro"><a href="${SEMESTER_GOOGLE_SHEET}" target="_blank" rel="noopener">📋 Mở Google Sheet gốc</a></p>`;
+    <p class="extra-intro"><a href="${SEMESTER_GOOGLE_SHEET}" target="_blank" rel="noopener">📋 Mở Google Sheet gốc</a></p>
+    <table class="data-table extra-table" aria-label="Poster tuyển sinh D2-6">
+      <thead><tr><th class="table-header">Poster tuyển sinh — Kỳ tháng 3/2027 · Chương trình D2-6</th></tr></thead>
+      <tbody><tr><td class="col-value extra-poster-cell">
+        <img src="images/tuyen-sinh-d2-6-ky-thang-3-2027.png" alt="Tuyển sinh kỳ tháng 3/2027 — Chương trình D2-6: lộ trình, ưu đãi, danh sách trường Hàn–Việt và thông tin liên hệ" class="extra-poster-img" loading="lazy">
+      </td></tr></tbody>
+    </table>`;
 
   const s = EXTRA_SHEETS;
   // Danh sách trường Hàn - bảng tổng hợp
