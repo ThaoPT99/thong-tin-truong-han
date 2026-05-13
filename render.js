@@ -106,7 +106,7 @@ function renderExtra() {
   const SEMESTER_GOOGLE_SHEET = "https://docs.google.com/spreadsheets/d/1H5tFffhJeLETHrNeRLV2l_gpg-KDQITD/edit?usp=sharing&ouid=112929137164133989656&rtpof=true&sd=true";
   let html = `<section class="sheet-view">
     <h2 class="sheet-title">Tài liệu chung</h2>
-    <p class="extra-intro"><a href="${link}" target="_blank" rel="noopener">📋 Mở Google Sheet gốc</a></p>`;
+    <p class="extra-intro"><a href="${SEMESTER_GOOGLE_SHEET}" target="_blank" rel="noopener">📋 Mở Google Sheet gốc</a></p>`;
 
   const s = EXTRA_SHEETS;
   // Danh sách trường Hàn - bảng tổng hợp

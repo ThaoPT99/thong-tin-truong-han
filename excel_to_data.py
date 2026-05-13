@@ -169,33 +169,55 @@ def get_hyperlink(ws, row, col):
         return m.group(1) if m else None
     return None
 
-def find_row_by_label(ws, labels, start=1, end=30):
-    """Tìm dòng chứa label - label ở cột A, value ở cột B. Trả về (row, value, hyperlink)"""
+def _row_label_match(lbl, cell_a):
+    """lbl khớp với tiêu đề dòng (cột A)."""
+    if not lbl or not cell_a:
+        return False
+    a = cell_a.strip()
+    return lbl.lower() in a.lower() or a.lower() == lbl.lower()
+
+
+def find_row_by_label(ws, labels, start=1, end=120, require_value=True):
+    """Tìm dòng chứa label - label ở cột A, value ở cột B/C.
+    require_value=True: bỏ qua dòng tiêu đề nhóm (cột B/C trống, không có link) — tránh lấy nhầm hàng section."""
     for r in range(start, min(end, ws.max_row + 1)):
         a = get_cell(ws, r, 1)
-        b = get_cell(ws, r, 2)
-        c = get_cell(ws, r, 3)
+        if not a:
+            continue
         for lbl in labels:
-            if lbl and (lbl.lower() in a.lower() or a.strip() == lbl):
-                val = b if b and b != a else c
-                hyperlink = get_hyperlink(ws, r, 2)
-                return r, val or "", hyperlink
+            if not lbl or not _row_label_match(lbl, a):
+                continue
+            b = get_cell(ws, r, 2)
+            c = get_cell(ws, r, 3)
+            val = b if b and b != a else c
+            hyperlink = get_hyperlink(ws, r, 2) or get_hyperlink(ws, r, 3)
+            if require_value and not (str(val).strip() if val is not None else "") and not hyperlink:
+                continue
+            return r, val or "", hyperlink
     return None, "", None
 
-def find_row_by_label_with_color(ws, labels, start=1, end=30):
+
+def find_row_by_label_with_color(ws, labels, start=1, end=120, require_value=True):
     """Tìm dòng chứa label, trả về (row, value_with_color, hyperlink). value = string hoặc segments."""
     for r in range(start, min(end, ws.max_row + 1)):
         a = get_cell(ws, r, 1)
+        if not a:
+            continue
         for lbl in labels:
-            if lbl and (lbl.lower() in a.lower() or a.strip() == lbl):
-                segs_b = get_cell_segments(ws, r, 2)
-                segs_c = get_cell_segments(ws, r, 3)
-                segs = segs_b if segs_b else segs_c
-                val = _segments_to_value(segs)
-                if not val and segs_b != segs_c:
-                    val = _segments_to_value(segs_c)
-                hyperlink = get_hyperlink(ws, r, 2)
-                return r, val, hyperlink
+            if not lbl or not _row_label_match(lbl, a):
+                continue
+            segs_b = get_cell_segments(ws, r, 2)
+            segs_c = get_cell_segments(ws, r, 3)
+            segs = segs_b if segs_b else segs_c
+            val = _segments_to_value(segs)
+            if not val and segs_b != segs_c:
+                val = _segments_to_value(segs_c)
+            hyperlink = get_hyperlink(ws, r, 2) or get_hyperlink(ws, r, 3)
+            if require_value:
+                has = (isinstance(val, str) and val.strip()) or (isinstance(val, list) and len(val) > 0)
+                if not has and not hyperlink:
+                    continue
+            return r, val, hyperlink
     return None, "", None
 
 def extract_youtube_id(text):
@@ -297,20 +319,35 @@ def parse_school_sheet(ws, sheet_name):
     if cond:
         data["conditions"] = [c.strip() for c in re.split(r'\d+:', cond) if c.strip()][:10]
     
-    # Các chuyên ngành tuyển sinh
-    majors = get_val("Các chuyên ngành tuyển sinh", "Chuyên ngành tuyển sinh")
+    # Các chuyên ngành tuyển sinh (Excel kỳ 3/2027 dùng thêm nhãn "Các chuyên ngành D2-6")
+    majors = get_val(
+        "Các chuyên ngành tuyển sinh",
+        "Chuyên ngành tuyển sinh",
+        "Các chuyên ngành D2-6",
+        "Chuyên ngành D2-6",
+        "Ngành tuyển sinh",
+    )
     if majors:
-        data["majors"] = [m.strip() for m in re.split(r'\d+[.:]', majors) if len(m.strip()) > 3][:20]
+        data["majors"] = [m.strip() for m in re.split(r'\d+[.:]', str(majors)) if len(m.strip()) > 3][:40]
     
-    # Chuyển đổi
+    # Chuyển đổi (Excel thường dùng gạch đầu dòng - / • thay vì chỉ dấu - giữa cụm)
     conv = get_val("Thời gian chuyển đổi", "Thời gian chuyển đổi chuyên ngành")
     if conv:
-        data["conversion"] = [c.strip() for c in re.split(r'[-–]', conv) if len(c.strip()) > 10][:6]
+        sconv = str(conv)
+        lines = [ln.strip().lstrip("-–•*\t ").strip() for ln in sconv.split("\n") if len(ln.strip()) > 12]
+        if len(lines) >= 2:
+            data["conversion"] = lines[:15]
+        else:
+            data["conversion"] = [c.strip() for c in re.split(r'[-–]', sconv) if len(c.strip()) > 10][:12]
     
-    # Hồ sơ
-    docs = get_val("Hồ sơ trường Hàn", "Hồ sơ")
+    # Hồ sơ (bỏ header "HỒ SƠ TRƯỜNG HÀN..." nhờ require_value; thêm nhãn "Hồ sơ cần lưu ý")
+    docs = get_val("Hồ sơ cần lưu ý", "Hồ sơ trường Hàn cần lưu ý", "Hồ sơ trường Hàn", "Hồ sơ")
     if docs:
-        data["documents"] = [d.strip() for d in re.split(r'\d+:', docs) if len(d.strip()) > 5][:15]
+        raw = str(docs)
+        parts = re.split(r'\d+\s*:', raw)
+        if len(parts) < 2:
+            parts = re.split(r'(?:\n|^)\s*[-–•]\s+', raw)
+        data["documents"] = [d.strip() for d in parts if len(d.strip()) > 5][:25]
     
     # Ưu điểm
     adv = get_val("Ưu điểm")
@@ -352,9 +389,9 @@ def parse_school_sheet(ws, sheet_name):
     # Lịch học (nếu có)
     data["schedule"] = get_val_with_color("Lịch học", "Lịch")
     
-    # Partners - tìm trong dòng 15-35
+    # Partners - bảng mã CĐ/ĐH VN (Excel mới đặt từ khoảng dòng 31–48)
     found = {}
-    for r in range(15, min(36, ws.max_row + 1)):
+    for r in range(15, min(ws.max_row + 1, 80)):
         code = get_cell(ws, r, 1).strip()
         if code in PARTNER_ROWS:
             val = get_cell(ws, r, 2)

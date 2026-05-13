@@ -29,7 +29,7 @@ const SCHOOLS_DATA = {
       "title": ""
     },
     "location": "45 Cheonghak-ro, Osan-si, Gyeonggi-do, Hàn Quốc (cách Seoul 35 km về phía Nam )",
-    "intro": "",
+    "intro": "*Trường hàng đầu tỉnh Gyeonggi\n- Tên tiếng Hàn: 오산대학교\n- Tên tiếng Anh: Osan University\n- Năm thành lập: 1978\n- Loại trường: Đại học tư thục\n- Chuyên ngành tiêu biểu:Kỹ thuật, công nghệ\n- Học bổng: Có\n- Website: www.osan.ac.kr/\n- Là trường tư thục tọa lạc tại tỉnh Gyeonggi, với lịch sử phát triển 43 năm và đầu tư vào chất lượng giáo dục là trường Đại học được nhiều du học sinh quốc tế lựa chọn theo học. Với vị trí thuận lợi không quá xa trung tâm cách thủ đô Seoul 35km về phía nam.\n- Trường được thành lập vào năm 1978 với tên gọi Cao đẳng Công nghệ Kỹ thuật Osan.\n- Trường hiện đang đối tác với Cao đẳng Nghề Công nghiệp Hà Nội và Cao đẳng Nghề Công nghề Thành phố Hồ Chí Minh và 1 số trường khác.\n- Xếp thứ 32 trường có tỷ lệ việc làm ở 57,3% theo công của Bộ Giáo dục.",
     "conditions": [
       "Dưới 24 tuổi",
       "Có học bạ cấp 3 ( GPA 6,3 )",
@@ -39,20 +39,44 @@ const SCHOOLS_DATA = {
       "Không phân biệt vùng miền",
       "Có sức khỏe tốt không mắc các bệnh truyền nhiễm"
     ],
-    "majors": [],
+    "majors": [
+      "Ngành Kỹ thuật Cơ khí - MECHANICAL ENGINEERING.",
+      "Quản lý Marketing và Truyền thông - MARKETING AND COMMUNICATION MANAGEMENT.",
+      "Ngành Công nghệ công nghiệp",
+      "Ngành Cơ khí"
+    ],
     "conversion": [
-      "6 trong vòng 6 tháng",
-      "Sau 6 tháng chuyển tiếp lên chuyên ngành D2",
-      "1 và học tiếp trong vòng 2 năm",
+      "Học D2-6 trong vòng 6 tháng",
+      "Sau 6 tháng chuyển tiếp lên chuyên ngành D2-1 và học tiếp trong vòng 2 năm",
       "Điều kiện để tốt nghiệp > Có chứng chỉ Topik 3",
       "Số buổi nghỉ quá 4 buổi (không xin phép) sẽ không được chuyển đổi lên chuyên ngành"
     ],
-    "tuition": "",
+    "tuition": "- Đi theo diện D2-6 được nhận học bổng của trường giảm 50% trong suốt quá trình học.\n\n- Học phí dự kiến 1.700.000 KRW/6 tháng ( Tiếng + Chuyên Ngành ) đã giảm 50%",
     "insurance": "",
     "ktx": "Sau khi pass Visa: \n•     Các học sinh sẽ ở KTX trong 3 tháng 600.000 KRW/3 tháng và có thể phải chuyển nhà vào 3 tháng tiếp theo có người hỗ trợ tìm nhà ở.\n•     Chi phí sinh hoạt: Khoảng 500.000 KRW/tháng \n•     Chi phí nhà ở: \n-     Tiền cọc nhà: 1.000.000 KRW\n-     Tiền thuê nhà: 400.000 KRW/1 tháng\n-     Lưu ý: đã có học sinh tìm được nhà giá cọc chỉ có 600.000 krw và tiền thuê nhà 280.000 krw/1 tháng",
     "schedule": "",
-    "advantages": [],
-    "documents": [],
+    "advantages": [
+      "Không yêu cầu chứng chỉ tiếng khi tham gia chương trình trao đổi sinh viên của trường Osan.",
+      "Không đóng băng tài chính ( Không mở sổ Kstudy ).",
+      "Không Phỏng Vấn ĐSQ.",
+      "Tỷ lệ đỗ gần như tuyệt đối nếu có chứng chỉ tiếng Topik 2 hoặc Sejong 2b.",
+      "Học phí rẻ.",
+      "Được đi làm thêm ngay, cam kết hỗ trợ việc làm thêm, lương trung bình 40 triệu/1 tháng, thời gian làm thêm 5h/1 ngày, ngày nghỉ và lễ tết không giới hạn",
+      "Thời gian học trong tuần ít chỉ từ 3 buổi/1 tuần.",
+      "Hỗ trợ chuyển đổi Visa sau khi tốt nghiệp sáng E7.",
+      "Được tạm hoãn vụ quân sự."
+    ],
+    "documents": [
+      "- Application đánh máy (In bản đánh máy + ký tên, scan lại bản có chữ ký)\n- Gửi bản word + PDF\n- Tiếng hàn\n\nHồ sơ gửi sang trường bản cứng:",
+      "Bảng Điểm CĐ tại VN ( Dịch Công chứng + Dán tem tím  )",
+      "Giấy xác nhận SV ( Dịch Công chứng + Dán tem tím  )",
+      "Giấy xác nhận nơi sinh CT07 ( Dịch Công chứng )",
+      "Giấy cam kết tuân thủ quy định di học ( có mẫu đi kèm )",
+      "Giấy xác nhận số dư tài khoản gửi tiết kiệm ngân hàng , sao kê số dư tài khoản tối thiểu 300 triệu VND đứng tên học sinh  (xin ở ngân hàng)\nTrong vòng 1 tháng trước khi nộp hồ sơ",
+      "Bản sao Hộ chiếu",
+      "Application form ( Theo mẫu của trường )",
+      "Giấy khám sức khoẻ lao phổi song ngữ ( 2 Bản : 1 Bản nộp trưởng + 1 Bản nộp ĐSQ khi xin visa )\nLưu ý: Tất cả các bản đều là dịch công chứng   \n\nLưu ý sổ nộp ĐSQ/LSQ: \n- Tham gia chương trình không yêu cầu sổ lùi, nhưng an toàn hơn thì mở trước 1 tháng - Số tiền CMTC khi nộp hồ sơ xin Visa là 250 triệu/300 triệu.\n- Tem tím có 4 tím tem + Mỗi loại 2 = Tổng 8 tem bắt buộc ( 1 bản nộp ĐSQ + 1 bản sau này mang sang trường Hàn )\n- KHÔNG MỞ SỔ CMTC TẠI NGÂN HÀNG BẮC Á và NGÂN HÀNG CHÍNH SÁCH XÃ HỘI\n\n📎 Tài liệu đính kèm: Cam kết tuân thủ của Học sinh - OSAN.docx"
+    ],
     "documentsNote": "1. NGUYEN TIEN DUNG.jpg",
     "partners": [
       {
@@ -73,62 +97,62 @@ const SCHOOLS_DATA = {
       {
         "code": "VTV",
         "name": "Cao đẳng Truyền hình Việt Nam",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Truyền hình Việt Nam"
       },
       {
         "code": "BGIT",
         "name": "Cao đẳng Công nghiệp Bắc Giang",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghiệp Bắc Giang"
       },
       {
         "code": "HPC-HP",
         "name": "Cao đẳng Y tế Hải Phòng",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Y tế Hải Phòng"
       },
       {
         "code": "PMDT",
         "name": "Cao đẳng Công nghệ Y Dược Việt Nam",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghệ Y Dược Việt Nam"
       },
       {
         "code": "TWU",
         "name": "Đại học Trưng Vương",
-        "nameKr": ""
+        "nameKr": "Đại học Trưng Vương"
       },
       {
         "code": "UTM",
         "name": "ĐH Quản lý và Kinh doanh Hữu Nghị",
-        "nameKr": ""
+        "nameKr": "ĐH Quản lý và Kinh doanh Hữu Nghị"
       },
       {
         "code": "KTTT",
         "name": "Cao đẳng Kinh tế Kỹ thuật Thương mại",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Kinh tế Kỹ thuật Thương mại"
       },
       {
         "code": "SGT",
         "name": "Cao đẳng Công nghệ Sài Gòn",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghệ Sài Gòn"
       },
       {
         "code": "ISPACE",
         "name": "Cao đẳng Công nghệ i-Space",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghệ i-Space"
       },
       {
         "code": "DA",
         "name": "Cao đẳng Đồng An",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Đồng An"
       },
       {
         "code": "SDU",
         "name": "Đại học Sao Đỏ",
-        "nameKr": ""
+        "nameKr": "Đại học Sao Đỏ"
       },
       {
         "code": "DH",
         "name": "Cao đẳng Duyên hải",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Duyên hải"
       }
     ],
     "mou": "HNC, HCCT, VTV, SGT, KTTU"
@@ -158,7 +182,7 @@ const SCHOOLS_DATA = {
       "title": ""
     },
     "location": "12 Choansan-ro, Wolgye‑dong, Nowon‑gu, Seoul 01878, Hàn Quốc",
-    "intro": "",
+    "intro": "Đại học tư thục, dạng cao đẳng – chuyên đào tạo bằng cao đẳng và chứng chỉ nghề chuyên sâu\nDiện tích trường khoảng 76.000 m² (khoảng 7,6 ha).\nGồm khoảng 10 tòa nhà học tập và ký túc xá; có cả trường PTTH công nghệ cùng hệ thống\nKhoảng 8.600 sinh viên; 160 giảng viên chính thức và 290 giảng viên thỉnh giảng\n\nChuyên ngành:\nCó 6 khoa chính: Smart ICT, Smart City, Creative Design, Broadcasting & Culture Contents, Global Business, Physical Education... với tổng cộng 33 ngành học (hai và ba năm)\n\nGiao thông & đi lại\nTàu điện ngầm:\nGa Wolgye – tuyến số 1, ngắn khoảng 5 phút đi bộ tới trường.\nTừ ga Changdong (số 4), chuyển sang số 1 đến Wolgye.\nCách ga Hagye (tuyến 7) một chút, kết nối qua xe buýt \n\nXe buýt: Tuyến 100, 172, 1137, 1140, 1161 dừng ngay trước trường \n\nXe hơi: Dễ tiếp cận từ các tuyến đường cao tốc Đông Bắc và các cầu vượt gần đó",
     "conditions": [
       "Dưới 24 tuổi",
       "Có học bạ cấp 3 ( GPA 5.0 )",
@@ -168,20 +192,51 @@ const SCHOOLS_DATA = {
       "Không phân biệt vùng miền",
       "Có sức khỏe tốt không mắc các bệnh truyền nhiễm"
     ],
-    "majors": [],
+    "majors": [
+      "Khoa Kinh doanh dịch vụ du lịch - DEPARTMENT OF TOURISM & SERVICE MANAGEMENT"
+    ],
     "conversion": [
-      "6 trong vòng 6 tháng",
-      "Sau 6 tháng chuyển tiếp lên chuyên ngành D2",
-      "1 và học tiếp trong vòng 2 năm",
+      "Học D2-6 trong vòng 6 tháng",
+      "Sau 6 tháng chuyển tiếp lên chuyên ngành D2-1 và học tiếp trong vòng 2 năm",
       "Điều kiện để tốt nghiệp > Có chứng chỉ Topik 3",
       "Số buổi nghỉ quá 4 buổi (không xin phép) sẽ không được chuyển đổi lên chuyên ngành"
     ],
-    "tuition": "",
+    "tuition": "Đi theo diện D2-6 được nhận học bổng của trường giảm 50% trong suốt quá trình học cho đến khi tốt nghiệp\n\nHọc phí dự kiến 1.543.500 KRW/6 tháng ( Tiếng + Chuyên Ngành ) đã giảm 50%\n\n1 Tuần chỉ phải học 2 đến 3 buổi tùy thời điểm, mỗi buổi chỉ 1 buổi sáng hoặc 1 buổi chiều",
     "insurance": "",
     "ktx": "•  KTX: 4 người/1 phòng( không bao gồm ăn)\nLưu ý: \n- KTX dành cho nữ 200,000 KRW/1 tháng ở trong khuôn viên trường. ( 16 tuần học và 8 tuần nghỉ ).\n- KTX dành cho nam 250,000 KRW/1 tháng, cách trường 20 phút đi tầu. ( 16 tuần học và  8 tuần nghỉ ).\n•  Chi phí nhập học: 214.000 KRW ( Chưa bao gồm tiền chăn gối, sách)\n*  Phí xe buýt đón: 30.000 KRW\n*  Phí đăng ký cư trú: 34.000 KRW\n*  Bảo hiểm: 100.000 KRW\n*  Trải nghiệm văn hóa: 50.000 KRW",
     "schedule": "",
-    "advantages": [],
-    "documents": [],
+    "advantages": [
+      "Không yêu cầu chứng chỉ tiếng khi tham gia chương trình trao đổi sinh viên của trường Induk.",
+      "Không đóng băng tài chính ( Không mở sổ Kstudy ).",
+      "Không Phỏng Vấn ĐSQ.",
+      "Tỷ lệ đỗ gần như tuyệt đối nếu có chứng chỉ tiếng Topik 2 hoặc Sejong 2b.",
+      "Học phí rẻ.",
+      "Được đi làm thêm ngay, cam kết hỗ trợ việc làm thêm, lương trung bình 40 triệu/1 tháng, thời gian làm thêm 5h/1 ngày, ngày nghỉ và lễ tết không giới hạn",
+      "Thời gian học trong tuần ít chỉ từ 3 buổi/1 tuần.",
+      "Hỗ trợ chuyển đổi Visa sau khi tốt nghiệp sáng E7.",
+      "Được tạm hoãn nghĩa vụ quân sự."
+    ],
+    "documents": [
+      "- Application đánh máy (In bản đánh máy + ký tên, scan lại bản có chữ ký)\n- Gửi bản word + PDF\n- Tiếng Hàn\n\nHồ sơ gửi sang trường toàn bộ là bản scan:",
+      "Application form (Thư đăng ký nhập học)- Theo mẫu (số 1)",
+      "Giới thiệu bản thân và kế hoạch du học- Theo mẫu (số 2)",
+      "Thư đồng ý cho phép tra cứu học lực- Theo mẫu (số 3)",
+      "Thư đồng ý cho phép thu thập và sử dụng thông tin cá nhân- Theo mẫu (số 4)",
+      "Giấy bảo lãnh tài chính- Theo mẫu (số 4)",
+      "Giấy cam kết - Theo mẫu (số 6)",
+      "Giấy xác nhận sinh viên ( Dịch Công chứng / không cần tem tím khi nộp trường  )",
+      "Bảng điểm cao đẳng ( Dịch công chứng / không cần tem tím khi nộp trường )",
+      "Thư tiến cử (bản gốc) do Hiệu trưởng của Trường cao đẳng cấp ( dịch công chứng )",
+      "Bản sao hộ chiếu của học sinh/ bố mẹ ( Dịch công chứng )",
+      "Bản sao CCCD của học sinh, bố mẹ ( Dịch công chứng )",
+      "Giây khai sinh ( Dịch Công chứng )",
+      "Giấy chứng minh quan hệ gia đình ( Sổ hộ khẩu, CT07 , dịch công chứng )",
+      "Xác nhân số dư tài khoản 13 triệu won (Sổ đứng tên học sinh, số dư tối thiểu 13 triệu won trở lên \nGiấy chứng nhận được cấp trong vòng 1 tháng trước khi nộp hồ sơ)",
+      "Giấy xác nhận nơi công tác, thu nhập và chứng minh tài chính của bố mẹ (Dịch công chứng )",
+      "Giấy chứng nhận kết quả TOPIK (nếu có TOPIK 2 trở lên thì nộp)",
+      "Ảnh thẻ nền trắng, theo form ảnh hộ chiếu (3 cái).",
+      "Giấy khám sức khoẻ lao phổi song ngữ  ( 2 Bản : 1 Bản nộp trưởng + 1 Bản nộp ĐSQ khi xin visa ) \n\nLưu ý sổ nộp ĐSQ/LSQ: \n- Tham gia chương trình không yêu cầu sổ lùi, nhưng an toàn hơn thì mở trước 1 tháng - Số tiền CMTC khi nộp hồ sơ xin Visa là 250 triệu/300 triệu.\n- Tem tím có 4 tím tem + Mỗi loại 2 = Tổng 8 tem bắt buộc ( 1 bản nộp ĐSQ + 1 bản sau này mang sang trường Hàn ).\n- KHÔNG MỞ SỔ CMTC TẠI NGÂN HÀNG BẮC Á và NGÂN HÀNG CHÍNH SÁCH XÃ HỘI"
+    ],
     "documentsNote": "",
     "partners": [
       {
@@ -202,62 +257,62 @@ const SCHOOLS_DATA = {
       {
         "code": "VTV",
         "name": "Cao đẳng Truyền hình Việt Nam",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Truyền hình Việt Nam"
       },
       {
         "code": "BGIT",
         "name": "Cao đẳng Công nghiệp Bắc Giang",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghiệp Bắc Giang"
       },
       {
         "code": "HPC-HP",
         "name": "Cao đẳng Y tế Hải Phòng",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Y tế Hải Phòng"
       },
       {
         "code": "PMDT",
         "name": "Cao đẳng Công nghệ Y Dược Việt Nam",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghệ Y Dược Việt Nam"
       },
       {
         "code": "TWU",
         "name": "Đại học Trưng Vương",
-        "nameKr": ""
+        "nameKr": "Đại học Trưng Vương"
       },
       {
         "code": "UTM",
         "name": "ĐH Quản lý và Kinh doanh Hữu Nghị",
-        "nameKr": ""
+        "nameKr": "ĐH Quản lý và Kinh doanh Hữu Nghị"
       },
       {
         "code": "KTTT",
         "name": "Cao đẳng Kinh tế Kỹ thuật Thương mại",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Kinh tế Kỹ thuật Thương mại"
       },
       {
         "code": "SGT",
         "name": "Cao đẳng Công nghệ Sài Gòn",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghệ Sài Gòn"
       },
       {
         "code": "ISPACE",
         "name": "Cao đẳng Công nghệ i-Space",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghệ i-Space"
       },
       {
         "code": "DA",
         "name": "Cao đẳng Đồng An",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Đồng An"
       },
       {
         "code": "SDU",
         "name": "Đại học Sao Đỏ",
-        "nameKr": ""
+        "nameKr": "Đại học Sao Đỏ"
       },
       {
         "code": "DH",
         "name": "Cao đẳng Duyên hải",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Duyên hải"
       }
     ],
     "mou": "HNC, VTV, BGIT, TWU, SDU, DH"
@@ -287,7 +342,7 @@ const SCHOOLS_DATA = {
       "title": ""
     },
     "location": "Địa chỉ: 34 Yanghwa-ro 37beon-gil, Manan-gu, Anyang-si, Gyeonggi-do, Hàn Quốc\n\nNằm tại quận Manan, thành phố Anyang (Gyeonggi), thuộc vùng thủ đô Seoul – kết nối thuận tiện bằng tàu, xe buýt, có shuttle bus từ ga Anyang .",
-    "intro": "",
+    "intro": "- Tên tiếng Hàn: 연성대학교\n- Tên tiếng Anh: Yeonsung University\n\nThành lập:\n- 15/3/1977 – bắt đầu là Anyang Industrial Technical School\n- 1979 chuyển thành trường cao đẳng kỹ thuật\n- 1998 đổi tên thành Anyang Science University\n- 1/5/2012 – đổi tên chính thức thành Yeonsung University \nLoại hình: Tư thục, cao đẳng nghề chuyên biệt (junior college) .\nQuy mô (2018): khoảng 5.800 sinh viên; ~156 giảng viên chính quy và 300 giảng viên thỉnh giảng\n\nKhuôn viên: Diện tích khoảng 202.000 m², gồm thư viện, 9 tòa nhà học thuật, ký túc xá, nhiều phòng lab chuyên ngành & phòng thực hành, sân thể thao .\nTiện ích: Quầy cà phê (Gem Café), căng-tin, food court, career lounge, maker space, VR/STUDIO/CS studio, hội trường, shuttle bus… \nDịch vụ sinh viên: Tư vấn nghề nghiệp – học tập cá nhân hóa (AI), hỗ trợ tâm lý, thiết kế portfolio, chuẩn bị xin việc .\nCải thiện chất lượng: Năm 2023, cải tổ đa dạng thực đơn căn tin (từ 2 lên ~40 món/phục vụ) sau hiệu ứng truyền thông \n\nLiên kết với hơn 43 trường đối tác tại 14 quốc gia – châu Âu, châu Á, Mỹ... nhằm trao đổi học thuật, thực tập quốc tế .\nĐịnh hướng nghề nghiệp gắn liền với doanh nghiệp qua chương trình P-TECH, tích hợp kỹ năng thực tiễn và chuyển tiếp nghề nghiệp",
     "conditions": [
       "Dưới 24 tuổi",
       "Có học bạ cấp 3 ( GPA 5.0 )",
@@ -297,20 +352,48 @@ const SCHOOLS_DATA = {
       "Không phân biệt vùng miền",
       "Có sức khỏe tốt không mắc các bệnh truyền nhiễm"
     ],
-    "majors": [],
+    "majors": [
+      "Quản trị kinh doanh - BUSINESS ADMINISTRATION",
+      "Điện - điện tử - ELECTRICAL AND ELECTRONICS ENGINEERING"
+    ],
     "conversion": [
-      "6 trong vòng 6 tháng > Thi topik trường nếu chưa có chứng chỉ tiếng Topik2",
-      "Sau 6 tháng chuyển tiếp lên chuyên ngành D2",
-      "1 và học tiếp trong vòng 2 năm",
+      "Học D2-6 trong vòng 6 tháng > Thi topik trường nếu chưa có chứng chỉ tiếng Topik2",
+      "Sau 6 tháng chuyển tiếp lên chuyên ngành D2-1 và học tiếp trong vòng 2 năm",
       "Điều kiện để tốt nghiệp > Có chứng chỉ Topik 3",
       "Số buổi nghỉ quá 4 buổi (không xin phép) sẽ không được chuyển đổi lên chuyên ngành"
     ],
-    "tuition": "",
+    "tuition": "Đi theo diện D2-6 được nhận học bổng của trường giảm 50% ngay kỳ đầu tiên \nHọc phí dự kiến 1.600.000 KRW/6 tháng ( Tiếng + Chuyên Ngành ) đã giảm 50%\n\n1 Tuần chỉ phải học 1 đến 3 buổi tùy thời điểm, mỗi buổi chỉ 1 buổi sáng hoặc 1 buổi chiều, mỗi buổi 3 đến 4 tiếng",
     "insurance": "",
     "ktx": "- KTX nằm ngoài khuôn viên trường\n- Giá giao động 1.650.000 KRW/6 tháng",
     "schedule": "",
-    "advantages": [],
-    "documents": [],
+    "advantages": [
+      "Không yêu cầu chứng chỉ tiếng khi tham gia chương trình trao đổi sinh viên của trường Yeonsung.",
+      "Không đóng băng tài chính ( Không mở sổ Kstudy ).",
+      "Không Phỏng Vấn ĐSQ.",
+      "Tỷ lệ đỗ gần như tuyệt đối nếu có chứng chỉ tiếng Topik 2 hoặc Sejong 2b.",
+      "Học phí rẻ.",
+      "Được đi làm thêm ngay, cam kết hỗ trợ việc làm thêm, lương trung bình 40 triệu/1 tháng, thời gian làm thêm 5h/1 ngày, ngày nghỉ và lễ tết không giới hạn",
+      "Thời gian học trong tuần ít chỉ từ 3 buổi/1 tuần.",
+      "Hỗ trợ chuyển đổi Visa sau khi tốt nghiệp sáng E7.",
+      "Được tạm hoãn nghĩa vụ quân sự."
+    ],
+    "documents": [
+      "- Application đánh máy (In bản đánh máy + ký tên, scan lại bản có chữ ký)\n- Gửi bản word + PDF\n- Tiếng Hàn\n\nHồ sơ gửi sang trường bản scan:",
+      "Application form (Thư đăng ký nhập học) - Theo mẫu (số 1)",
+      "Giới thiệu bản thân và kế hoạch du học -        - Theo mẫu (số 2)",
+      "Giấy bảo lãnh chi phí du học- Theo mẫu (số 3)",
+      "Thư tiến cử (bản gốc) do hiệu trưởng của Trường cao đẳng cấp ( Dịch Công chứng )",
+      "Giấy xác nhận sinh viên ( Dịch Công chứng / không cần tem tím khi nộp trường/ )",
+      "Bảng điểm cao đẳng ( Dịch Công chứng/  không cần tem tím khi nộp trường )",
+      "Bản sao hộ chiếu của học sinh/ bố mẹ",
+      "Bản sao CCCD/hộ chiếu của bố mẹ",
+      "Giấy khai sinh ( Dịch Công chứng )",
+      "Sổ hộ khẩu (giấy chứng minh quan hệ gia đình) CT07 ( Dịch công chứng)",
+      "Giấy xác nhận số dư tài khoản trên 13 triệu won (Giấy chứng nhận số dư phát hành trong vòng 1 tháng trước khi nộp hồ sơ).",
+      "Giấy xác nhận đang công tác hoặc chứng minh được thu nhập của bố mẹ",
+      "ảnh hộ chiếu nền trắng 3 st ( 3,5*4,5)",
+      "Giấy khám sức khoẻ lao phổi song ngữ ( 2 Bản : 1 Bản nộp trưởng + 1 Bản nộp ĐSQ khi xin visa ) \n\n\nLưu ý sổ nộp ĐSQ/LSQ: \n- Tham gia chương trình không yêu cầu sổ lùi, nhưng an toàn hơn thì mở trước 1 tháng - Số tiền CMTC khi nộp hồ sơ xin Visa là 250 triệu/300 triệu.\n- Tem tím có 4 tím tem + Mỗi loại 2 = Tổng 8 tem bắt buộc ( 1 bản nộp ĐSQ + 1 bản sau này mang sang trường Hàn )\n- KHÔNG MỞ SỔ CMTC TẠI NGÂN HÀNG BẮC Á và NGÂN HÀNG CHÍNH SÁCH XÃ HỘI"
+    ],
     "documentsNote": "",
     "partners": [
       {
@@ -331,62 +414,62 @@ const SCHOOLS_DATA = {
       {
         "code": "VTV",
         "name": "Cao đẳng Truyền hình Việt Nam",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Truyền hình Việt Nam"
       },
       {
         "code": "BGIT",
         "name": "Cao đẳng Công nghiệp Bắc Giang",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghiệp Bắc Giang"
       },
       {
         "code": "HPC-HP",
         "name": "Cao đẳng Y tế Hải Phòng",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Y tế Hải Phòng"
       },
       {
         "code": "PMDT",
         "name": "Cao đẳng Công nghệ Y Dược Việt Nam",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghệ Y Dược Việt Nam"
       },
       {
         "code": "TWU",
         "name": "Đại học Trưng Vương",
-        "nameKr": ""
+        "nameKr": "Đại học Trưng Vương"
       },
       {
         "code": "UTM",
         "name": "ĐH Quản lý và Kinh doanh Hữu Nghị",
-        "nameKr": ""
+        "nameKr": "ĐH Quản lý và Kinh doanh Hữu Nghị"
       },
       {
         "code": "KTTT",
         "name": "Cao đẳng Kinh tế Kỹ thuật Thương mại",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Kinh tế Kỹ thuật Thương mại"
       },
       {
         "code": "SGT",
         "name": "Cao đẳng Công nghệ Sài Gòn",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghệ Sài Gòn"
       },
       {
         "code": "ISPACE",
         "name": "Cao đẳng Công nghệ i-Space",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghệ i-Space"
       },
       {
         "code": "DA",
         "name": "Cao đẳng Đồng An",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Đồng An"
       },
       {
         "code": "SDU",
         "name": "Đại học Sao Đỏ",
-        "nameKr": ""
+        "nameKr": "Đại học Sao Đỏ"
       },
       {
         "code": "DH",
         "name": "Cao đẳng Duyên hải",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Duyên hải"
       }
     ],
     "mou": "HNC, HCCT, BGIT, KTTT, SGT, DA, SDU, KTTU"
@@ -415,7 +498,7 @@ const SCHOOLS_DATA = {
       "title": ""
     },
     "location": "20 Hongjimun 2-gil, Jongno-gu, Seoul 03016, Hàn Quốc (Campus Seoul) | 31 Sangmyungdae-gil, Cheonan-si, Chungcheongnam-do (Campus Cheonan)",
-    "intro": "",
+    "intro": "- Tên tiếng Hàn: 상명대학교\n- Tên tiếng Anh: Sangmyung University\n- Năm thành lập: 1937\n- Loại hình: Đại học tư thục 4 năm\n- Quy mô: ~13.000 sinh viên\n- Website: www.smu.ac.kr\n\nSangmyung University là trường đại học tư thục uy tín tại Hàn Quốc với lịch sử hơn 80 năm. Trường có 2 campus: Seoul (Jongno-gu) và Cheonan (Chungnam). Campus Seoul nằm ngay trung tâm thành phố, gần Gyeongbokgung và Changdeokgung, thuận tiện di chuyển bằng metro.\n\nTrường nổi tiếng với các ngành Nghệ thuật, Công nghệ thông tin, Kinh doanh và Khoa học xã hội. Tỷ lệ có việc làm sau tốt nghiệp cao, đặc biệt các ngành kỹ thuật và thiết kế.",
     "conditions": [
       "Dưới 22 tuổi",
       "Có học bạ cấp 3 (GPA 5.0)",
@@ -426,20 +509,44 @@ const SCHOOLS_DATA = {
       "Có sức khỏe tốt không mắc các bệnh truyền nhiễm",
       "Có chứng chỉ Topik 2 hoặc Sejong 2b"
     ],
-    "majors": [],
+    "majors": [
+      "Kinh doanh quốc tế - INTERNATIONAL BUSINESS",
+      "Công nghệ thông tin - INFORMATION TECHNOLOGY",
+      "Thiết kế - DESIGN"
+    ],
     "conversion": [
-      "6 trong vòng 1 năm",
-      "Sau 1 năm chuyển tiếp lên chuyên ngành D2",
-      "2 và học tiếp trong vòng 4 năm",
+      "Học D2-6 trong vòng 1 năm",
+      "Sau 1 năm chuyển tiếp lên chuyên ngành D2-2 và học tiếp trong vòng 4 năm",
       "Điều kiện để tốt nghiệp > Có chứng chỉ Topik 4",
       "Số buổi nghỉ quá 4 buổi (không xin phép) sẽ không được chuyển đổi lên chuyên ngành"
     ],
-    "tuition": "",
+    "tuition": "Đi theo diện D2-6 được nhận học bổng của trường giảm 50% kỳ đầu\nHọc phí dự kiến: 1.800.000 - 2.200.000 KRW/kỳ (đã giảm 50%)",
     "insurance": "",
     "ktx": "KTX trong khuôn viên trường: 350.000 - 500.000 KRW/tháng\nNhà thuê gần trường: 300.000 - 450.000 KRW/tháng",
     "schedule": "",
-    "advantages": [],
-    "documents": [],
+    "advantages": [
+      "Đại học 4 năm uy tín, bằng cấp được công nhận rộng rãi",
+      "Không đóng băng tài chính",
+      "Tỷ lệ chuyển đổi E7 rất tốt sau khi tốt nghiệp",
+      "Campus Seoul - vị trí đắc địa trung tâm thủ đô",
+      "Nhiều cơ hội làm thêm tại Seoul",
+      "Được tạm hoãn nghĩa vụ quân sự"
+    ],
+    "documents": [
+      "- Application đánh máy (In bản đánh máy + ký tên, scan lại bản có chữ ký)\n- Gửi bản word + PDF\n- Tiếng Anh/Hàn\n\nHồ sơ gửi sang trường bản scan:",
+      "Application form - Theo mẫu trường",
+      "Giấy xác nhận sinh viên (Dịch Công chứng)",
+      "Bảng điểm cao đẳng (Dịch Công chứng)",
+      "Thư tiến cử của Hiệu trưởng (Dịch Công chứng)",
+      "Bản sao hộ chiếu",
+      "Bản sao CCCD của học sinh, bố mẹ (Dịch Công chứng)",
+      "Giấy khai sinh (Dịch Công chứng)",
+      "CT07 (Dịch Công chứng)",
+      "Xác nhận số dư 13 triệu KRW đứng tên học sinh",
+      "Chứng chỉ TOPIK (nếu có)",
+      "03 ảnh thẻ 3,5*4,5 nền trắng",
+      "Giấy khám sức khoẻ lao phổi song ngữ\n\nLưu ý sổ nộp ĐSQ/LSQ:\n- Số tiền CMTC khi nộp hồ sơ xin Visa là 250-300 triệu\n- KHÔNG MỞ SỔ CMTC TẠI NGÂN HÀNG BẮC Á và NGÂN HÀNG CHÍNH SÁCH XÃ HỘI"
+    ],
     "documentsNote": "Cập nhật sau khi có invoice chính thức từ trường",
     "partners": [
       {
@@ -460,62 +567,62 @@ const SCHOOLS_DATA = {
       {
         "code": "VTV",
         "name": "Cao đẳng Truyền hình Việt Nam",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Truyền hình Việt Nam"
       },
       {
         "code": "BGIT",
         "name": "Cao đẳng Công nghiệp Bắc Giang",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghiệp Bắc Giang"
       },
       {
         "code": "HPC-HP",
         "name": "Cao đẳng Y tế Hải Phòng",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Y tế Hải Phòng"
       },
       {
         "code": "PMDT",
         "name": "Cao đẳng Công nghệ Y Dược Việt Nam",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghệ Y Dược Việt Nam"
       },
       {
         "code": "TWU",
         "name": "Đại học Trưng Vương",
-        "nameKr": ""
+        "nameKr": "Đại học Trưng Vương"
       },
       {
         "code": "UTM",
         "name": "ĐH Quản lý và Kinh doanh Hữu Nghị",
-        "nameKr": ""
+        "nameKr": "ĐH Quản lý và Kinh doanh Hữu Nghị"
       },
       {
         "code": "KTTT",
         "name": "Cao đẳng Kinh tế Kỹ thuật Thương mại",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Kinh tế Kỹ thuật Thương mại"
       },
       {
         "code": "SGT",
         "name": "Cao đẳng Công nghệ Sài Gòn",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghệ Sài Gòn"
       },
       {
         "code": "ISPACE",
         "name": "Cao đẳng Công nghệ i-Space",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghệ i-Space"
       },
       {
         "code": "DA",
         "name": "Cao đẳng Đồng An",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Đồng An"
       },
       {
         "code": "SDU",
         "name": "Đại học Sao Đỏ",
-        "nameKr": ""
+        "nameKr": "Đại học Sao Đỏ"
       },
       {
         "code": "DH",
         "name": "Cao đẳng Duyên hải",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Duyên hải"
       }
     ],
     "mou": "HN, HNC, HCCT, VTV, BGIT, HPC-HP, KTTT, DH"
@@ -536,7 +643,8 @@ const SCHOOLS_DATA = {
     },
     "links": {
       "website": "",
-      "catalog": "https://drive.google.com/file/d/1koKmGXVjZmSBtiSRcqaMuf3blbO_w4W0/view?usp=sharing"
+      "catalog": "https://drive.google.com/file/d/1koKmGXVjZmSBtiSRcqaMuf3blbO_w4W0/view?usp=sharing",
+      "invoice": "https://drive.google.com/file/d/15_g8BgeSQAyDkqLAFCz8XE04mnXcjeX0/view?usp=sharing"
     },
     "video": {
       "url": "https://www.youtube.com/watch?v=Vup7-eqakBE",
@@ -544,7 +652,7 @@ const SCHOOLS_DATA = {
       "title": ""
     },
     "location": "63 Gyeyangsan-ro, Gyesan-dong, Gyeyang-gu, Incheon, Hàn Quốc",
-    "intro": "",
+    "intro": "- Tên tiếng anh: Kyungin Women’s University (KIWU).\n- Tên tiếng Hàn: 경인여자대학교\n- Năm thành lập: Năm 1992.\n- Loại hình: tư thục.\n- Số sinh viên: khoảng 4.500\n- Điện thoại: 031-540-0114\n- Website: https://www.kiwu.ac.kr/\n\n1: Top 3 Nữ sinh Incheon & Visa thẳng: Thành lập năm 1992 tại Incheon, Đại học Nữ sinh Kyungin là trường tư thục hàng đầu dành cho nữ sinh tại Hàn Quốc, xếp top 3 trường nữ sinh tốt nhất Incheon. Trường được Bộ Giáo dục Hàn Quốc công nhận là “Đại học Xuất sắc” (2014-2020) và thuộc top 1% visa thẳng (2018), giúp sinh viên Việt Nam nhập học dễ dàng mà không cần phỏng vấn hay đóng băng tài khoản 10,000 USD.\n2: Vị trí chiến lược: Tọa lạc tại Incheon, gần sân bay quốc tế Incheon (~30 phút), KIWU nằm trong khu vực sầm uất với trung tâm thương mại lớn nhất Hàn Quốc và chi phí sinh hoạt thấp hơn Seoul (~60-70%). Incheon cách Seoul ~40 phút tàu điện, thuận tiện di chuyển. Cộng đồng sinh viên quốc tế tại đây khoảng 300 người, trong đó ~100 sinh viên Việt Nam (2023).\n3: Thế mạnh đào tạo: KIWU nổi bật với các ngành phù hợp nữ giới: \n- Điều dưỡng: Xếp hạng A về đào tạo (2018), hợp tác với các bệnh viện lớn.\n- Giáo dục mầm non: Đào tạo giáo viên mầm non hơn 30 năm.\n- Làm đẹp: Mỹ phẩm, Thẩm mỹ, Quản lý spa.\n- Thư ký & Kế toán thuế.\n- Du lịch & Khách sạn: Quản lý sự kiện, Dịch vụ hàng không. Trường có 4 khoa (Xã hội, Sức khỏe, Văn hóa, Kinh doanh) với hơn 20 chuyên ngành. Các chương trình giảng dạy kết hợp thực hành, đảm bảo tỷ lệ việc làm sau tốt nghiệp lên đến 80% (2018).",
     "conditions": [
       "Dưới 24 tuổi",
       "Chỉ dành cho nữ",
@@ -556,277 +664,38 @@ const SCHOOLS_DATA = {
       "Có sức khỏe tốt không mắc các bệnh truyền nhiễm",
       "Có chứng chỉ Topik 2 hoặc Sejong2b ( Fastgo có hỗ trợ Sejong2b) - Với kỳ tháng 3/2026 không yêu cầu chứng chỉ tiếng"
     ],
-    "majors": [],
+    "majors": [
+      "Điều Dưỡng - Nursing ( 간호학과)"
+    ],
     "conversion": [
-      "6 trong vòng 6 tháng.",
-      "Sau 6 tháng chuyển tiếp lên chuyên ngành D2",
-      "1 và học tiếp trong vòng 2 năm",
+      "Học D2-6 trong vòng 6 tháng.",
+      "Sau 6 tháng chuyển tiếp lên chuyên ngành D2-1 và học tiếp trong vòng 2 năm",
       "Điều kiện để tốt nghiệp > Có chứng chỉ Topik 3",
       "Số buổi nghỉ quá 4 buổi (không xin phép) sẽ không được chuyển đổi lên chuyên ngành"
     ],
-    "tuition": "",
+    "tuition": "Với D2-6 học kỳ đầu tiên: 1.480.000 Krw",
     "insurance": "",
     "ktx": "300.000 KRW/1 tháng",
     "schedule": "",
-    "advantages": [],
-    "documents": [],
-    "documentsNote": "invoice KyungGin.pdf",
-    "partners": [
-      {
-        "code": "HN",
-        "name": "Cao đẳng Hà Nội",
-        "nameKr": "Cao đẳng Hà Nội"
-      },
-      {
-        "code": "HNC",
-        "name": "Cao đẳng Hữu Nghị",
-        "nameKr": "Cao đẳng Hữu Nghị"
-      },
-      {
-        "code": "HCCT",
-        "name": "Cao đẳng Thương mại và Du lịch Hà Nội",
-        "nameKr": "Cao đẳng Thương mại và Du lịch Hà Nội"
-      },
-      {
-        "code": "VTV",
-        "name": "Cao đẳng Truyền hình Việt Nam",
-        "nameKr": ""
-      },
-      {
-        "code": "BGIT",
-        "name": "Cao đẳng Công nghiệp Bắc Giang",
-        "nameKr": ""
-      },
-      {
-        "code": "HPC-HP",
-        "name": "Cao đẳng Y tế Hải Phòng",
-        "nameKr": ""
-      },
-      {
-        "code": "PMDT",
-        "name": "Cao đẳng Công nghệ Y Dược Việt Nam",
-        "nameKr": ""
-      },
-      {
-        "code": "TWU",
-        "name": "Đại học Trưng Vương",
-        "nameKr": ""
-      },
-      {
-        "code": "UTM",
-        "name": "ĐH Quản lý và Kinh doanh Hữu Nghị",
-        "nameKr": ""
-      },
-      {
-        "code": "KTTT",
-        "name": "Cao đẳng Kinh tế Kỹ thuật Thương mại",
-        "nameKr": ""
-      },
-      {
-        "code": "SGT",
-        "name": "Cao đẳng Công nghệ Sài Gòn",
-        "nameKr": ""
-      },
-      {
-        "code": "ISPACE",
-        "name": "Cao đẳng Công nghệ i-Space",
-        "nameKr": ""
-      },
-      {
-        "code": "DA",
-        "name": "Cao đẳng Đồng An",
-        "nameKr": ""
-      },
-      {
-        "code": "SDU",
-        "name": "Đại học Sao Đỏ",
-        "nameKr": ""
-      },
-      {
-        "code": "DH",
-        "name": "Cao đẳng Duyên hải",
-        "nameKr": ""
-      }
+    "advantages": [
+      "Không đóng băng tài chính",
+      "Cam kết tỉ lệ visa cực cao",
+      "Linh động chọn ngành học khi lên D2-1",
+      "Thu nhập làm thêm lên tới 40 triệu đồng/ tháng",
+      "Lên D22 cần Topik 3/Hoặc hoàn thành 100h tiếng Hàn",
+      "Được tạm hoãn nghĩa vụ quân sự"
     ],
-    "mou": "HNC, VTV, BGIT, UTM, SGT, KTTU"
-  },
-  "dh-y-te-dongnam": {
-    "id": "dh-y-te-dongnam",
-    "name": "Dongnam",
-    "nameKr": "동남보건대학교 | Tỷ lệ Đỗ tuyệt đối - Học khá nhiều - Việc làm thêm khá hạn chế",
-    "nameEn": "Dongnam Health University",
-    "system": "D2-6 > D2-1 (Cao Đẳng)",
-    "quota": 200,
-    "images": {
-      "main": "images/placeholder.svg",
-      "catalog": "",
-      "locationMap": "",
-      "invoice": "",
-      "gallery": []
-    },
-    "links": {
-      "website": "",
-      "catalog": "documents/Dongnam-University-Catalog-.pdf"
-    },
-    "video": {
-      "url": "https://www.youtube.com/watch?v=2JCs1paO_Zo",
-      "youtubeId": "2JCs1paO_Zo",
-      "title": ""
-    },
-    "location": "Địa chỉ: 50 Cheoncheon‑ro 74‑gil, Jeongja‑dong, Jangan‑gu, Suwon‑si, Gyeonggi‑do, Hàn Quốc\n\nNằm ở phía bắc Suwon, trên bờ sông Seohocheon, trong khu vực đô thị thuận tiện di chuyển bằng bus và đi tới Seoul rất dễ dàng",
-    "intro": "",
-    "conditions": [
-      "Dưới 24 tuổi",
-      "Có học bạ cấp 3 ( GPA 5.0 )",
-      "Có bằng tốt nghiệp cấp 3",
-      "Số buổi nghỉ không quá 30 buổi",
-      "Trượt Visa các hệ D4-1, D2-1, D2-2, D2-3, E9",
-      "Không phân biệt vùng miền",
-      "Có sức khỏe tốt không mắc các bệnh truyền nhiễm"
+    "documents": [
+      "- Application đánh máy (In bản đánh máy + ký tên, scan lại bản có chữ ký)\n- Gửi bản word + PDF\n- Làm tiếng Hàn.\n\nHồ sơ gửi trường sau PV scan:",
+      "Application",
+      "Giấy xác nhận sinh viên của trường đại học/cao đẳng đang theo học  (Tem Tím)",
+      "Bảng điểm học tập chính thức ( Tem Tím )",
+      "Bằng tốt nghiệp + Học bạ ( Dịch công chứng )",
+      "Bản sao hộ chiếu ( Dịch Công chứng )",
+      "Phiếu thông tin về trình độ tiếng Hàn ( Chứng chỉ TOPIK hoặc SEJONG nếu có )",
+      "03 ảnh thẻ cỡ 3x4 (mặt chính diện)",
+      "Xác nhân số dư sổ tiết kiệm sổ 17.000.000 KRW đứng tên học sinh\n\nSổ chứng minh tài chính khi nộp xin Visa ( Sổ gốc )\n- Mở sổ tài khoản 250 triệu.\n- Thời hạn sổ 1 năm\n- Đứng tên học sinh\n\nLưu ý sổ nộp ĐSQ/LSQ: \n- Tham gia chương trình không yêu cầu sổ lùi, nhưng an toàn hơn thì mở trước 1 tháng - Số tiền CMTC khi nộp hồ sơ xin Visa là 250 triệu/300 triệu.\n- Tem tím có 4 tím tem + Mỗi loại 2 = Tổng 8 tem bắt buộc ( 1 bản nộp ĐSQ + 1 bản sau này mang sang trường Hàn ).\n- KHÔNG MỞ SỔ CMTC TẠI NGÂN HÀNG BẮC Á VÀ NGÂN HÀNG CHÍNH SÁCH XÃ HỘI"
     ],
-    "majors": [],
-    "conversion": [
-      "6 trong vòng 6 tháng",
-      "Sau 6 tháng chuyển tiếp lên chuyên ngành D2",
-      "1 và học tiếp trong vòng 2 năm",
-      "Điều kiện để tốt nghiệp > Có chứng chỉ Topik 3",
-      "Số buổi nghỉ quá 4 buổi (không xin phép) sẽ không được chuyển đổi lên chuyên ngành"
-    ],
-    "tuition": "",
-    "insurance": "",
-    "ktx": "",
-    "schedule": "",
-    "advantages": [],
-    "documents": [],
-    "documentsNote": "Invoice mẫu Đong Nam.pdf",
-    "partners": [
-      {
-        "code": "HN",
-        "name": "Cao đẳng Hà Nội",
-        "nameKr": "Cao đẳng Hà Nội"
-      },
-      {
-        "code": "HNC",
-        "name": "Cao đẳng Hữu Nghị",
-        "nameKr": "Cao đẳng Hữu Nghị"
-      },
-      {
-        "code": "HCCT",
-        "name": "Cao đẳng Thương mại và Du lịch Hà Nội",
-        "nameKr": "Cao đẳng Thương mại và Du lịch Hà Nội"
-      },
-      {
-        "code": "VTV",
-        "name": "Cao đẳng Truyền hình Việt Nam",
-        "nameKr": ""
-      },
-      {
-        "code": "BGIT",
-        "name": "Cao đẳng Công nghiệp Bắc Giang",
-        "nameKr": ""
-      },
-      {
-        "code": "HPC-HP",
-        "name": "Cao đẳng Y tế Hải Phòng",
-        "nameKr": ""
-      },
-      {
-        "code": "PMDT",
-        "name": "Cao đẳng Công nghệ Y Dược Việt Nam",
-        "nameKr": ""
-      },
-      {
-        "code": "TWU",
-        "name": "Đại học Trưng Vương",
-        "nameKr": ""
-      },
-      {
-        "code": "UTM",
-        "name": "ĐH Quản lý và Kinh doanh Hữu Nghị",
-        "nameKr": ""
-      },
-      {
-        "code": "KTTT",
-        "name": "Cao đẳng Kinh tế Kỹ thuật Thương mại",
-        "nameKr": ""
-      },
-      {
-        "code": "SGT",
-        "name": "Cao đẳng Công nghệ Sài Gòn",
-        "nameKr": ""
-      },
-      {
-        "code": "ISPACE",
-        "name": "Cao đẳng Công nghệ i-Space",
-        "nameKr": ""
-      },
-      {
-        "code": "DA",
-        "name": "Cao đẳng Đồng An",
-        "nameKr": ""
-      },
-      {
-        "code": "SDU",
-        "name": "Đại học Sao Đỏ",
-        "nameKr": ""
-      },
-      {
-        "code": "DH",
-        "name": "Cao đẳng Duyên hải",
-        "nameKr": ""
-      }
-    ],
-    "mou": "HNC, HPC, HCCT, SGT, BCIT"
-  },
-  "dh-dongeui": {
-    "id": "dh-dongeui",
-    "name": "Dong-Eui",
-    "nameKr": "동의대학교 | Tỷ lệ đỗ cực cao - Việc làm thêm nhiều - Tỷ lệ chuyển đổi E7 tốt - Học khá nặng",
-    "nameEn": "DongEui Institute Of Technology",
-    "system": "D2-6 > D2-2 (Đại học)",
-    "quota": 200,
-    "images": {
-      "main": "images/placeholder.svg",
-      "catalog": "",
-      "locationMap": "",
-      "invoice": "",
-      "gallery": []
-    },
-    "links": {
-      "website": "",
-      "catalog": "https://drive.google.com/file/d/1OvD9XCX6dLBaIR6IKTdgtnfoT-Op3gU-/view?usp=sharing"
-    },
-    "video": {
-      "url": "https://www.youtube.com/watch?v=xqT-_-3l8Yk",
-      "youtubeId": "xqT-_-3l8Yk",
-      "title": ""
-    },
-    "location": "176 Eomgwang-ro, Gaya 3(sam)-dong, Busanjin-gu, Busan, Hàn Quốc",
-    "intro": "",
-    "conditions": [
-      "Dưới 22 tuổi",
-      "Có học bạ cấp 3 ( GPA 5.0 )",
-      "Có bằng tốt nghiệp cấp 3",
-      "Số buổi nghỉ không quá 30 buổi",
-      "Trượt Visa các hệ D4-1, D2-1, D2-2, D2-3, E9",
-      "Không phân biệt vùng miền",
-      "Có sức khỏe tốt không mắc các bệnh truyền nhiễm",
-      "Có chứng chỉ Topik 2 hoặc Sejong2b ( Fastgo có hỗ trợ Sejong2b)"
-    ],
-    "majors": [],
-    "conversion": [
-      "6 trong vòng 1 năm.",
-      "Sau 1 năm chuyển tiếp lên chuyên ngành D2",
-      "2 và học tiếp trong vòng 4 năm",
-      "Điều kiện để tốt nghiệp > Có chứng chỉ Topik 4",
-      "Số buổi nghỉ quá 4 buổi (không xin phép) sẽ không được chuyển đổi lên chuyên ngành"
-    ],
-    "tuition": "",
-    "insurance": "",
-    "ktx": "KTX chỉ từ 150.000 KRW/1 tháng\n\nTặng kèm 100 xuất ăn miễn phí - Có thể nhiều hơn - Mỗi xuất giá 5000 won",
-    "schedule": "",
-    "advantages": [],
-    "documents": [],
     "documentsNote": "",
     "partners": [
       {
@@ -847,62 +716,369 @@ const SCHOOLS_DATA = {
       {
         "code": "VTV",
         "name": "Cao đẳng Truyền hình Việt Nam",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Truyền hình Việt Nam"
       },
       {
         "code": "BGIT",
         "name": "Cao đẳng Công nghiệp Bắc Giang",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghiệp Bắc Giang"
       },
       {
         "code": "HPC-HP",
         "name": "Cao đẳng Y tế Hải Phòng",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Y tế Hải Phòng"
       },
       {
         "code": "PMDT",
         "name": "Cao đẳng Công nghệ Y Dược Việt Nam",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghệ Y Dược Việt Nam"
       },
       {
         "code": "TWU",
         "name": "Đại học Trưng Vương",
-        "nameKr": ""
+        "nameKr": "Đại học Trưng Vương"
       },
       {
         "code": "UTM",
         "name": "ĐH Quản lý và Kinh doanh Hữu Nghị",
-        "nameKr": ""
+        "nameKr": "ĐH Quản lý và Kinh doanh Hữu Nghị"
       },
       {
         "code": "KTTT",
         "name": "Cao đẳng Kinh tế Kỹ thuật Thương mại",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Kinh tế Kỹ thuật Thương mại"
       },
       {
         "code": "SGT",
         "name": "Cao đẳng Công nghệ Sài Gòn",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghệ Sài Gòn"
       },
       {
         "code": "ISPACE",
         "name": "Cao đẳng Công nghệ i-Space",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghệ i-Space"
       },
       {
         "code": "DA",
         "name": "Cao đẳng Đồng An",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Đồng An"
       },
       {
         "code": "SDU",
         "name": "Đại học Sao Đỏ",
-        "nameKr": ""
+        "nameKr": "Đại học Sao Đỏ"
       },
       {
         "code": "DH",
         "name": "Cao đẳng Duyên hải",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Duyên hải"
+      }
+    ],
+    "mou": "HNC, VTV, BGIT, UTM, SGT, KTTU"
+  },
+  "dh-y-te-dongnam": {
+    "id": "dh-y-te-dongnam",
+    "name": "Dongnam",
+    "nameKr": "동남보건대학교 | Tỷ lệ Đỗ tuyệt đối - Học khá nhiều - Việc làm thêm khá hạn chế",
+    "nameEn": "Dongnam Health University",
+    "system": "D2-6 > D2-1 (Cao Đẳng)",
+    "quota": 200,
+    "images": {
+      "main": "images/placeholder.svg",
+      "catalog": "",
+      "locationMap": "",
+      "invoice": "",
+      "gallery": []
+    },
+    "links": {
+      "website": "",
+      "catalog": "documents/Dongnam-University-Catalog-.pdf",
+      "invoice": "https://drive.google.com/file/d/1cQt0uqhosBjyHgX4UuAPaF__6WjRIpEu/view?usp=sharing"
+    },
+    "video": {
+      "url": "https://www.youtube.com/watch?v=2JCs1paO_Zo",
+      "youtubeId": "2JCs1paO_Zo",
+      "title": ""
+    },
+    "location": "Địa chỉ: 50 Cheoncheon‑ro 74‑gil, Jeongja‑dong, Jangan‑gu, Suwon‑si, Gyeonggi‑do, Hàn Quốc\n\nNằm ở phía bắc Suwon, trên bờ sông Seohocheon, trong khu vực đô thị thuận tiện di chuyển bằng bus và đi tới Seoul rất dễ dàng",
+    "intro": "- Tên tiếng Hàn: 동남보건대학교\n- Tên tiếng Anh: Dongnam Health University\n\nThành lập:\nNgày 19/12/1973 dưới tên Dongnam Health Junior School \nTrở thành trường cao đẳng năm 1979, đổi tên thành đại học vào năm 1998 và 2012.\nLoại hình: Đại học chuyên đào tạo chuyên môn, tư thục.\nLãnh đạo hiện nay: Chủ tịch Lee Young Kwon (이영권) \nQuy mô (đến 2023): khoảng 4.685 sinh viên, 122 giảng viên chính quy và 258 giảng viên thỉnh giảng\n\nCơ sở: 9 tòa nhà học thuật gần công viên Jeongja, thư viện, phòng lab, ký túc xá, thư viện kỹ thuật cao cấp \nHoạt động được cấp phép:\nĐược Bộ Giáo dục Hàn Quốc chọn là trường chất lượng (2 đợt hỗ trợ đổi mới), đạt chứng nhận đào tạo điều dưỡng y tế .\nTrường thuộc nhóm được cấp “giấy chứng nhận chất lượng giáo dục nghề” \n\nTỷ lệ sinh viên/giảng viên: ~38 sinh viên cho mỗi giảng viên chính quy.\nTài chính & bộ hỗ trợ: Kinh phí trung bình đào tạo một sinh viên ~937.000 KRW/năm; nhận hỗ trợ từ chính phủ giai đoạn 2022–2024 .\nXếp hạng học thuật:\nTheo AD Scientific Index (2025): xếp #240 tại Hàn Quốc, #10.113 châu Á, 18.687 thế giới",
+    "conditions": [
+      "Dưới 24 tuổi",
+      "Có học bạ cấp 3 ( GPA 5.0 )",
+      "Có bằng tốt nghiệp cấp 3",
+      "Số buổi nghỉ không quá 30 buổi",
+      "Trượt Visa các hệ D4-1, D2-1, D2-2, D2-3, E9",
+      "Không phân biệt vùng miền",
+      "Có sức khỏe tốt không mắc các bệnh truyền nhiễm"
+    ],
+    "majors": [
+      "Chăm sóc sắc đẹp - BEAUTY CARE",
+      "Quản lý du lịch y tế - MEDICAL TOURISM MANAGEMENT"
+    ],
+    "conversion": [
+      "Học D2-6 trong vòng 6 tháng",
+      "Sau 6 tháng chuyển tiếp lên chuyên ngành D2-1 và học tiếp trong vòng 2 năm",
+      "Điều kiện để tốt nghiệp > Có chứng chỉ Topik 3",
+      "Số buổi nghỉ quá 4 buổi (không xin phép) sẽ không được chuyển đổi lên chuyên ngành"
+    ],
+    "tuition": "1. Ngành : QUẢN TRỊ DỊCH VỤ DU LỊCH Y TẾ : \nĐi theo diện D2-6 được nhận học bổng của trường giảm 50% ngay kỳ đầu tiên \nHọc phí dự kiến: 1.594.300KRW/6 tháng ( Tiếng + Chuyên Ngành ) đã giảm 50%",
+    "insurance": "",
+    "ktx": "",
+    "schedule": "",
+    "advantages": [
+      "Không yêu cầu chứng chỉ tiếng khi tham gia chương trình trao đổi sinh viên của trường Osan.",
+      "Không đóng băng tài chính ( Không mở sổ Kstudy ).",
+      "Không Phỏng Vấn ĐSQ.",
+      "Tỷ lệ đỗ gần như tuyệt đối nếu có chứng chỉ tiếng Topik 2 hoặc Sejong 2b.",
+      "Học phí rẻ.",
+      "Được đi làm thêm ngay, cam kết hỗ trợ việc làm thêm, lương trung bình 40 triệu/1 tháng, thời gian làm thêm 5h/1 ngày, ngày nghỉ và lễ tết không giới hạn",
+      "Thời gian học trong tuần ít chỉ từ 5 buổi/1 tuần.",
+      "Hỗ trợ chuyển đổi Visa sau khi tốt nghiệp sáng E7.",
+      "Được tạm hoãn nghĩa vụ quân sự."
+    ],
+    "documents": [
+      "- Application đánh máy (In bản đánh máy + ký tên, scan lại bản có chữ ký)\n- Gửi bản word + PDF\n- Tiếng Hàn\n\nHồ sơ gửi sang trường toàn bộ là bản scan:",
+      "Application form (Thư đăng ký nhập học) & thư đồng ý thu thập thông tin cá nhân - Theo mẫu của trường",
+      "Giấy chứng nhận sinh viên (dịch công chứng)",
+      "Bảng điểm tại trường Cao đẳng (dịch công chứng)",
+      "Chứng chỉ ngoại ngữ (TOPIK ko bắt buộc) (nếu có TOPIK 2 hoặc SEJONG 2B trở lên thì nộp)",
+      "Bản sao hộ chiếu của học sinh và bố mẹ",
+      "Bản sao CCCD của học sinh và bố mẹ (dịch công chứng)",
+      "Giấy khai sinh ( Dịch công chứng )",
+      "CT07 (giấy chứng minh quan hệ gia đình) ( Dịch Công chứng )",
+      "Giấy chứng minh tài chính (Chứng minh thu nhập của bố mẹ - Dịch Công chứng)",
+      "Xác nhân số dư tương đương 18 triệu KRW đứng tên học sinh  (bản sao sổ tiết kiệm và giấy xác nhận số dư) Trong vòng 1 tháng trước khi nộp hồ sơ",
+      "Nền trắng, ảnh hộ chiếu ( 3 ảnh 3,5*4,5)\n\nLưu ý sổ nộp ĐSQ/LSQ: \n- Tham gia chương trình không yêu cầu sổ lùi, nhưng an toàn hơn thì mở trước 1 tháng - Số tiền CMTC khi nộp hồ sơ xin Visa là 250 triệu/300 triệu.\n- Tem tím có 4 tím tem + Mỗi loại 2 = Tổng 8 tem bắt buộc ( 1 bản nộp ĐSQ + 1 bản sau này mang sang trường Hàn )\n- KHÔNG MỞ SỔ CMTC TẠI NGÂN HÀNG BẮC Á và NGÂN HÀNG CHÍNH SÁCH XÃ HỘI"
+    ],
+    "documentsNote": "",
+    "partners": [
+      {
+        "code": "HN",
+        "name": "Cao đẳng Hà Nội",
+        "nameKr": "Cao đẳng Hà Nội"
+      },
+      {
+        "code": "HNC",
+        "name": "Cao đẳng Hữu Nghị",
+        "nameKr": "Cao đẳng Hữu Nghị"
+      },
+      {
+        "code": "HCCT",
+        "name": "Cao đẳng Thương mại và Du lịch Hà Nội",
+        "nameKr": "Cao đẳng Thương mại và Du lịch Hà Nội"
+      },
+      {
+        "code": "VTV",
+        "name": "Cao đẳng Truyền hình Việt Nam",
+        "nameKr": "Cao đẳng Truyền hình Việt Nam"
+      },
+      {
+        "code": "BGIT",
+        "name": "Cao đẳng Công nghiệp Bắc Giang",
+        "nameKr": "Cao đẳng Công nghiệp Bắc Giang"
+      },
+      {
+        "code": "HPC-HP",
+        "name": "Cao đẳng Y tế Hải Phòng",
+        "nameKr": "Cao đẳng Y tế Hải Phòng"
+      },
+      {
+        "code": "PMDT",
+        "name": "Cao đẳng Công nghệ Y Dược Việt Nam",
+        "nameKr": "Cao đẳng Công nghệ Y Dược Việt Nam"
+      },
+      {
+        "code": "TWU",
+        "name": "Đại học Trưng Vương",
+        "nameKr": "Đại học Trưng Vương"
+      },
+      {
+        "code": "UTM",
+        "name": "ĐH Quản lý và Kinh doanh Hữu Nghị",
+        "nameKr": "ĐH Quản lý và Kinh doanh Hữu Nghị"
+      },
+      {
+        "code": "KTTT",
+        "name": "Cao đẳng Kinh tế Kỹ thuật Thương mại",
+        "nameKr": "Cao đẳng Kinh tế Kỹ thuật Thương mại"
+      },
+      {
+        "code": "SGT",
+        "name": "Cao đẳng Công nghệ Sài Gòn",
+        "nameKr": "Cao đẳng Công nghệ Sài Gòn"
+      },
+      {
+        "code": "ISPACE",
+        "name": "Cao đẳng Công nghệ i-Space",
+        "nameKr": "Cao đẳng Công nghệ i-Space"
+      },
+      {
+        "code": "DA",
+        "name": "Cao đẳng Đồng An",
+        "nameKr": "Cao đẳng Đồng An"
+      },
+      {
+        "code": "SDU",
+        "name": "Đại học Sao Đỏ",
+        "nameKr": "Đại học Sao Đỏ"
+      },
+      {
+        "code": "DH",
+        "name": "Cao đẳng Duyên hải",
+        "nameKr": "Cao đẳng Duyên hải"
+      }
+    ],
+    "mou": "HNC, HPC, HCCT, SGT, BCIT"
+  },
+  "dh-dongeui": {
+    "id": "dh-dongeui",
+    "name": "Dong-Eui",
+    "nameKr": "동의대학교 | Tỷ lệ đỗ cực cao - Việc làm thêm nhiều - Tỷ lệ chuyển đổi E7 tốt - Học khá nặng",
+    "nameEn": "DongEui Institute Of Technology",
+    "system": "D2-6 > D2-2 (Đại học)",
+    "quota": 200,
+    "images": {
+      "main": "images/placeholder.svg",
+      "catalog": "",
+      "locationMap": "",
+      "invoice": "",
+      "gallery": []
+    },
+    "links": {
+      "website": "",
+      "catalog": "https://drive.google.com/file/d/1OvD9XCX6dLBaIR6IKTdgtnfoT-Op3gU-/view?usp=sharing",
+      "invoice": "https://drive.google.com/file/d/1mo1sCUbmhxxrZlprtSNmh5KibJQYJR8e/view?usp=sharing"
+    },
+    "video": {
+      "url": "https://www.youtube.com/watch?v=xqT-_-3l8Yk",
+      "youtubeId": "xqT-_-3l8Yk",
+      "title": ""
+    },
+    "location": "176 Eomgwang-ro, Gaya 3(sam)-dong, Busanjin-gu, Busan, Hàn Quốc",
+    "intro": "Tên tiếng Hàn: 동의대학교\nTên tiếng Anh: Dong-Eui University\nNăm thành lập: 1977\nLoại hình: Đại học tư thục hệ 4 năm\nĐịa điểm: Thành phố Busan, Hàn Quốc\nCơ sở:\nGaya Campus: 176 Eomgwangno, Busanjin-gu, Busan\nYangjeong Campus: 100 Jinri 1-ro, Busanjin-gu, Busan\nWebsite: deu.ac.kr\nTrường nằm tại trung tâm \nthành phố Busan\n\nCách biển Gwabggalli và Haeundae khoảng 30 phút đi tầu điện ngầm\n\nGần sân bay quốc tế Gimhae - chỉ mất 40 phút di chuyển",
+    "conditions": [
+      "Dưới 22 tuổi",
+      "Có học bạ cấp 3 ( GPA 5.0 )",
+      "Có bằng tốt nghiệp cấp 3",
+      "Số buổi nghỉ không quá 30 buổi",
+      "Trượt Visa các hệ D4-1, D2-1, D2-2, D2-3, E9",
+      "Không phân biệt vùng miền",
+      "Có sức khỏe tốt không mắc các bệnh truyền nhiễm",
+      "Có chứng chỉ Topik 2 hoặc Sejong2b ( Fastgo có hỗ trợ Sejong2b)"
+    ],
+    "majors": [
+      "Kỹ thuật cơ khí - MECHANICAL ENGINEERING",
+      "Quản lý du lịch quốc tế - INTERNATIONAL TOURISM MANAGEMENT",
+      "Quản trị kinh doanh - BUSINESS ADMINISTRATION",
+      "Kỹ thuật ô tô - AUTOMOTIVE ENGINEERING"
+    ],
+    "conversion": [
+      "Học D2-6 trong vòng 1 năm.",
+      "Sau 1 năm chuyển tiếp lên chuyên ngành D2-2 và học tiếp trong vòng 4 năm",
+      "Điều kiện để tốt nghiệp > Có chứng chỉ Topik 4",
+      "Số buổi nghỉ quá 4 buổi (không xin phép) sẽ không được chuyển đổi lên chuyên ngành"
+    ],
+    "tuition": "Với D2-6 học phí năm đầu tiên : 1.800.000 KRW/1 năm ( Học bổng 100% kỳ đầu tiên )\n\nTất cả học kỳ học phí khi lên chuyên ngành giao động 1.800.000 krw > 3.000.000 Krw/1 kỳ tùy khoa đăng ký theo học",
+    "insurance": "",
+    "ktx": "KTX chỉ từ 150.000 KRW/1 tháng\n\nTặng kèm 100 xuất ăn miễn phí - Có thể nhiều hơn - Mỗi xuất giá 5000 won",
+    "schedule": "",
+    "advantages": [
+      "Nhận ngay học bổng toàn 100% kỳ đầu tiên khi đăng ký tham gia chương trình trị giá 1.800.000 krw.",
+      "Không đóng băng tài chính",
+      "Cam kết tỉ lệ visa cực cao",
+      "Linh động chọn ngành học khi lên D2-2",
+      "Nhiều việc làm, thu nhập làm thêm lên tới 40 triệu đồng/ tháng",
+      "Lên D22 cần Topik 3/Hoặc hoàn thành 100h tiếng Hàn",
+      "Được tạm hoãn nghĩa vụ quân sự"
+    ],
+    "documents": [
+      "- Application đánh máy (In bản đánh máy + ký tên, scan lại bản có chữ ký)\n- Gửi bản word + PDF\n- Làm tiếng anh\n\nHồ sơ gửi trường sau PV bản cứng:",
+      "Đơn đăng ký chương trình sinh viên trao đổi",
+      "Giấy xác nhận sinh viên của trường đại học hoặc cao đẳng đang theo học  (Dịch Công chứng)",
+      "Bảng điểm học tập chính thức ( Dịch Công chứng )",
+      "Giấy khám lao phổi ( 2 bản: 1 bản nộp trường + 1 bản nộp ĐSQ xin Visa ) \n(Có thể yêu cầu thêm kiểm tra sức khỏe nếu ở ký túc xá)",
+      "Bản sao hộ chiếu ( Dịch Công chứng )",
+      "Phiếu thông tin về trình độ tiếng Hàn ( Chứng chỉ TOPIK hoặc SEJONG nếu có )",
+      "Thư giới thiệu của Hiệu trưởng trường Đại học/Cao đẳng học sinh theo học - Fastgo cung cấp ( Dịch Công chứng )",
+      "03 ảnh thẻ cỡ 3x4 (mặt chính diện)",
+      "Xác nhân số dư sổ tiết kiệm sổ 17.000.000 KRW đứng tên học sinh\n\nSổ chứng minh tài chính khi nộp xin Visa ( Sổ gốc )\n- Mở sổ tài khoản 250 triệu.\n- Thời hạn sổ 1 năm\n- Đứng tên học sinh\n\nLưu ý sổ nộp ĐSQ/LSQ: \n- Tham gia chương trình không yêu cầu sổ lùi, nhưng an toàn hơn thì mở trước 1 tháng - Số tiền CMTC khi nộp hồ sơ xin Visa là 250 triệu/300 triệu.\n- Tem tím có 4 tím tem + Mỗi loại 2 = Tổng 8 tem bắt buộc ( 1 bản nộp ĐSQ + 1 bản sau này mang sang trường Hàn ).\n- KHÔNG MỞ SỔ CMTC TẠI NGÂN HÀNG BẮC Á VÀ NGÂN HÀNG CHÍNH SÁCH XÃ HỘI"
+    ],
+    "documentsNote": "",
+    "partners": [
+      {
+        "code": "HN",
+        "name": "Cao đẳng Hà Nội",
+        "nameKr": "Cao đẳng Hà Nội"
+      },
+      {
+        "code": "HNC",
+        "name": "Cao đẳng Hữu Nghị",
+        "nameKr": "Cao đẳng Hữu Nghị"
+      },
+      {
+        "code": "HCCT",
+        "name": "Cao đẳng Thương mại và Du lịch Hà Nội",
+        "nameKr": "Cao đẳng Thương mại và Du lịch Hà Nội"
+      },
+      {
+        "code": "VTV",
+        "name": "Cao đẳng Truyền hình Việt Nam",
+        "nameKr": "Cao đẳng Truyền hình Việt Nam"
+      },
+      {
+        "code": "BGIT",
+        "name": "Cao đẳng Công nghiệp Bắc Giang",
+        "nameKr": "Cao đẳng Công nghiệp Bắc Giang"
+      },
+      {
+        "code": "HPC-HP",
+        "name": "Cao đẳng Y tế Hải Phòng",
+        "nameKr": "Cao đẳng Y tế Hải Phòng"
+      },
+      {
+        "code": "PMDT",
+        "name": "Cao đẳng Công nghệ Y Dược Việt Nam",
+        "nameKr": "Cao đẳng Công nghệ Y Dược Việt Nam"
+      },
+      {
+        "code": "TWU",
+        "name": "Đại học Trưng Vương",
+        "nameKr": "Đại học Trưng Vương"
+      },
+      {
+        "code": "UTM",
+        "name": "ĐH Quản lý và Kinh doanh Hữu Nghị",
+        "nameKr": "ĐH Quản lý và Kinh doanh Hữu Nghị"
+      },
+      {
+        "code": "KTTT",
+        "name": "Cao đẳng Kinh tế Kỹ thuật Thương mại",
+        "nameKr": "Cao đẳng Kinh tế Kỹ thuật Thương mại"
+      },
+      {
+        "code": "SGT",
+        "name": "Cao đẳng Công nghệ Sài Gòn",
+        "nameKr": "Cao đẳng Công nghệ Sài Gòn"
+      },
+      {
+        "code": "ISPACE",
+        "name": "Cao đẳng Công nghệ i-Space",
+        "nameKr": "Cao đẳng Công nghệ i-Space"
+      },
+      {
+        "code": "DA",
+        "name": "Cao đẳng Đồng An",
+        "nameKr": "Cao đẳng Đồng An"
+      },
+      {
+        "code": "SDU",
+        "name": "Đại học Sao Đỏ",
+        "nameKr": "Đại học Sao Đỏ"
+      },
+      {
+        "code": "DH",
+        "name": "Cao đẳng Duyên hải",
+        "nameKr": "Cao đẳng Duyên hải"
       }
     ],
     "mou": "HN, HNC, HCCT, VTV, HPC-HP, PMDT, UTM, SGT, SDU"
@@ -927,12 +1103,12 @@ const SCHOOLS_DATA = {
       "invoice": "https://drive.google.com/file/d/1qcyCKMkHSUhwHmKkycw2qEiyHZf_-mhA/view?usp=sharing"
     },
     "video": {
-      "url": "",
-      "youtubeId": "",
+      "url": "https://www.youtube.com/watch?v=DnVeaZaVpHA",
+      "youtubeId": "DnVeaZaVpHA",
       "title": ""
     },
     "location": "17 Jeildaehak-gil, Deogwol-dong, Suncheon-si, Jeollanam-do, 57997, Hàn Quốc",
-    "intro": "",
+    "intro": "- Tên tiếng Hàn: 순천제일　\n- Tên tiếng Anh: Suncheon Jeil College\n\nThành lập: Năm 1978–1979 (ban đầu là Cao đẳng Kỹ thuật), đổi tên thành Suncheon Jeil College từ năm 1998–2012 \nstudyinkorea.go.kr\n\nLoại hình: Tư thục, cao đẳng chuyên đào tạo nghề.\n\nQuy mô: Hơn 4.000 sinh viên; hơn 200 giảng viên\n\nHệ Cao đẳng\nCó nhiều khoa: Kỹ thuật (xây dựng, điện tử, ô tô…), Khoa học tự nhiên, Y tế & Phúc lợi, Nghệ thuật & Dịch vụ…",
     "conditions": [
       "Dưới 24 tuổi",
       "Có học bạ cấp 3 ( GPA 5.0 )",
@@ -942,20 +1118,47 @@ const SCHOOLS_DATA = {
       "Không phân biệt vùng miền",
       "Có sức khỏe tốt không mắc các bệnh truyền nhiễm"
     ],
-    "majors": [],
+    "majors": [
+      "Khoa pha chế cà phê và khoa học ẩm thực - DEPARTMENT OF COFFEE BARISTA AND CULINARY SCIENCE",
+      "Đa phương tiện - MULTI MEDIA",
+      "Công nghệ – Công nghiệp         - TECHNOLOGY – INDUSTRY",
+      "Kỹ thuật cơ khí & ô tô - MECHANICAL & AUTOMOTIVE ENGINEERING"
+    ],
     "conversion": [
-      "6 trong vòng 6 tháng",
-      "Sau 6 tháng chuyển tiếp lên chuyên ngành D2",
-      "1 và học tiếp trong vòng 2 năm",
+      "Học D2-6 trong vòng 6 tháng",
+      "Sau 6 tháng chuyển tiếp lên chuyên ngành D2-1 và học tiếp trong vòng 2 năm",
       "Điều kiện để tốt nghiệp > Có chứng chỉ Topik 3",
       "Số buổi nghỉ quá 4 buổi (không xin phép) sẽ không được chuyển đổi lên chuyên ngành"
     ],
-    "tuition": "",
+    "tuition": "Đi theo diện D2-6 được nhận học bổng của trường giảm 50% trong suốt quá trình học cho đến khi tốt nghiệp\n\nHọc phí dự kiến 1.600.000 KRW/6 tháng ( Tiếng + Chuyên Ngành ) đã giảm 50%\n\n1 Tuần chỉ phải học 1 đến 3 buổi tùy thời điểm, mỗi buổi chỉ 1 buổi sáng hoặc 1 buổi chiều, mỗi buổi 1 đến 2 tiếng\n\nLưu ý: Khi nhập cảnh sang trường - Học sinh phải đóng 800.000 won phí đăng ký cho trường bằng tiền mặt",
     "insurance": "",
     "ktx": "- Dự kiến : 1.000.000 KRW/5 tháng\n- Sẽ có Invoice sau khi đỗ phỏng vấn trường",
     "schedule": "",
-    "advantages": [],
-    "documents": [],
+    "advantages": [
+      "Không yêu cầu chứng chỉ tiếng khi tham gia chương trình trao đổi sinh viên của trường Suncheon Jeil.",
+      "Không đóng băng tài chính ( Không mở sổ Kstudy ).",
+      "Không Phỏng Vấn ĐSQ.",
+      "Tỷ lệ đỗ gần như tuyệt đối nếu có chứng chỉ tiếng Topik 2 hoặc Sejong 2b.",
+      "Học phí rẻ.",
+      "Được đi làm thêm ngay, cam kết hỗ trợ việc làm thêm, lương trung bình 40 triệu/1 tháng, thời gian làm thêm 5h/1 ngày, ngày nghỉ và lễ tết không giới hạn",
+      "Thời gian học trong tuần ít chỉ từ 3 buổi/1 tuần.",
+      "Hỗ trợ chuyển đổi Visa sau khi tốt nghiệp sáng E7.",
+      "Được tạm hoãn nghĩa vụ quân sự."
+    ],
+    "documents": [
+      "- Application viết tay\n- Tiếng Hàn \n\nHồ sơ gửi sang trường toàn bộ là bản Scan:",
+      "Bản sao hộ chiếu và 03 ảnh 3.5 * 4.5 ( ảnh nền trắng)",
+      "Bằng tốt nghiệp THPT ( Dịch công chứng )",
+      "Giấy chứng nhận sinh viên ( Dịch công chứng )",
+      "Bảng điểm tại trường Cao Đẳng ( Dịch Công chứng )",
+      "Giấy chứng minh tài chính 6 tháng gần nhất ( Bản khai thu nhập, CM thu nhập, giấy đăng ký kinh doanh ...)\n- Cần bản khai thu nhập và giấy chứng minh thu nhập của bố mẹ\n- Tài liệu bao gồm: nghề nghiệp, thu nhập, địa chỉ nơi làm việc, số điện thoại, chức vụ, v.v.\n- Đối với chủ hộ kinh doanh: giấy đăng ký kinh doanh, báo cáo thuế, v.v.\n- Phải nộp ảnh chụp thực tế nơi làm việc (xưởng sản xuất, cửa hàng, v.v.)\"",
+      "Giâý xác nhận số dư tài khoản ngân hàng 6 tháng 16.000.000 KRW trở lên \n-  Sao kê ngân hàng 3>6 tháng gần nhất \n- Có thể sử dụng tài khoản của học sinh hoặc bố mẹ\n- Phải được phát hành trong vòng 30 ngày gần nhất và có xác nhận từ ngân hàng",
+      "CT07 chứng nhận quan hệ gia đình ( Dịch công chứng )",
+      "Bản sao CCCD bô/mẹ ( Dịch công chứng )",
+      "Giấy khai sinh học sinh ( Dịch công chứng )",
+      "Application form ( Viết tay )",
+      "Chứng chỉ ngoại ngữ nếu có ( TOPIK 2 hoặc SEJONG 2B trở lên )\n\nLưu ý sổ nộp ĐSQ: \n- Tham gia chương trình không yêu cầu sổ lùi, nhưng an toàn hơn thì mở trước 1 tháng - Số tiền CMTC khi nộp hồ sơ xin Visa là 250 triệu/300 triệu.\n- KHÔNG MỞ SỔ CMTC TẠI NGÂN HÀNG BẮC Á và NGÂN HÀNG CHÍNH SÁCH XÃ HỘI"
+    ],
     "documentsNote": "",
     "partners": [
       {
@@ -970,68 +1173,68 @@ const SCHOOLS_DATA = {
       },
       {
         "code": "HCCT",
-        "name": "Cao đẳng Thương mại và Du lịch HN",
-        "nameKr": ""
+        "name": "Cao đẳng Thương mại và Du lịch Hà Nội",
+        "nameKr": "Cao đẳng Thương mại và Du lịch Hà Nội"
       },
       {
         "code": "VTV",
         "name": "Cao đẳng Truyền hình Việt Nam",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Truyền hình Việt Nam"
       },
       {
         "code": "BGIT",
         "name": "Cao đẳng Công nghiệp Bắc Giang",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghiệp Bắc Giang"
       },
       {
         "code": "HPC-HP",
         "name": "Cao đẳng Y tế Hải Phòng",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Y tế Hải Phòng"
       },
       {
         "code": "PMDT",
         "name": "Cao đẳng Công nghệ Y Dược Việt Nam",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghệ Y Dược Việt Nam"
       },
       {
         "code": "TWU",
         "name": "Đại học Trưng Vương",
-        "nameKr": ""
+        "nameKr": "Đại học Trưng Vương"
       },
       {
         "code": "UTM",
         "name": "ĐH Quản lý và Kinh doanh Hữu Nghị",
-        "nameKr": ""
+        "nameKr": "ĐH Quản lý và Kinh doanh Hữu Nghị"
       },
       {
         "code": "KTTT",
         "name": "Cao đẳng Kinh tế Kỹ thuật Thương mại",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Kinh tế Kỹ thuật Thương mại"
       },
       {
         "code": "SGT",
         "name": "Cao đẳng Công nghệ Sài Gòn",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghệ Sài Gòn"
       },
       {
         "code": "ISPACE",
         "name": "Cao đẳng Công nghệ i-Space",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghệ i-Space"
       },
       {
         "code": "DA",
         "name": "Cao đẳng Đồng An",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Đồng An"
       },
       {
         "code": "SDU",
         "name": "Đại học Sao Đỏ",
-        "nameKr": ""
+        "nameKr": "Đại học Sao Đỏ"
       },
       {
         "code": "DH",
         "name": "Cao đẳng Duyên hải",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Duyên hải"
       }
     ],
     "mou": "HN, HNC, HCCT, VTV, HPC-HP, SGT, DH"
@@ -1060,7 +1263,7 @@ const SCHOOLS_DATA = {
       "title": ""
     },
     "location": "Địa chỉ: 516 đường Jinman , Phường Yangjeong, quận Busanjin, Busan, Hàn Quốc\n\nTọa lạc tại vị trí chiến lược giáp Seomyeon, trung tâm Busan thành phố lớn thứ 2 tại Hàn Quốc ( dưới 10 phút di chuyển)",
-    "intro": "",
+    "intro": "- Tên tiếng Hàn: 부산여자대학교\n- Tên tiếng Anh: Busan Women's College \n\nThành lập: năm 1969 Trường Nữ Sinh Busan Hàn Quốc được thành lập với tên gọi đầu tiên là Trường Trung học Nữ Busan.\nNăm 2012 trường được đổi tên thành Cao Đẳng Nữ Sinh Busan.\n\nLoại hình:  tư thục\nQuy mô: ~2877 sinh viên\nGiáo sư  và cán bộ nhân viên: 290 giáo sư \n\nWebsite: https: http://www.bwc.ac.kr\n \nTrong suốt quá trình gần 60 năm hình thành và phát triển, trường đã mở rộng các chương trình đào tạo bao gồm các ngành như giáo dục mần non, du lịch, khách sạn, y tế và phúc lợi xã hội. \n\n. Xếp thứ hạng 171/193 TOP trường Đại học / Cao đẳng Hàn Quốc.\n. Xếp hạng 9676/14131 trường Đại học/ Cao đẳng trên toàn thế giới.\nSố lượng sinh viên đang theo học ~ 3.000 sinh viên.\n\nTừ năm 2011~ 2012 trường được Bộ Giáo Dục, khoa học công nghệ Hàn Quốc bình chọn tham gia thí điểm Dự Án Tăng Cường Năng Lực Giáo Dục Cao Đẳng.\n\nTrung tâm Hỗ trợ việc làm và khởi nghiệp tại trường cung cấp nhiều thông tin bổ ích về nghề nghiệp , việc làm và thông tin khởi nghiệp cho sinh viên.\nNăm 2021, Viện Đánh Giá Và Chứng Nhận Đào Tạo Nghề chứng nhậ Cao Đẳng Nữ Busan là Cao Đẳng có chất lượng đào tạo nghề Cao Cấp.\n\n. Thông qua Trung tâm Tư Vấn Đời Sống Sinh Viên, nhà trường tổ chức các buổi tư vấn tâm lý giúp sinh viên giải quyết nhanh chóng các vấn đề và mối quan tâm của mình.",
     "conditions": [
       "Dưới 24 tuổi",
       "Có học bạ cấp 3 ( GPA 5.0 )",
@@ -1072,18 +1275,43 @@ const SCHOOLS_DATA = {
     ],
     "majors": [],
     "conversion": [
-      "6 trong vòng 6 tháng > Thi topik trường nếu chưa có chứng chỉ tiếng Topik2",
-      "Sau 6 tháng chuyển tiếp lên chuyên ngành D2",
-      "1 và học tiếp trong vòng 2 năm",
+      "Học D2-6 trong vòng 6 tháng > Thi topik trường nếu chưa có chứng chỉ tiếng Topik2",
+      "Sau 6 tháng chuyển tiếp lên chuyên ngành D2-1 và học tiếp trong vòng 2 năm",
       "Điều kiện để tốt nghiệp > Có chứng chỉ Topik 3",
       "Số buổi nghỉ quá 4 buổi (không xin phép) sẽ không được chuyển đổi lên chuyên ngành"
     ],
-    "tuition": "",
+    "tuition": "Đi theo diện D2-6 được nhận học bổng của trường giảm 50% ngay kỳ đầu tiên \nHọc phí dự kiến 1.618.000 KRW/6 tháng ( Tiếng + Chuyên Ngành ) đã giảm 50%\nTiền bảo hiểm: 80,000 KRW\n\n1 Tuần chỉ phải học 1 đến 3 buổi tùy thời điểm, mỗi buổi chỉ 1 buổi sáng hoặc 1 buổi chiều, mỗi buổi 3 đến 4 tiếng",
     "insurance": "",
     "ktx": "720,000 KRW/6 tháng",
     "schedule": "",
-    "advantages": [],
-    "documents": [],
+    "advantages": [
+      "Không yêu cầu chứng chỉ tiếng khi tham gia chương trình trao đổi sinh viên của trường Yeonsung.",
+      "Không đóng băng tài chính ( Không mở sổ Kstudy ).",
+      "Không Phỏng Vấn ĐSQ.",
+      "Tỷ lệ đỗ gần như tuyệt đối nếu có chứng chỉ tiếng Topik 2 hoặc Sejong 2b.",
+      "Học phí rẻ.",
+      "Được đi làm thêm ngay, cam kết hỗ trợ việc làm thêm, lương trung bình 40 triệu/1 tháng, thời gian làm thêm 5h/1 ngày, ngày nghỉ và lễ tết không giới hạn",
+      "Thời gian học trong tuần ít chỉ từ 3 buổi/1 tuần.",
+      "Hỗ trợ chuyển đổi Visa sau khi tốt nghiệp sáng E7.",
+      "Được tạm hoãn nghĩa vụ quân sự."
+    ],
+    "documents": [
+      "- Application đánh máy (In bản đánh máy + ký tên, scan lại bản có chữ ký)\n- Gửi bản word + PDF\n- Tiếng Hàn\n\nHồ sơ gửi sang trường bản scan:",
+      "Application form (Thư đăng ký nhập học) - Theo mẫu (số 1)",
+      "Giới thiệu bản thân và kế hoạch du học -        - Theo mẫu (số 2)",
+      "Giấy bảo lãnh chi phí du học- Theo mẫu (số 3)",
+      "Thư tiến cử (bản gốc) do hiệu trưởng của Trường cao đẳng cấp ( Dịch Công chứng )",
+      "Giấy xác nhận sinh viên ( Dịch Công chứng / không cần tem tím khi nộp trường/ )",
+      "Bảng điểm cao đẳng ( Dịch Công chứng/  không cần tem tím khi nộp trường )",
+      "Bản sao hộ chiếu của học sinh/ bố mẹ",
+      "Bản sao CCCD/hộ chiếu của bố mẹ",
+      "Giấy khai sinh ( Dịch Công chứng )",
+      "Sổ hộ khẩu (giấy chứng minh quan hệ gia đình) CT07 ( Dịch công chứng)",
+      "Giấy xác nhận số dư tài khoản trên 13 triệu won (Giấy chứng nhận số dư phát hành trong vòng 1 tháng trước khi nộp hồ sơ).",
+      "Giấy xác nhận đang công tác hoặc chứng minh được thu nhập của bố mẹ",
+      "ảnh hộ chiếu nền trắng 3 st ( 3,5*4,5)",
+      "Giấy khám sức khoẻ lao phổi song ngữ ( 2 Bản : 1 Bản nộp trưởng + 1 Bản nộp ĐSQ khi xin visa ) \n\n\nLưu ý sổ nộp ĐSQ/LSQ: \n- Tham gia chương trình không yêu cầu sổ lùi, nhưng an toàn hơn thì mở trước 1 tháng - Số tiền CMTC khi nộp hồ sơ xin Visa là 250 triệu/300 triệu.\n- Tem tím có 4 tím tem + Mỗi loại 2 = Tổng 8 tem bắt buộc ( 1 bản nộp ĐSQ + 1 bản sau này mang sang trường Hàn )\n- KHÔNG MỞ SỔ CMTC TẠI NGÂN HÀNG BẮC Á và NGÂN HÀNG CHÍNH SÁCH XÃ HỘI"
+    ],
     "documentsNote": "Invoice Busan Women College",
     "partners": [
       {
@@ -1104,62 +1332,62 @@ const SCHOOLS_DATA = {
       {
         "code": "VTV",
         "name": "Cao đẳng Truyền hình Việt Nam",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Truyền hình Việt Nam"
       },
       {
         "code": "BGIT",
         "name": "Cao đẳng Công nghiệp Bắc Giang",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghiệp Bắc Giang"
       },
       {
         "code": "HPC-HP",
         "name": "Cao đẳng Y tế Hải Phòng",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Y tế Hải Phòng"
       },
       {
         "code": "PMDT",
         "name": "Cao đẳng Công nghệ Y Dược Việt Nam",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghệ Y Dược Việt Nam"
       },
       {
         "code": "TWU",
         "name": "Đại học Trưng Vương",
-        "nameKr": ""
+        "nameKr": "Đại học Trưng Vương"
       },
       {
         "code": "UTM",
         "name": "ĐH Quản lý và Kinh doanh Hữu Nghị",
-        "nameKr": ""
+        "nameKr": "ĐH Quản lý và Kinh doanh Hữu Nghị"
       },
       {
         "code": "KTTT",
         "name": "Cao đẳng Kinh tế Kỹ thuật Thương mại",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Kinh tế Kỹ thuật Thương mại"
       },
       {
         "code": "SGT",
         "name": "Cao đẳng Công nghệ Sài Gòn",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghệ Sài Gòn"
       },
       {
         "code": "ISPACE",
         "name": "Cao đẳng Công nghệ i-Space",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghệ i-Space"
       },
       {
         "code": "DA",
         "name": "Cao đẳng Đồng An",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Đồng An"
       },
       {
         "code": "SDU",
         "name": "Đại học Sao Đỏ",
-        "nameKr": ""
+        "nameKr": "Đại học Sao Đỏ"
       },
       {
         "code": "DH",
         "name": "Cao đẳng Duyên hải",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Duyên hải"
       }
     ],
     "mou": "HN, HCCT, VTV, UTM, SGT, DH"
@@ -1188,7 +1416,7 @@ const SCHOOLS_DATA = {
       "title": ""
     },
     "location": "57 Oesolsun-ro 303beon-gil, Geumjeong-gu, Busan 46252, Hàn Quốc\nNằm tại quận Geumjeong, thành phố Busan - gần núi Geumjeongsan, cách trung tâm Busan 20 phút tàu điện",
-    "intro": "",
+    "intro": "- Tên tiếng Hàn: 부산가톨릭대학교\n- Tên tiếng Anh: Catholic University of Busan\n- Năm thành lập: 1964\n- Loại hình: Đại học tư thục Công giáo\n- Quy mô: ~5.000 sinh viên\n- Website: www.cup.ac.kr\n\nĐại học Công giáo Busan là trường đại học tư thục được thành lập bởi Giáo phận Công giáo Busan. Trường nổi tiếng với các ngành Khoa học Y tế, Điều dưỡng, Xã hội học và Công nghệ thông tin. Môi trường học tập kỷ luật, yên tĩnh, hỗ trợ sinh viên quốc tế tốt.\n\nTrường có tỷ lệ việc làm sau tốt nghiệp cao, đặc biệt trong lĩnh vực y tế và phúc lợi xã hội tại khu vực Busan.",
     "conditions": [
       "Dưới 24 tuổi",
       "Có học bạ cấp 3 (GPA 5.0)",
@@ -1198,20 +1426,46 @@ const SCHOOLS_DATA = {
       "Không phân biệt vùng miền",
       "Có sức khỏe tốt không mắc các bệnh truyền nhiễm"
     ],
-    "majors": [],
+    "majors": [
+      "Quản trị kinh doanh - BUSINESS ADMINISTRATION",
+      "Phúc lợi xã hội - SOCIAL WELFARE",
+      "Công nghệ thông tin - INFORMATION TECHNOLOGY"
+    ],
     "conversion": [
-      "6 trong vòng 6 tháng",
-      "Sau 6 tháng chuyển tiếp lên chuyên ngành D2",
-      "1 và học tiếp trong vòng 2 năm",
+      "Học D2-6 trong vòng 6 tháng",
+      "Sau 6 tháng chuyển tiếp lên chuyên ngành D2-1 và học tiếp trong vòng 2 năm",
       "Điều kiện để tốt nghiệp > Có chứng chỉ Topik 3",
       "Số buổi nghỉ quá 4 buổi (không xin phép) sẽ không được chuyển đổi lên chuyên ngành"
     ],
-    "tuition": "",
+    "tuition": "Đi theo diện D2-6 được nhận học bổng của trường giảm 50% ngay kỳ đầu tiên\nHọc phí dự kiến: 1.550.000 KRW/6 tháng (đã giảm 50%)",
     "insurance": "",
     "ktx": "KTX trong khuôn viên trường: 250.000 - 350.000 KRW/tháng\n4 người/phòng",
     "schedule": "",
-    "advantages": [],
-    "documents": [],
+    "advantages": [
+      "Không yêu cầu chứng chỉ tiếng khi tham gia chương trình",
+      "Không đóng băng tài chính",
+      "Không Phỏng Vấn ĐSQ",
+      "Tỷ lệ đỗ cao nếu có Topik 2 hoặc Sejong 2b",
+      "Busan - thành phố lớn thứ 2 Hàn Quốc, nhiều cơ hội việc làm",
+      "Được đi làm thêm sau khi có chứng minh thư",
+      "Được tạm hoãn nghĩa vụ quân sự"
+    ],
+    "documents": [
+      "- Application đánh máy (In bản đánh máy + ký tên, scan lại bản có chữ ký)\n- Gửi bản word + PDF\n- Tiếng Hàn\n\nHồ sơ gửi sang trường bản scan:",
+      "Application form - Theo mẫu trường",
+      "Giới thiệu bản thân và kế hoạch du học - Theo mẫu",
+      "Thư tiến cử của Hiệu trưởng (Dịch Công chứng)",
+      "Giấy xác nhận sinh viên (Dịch Công chứng)",
+      "Bảng điểm cao đẳng (Dịch Công chứng)",
+      "Bản sao hộ chiếu",
+      "Bản sao CCCD của học sinh, bố mẹ (Dịch Công chứng)",
+      "Giấy khai sinh (Dịch Công chứng)",
+      "CT07 (Dịch Công chứng)",
+      "Xác nhận số dư 13 triệu KRW đứng tên học sinh",
+      "Chứng chỉ TOPIK (nếu có)",
+      "03 ảnh thẻ 3,5*4,5 nền trắng",
+      "Giấy khám sức khoẻ lao phổi song ngữ\n\nLưu ý sổ nộp ĐSQ/LSQ:\n- Số tiền CMTC khi nộp hồ sơ xin Visa là 250-300 triệu\n- KHÔNG MỞ SỔ CMTC TẠI NGÂN HÀNG BẮC Á và NGÂN HÀNG CHÍNH SÁCH XÃ HỘI"
+    ],
     "documentsNote": "Cập nhật sau khi có invoice chính thức từ trường",
     "partners": [
       {
@@ -1232,62 +1486,62 @@ const SCHOOLS_DATA = {
       {
         "code": "VTV",
         "name": "Cao đẳng Truyền hình Việt Nam",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Truyền hình Việt Nam"
       },
       {
         "code": "BGIT",
         "name": "Cao đẳng Công nghiệp Bắc Giang",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghiệp Bắc Giang"
       },
       {
         "code": "HPC-HP",
         "name": "Cao đẳng Y tế Hải Phòng",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Y tế Hải Phòng"
       },
       {
         "code": "PMDT",
         "name": "Cao đẳng Công nghệ Y Dược Việt Nam",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghệ Y Dược Việt Nam"
       },
       {
         "code": "TWU",
         "name": "Đại học Trưng Vương",
-        "nameKr": ""
+        "nameKr": "Đại học Trưng Vương"
       },
       {
         "code": "UTM",
         "name": "ĐH Quản lý và Kinh doanh Hữu Nghị",
-        "nameKr": ""
+        "nameKr": "ĐH Quản lý và Kinh doanh Hữu Nghị"
       },
       {
         "code": "KTTT",
         "name": "Cao đẳng Kinh tế Kỹ thuật Thương mại",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Kinh tế Kỹ thuật Thương mại"
       },
       {
         "code": "SGT",
         "name": "Cao đẳng Công nghệ Sài Gòn",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghệ Sài Gòn"
       },
       {
         "code": "ISPACE",
         "name": "Cao đẳng Công nghệ i-Space",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghệ i-Space"
       },
       {
         "code": "DA",
         "name": "Cao đẳng Đồng An",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Đồng An"
       },
       {
         "code": "SDU",
         "name": "Đại học Sao Đỏ",
-        "nameKr": ""
+        "nameKr": "Đại học Sao Đỏ"
       },
       {
         "code": "DH",
         "name": "Cao đẳng Duyên hải",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Duyên hải"
       }
     ],
     "mou": "HNC, HCCT, BGIT, HPC-HP, PMDT, UTM, KTTT, DA"
@@ -1316,7 +1570,7 @@ const SCHOOLS_DATA = {
       "title": ""
     },
     "location": "112 Hallim-ro, Hallim-myeon, Gimhae-si, Gyeongsangnam-do 50983, Hàn Quốc\nThành phố Gimhae, tỉnh Gyeongnam - cách sân bay quốc tế Gimhae (Busan) khoảng 20 phút, cách trung tâm Busan 40 phút",
-    "intro": "",
+    "intro": "- Tên tiếng Hàn: 김해대학교\n- Tên tiếng Anh: Gimhae College\n- Năm thành lập: 1993\n- Loại hình: Cao đẳng tư thục\n- Quy mô: ~3.500 sinh viên\n- Website: www.gimhae.ac.kr\n\nGimhae College tọa lạc tại thành phố Gimhae, vùng Gyeongnam - khu công nghiệp lớn của miền Nam Hàn Quốc. Trường chuyên đào tạo các ngành kỹ thuật, công nghệ và dịch vụ gắn với nhu cầu thực tế của các khu công nghiệp Gimhae và Busan.\n\nVị trí gần sân bay Gimhae và các khu công nghiệp lớn tạo điều kiện thuận lợi cho sinh viên tìm việc làm thêm và thực tập. Chi phí sinh hoạt tại Gimhae thấp hơn Busan khoảng 20-30%.",
     "conditions": [
       "Dưới 24 tuổi",
       "Có học bạ cấp 3 (GPA 5.0)",
@@ -1326,20 +1580,48 @@ const SCHOOLS_DATA = {
       "Không phân biệt vùng miền",
       "Có sức khỏe tốt không mắc các bệnh truyền nhiễm"
     ],
-    "majors": [],
+    "majors": [
+      "Kỹ thuật cơ khí - MECHANICAL ENGINEERING",
+      "Quản trị kinh doanh - BUSINESS ADMINISTRATION",
+      "Công nghệ ô tô - AUTOMOTIVE TECHNOLOGY",
+      "Điện - điện tử - ELECTRICAL AND ELECTRONICS"
+    ],
     "conversion": [
-      "6 trong vòng 6 tháng",
-      "Sau 6 tháng chuyển tiếp lên chuyên ngành D2",
-      "1 và học tiếp trong vòng 2 năm",
+      "Học D2-6 trong vòng 6 tháng",
+      "Sau 6 tháng chuyển tiếp lên chuyên ngành D2-1 và học tiếp trong vòng 2 năm",
       "Điều kiện để tốt nghiệp > Có chứng chỉ Topik 3",
       "Số buổi nghỉ quá 4 buổi (không xin phép) sẽ không được chuyển đổi lên chuyên ngành"
     ],
-    "tuition": "",
+    "tuition": "Đi theo diện D2-6 được nhận học bổng của trường giảm 50% ngay kỳ đầu tiên\nHọc phí dự kiến: 1.400.000 KRW/6 tháng (đã giảm 50%)",
     "insurance": "",
     "ktx": "KTX trong khuôn viên trường: 200.000 - 300.000 KRW/tháng\n4-6 người/phòng",
     "schedule": "",
-    "advantages": [],
-    "documents": [],
+    "advantages": [
+      "Không yêu cầu chứng chỉ tiếng khi tham gia chương trình",
+      "Không đóng băng tài chính",
+      "Không Phỏng Vấn ĐSQ",
+      "Tỷ lệ đỗ cao nếu có Topik 2 hoặc Sejong 2b",
+      "Gần sân bay Gimhae - thuận tiện di chuyển",
+      "Gần khu công nghiệp lớn - nhiều việc làm thêm",
+      "Chi phí sinh hoạt thấp so với Seoul/Busan",
+      "Được tạm hoãn nghĩa vụ quân sự"
+    ],
+    "documents": [
+      "- Application đánh máy (In bản đánh máy + ký tên, scan lại bản có chữ ký)\n- Gửi bản word + PDF\n- Tiếng Hàn\n\nHồ sơ gửi sang trường bản scan:",
+      "Application form - Theo mẫu trường",
+      "Giới thiệu bản thân và kế hoạch du học",
+      "Thư tiến cử của Hiệu trưởng (Dịch Công chứng)",
+      "Giấy xác nhận sinh viên (Dịch Công chứng)",
+      "Bảng điểm cao đẳng (Dịch Công chứng)",
+      "Bản sao hộ chiếu",
+      "Bản sao CCCD của học sinh, bố mẹ (Dịch Công chứng)",
+      "Giấy khai sinh (Dịch Công chứng)",
+      "CT07 (Dịch Công chứng)",
+      "Xác nhận số dư 13 triệu KRW đứng tên học sinh",
+      "Chứng chỉ TOPIK (nếu có)",
+      "03 ảnh thẻ 3,5*4,5 nền trắng",
+      "Giấy khám sức khoẻ lao phổi song ngữ\n\nLưu ý sổ nộp ĐSQ/LSQ:\n- Số tiền CMTC khi nộp hồ sơ xin Visa là 250-300 triệu\n- KHÔNG MỞ SỔ CMTC TẠI NGÂN HÀNG BẮC Á và NGÂN HÀNG CHÍNH SÁCH XÃ HỘI"
+    ],
     "documentsNote": "Cập nhật sau khi có invoice chính thức từ trường",
     "partners": [
       {
@@ -1360,62 +1642,62 @@ const SCHOOLS_DATA = {
       {
         "code": "VTV",
         "name": "Cao đẳng Truyền hình Việt Nam",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Truyền hình Việt Nam"
       },
       {
         "code": "BGIT",
         "name": "Cao đẳng Công nghiệp Bắc Giang",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghiệp Bắc Giang"
       },
       {
         "code": "HPC-HP",
         "name": "Cao đẳng Y tế Hải Phòng",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Y tế Hải Phòng"
       },
       {
         "code": "PMDT",
         "name": "Cao đẳng Công nghệ Y Dược Việt Nam",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghệ Y Dược Việt Nam"
       },
       {
         "code": "TWU",
         "name": "Đại học Trưng Vương",
-        "nameKr": ""
+        "nameKr": "Đại học Trưng Vương"
       },
       {
         "code": "UTM",
         "name": "ĐH Quản lý và Kinh doanh Hữu Nghị",
-        "nameKr": ""
+        "nameKr": "ĐH Quản lý và Kinh doanh Hữu Nghị"
       },
       {
         "code": "KTTT",
         "name": "Cao đẳng Kinh tế Kỹ thuật Thương mại",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Kinh tế Kỹ thuật Thương mại"
       },
       {
         "code": "SGT",
         "name": "Cao đẳng Công nghệ Sài Gòn",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghệ Sài Gòn"
       },
       {
         "code": "ISPACE",
         "name": "Cao đẳng Công nghệ i-Space",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghệ i-Space"
       },
       {
         "code": "DA",
         "name": "Cao đẳng Đồng An",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Đồng An"
       },
       {
         "code": "SDU",
         "name": "Đại học Sao Đỏ",
-        "nameKr": ""
+        "nameKr": "Đại học Sao Đỏ"
       },
       {
         "code": "DH",
         "name": "Cao đẳng Duyên hải",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Duyên hải"
       }
     ],
     "mou": "HCCT, VTV, BGIT, HPC-HP, PMDT, UTM, ISPACE, DA, SDU"
@@ -1444,7 +1726,7 @@ const SCHOOLS_DATA = {
       "title": ""
     },
     "location": "277 Hyodeok-ro, Nam-gu, Gwangju 61743, Hàn Quốc\nThành phố Gwangju - thành phố lớn thứ 5 Hàn Quốc, thủ phủ vùng Honam (Jeolla)",
-    "intro": "",
+    "intro": "- Tên tiếng Hàn: 광주대학교\n- Tên tiếng Anh: Gwangju University\n- Năm thành lập: 1981\n- Loại hình: Đại học tư thục 4 năm\n- Quy mô: ~8.000 sinh viên\n- Website: www.gwangju.ac.kr\n\nGwangju University là trường đại học tư thục lớn tại thành phố Gwangju, trung tâm văn hóa và giáo dục của vùng Honam. Trường có hơn 40 chuyên ngành thuộc các lĩnh vực kỹ thuật, kinh doanh, y tế, nghệ thuật và khoa học xã hội.\n\nThành phố Gwangju là một trong những đô thị phát triển mạnh về công nghiệp ô tô (Kia Motors) và điện tử (LG), cung cấp nhiều cơ hội việc làm thêm cho sinh viên. Chi phí sinh hoạt thấp hơn Seoul 40-50%.",
     "conditions": [
       "Dưới 24 tuổi",
       "Có học bạ cấp 3 (GPA 5.0)",
@@ -1454,20 +1736,47 @@ const SCHOOLS_DATA = {
       "Không phân biệt vùng miền",
       "Có sức khỏe tốt không mắc các bệnh truyền nhiễm"
     ],
-    "majors": [],
+    "majors": [
+      "Quản trị kinh doanh - BUSINESS ADMINISTRATION",
+      "Công nghệ thông tin - INFORMATION TECHNOLOGY",
+      "Kỹ thuật công nghiệp - INDUSTRIAL ENGINEERING",
+      "Điều dưỡng - NURSING"
+    ],
     "conversion": [
-      "6 trong vòng 1 năm",
-      "Sau 1 năm chuyển tiếp lên chuyên ngành D2",
-      "2 và học tiếp trong vòng 4 năm",
+      "Học D2-6 trong vòng 1 năm",
+      "Sau 1 năm chuyển tiếp lên chuyên ngành D2-2 và học tiếp trong vòng 4 năm",
       "Điều kiện để tốt nghiệp > Có chứng chỉ Topik 4",
       "Số buổi nghỉ quá 4 buổi (không xin phép) sẽ không được chuyển đổi lên chuyên ngành"
     ],
-    "tuition": "",
+    "tuition": "Đi theo diện D2-6 được nhận học bổng của trường giảm 50% ngay kỳ đầu tiên\nHọc phí dự kiến: 1.700.000 - 2.000.000 KRW/kỳ (đã giảm 50%)",
     "insurance": "",
     "ktx": "KTX trong khuôn viên trường: 250.000 - 380.000 KRW/tháng\n4 người/phòng",
     "schedule": "",
-    "advantages": [],
-    "documents": [],
+    "advantages": [
+      "Không yêu cầu chứng chỉ tiếng khi tham gia chương trình",
+      "Không đóng băng tài chính",
+      "Không Phỏng Vấn ĐSQ",
+      "Đại học 4 năm, bằng cấp giá trị cao",
+      "Thành phố Gwangju - chi phí sinh hoạt thấp",
+      "Gần các khu công nghiệp Kia, LG - nhiều việc làm thêm",
+      "Được tạm hoãn nghĩa vụ quân sự"
+    ],
+    "documents": [
+      "- Application đánh máy (In bản đánh máy + ký tên, scan lại bản có chữ ký)\n- Gửi bản word + PDF\n- Tiếng Hàn\n\nHồ sơ gửi sang trường bản scan:",
+      "Application form - Theo mẫu trường",
+      "Giới thiệu bản thân và kế hoạch du học",
+      "Thư tiến cử của Hiệu trưởng (Dịch Công chứng)",
+      "Giấy xác nhận sinh viên (Dịch Công chứng)",
+      "Bảng điểm cao đẳng (Dịch Công chứng)",
+      "Bản sao hộ chiếu",
+      "Bản sao CCCD của học sinh, bố mẹ (Dịch Công chứng)",
+      "Giấy khai sinh (Dịch Công chứng)",
+      "CT07 (Dịch Công chứng)",
+      "Xác nhận số dư 13 triệu KRW đứng tên học sinh",
+      "Chứng chỉ TOPIK (nếu có)",
+      "03 ảnh thẻ 3,5*4,5 nền trắng",
+      "Giấy khám sức khoẻ lao phổi song ngữ\n\nLưu ý sổ nộp ĐSQ/LSQ:\n- Số tiền CMTC khi nộp hồ sơ xin Visa là 250-300 triệu\n- KHÔNG MỞ SỔ CMTC TẠI NGÂN HÀNG BẮC Á và NGÂN HÀNG CHÍNH SÁCH XÃ HỘI"
+    ],
     "documentsNote": "Cập nhật sau khi có invoice chính thức từ trường",
     "partners": [
       {
@@ -1488,62 +1797,62 @@ const SCHOOLS_DATA = {
       {
         "code": "VTV",
         "name": "Cao đẳng Truyền hình Việt Nam",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Truyền hình Việt Nam"
       },
       {
         "code": "BGIT",
         "name": "Cao đẳng Công nghiệp Bắc Giang",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghiệp Bắc Giang"
       },
       {
         "code": "HPC-HP",
         "name": "Cao đẳng Y tế Hải Phòng",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Y tế Hải Phòng"
       },
       {
         "code": "PMDT",
         "name": "Cao đẳng Công nghệ Y Dược Việt Nam",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghệ Y Dược Việt Nam"
       },
       {
         "code": "TWU",
         "name": "Đại học Trưng Vương",
-        "nameKr": ""
+        "nameKr": "Đại học Trưng Vương"
       },
       {
         "code": "UTM",
         "name": "ĐH Quản lý và Kinh doanh Hữu Nghị",
-        "nameKr": ""
+        "nameKr": "ĐH Quản lý và Kinh doanh Hữu Nghị"
       },
       {
         "code": "KTTT",
         "name": "Cao đẳng Kinh tế Kỹ thuật Thương mại",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Kinh tế Kỹ thuật Thương mại"
       },
       {
         "code": "SGT",
         "name": "Cao đẳng Công nghệ Sài Gòn",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghệ Sài Gòn"
       },
       {
         "code": "ISPACE",
         "name": "Cao đẳng Công nghệ i-Space",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghệ i-Space"
       },
       {
         "code": "DA",
         "name": "Cao đẳng Đồng An",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Đồng An"
       },
       {
         "code": "SDU",
         "name": "Đại học Sao Đỏ",
-        "nameKr": ""
+        "nameKr": "Đại học Sao Đỏ"
       },
       {
         "code": "DH",
         "name": "Cao đẳng Duyên hải",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Duyên hải"
       }
     ],
     "mou": "HN, HCCT, VTV, BGIT, UTM, KTTT, SGT"
@@ -1572,7 +1881,7 @@ const SCHOOLS_DATA = {
       "title": ""
     },
     "location": "23 Cheomdanmunhwa-ro, Gwangsan-gu, Gwangju 62271, Hàn Quốc\nNằm tại quận Gwangsan, thành phố Gwangju - gần sân bay quốc tế Gwangju, khu công nghệ cao Gwangju",
-    "intro": "",
+    "intro": "- Tên tiếng Hàn: 남부대학교\n- Tên tiếng Anh: Nambu University\n- Năm thành lập: 1994\n- Loại hình: Đại học tư thục 4 năm\n- Quy mô: ~5.000 sinh viên\n- Website: www.nambu.ac.kr\n\nNambu University (Đại học Phương Nam) là trường đại học tư thục tại Gwangju, Hàn Quốc. Trường tập trung đào tạo các ngành Công nghệ, Khoa học sức khỏe, Nghệ thuật và Kinh doanh. Nổi bật với chương trình hỗ trợ sinh viên quốc tế và tỷ lệ visa D2 tốt.\n\nGần sân bay Gwangju và Khu công nghệ cao Gwangju - cơ hội thực tập và làm thêm dồi dào trong các ngành điện tử quang học.",
     "conditions": [
       "Dưới 24 tuổi",
       "Có học bạ cấp 3 (GPA 5.0)",
@@ -1582,20 +1891,47 @@ const SCHOOLS_DATA = {
       "Không phân biệt vùng miền",
       "Có sức khỏe tốt không mắc các bệnh truyền nhiễm"
     ],
-    "majors": [],
+    "majors": [
+      "Quản trị kinh doanh - BUSINESS ADMINISTRATION",
+      "Kỹ thuật công nghiệp - INDUSTRIAL ENGINEERING",
+      "Công nghệ thực phẩm - FOOD TECHNOLOGY",
+      "Thiết kế - DESIGN"
+    ],
     "conversion": [
-      "6 trong vòng 1 năm",
-      "Sau 1 năm chuyển tiếp lên chuyên ngành D2",
-      "2 và học tiếp trong vòng 4 năm",
+      "Học D2-6 trong vòng 1 năm",
+      "Sau 1 năm chuyển tiếp lên chuyên ngành D2-2 và học tiếp trong vòng 4 năm",
       "Điều kiện để tốt nghiệp > Có chứng chỉ Topik 4",
       "Số buổi nghỉ quá 4 buổi (không xin phép) sẽ không được chuyển đổi lên chuyên ngành"
     ],
-    "tuition": "",
+    "tuition": "Đi theo diện D2-6 được nhận học bổng của trường giảm 50% ngay kỳ đầu tiên\nHọc phí dự kiến: 1.500.000 - 1.800.000 KRW/kỳ (đã giảm 50%)",
     "insurance": "",
     "ktx": "KTX trong khuôn viên trường: 200.000 - 320.000 KRW/tháng\n4 người/phòng",
     "schedule": "",
-    "advantages": [],
-    "documents": [],
+    "advantages": [
+      "Không yêu cầu chứng chỉ tiếng khi tham gia chương trình",
+      "Không đóng băng tài chính",
+      "Không Phỏng Vấn ĐSQ",
+      "Đại học 4 năm, chi phí học phí và sinh hoạt thấp",
+      "Gần sân bay Gwangju",
+      "Môi trường học tập hỗ trợ sinh viên quốc tế tốt",
+      "Được tạm hoãn nghĩa vụ quân sự"
+    ],
+    "documents": [
+      "- Application đánh máy (In bản đánh máy + ký tên, scan lại bản có chữ ký)\n- Gửi bản word + PDF\n- Tiếng Hàn\n\nHồ sơ gửi sang trường bản scan:",
+      "Application form - Theo mẫu trường",
+      "Giới thiệu bản thân và kế hoạch du học",
+      "Thư tiến cử của Hiệu trưởng (Dịch Công chứng)",
+      "Giấy xác nhận sinh viên (Dịch Công chứng)",
+      "Bảng điểm cao đẳng (Dịch Công chứng)",
+      "Bản sao hộ chiếu",
+      "Bản sao CCCD của học sinh, bố mẹ (Dịch Công chứng)",
+      "Giấy khai sinh (Dịch Công chứng)",
+      "CT07 (Dịch Công chứng)",
+      "Xác nhận số dư 13 triệu KRW đứng tên học sinh",
+      "Chứng chỉ TOPIK (nếu có)",
+      "03 ảnh thẻ 3,5*4,5 nền trắng",
+      "Giấy khám sức khoẻ lao phổi song ngữ\n\nLưu ý sổ nộp ĐSQ/LSQ:\n- Số tiền CMTC khi nộp hồ sơ xin Visa là 250-300 triệu\n- KHÔNG MỞ SỔ CMTC TẠI NGÂN HÀNG BẮC Á và NGÂN HÀNG CHÍNH SÁCH XÃ HỘI"
+    ],
     "documentsNote": "Cập nhật sau khi có invoice chính thức từ trường",
     "partners": [
       {
@@ -1616,62 +1952,62 @@ const SCHOOLS_DATA = {
       {
         "code": "VTV",
         "name": "Cao đẳng Truyền hình Việt Nam",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Truyền hình Việt Nam"
       },
       {
         "code": "BGIT",
         "name": "Cao đẳng Công nghiệp Bắc Giang",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghiệp Bắc Giang"
       },
       {
         "code": "HPC-HP",
         "name": "Cao đẳng Y tế Hải Phòng",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Y tế Hải Phòng"
       },
       {
         "code": "PMDT",
         "name": "Cao đẳng Công nghệ Y Dược Việt Nam",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghệ Y Dược Việt Nam"
       },
       {
         "code": "TWU",
         "name": "Đại học Trưng Vương",
-        "nameKr": ""
+        "nameKr": "Đại học Trưng Vương"
       },
       {
         "code": "UTM",
         "name": "ĐH Quản lý và Kinh doanh Hữu Nghị",
-        "nameKr": ""
+        "nameKr": "ĐH Quản lý và Kinh doanh Hữu Nghị"
       },
       {
         "code": "KTTT",
         "name": "Cao đẳng Kinh tế Kỹ thuật Thương mại",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Kinh tế Kỹ thuật Thương mại"
       },
       {
         "code": "SGT",
         "name": "Cao đẳng Công nghệ Sài Gòn",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghệ Sài Gòn"
       },
       {
         "code": "ISPACE",
         "name": "Cao đẳng Công nghệ i-Space",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghệ i-Space"
       },
       {
         "code": "DA",
         "name": "Cao đẳng Đồng An",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Đồng An"
       },
       {
         "code": "SDU",
         "name": "Đại học Sao Đỏ",
-        "nameKr": ""
+        "nameKr": "Đại học Sao Đỏ"
       },
       {
         "code": "DH",
         "name": "Cao đẳng Duyên hải",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Duyên hải"
       }
     ],
     "mou": "HNC, HCCT, VTV, BGIT, HPC-HP, PMDT, UTM, SGT, SDU, KTTU"
@@ -1700,7 +2036,7 @@ const SCHOOLS_DATA = {
       "title": ""
     },
     "location": "Địa chỉ: 316 Daehak-ro, Sinwol-dong, Jecheon, tỉnh Chungcheongbuk, Hàn Quốc\n\nVị trí : Thành phố Jecheon, tỉnh Bắc Chungcheong, Hàn Quốc. (cách thủ đô Seoul khoảng 2 giờ tàu điện)",
-    "intro": "",
+    "intro": "- Tên tiếng Hàn: 대원대학교\n- Tên tiếng Anh: Daewon  College\n\nThành lập: năm 1995\n\nLoại hình:  tư thục\n\nQuy mô: ~3.000 sinh viên \nGiáo sư  và cán bộ nhân viên: 92 giáo sư, 50 nhân viên \nWebsite: https://www.daewon.ac.kr/mbs/daewon/\n \nVới không gian campus rộng rãi, thoáng mát có tộng cộng 23 khoa ( chuyên ngành ) và hơn 3000 học sinh đang theo học.\nTrường cung cấp các dịch vụ hỗ trợ học tập, tư vấn nghề nghiệp, hỗ trợ tìm việc làm và hoạt động thực tập gắn với doanh nghiệp nhằm giúp sinh viên chuẩn bị tốt cho việc ra trường và tìm việc. Nhiều chương trình hướng nghiệp, workshop và tư vấn CV được tổ chức thường xuyên\n\nChất lượng & cải tiến: \nTrong gần 30 năm hoạt động, Daewon College luôn đổi mới chương trình đào tạo, chú trọng thực hành kỹ năng và gắn kết với nhu cầu thị trường lao động. Tỷ lệ sinh viên có việc làm sau tốt nghiệp khá cao nhờ hệ thống kết nối doanh nghiệp và chương trình đào tạo ứng dụng.\n\nLiên kết quốc tế:\nTrường có nhiều cơ hội hợp tác và trao đổi học thuật, thực tập với các tổ chức, doanh nghiệp trong và ngoài nước (đa phần tập trung vào thực hành nghề và kết nối việc làm).\n\nĐịnh hướng nghề nghiệp:\nĐịnh hướng đào tạo của Daewon College luôn gắn liền với nhu cầu thực tế của doanh nghiệp và thị trường lao động.\nHỗ trợ việc làm theo diện E-7 liên kết trực tiếp với Công ty Samsung  Heavy Industries\nHội đồng công ty đối tác nội bộ Công ty HD Huyndai Heavy Industries.\nCác Công ty nguyên vật liệu Jecheon ( lljin Global, INFAC, YuYu Pharma .....\n\nNăm 2000 trường được Cục quản lý Doanh nghiệp Vừa và nhỏ chỉ định là Trường trị doanh nghiệp Vừa và Nhỏ ( TRITAS), và được Bộ giáo dục chọn làm trường đại học cơ sở cho các dự án chuyên ngành và ngành công nghiệp địa phương.",
     "conditions": [
       "Dưới 24 tuổi",
       "Có học bạ cấp 3 ( GPA 5,0 )",
@@ -1710,20 +2046,44 @@ const SCHOOLS_DATA = {
       "Không phân biệt vùng miền",
       "Có sức khỏe tốt không mắc các bệnh truyền nhiễm"
     ],
-    "majors": [],
+    "majors": [
+      "Quản trị kinh doanh - BUSINESS ADMINISTRATION",
+      "Điện - điện tử - ELECTRICAL AND ELECTRONICS ENGINEERING"
+    ],
     "conversion": [
-      "6 trong vòng 6 tháng > Thi topik trường nếu chưa có chứng chỉ tiếng Topik2",
-      "Sau 6 tháng chuyển tiếp lên chuyên ngành D2",
-      "1 và học tiếp trong vòng 2 năm",
+      "Học D2-6 trong vòng 6 tháng > Thi topik trường nếu chưa có chứng chỉ tiếng Topik2",
+      "Sau 6 tháng chuyển tiếp lên chuyên ngành D2-1 và học tiếp trong vòng 2 năm",
       "Điều kiện để tốt nghiệp > Có chứng chỉ Topik 3",
       "Số buổi nghỉ quá 4 buổi (không xin phép) sẽ không được chuyển đổi lên chuyên ngành"
     ],
-    "tuition": "",
+    "tuition": "Đi theo diện D2-6 được nhận học bổng của trường giảm 50% ngay kỳ đầu tiên \nHọc phí dự kiến 1.100.000 KRW/6 tháng ( Tiếng + Chuyên Ngành ) đã giảm 50%\n\n1 Tuần chỉ phải học 1 đến 3 buổi tùy thời điểm, mỗi buổi chỉ 1 buổi sáng hoặc 1 buổi chiều, mỗi buổi 3 đến 4 tiếng, có thể học Online không cần lên trường",
     "insurance": "",
     "ktx": "750,000KRW /1 kỳ",
     "schedule": "",
-    "advantages": [],
-    "documents": [],
+    "advantages": [
+      "Không yêu cầu chứng chỉ tiếng khi tham gia chương trình trao đổi sinh viên của trường Yeonsung.",
+      "Không đóng băng tài chính ( Không mở sổ Kstudy ).",
+      "Không Phỏng Vấn ĐSQ.",
+      "Tỷ lệ đỗ gần như tuyệt đối nếu có chứng chỉ tiếng Topik 2 hoặc Sejong 2b.",
+      "Học phí rẻ.",
+      "Được đi làm thêm ngay, cam kết hỗ trợ việc làm thêm, lương trung bình 40 triệu/1 tháng, thời gian làm thêm 5h/1 ngày, ngày nghỉ và lễ tết không giới hạn",
+      "Thời gian học trong tuần ít chỉ từ 3 buổi/1 tuần.",
+      "Hỗ trợ chuyển đổi Visa sau khi tốt nghiệp sáng E7.",
+      "Được tạm hoãn nghĩa vụ quân sự."
+    ],
+    "documents": [
+      "- Application đánh máy (In bản đánh máy + ký tên, scan lại bản có chữ ký)\n- Gửi bản word + PDF\n- Tiếng Hàn\n\nHồ sơ gửi sang trường bản scan:",
+      "Application form (Thư đăng ký nhập học) - Theo mẫu (số 1)",
+      "Thư tiến cử (bản gốc) do hiệu trưởng của Trường cao đẳng cấp ( Dịch Công chứng )",
+      "Giấy xác nhận sinh viên ( Dịch Công chứng / không cần tem tím khi nộp trường/ )",
+      "Bảng điểm cao đẳng ( Dịch Công chứng/  không cần tem tím khi nộp trường )",
+      "Bản sao hộ chiếu của học sinh/ bố mẹ",
+      "Bản sao CCCD/hộ chiếu của bố mẹ",
+      "Sổ hộ khẩu (giấy chứng minh quan hệ gia đình) CT07 ( Dịch công chứng)",
+      "Giấy xác nhận số dư tài khoản 400tr (Giấy chứng nhận số dư phát hành trong vòng 1 tháng trước khi nộp hồ sơ).",
+      "ảnh hộ chiếu nền trắng 3 st ( 3,5*4,5)",
+      "Giấy khám sức khoẻ lao phổi song ngữ ( 2 Bản : 1 Bản nộp trưởng + 1 Bản nộp ĐSQ khi xin visa ) \n\n\nLưu ý sổ nộp ĐSQ/LSQ: \n- Tham gia chương trình không yêu cầu sổ lùi, nhưng an toàn hơn thì mở trước 1 tháng - Số tiền CMTC khi nộp hồ sơ xin Visa là 250 triệu/300 triệu.\n- Tem tím có 4 tím tem + Mỗi loại 2 = Tổng 8 tem bắt buộc ( 1 bản nộp ĐSQ + 1 bản sau này mang sang trường Hàn )\n- KHÔNG MỞ SỔ CMTC TẠI NGÂN HÀNG BẮC Á và NGÂN HÀNG CHÍNH SÁCH XÃ HỘI"
+    ],
     "documentsNote": "",
     "partners": [
       {
@@ -1744,62 +2104,62 @@ const SCHOOLS_DATA = {
       {
         "code": "VTV",
         "name": "Cao đẳng Truyền hình Việt Nam",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Truyền hình Việt Nam"
       },
       {
         "code": "BGIT",
         "name": "Cao đẳng Công nghiệp Bắc Giang",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghiệp Bắc Giang"
       },
       {
         "code": "HPC-HP",
         "name": "Cao đẳng Y tế Hải Phòng",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Y tế Hải Phòng"
       },
       {
         "code": "PMDT",
         "name": "Cao đẳng Công nghệ Y Dược Việt Nam",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghệ Y Dược Việt Nam"
       },
       {
         "code": "TWU",
         "name": "Đại học Trưng Vương",
-        "nameKr": ""
+        "nameKr": "Đại học Trưng Vương"
       },
       {
         "code": "UTM",
         "name": "ĐH Quản lý và Kinh doanh Hữu Nghị",
-        "nameKr": ""
+        "nameKr": "ĐH Quản lý và Kinh doanh Hữu Nghị"
       },
       {
         "code": "KTTT",
         "name": "Cao đẳng Kinh tế Kỹ thuật Thương mại",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Kinh tế Kỹ thuật Thương mại"
       },
       {
         "code": "SGT",
         "name": "Cao đẳng Công nghệ Sài Gòn",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghệ Sài Gòn"
       },
       {
         "code": "ISPACE",
         "name": "Cao đẳng Công nghệ i-Space",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghệ i-Space"
       },
       {
         "code": "DA",
         "name": "Cao đẳng Đồng An",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Đồng An"
       },
       {
         "code": "SDU",
         "name": "Đại học Sao Đỏ",
-        "nameKr": ""
+        "nameKr": "Đại học Sao Đỏ"
       },
       {
         "code": "DH",
         "name": "Cao đẳng Duyên hải",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Duyên hải"
       }
     ],
     "mou": "HCCT, BGIT, PMDT, UTM, DH, KTTU"
@@ -1828,7 +2188,7 @@ const SCHOOLS_DATA = {
       "title": ""
     },
     "location": "65 Semyung-ro, Jecheon-si, Chungcheongbuk-do 27136, Hàn Quốc\nThành phố Jecheon, tỉnh Bắc Chungcheong - cách Seoul khoảng 2 giờ tàu KTX, thiên nhiên đẹp",
-    "intro": "",
+    "intro": "- Tên tiếng Hàn: 세명대학교\n- Tên tiếng Anh: Semyung University\n- Năm thành lập: 1992\n- Loại hình: Đại học tư thục 4 năm\n- Quy mô: ~6.000 sinh viên\n- Website: www.semyung.ac.kr\n\nSemyung University là trường đại học tư thục tại thành phố Jecheon, tỉnh Bắc Chungcheong. Trường có hơn 30 chuyên ngành thuộc các lĩnh vực Luật, Kinh doanh, Y tế, Kỹ thuật và Nghệ thuật.\n\nThành phố Jecheon nổi tiếng với cảnh quan thiên nhiên đẹp (hồ Cheongpung, núi Woraksan) và thảo dược Hàn Quốc. Chi phí sinh hoạt rất thấp so với các thành phố lớn. Trường có chương trình hỗ trợ sinh viên quốc tế tốt.",
     "conditions": [
       "Dưới 24 tuổi",
       "Có học bạ cấp 3 (GPA 5.0)",
@@ -1838,20 +2198,47 @@ const SCHOOLS_DATA = {
       "Không phân biệt vùng miền",
       "Có sức khỏe tốt không mắc các bệnh truyền nhiễm"
     ],
-    "majors": [],
+    "majors": [
+      "Quản trị kinh doanh - BUSINESS ADMINISTRATION",
+      "Hàn Quốc học - KOREAN STUDIES",
+      "Kỹ thuật môi trường - ENVIRONMENTAL ENGINEERING",
+      "Khoa học thể thao - SPORT SCIENCE"
+    ],
     "conversion": [
-      "6 trong vòng 1 năm",
-      "Sau 1 năm chuyển tiếp lên chuyên ngành D2",
-      "2 và học tiếp trong vòng 4 năm",
+      "Học D2-6 trong vòng 1 năm",
+      "Sau 1 năm chuyển tiếp lên chuyên ngành D2-2 và học tiếp trong vòng 4 năm",
       "Điều kiện để tốt nghiệp > Có chứng chỉ Topik 4",
       "Số buổi nghỉ quá 4 buổi (không xin phép) sẽ không được chuyển đổi lên chuyên ngành"
     ],
-    "tuition": "",
+    "tuition": "Đi theo diện D2-6 được nhận học bổng của trường giảm 50% ngay kỳ đầu tiên\nHọc phí dự kiến: 1.500.000 - 1.700.000 KRW/kỳ (đã giảm 50%)",
     "insurance": "",
     "ktx": "KTX trong khuôn viên trường: 180.000 - 280.000 KRW/tháng\n4 người/phòng",
     "schedule": "",
-    "advantages": [],
-    "documents": [],
+    "advantages": [
+      "Không yêu cầu chứng chỉ tiếng khi tham gia chương trình",
+      "Không đóng băng tài chính",
+      "Không Phỏng Vấn ĐSQ",
+      "Chi phí sinh hoạt rất thấp (thành phố nhỏ yên tĩnh)",
+      "Đại học 4 năm, bằng cấp có giá trị",
+      "Môi trường an toàn, yên tĩnh phù hợp học tập",
+      "Được tạm hoãn nghĩa vụ quân sự"
+    ],
+    "documents": [
+      "- Application đánh máy (In bản đánh máy + ký tên, scan lại bản có chữ ký)\n- Gửi bản word + PDF\n- Tiếng Hàn\n\nHồ sơ gửi sang trường bản scan:",
+      "Application form - Theo mẫu trường",
+      "Giới thiệu bản thân và kế hoạch du học",
+      "Thư tiến cử của Hiệu trưởng (Dịch Công chứng)",
+      "Giấy xác nhận sinh viên (Dịch Công chứng)",
+      "Bảng điểm cao đẳng (Dịch Công chứng)",
+      "Bản sao hộ chiếu",
+      "Bản sao CCCD của học sinh, bố mẹ (Dịch Công chứng)",
+      "Giấy khai sinh (Dịch Công chứng)",
+      "CT07 (Dịch Công chứng)",
+      "Xác nhận số dư 13 triệu KRW đứng tên học sinh",
+      "Chứng chỉ TOPIK (nếu có)",
+      "03 ảnh thẻ 3,5*4,5 nền trắng",
+      "Giấy khám sức khoẻ lao phổi song ngữ\n\nLưu ý sổ nộp ĐSQ/LSQ:\n- Số tiền CMTC khi nộp hồ sơ xin Visa là 250-300 triệu\n- KHÔNG MỞ SỔ CMTC TẠI NGÂN HÀNG BẮC Á và NGÂN HÀNG CHÍNH SÁCH XÃ HỘI"
+    ],
     "documentsNote": "Cập nhật sau khi có invoice chính thức từ trường",
     "partners": [
       {
@@ -1872,62 +2259,62 @@ const SCHOOLS_DATA = {
       {
         "code": "VTV",
         "name": "Cao đẳng Truyền hình Việt Nam",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Truyền hình Việt Nam"
       },
       {
         "code": "BGIT",
         "name": "Cao đẳng Công nghiệp Bắc Giang",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghiệp Bắc Giang"
       },
       {
         "code": "HPC-HP",
         "name": "Cao đẳng Y tế Hải Phòng",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Y tế Hải Phòng"
       },
       {
         "code": "PMDT",
         "name": "Cao đẳng Công nghệ Y Dược Việt Nam",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghệ Y Dược Việt Nam"
       },
       {
         "code": "TWU",
         "name": "Đại học Trưng Vương",
-        "nameKr": ""
+        "nameKr": "Đại học Trưng Vương"
       },
       {
         "code": "UTM",
         "name": "ĐH Quản lý và Kinh doanh Hữu Nghị",
-        "nameKr": ""
+        "nameKr": "ĐH Quản lý và Kinh doanh Hữu Nghị"
       },
       {
         "code": "KTTT",
         "name": "Cao đẳng Kinh tế Kỹ thuật Thương mại",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Kinh tế Kỹ thuật Thương mại"
       },
       {
         "code": "SGT",
         "name": "Cao đẳng Công nghệ Sài Gòn",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghệ Sài Gòn"
       },
       {
         "code": "ISPACE",
         "name": "Cao đẳng Công nghệ i-Space",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Công nghệ i-Space"
       },
       {
         "code": "DA",
         "name": "Cao đẳng Đồng An",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Đồng An"
       },
       {
         "code": "SDU",
         "name": "Đại học Sao Đỏ",
-        "nameKr": ""
+        "nameKr": "Đại học Sao Đỏ"
       },
       {
         "code": "DH",
         "name": "Cao đẳng Duyên hải",
-        "nameKr": ""
+        "nameKr": "Cao đẳng Duyên hải"
       }
     ],
     "mou": "HN, HNC, HCCT, BGIT, PMDT, DH"
