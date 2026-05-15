@@ -31,7 +31,7 @@ const SCHOOLS_DATA = {
     "location": "45 Cheonghak-ro, Osan-si, Gyeonggi-do, Hàn Quốc (cách Seoul 35 km về phía Nam )",
     "intro": "*Trường hàng đầu tỉnh Gyeonggi\n- Tên tiếng Hàn: 오산대학교\n- Tên tiếng Anh: Osan University\n- Năm thành lập: 1978\n- Loại trường: Đại học tư thục\n- Chuyên ngành tiêu biểu:Kỹ thuật, công nghệ\n- Học bổng: Có\n- Website: www.osan.ac.kr/\n- Là trường tư thục tọa lạc tại tỉnh Gyeonggi, với lịch sử phát triển 43 năm và đầu tư vào chất lượng giáo dục là trường Đại học được nhiều du học sinh quốc tế lựa chọn theo học. Với vị trí thuận lợi không quá xa trung tâm cách thủ đô Seoul 35km về phía nam.\n- Trường được thành lập vào năm 1978 với tên gọi Cao đẳng Công nghệ Kỹ thuật Osan.\n- Trường hiện đang đối tác với Cao đẳng Nghề Công nghiệp Hà Nội và Cao đẳng Nghề Công nghề Thành phố Hồ Chí Minh và 1 số trường khác.\n- Xếp thứ 32 trường có tỷ lệ việc làm ở 57,3% theo công của Bộ Giáo dục.",
     "conditions": [
-      "Dưới 24 tuổi",
+      "Dưới 25 tuổi",
       "Có học bạ cấp 3 ( GPA 6,3 )",
       "Có bằng tốt nghiệp cấp 3",
       "Số buổi nghỉ không quá 15 buổi",
@@ -184,7 +184,7 @@ const SCHOOLS_DATA = {
     "location": "12 Choansan-ro, Wolgye‑dong, Nowon‑gu, Seoul 01878, Hàn Quốc",
     "intro": "Đại học tư thục, dạng cao đẳng – chuyên đào tạo bằng cao đẳng và chứng chỉ nghề chuyên sâu\nDiện tích trường khoảng 76.000 m² (khoảng 7,6 ha).\nGồm khoảng 10 tòa nhà học tập và ký túc xá; có cả trường PTTH công nghệ cùng hệ thống\nKhoảng 8.600 sinh viên; 160 giảng viên chính thức và 290 giảng viên thỉnh giảng\n\nChuyên ngành:\nCó 6 khoa chính: Smart ICT, Smart City, Creative Design, Broadcasting & Culture Contents, Global Business, Physical Education... với tổng cộng 33 ngành học (hai và ba năm)\n\nGiao thông & đi lại\nTàu điện ngầm:\nGa Wolgye – tuyến số 1, ngắn khoảng 5 phút đi bộ tới trường.\nTừ ga Changdong (số 4), chuyển sang số 1 đến Wolgye.\nCách ga Hagye (tuyến 7) một chút, kết nối qua xe buýt \n\nXe buýt: Tuyến 100, 172, 1137, 1140, 1161 dừng ngay trước trường \n\nXe hơi: Dễ tiếp cận từ các tuyến đường cao tốc Đông Bắc và các cầu vượt gần đó",
     "conditions": [
-      "Dưới 24 tuổi",
+      "Dưới 25 tuổi",
       "Có học bạ cấp 3 ( GPA 5.0 )",
       "Có bằng tốt nghiệp cấp 3",
       "Số buổi nghỉ không quá 30 buổi",
@@ -344,7 +344,7 @@ const SCHOOLS_DATA = {
     "location": "Địa chỉ: 34 Yanghwa-ro 37beon-gil, Manan-gu, Anyang-si, Gyeonggi-do, Hàn Quốc\n\nNằm tại quận Manan, thành phố Anyang (Gyeonggi), thuộc vùng thủ đô Seoul – kết nối thuận tiện bằng tàu, xe buýt, có shuttle bus từ ga Anyang .",
     "intro": "- Tên tiếng Hàn: 연성대학교\n- Tên tiếng Anh: Yeonsung University\n\nThành lập:\n- 15/3/1977 – bắt đầu là Anyang Industrial Technical School\n- 1979 chuyển thành trường cao đẳng kỹ thuật\n- 1998 đổi tên thành Anyang Science University\n- 1/5/2012 – đổi tên chính thức thành Yeonsung University \nLoại hình: Tư thục, cao đẳng nghề chuyên biệt (junior college) .\nQuy mô (2018): khoảng 5.800 sinh viên; ~156 giảng viên chính quy và 300 giảng viên thỉnh giảng\n\nKhuôn viên: Diện tích khoảng 202.000 m², gồm thư viện, 9 tòa nhà học thuật, ký túc xá, nhiều phòng lab chuyên ngành & phòng thực hành, sân thể thao .\nTiện ích: Quầy cà phê (Gem Café), căng-tin, food court, career lounge, maker space, VR/STUDIO/CS studio, hội trường, shuttle bus… \nDịch vụ sinh viên: Tư vấn nghề nghiệp – học tập cá nhân hóa (AI), hỗ trợ tâm lý, thiết kế portfolio, chuẩn bị xin việc .\nCải thiện chất lượng: Năm 2023, cải tổ đa dạng thực đơn căn tin (từ 2 lên ~40 món/phục vụ) sau hiệu ứng truyền thông \n\nLiên kết với hơn 43 trường đối tác tại 14 quốc gia – châu Âu, châu Á, Mỹ... nhằm trao đổi học thuật, thực tập quốc tế .\nĐịnh hướng nghề nghiệp gắn liền với doanh nghiệp qua chương trình P-TECH, tích hợp kỹ năng thực tiễn và chuyển tiếp nghề nghiệp",
     "conditions": [
-      "Dưới 24 tuổi",
+      "Dưới 25 tuổi",
       "Có học bạ cấp 3 ( GPA 5.0 )",
       "Có bằng tốt nghiệp cấp 3",
       "Số buổi nghỉ không quá 30 buổi",
@@ -500,7 +500,7 @@ const SCHOOLS_DATA = {
     "location": "20 Hongjimun 2-gil, Jongno-gu, Seoul 03016, Hàn Quốc (Campus Seoul) | 31 Sangmyungdae-gil, Cheonan-si, Chungcheongnam-do (Campus Cheonan)",
     "intro": "- Tên tiếng Hàn: 상명대학교\n- Tên tiếng Anh: Sangmyung University\n- Năm thành lập: 1937\n- Loại hình: Đại học tư thục 4 năm\n- Quy mô: ~13.000 sinh viên\n- Website: www.smu.ac.kr\n\nSangmyung University là trường đại học tư thục uy tín tại Hàn Quốc với lịch sử hơn 80 năm. Trường có 2 campus: Seoul (Jongno-gu) và Cheonan (Chungnam). Campus Seoul nằm ngay trung tâm thành phố, gần Gyeongbokgung và Changdeokgung, thuận tiện di chuyển bằng metro.\n\nTrường nổi tiếng với các ngành Nghệ thuật, Công nghệ thông tin, Kinh doanh và Khoa học xã hội. Tỷ lệ có việc làm sau tốt nghiệp cao, đặc biệt các ngành kỹ thuật và thiết kế.",
     "conditions": [
-      "Dưới 22 tuổi",
+      "Dưới 25 tuổi",
       "Có học bạ cấp 3 (GPA 5.0)",
       "Có bằng tốt nghiệp cấp 3",
       "Số buổi nghỉ không quá 30 buổi",
@@ -654,7 +654,7 @@ const SCHOOLS_DATA = {
     "location": "63 Gyeyangsan-ro, Gyesan-dong, Gyeyang-gu, Incheon, Hàn Quốc",
     "intro": "- Tên tiếng anh: Kyungin Women’s University (KIWU).\n- Tên tiếng Hàn: 경인여자대학교\n- Năm thành lập: Năm 1992.\n- Loại hình: tư thục.\n- Số sinh viên: khoảng 4.500\n- Điện thoại: 031-540-0114\n- Website: https://www.kiwu.ac.kr/\n\n1: Top 3 Nữ sinh Incheon & Visa thẳng: Thành lập năm 1992 tại Incheon, Đại học Nữ sinh Kyungin là trường tư thục hàng đầu dành cho nữ sinh tại Hàn Quốc, xếp top 3 trường nữ sinh tốt nhất Incheon. Trường được Bộ Giáo dục Hàn Quốc công nhận là “Đại học Xuất sắc” (2014-2020) và thuộc top 1% visa thẳng (2018), giúp sinh viên Việt Nam nhập học dễ dàng mà không cần phỏng vấn hay đóng băng tài khoản 10,000 USD.\n2: Vị trí chiến lược: Tọa lạc tại Incheon, gần sân bay quốc tế Incheon (~30 phút), KIWU nằm trong khu vực sầm uất với trung tâm thương mại lớn nhất Hàn Quốc và chi phí sinh hoạt thấp hơn Seoul (~60-70%). Incheon cách Seoul ~40 phút tàu điện, thuận tiện di chuyển. Cộng đồng sinh viên quốc tế tại đây khoảng 300 người, trong đó ~100 sinh viên Việt Nam (2023).\n3: Thế mạnh đào tạo: KIWU nổi bật với các ngành phù hợp nữ giới: \n- Điều dưỡng: Xếp hạng A về đào tạo (2018), hợp tác với các bệnh viện lớn.\n- Giáo dục mầm non: Đào tạo giáo viên mầm non hơn 30 năm.\n- Làm đẹp: Mỹ phẩm, Thẩm mỹ, Quản lý spa.\n- Thư ký & Kế toán thuế.\n- Du lịch & Khách sạn: Quản lý sự kiện, Dịch vụ hàng không. Trường có 4 khoa (Xã hội, Sức khỏe, Văn hóa, Kinh doanh) với hơn 20 chuyên ngành. Các chương trình giảng dạy kết hợp thực hành, đảm bảo tỷ lệ việc làm sau tốt nghiệp lên đến 80% (2018).",
     "conditions": [
-      "Dưới 24 tuổi",
+      "Dưới 25 tuổi",
       "Chỉ dành cho nữ",
       "Có học bạ cấp 3 ( GPA 5.0 )",
       "Có bằng tốt nghiệp cấp 3",
@@ -803,7 +803,7 @@ const SCHOOLS_DATA = {
     "location": "Địa chỉ: 50 Cheoncheon‑ro 74‑gil, Jeongja‑dong, Jangan‑gu, Suwon‑si, Gyeonggi‑do, Hàn Quốc\n\nNằm ở phía bắc Suwon, trên bờ sông Seohocheon, trong khu vực đô thị thuận tiện di chuyển bằng bus và đi tới Seoul rất dễ dàng",
     "intro": "- Tên tiếng Hàn: 동남보건대학교\n- Tên tiếng Anh: Dongnam Health University\n\nThành lập:\nNgày 19/12/1973 dưới tên Dongnam Health Junior School \nTrở thành trường cao đẳng năm 1979, đổi tên thành đại học vào năm 1998 và 2012.\nLoại hình: Đại học chuyên đào tạo chuyên môn, tư thục.\nLãnh đạo hiện nay: Chủ tịch Lee Young Kwon (이영권) \nQuy mô (đến 2023): khoảng 4.685 sinh viên, 122 giảng viên chính quy và 258 giảng viên thỉnh giảng\n\nCơ sở: 9 tòa nhà học thuật gần công viên Jeongja, thư viện, phòng lab, ký túc xá, thư viện kỹ thuật cao cấp \nHoạt động được cấp phép:\nĐược Bộ Giáo dục Hàn Quốc chọn là trường chất lượng (2 đợt hỗ trợ đổi mới), đạt chứng nhận đào tạo điều dưỡng y tế .\nTrường thuộc nhóm được cấp “giấy chứng nhận chất lượng giáo dục nghề” \n\nTỷ lệ sinh viên/giảng viên: ~38 sinh viên cho mỗi giảng viên chính quy.\nTài chính & bộ hỗ trợ: Kinh phí trung bình đào tạo một sinh viên ~937.000 KRW/năm; nhận hỗ trợ từ chính phủ giai đoạn 2022–2024 .\nXếp hạng học thuật:\nTheo AD Scientific Index (2025): xếp #240 tại Hàn Quốc, #10.113 châu Á, 18.687 thế giới",
     "conditions": [
-      "Dưới 24 tuổi",
+      "Dưới 25 tuổi",
       "Có học bạ cấp 3 ( GPA 5.0 )",
       "Có bằng tốt nghiệp cấp 3",
       "Số buổi nghỉ không quá 30 buổi",
@@ -957,7 +957,7 @@ const SCHOOLS_DATA = {
     "location": "176 Eomgwang-ro, Gaya 3(sam)-dong, Busanjin-gu, Busan, Hàn Quốc",
     "intro": "Tên tiếng Hàn: 동의대학교\nTên tiếng Anh: Dong-Eui University\nNăm thành lập: 1977\nLoại hình: Đại học tư thục hệ 4 năm\nĐịa điểm: Thành phố Busan, Hàn Quốc\nCơ sở:\nGaya Campus: 176 Eomgwangno, Busanjin-gu, Busan\nYangjeong Campus: 100 Jinri 1-ro, Busanjin-gu, Busan\nWebsite: deu.ac.kr\nTrường nằm tại trung tâm \nthành phố Busan\n\nCách biển Gwabggalli và Haeundae khoảng 30 phút đi tầu điện ngầm\n\nGần sân bay quốc tế Gimhae - chỉ mất 40 phút di chuyển",
     "conditions": [
-      "Dưới 22 tuổi",
+      "Dưới 25 tuổi",
       "Có học bạ cấp 3 ( GPA 5.0 )",
       "Có bằng tốt nghiệp cấp 3",
       "Số buổi nghỉ không quá 30 buổi",
@@ -1110,7 +1110,7 @@ const SCHOOLS_DATA = {
     "location": "17 Jeildaehak-gil, Deogwol-dong, Suncheon-si, Jeollanam-do, 57997, Hàn Quốc",
     "intro": "- Tên tiếng Hàn: 순천제일　\n- Tên tiếng Anh: Suncheon Jeil College\n\nThành lập: Năm 1978–1979 (ban đầu là Cao đẳng Kỹ thuật), đổi tên thành Suncheon Jeil College từ năm 1998–2012 \nstudyinkorea.go.kr\n\nLoại hình: Tư thục, cao đẳng chuyên đào tạo nghề.\n\nQuy mô: Hơn 4.000 sinh viên; hơn 200 giảng viên\n\nHệ Cao đẳng\nCó nhiều khoa: Kỹ thuật (xây dựng, điện tử, ô tô…), Khoa học tự nhiên, Y tế & Phúc lợi, Nghệ thuật & Dịch vụ…",
     "conditions": [
-      "Dưới 24 tuổi",
+      "Dưới 25 tuổi",
       "Có học bạ cấp 3 ( GPA 5.0 )",
       "Có bằng tốt nghiệp cấp 3",
       "Số buổi nghỉ không quá 15 buổi",
@@ -1265,7 +1265,7 @@ const SCHOOLS_DATA = {
     "location": "Địa chỉ: 516 đường Jinman , Phường Yangjeong, quận Busanjin, Busan, Hàn Quốc\n\nTọa lạc tại vị trí chiến lược giáp Seomyeon, trung tâm Busan thành phố lớn thứ 2 tại Hàn Quốc ( dưới 10 phút di chuyển)",
     "intro": "- Tên tiếng Hàn: 부산여자대학교\n- Tên tiếng Anh: Busan Women's College \n\nThành lập: năm 1969 Trường Nữ Sinh Busan Hàn Quốc được thành lập với tên gọi đầu tiên là Trường Trung học Nữ Busan.\nNăm 2012 trường được đổi tên thành Cao Đẳng Nữ Sinh Busan.\n\nLoại hình:  tư thục\nQuy mô: ~2877 sinh viên\nGiáo sư  và cán bộ nhân viên: 290 giáo sư \n\nWebsite: https: http://www.bwc.ac.kr\n \nTrong suốt quá trình gần 60 năm hình thành và phát triển, trường đã mở rộng các chương trình đào tạo bao gồm các ngành như giáo dục mần non, du lịch, khách sạn, y tế và phúc lợi xã hội. \n\n. Xếp thứ hạng 171/193 TOP trường Đại học / Cao đẳng Hàn Quốc.\n. Xếp hạng 9676/14131 trường Đại học/ Cao đẳng trên toàn thế giới.\nSố lượng sinh viên đang theo học ~ 3.000 sinh viên.\n\nTừ năm 2011~ 2012 trường được Bộ Giáo Dục, khoa học công nghệ Hàn Quốc bình chọn tham gia thí điểm Dự Án Tăng Cường Năng Lực Giáo Dục Cao Đẳng.\n\nTrung tâm Hỗ trợ việc làm và khởi nghiệp tại trường cung cấp nhiều thông tin bổ ích về nghề nghiệp , việc làm và thông tin khởi nghiệp cho sinh viên.\nNăm 2021, Viện Đánh Giá Và Chứng Nhận Đào Tạo Nghề chứng nhậ Cao Đẳng Nữ Busan là Cao Đẳng có chất lượng đào tạo nghề Cao Cấp.\n\n. Thông qua Trung tâm Tư Vấn Đời Sống Sinh Viên, nhà trường tổ chức các buổi tư vấn tâm lý giúp sinh viên giải quyết nhanh chóng các vấn đề và mối quan tâm của mình.",
     "conditions": [
-      "Dưới 24 tuổi",
+      "Dưới 25 tuổi",
       "Có học bạ cấp 3 ( GPA 5.0 )",
       "Có bằng tốt nghiệp cấp 3",
       "Số buổi nghỉ không quá 15 buổi",
@@ -1418,7 +1418,7 @@ const SCHOOLS_DATA = {
     "location": "57 Oesolsun-ro 303beon-gil, Geumjeong-gu, Busan 46252, Hàn Quốc\nNằm tại quận Geumjeong, thành phố Busan - gần núi Geumjeongsan, cách trung tâm Busan 20 phút tàu điện",
     "intro": "- Tên tiếng Hàn: 부산가톨릭대학교\n- Tên tiếng Anh: Catholic University of Busan\n- Năm thành lập: 1964\n- Loại hình: Đại học tư thục Công giáo\n- Quy mô: ~5.000 sinh viên\n- Website: www.cup.ac.kr\n\nĐại học Công giáo Busan là trường đại học tư thục được thành lập bởi Giáo phận Công giáo Busan. Trường nổi tiếng với các ngành Khoa học Y tế, Điều dưỡng, Xã hội học và Công nghệ thông tin. Môi trường học tập kỷ luật, yên tĩnh, hỗ trợ sinh viên quốc tế tốt.\n\nTrường có tỷ lệ việc làm sau tốt nghiệp cao, đặc biệt trong lĩnh vực y tế và phúc lợi xã hội tại khu vực Busan.",
     "conditions": [
-      "Dưới 24 tuổi",
+      "Dưới 25 tuổi",
       "Có học bạ cấp 3 (GPA 5.0)",
       "Có bằng tốt nghiệp cấp 3",
       "Số buổi nghỉ không quá 30 buổi",
@@ -1572,7 +1572,7 @@ const SCHOOLS_DATA = {
     "location": "112 Hallim-ro, Hallim-myeon, Gimhae-si, Gyeongsangnam-do 50983, Hàn Quốc\nThành phố Gimhae, tỉnh Gyeongnam - cách sân bay quốc tế Gimhae (Busan) khoảng 20 phút, cách trung tâm Busan 40 phút",
     "intro": "- Tên tiếng Hàn: 김해대학교\n- Tên tiếng Anh: Gimhae College\n- Năm thành lập: 1993\n- Loại hình: Cao đẳng tư thục\n- Quy mô: ~3.500 sinh viên\n- Website: www.gimhae.ac.kr\n\nGimhae College tọa lạc tại thành phố Gimhae, vùng Gyeongnam - khu công nghiệp lớn của miền Nam Hàn Quốc. Trường chuyên đào tạo các ngành kỹ thuật, công nghệ và dịch vụ gắn với nhu cầu thực tế của các khu công nghiệp Gimhae và Busan.\n\nVị trí gần sân bay Gimhae và các khu công nghiệp lớn tạo điều kiện thuận lợi cho sinh viên tìm việc làm thêm và thực tập. Chi phí sinh hoạt tại Gimhae thấp hơn Busan khoảng 20-30%.",
     "conditions": [
-      "Dưới 24 tuổi",
+      "Dưới 25 tuổi",
       "Có học bạ cấp 3 (GPA 5.0)",
       "Có bằng tốt nghiệp cấp 3",
       "Số buổi nghỉ không quá 30 buổi",
@@ -1728,7 +1728,7 @@ const SCHOOLS_DATA = {
     "location": "277 Hyodeok-ro, Nam-gu, Gwangju 61743, Hàn Quốc\nThành phố Gwangju - thành phố lớn thứ 5 Hàn Quốc, thủ phủ vùng Honam (Jeolla)",
     "intro": "- Tên tiếng Hàn: 광주대학교\n- Tên tiếng Anh: Gwangju University\n- Năm thành lập: 1981\n- Loại hình: Đại học tư thục 4 năm\n- Quy mô: ~8.000 sinh viên\n- Website: www.gwangju.ac.kr\n\nGwangju University là trường đại học tư thục lớn tại thành phố Gwangju, trung tâm văn hóa và giáo dục của vùng Honam. Trường có hơn 40 chuyên ngành thuộc các lĩnh vực kỹ thuật, kinh doanh, y tế, nghệ thuật và khoa học xã hội.\n\nThành phố Gwangju là một trong những đô thị phát triển mạnh về công nghiệp ô tô (Kia Motors) và điện tử (LG), cung cấp nhiều cơ hội việc làm thêm cho sinh viên. Chi phí sinh hoạt thấp hơn Seoul 40-50%.",
     "conditions": [
-      "Dưới 24 tuổi",
+      "Dưới 25 tuổi",
       "Có học bạ cấp 3 (GPA 5.0)",
       "Có bằng tốt nghiệp cấp 3",
       "Số buổi nghỉ không quá 30 buổi",
@@ -1883,7 +1883,7 @@ const SCHOOLS_DATA = {
     "location": "23 Cheomdanmunhwa-ro, Gwangsan-gu, Gwangju 62271, Hàn Quốc\nNằm tại quận Gwangsan, thành phố Gwangju - gần sân bay quốc tế Gwangju, khu công nghệ cao Gwangju",
     "intro": "- Tên tiếng Hàn: 남부대학교\n- Tên tiếng Anh: Nambu University\n- Năm thành lập: 1994\n- Loại hình: Đại học tư thục 4 năm\n- Quy mô: ~5.000 sinh viên\n- Website: www.nambu.ac.kr\n\nNambu University (Đại học Phương Nam) là trường đại học tư thục tại Gwangju, Hàn Quốc. Trường tập trung đào tạo các ngành Công nghệ, Khoa học sức khỏe, Nghệ thuật và Kinh doanh. Nổi bật với chương trình hỗ trợ sinh viên quốc tế và tỷ lệ visa D2 tốt.\n\nGần sân bay Gwangju và Khu công nghệ cao Gwangju - cơ hội thực tập và làm thêm dồi dào trong các ngành điện tử quang học.",
     "conditions": [
-      "Dưới 24 tuổi",
+      "Dưới 25 tuổi",
       "Có học bạ cấp 3 (GPA 5.0)",
       "Có bằng tốt nghiệp cấp 3",
       "Số buổi nghỉ không quá 30 buổi",
@@ -2038,7 +2038,7 @@ const SCHOOLS_DATA = {
     "location": "Địa chỉ: 316 Daehak-ro, Sinwol-dong, Jecheon, tỉnh Chungcheongbuk, Hàn Quốc\n\nVị trí : Thành phố Jecheon, tỉnh Bắc Chungcheong, Hàn Quốc. (cách thủ đô Seoul khoảng 2 giờ tàu điện)",
     "intro": "- Tên tiếng Hàn: 대원대학교\n- Tên tiếng Anh: Daewon  College\n\nThành lập: năm 1995\n\nLoại hình:  tư thục\n\nQuy mô: ~3.000 sinh viên \nGiáo sư  và cán bộ nhân viên: 92 giáo sư, 50 nhân viên \nWebsite: https://www.daewon.ac.kr/mbs/daewon/\n \nVới không gian campus rộng rãi, thoáng mát có tộng cộng 23 khoa ( chuyên ngành ) và hơn 3000 học sinh đang theo học.\nTrường cung cấp các dịch vụ hỗ trợ học tập, tư vấn nghề nghiệp, hỗ trợ tìm việc làm và hoạt động thực tập gắn với doanh nghiệp nhằm giúp sinh viên chuẩn bị tốt cho việc ra trường và tìm việc. Nhiều chương trình hướng nghiệp, workshop và tư vấn CV được tổ chức thường xuyên\n\nChất lượng & cải tiến: \nTrong gần 30 năm hoạt động, Daewon College luôn đổi mới chương trình đào tạo, chú trọng thực hành kỹ năng và gắn kết với nhu cầu thị trường lao động. Tỷ lệ sinh viên có việc làm sau tốt nghiệp khá cao nhờ hệ thống kết nối doanh nghiệp và chương trình đào tạo ứng dụng.\n\nLiên kết quốc tế:\nTrường có nhiều cơ hội hợp tác và trao đổi học thuật, thực tập với các tổ chức, doanh nghiệp trong và ngoài nước (đa phần tập trung vào thực hành nghề và kết nối việc làm).\n\nĐịnh hướng nghề nghiệp:\nĐịnh hướng đào tạo của Daewon College luôn gắn liền với nhu cầu thực tế của doanh nghiệp và thị trường lao động.\nHỗ trợ việc làm theo diện E-7 liên kết trực tiếp với Công ty Samsung  Heavy Industries\nHội đồng công ty đối tác nội bộ Công ty HD Huyndai Heavy Industries.\nCác Công ty nguyên vật liệu Jecheon ( lljin Global, INFAC, YuYu Pharma .....\n\nNăm 2000 trường được Cục quản lý Doanh nghiệp Vừa và nhỏ chỉ định là Trường trị doanh nghiệp Vừa và Nhỏ ( TRITAS), và được Bộ giáo dục chọn làm trường đại học cơ sở cho các dự án chuyên ngành và ngành công nghiệp địa phương.",
     "conditions": [
-      "Dưới 24 tuổi",
+      "Dưới 25 tuổi",
       "Có học bạ cấp 3 ( GPA 5,0 )",
       "Có bằng tốt nghiệp cấp 3",
       "Số buổi nghỉ không quá 15 buổi",
@@ -2190,7 +2190,7 @@ const SCHOOLS_DATA = {
     "location": "65 Semyung-ro, Jecheon-si, Chungcheongbuk-do 27136, Hàn Quốc\nThành phố Jecheon, tỉnh Bắc Chungcheong - cách Seoul khoảng 2 giờ tàu KTX, thiên nhiên đẹp",
     "intro": "- Tên tiếng Hàn: 세명대학교\n- Tên tiếng Anh: Semyung University\n- Năm thành lập: 1992\n- Loại hình: Đại học tư thục 4 năm\n- Quy mô: ~6.000 sinh viên\n- Website: www.semyung.ac.kr\n\nSemyung University là trường đại học tư thục tại thành phố Jecheon, tỉnh Bắc Chungcheong. Trường có hơn 30 chuyên ngành thuộc các lĩnh vực Luật, Kinh doanh, Y tế, Kỹ thuật và Nghệ thuật.\n\nThành phố Jecheon nổi tiếng với cảnh quan thiên nhiên đẹp (hồ Cheongpung, núi Woraksan) và thảo dược Hàn Quốc. Chi phí sinh hoạt rất thấp so với các thành phố lớn. Trường có chương trình hỗ trợ sinh viên quốc tế tốt.",
     "conditions": [
-      "Dưới 24 tuổi",
+      "Dưới 25 tuổi",
       "Có học bạ cấp 3 (GPA 5.0)",
       "Có bằng tốt nghiệp cấp 3",
       "Số buổi nghỉ không quá 30 buổi",
@@ -2318,6 +2318,171 @@ const SCHOOLS_DATA = {
       }
     ],
     "mou": "HN, HNC, HCCT, BGIT, PMDT, DH"
+  },
+  "dh-nu-sinh-dongduk": {
+    "id": "dh-nu-sinh-dongduk",
+    "name": "DongDuk",
+    "nameKr": "동덕여자대학교 | Đại học 4 năm tại Seoul - Cái nôi nghệ thuật nữ sinh - Học bổng 50% - Chỉ dành cho nữ",
+    "nameEn": "Dongduk Women's University - Đại học 4 năm tại trung tâm Seoul - Học bổng 50% - ",
+    "system": "D2-6 > D2-2 (Đại học 4 năm)",
+    "quota": 200,
+    "images": {
+      "main": "images/placeholder.svg",
+      "catalog": "",
+      "locationMap": "",
+      "invoice": "",
+      "gallery": []
+    },
+    "links": {
+      "website": "",
+      "catalog": "documents/Đại-học-Nữ-sinh-Dongduk-Catalog.pdf"
+    },
+    "video": {
+      "url": "https://www.dongduk.ac.kr",
+      "youtubeId": "",
+      "title": ""
+    },
+    "location": "60 Hwarang-ro 13-gil, Seongbuk-gu, Seoul 02748, Hàn Quốc (trung tâm thủ đô Seoul)",
+    "intro": "- Tên tiếng Hàn: 동덕여자대학교\n- Tên tiếng Anh: Dongduk Women's University\n- Năm thành lập: 1908\n- Loại hình: Đại học tư thục 4 năm, dành riêng cho nữ sinh\n- Địa điểm: Seongbuk-gu, trung tâm thủ đô Seoul\n- Quy mô: khoảng 7.500–8.000 sinh viên\n- Website: www.dongduk.ac.kr\n\nDongduk Women's University là một trong những đại học nữ sinh danh tiếng nhất Hàn Quốc với hơn 116 năm lịch sử. Trường nằm trong top 24 đại học tốt nhất Seoul và top 60 đại học hàng đầu Hàn Quốc theo bảng xếp hạng EduRank.\n\nTrường được mệnh danh là \"cái nôi nghệ thuật nữ sinh Hàn Quốc\" với nhiều cựu sinh viên là nghệ sĩ nổi tiếng như Park Gyuri (KARA), Minah & Yura (Girl's Day), Jooyeon (After School), Seo Hyun-jin, Lee Sung-kyung...\n\nDongduk xếp hạng #12 tại Hàn Quốc về tác động của cựu sinh viên (EduRank), với mạng lưới alumni mạnh trong lĩnh vực văn hóa, truyền thông, thời trang và giải trí.\n\nĐược chọn tham gia dự án \"Campus Town\" của thành phố Seoul (2020) nhằm phát triển khu vực khuôn viên thành điểm sống – học tập sôi động. Là một trong những đại học được công nhận đạt chất lượng giáo dục quốc tế, giúp sinh viên dễ xin visa và học bổng quốc tế.",
+    "conditions": [
+      "VISA D2-6 (Du học trao đổi - Chương trình tiếng Hàn):",
+      "Chỉ dành cho nữ",
+      "Tốt nghiệp THPT",
+      "GPA > 6.0",
+      "Tốt nghiệp không quá 5 năm",
+      "Có chứng chỉ TOPIK 2 hoặc Sejong 2B",
+      "Có sức khỏe tốt, không mắc bệnh truyền nhiễm\n\nVISA D2-3 (Thạc sĩ nợ tiếng):",
+      "Sinh năm 1987 trở về sau",
+      "Không phân biệt nam nữ (chương trình thạc sĩ mở)",
+      "Không yêu cầu GPA đại học cao"
+    ],
+    "majors": [
+      "Chuyên ngành trao đổi (Korean Major - 한국어전공):\n- Giai đoạn 1 (Visa D2-6): Đào tạo Tiếng Hàn & Trải nghiệm văn hóa\n- Giai đoạn 2 (chuyển Visa D2-2): Chuyên ngành đại học 4 năm\n\nChuyên ngành Thạc sĩ (D2-3):",
+      "Tư vấn giáo dục [교육컨설팅]",
+      "Giáo dục Tiếng Hàn [한국어교육]\n\nCác khoa đại học (sau khi chuyển D2-2):\n- Đại học Nhân văn: Ngôn ngữ & Văn học Hàn, Lịch sử, Sáng tác, Tiếng Anh, Tiếng Nhật, Tiếng Trung...\n- Đại học Khoa học Xã hội: Thư viện, Phúc lợi xã hội\n- Đại học Kinh doanh: Kinh doanh tổng hợp\n- Đại học Khoa học Tự nhiên: Dinh dưỡng, Mỹ phẩm, Hóa học, Thể dục\n- Đại học Nghệ thuật: Hội họa, Thủ công kỹ thuật số, Âm nhạc\n- Đại học Thiết kế: Thời trang, Thiết kế thị giác, Truyền thông\n- Đại học Nghệ thuật Biểu diễn: Diễn xuất, Âm nhạc, Múa, Người mẫu\n- Đại học Thông tin: Khoa học máy tính, Thống kê"
+    ],
+    "conversion": [
+      "D2-6 (6 tháng): Học tiếng Hàn & văn hóa → chuyển D2-2 (Đại học 4 năm)",
+      "Điều kiện chuyển: Hoàn thành khóa tiếng, đủ điều kiện từ trường",
+      "Học bổng chuyên ngành kỳ đầu tiên: Giảm 50%",
+      "Học bổng các kỳ tiếp theo: 30%–60% tùy trình độ TOPIK",
+      "D2-3 Thạc sĩ: 2,5 năm (5 học kỳ), học 1 buổi/tuần",
+      "Điều kiện tốt nghiệp: TOPIK 2 (không yêu cầu viết luận văn)"
+    ],
+    "tuition": "VISA D2-6 (Korean Major – 6 tháng):\n- Học phí gốc: 4.195.000 KRW\n- Học bổng 50% kỳ đầu tiên: Giảm còn 2.097.500 KRW / 6 tháng\n- Miễn phí học tiếng giai đoạn D2-6\n- Học bổng các kỳ tiếp theo (D2-2): 30%–60% tùy trình độ TOPIK\n\nVISA D2-3 Thạc sĩ (5 kỳ học, 2,5 năm):\n- Học phí: 2.372.500 KRW/kỳ (đã giảm 50% cho toàn bộ 5 kỳ)\n- Miễn phí nhập học: 0 KRW (miễn 921.000 KRW)\n- Học bổng thêm 500.000 KRW khi đạt TOPIK 4",
+    "insurance": "",
+    "ktx": "Trường có ký túc xá trong khuôn viên campus:\n- Phòng đơn và phòng đôi (có bàn học, giường, tủ)\n- Hỗ trợ bảo hiểm và hỗ trợ việc làm cho sinh viên quốc tế\n- Chi phí KTX: Liên hệ trường để biết chi tiết từng kỳ\n- Chi phí sinh hoạt ước tính tại Seoul: 500.000–800.000 KRW/tháng\n- Địa chỉ trường: 60 Hwarang-ro 13-gil, Seongbuk-gu, Seoul 02748",
+    "schedule": "",
+    "advantages": [
+      "Đại học 4 năm uy tín tọa lạc tại trung tâm thủ đô Seoul – bằng cấp được công nhận quốc tế",
+      "Học bổng 50% ngay kỳ đầu tiên (chuyên ngành), miễn phí học tiếng giai đoạn D2-6",
+      "Học bổng 30%–60% các kỳ tiếp theo tùy trình độ TOPIK",
+      "Không yêu cầu tiếng Hàn cao (chỉ cần TOPIK 2 / Sejong 2B)",
+      "Không Phỏng Vấn ĐSQ (với chương trình D2-6)",
+      "Được làm thêm hợp pháp, thu nhập dao động 40–50 triệu VNĐ/tháng",
+      "Môi trường học tập toàn nữ – an toàn, thân thiện cho nữ sinh",
+      "Cơ hội tiếp xúc ngành Nghệ thuật, Thời trang, Biểu diễn đặc trưng của trường",
+      "Có thể chuyển Visa E-7 sau tốt nghiệp để làm việc lâu dài tại Hàn Quốc",
+      "Có thể chuyển Visa D-2 để học lên cao đẳng hoặc đại học các ngành khác",
+      "Được tạm hoãn nghĩa vụ quân sự (với sinh viên nam nếu có)"
+    ],
+    "documents": [
+      "- Application đánh máy (In bản đánh máy + ký tên, scan lại bản có chữ ký)\n- Gửi bản Word + PDF, làm bằng tiếng Hàn/tiếng Anh\n\nHồ sơ gửi sang trường (bản scan):",
+      "Application form (Thư đăng ký nhập học) – Theo mẫu của trường",
+      "Giới thiệu bản thân và kế hoạch du học – Theo mẫu",
+      "Giấy xác nhận sinh viên (Dịch Công chứng + Tem tím)",
+      "Bảng điểm đại học/cao đẳng (Dịch Công chứng + Tem tím)",
+      "Bằng tốt nghiệp + Học bạ (Dịch Công chứng)",
+      "Thư tiến cử của Hiệu trưởng trường Việt Nam (Dịch Công chứng)",
+      "Bản sao hộ chiếu học sinh + bố mẹ (Dịch Công chứng)",
+      "Bản sao CCCD học sinh + bố mẹ (Dịch Công chứng)",
+      "Giấy khai sinh (Dịch Công chứng)",
+      "CT07 / Sổ hộ khẩu – Giấy chứng minh quan hệ gia đình (Dịch Công chứng)",
+      "Xác nhận số dư tài khoản tiết kiệm đứng tên học sinh – tối thiểu 13 triệu KRW\n    (Phát hành trong vòng 1 tháng trước khi nộp hồ sơ)",
+      "Giấy xác nhận thu nhập/nơi công tác của bố mẹ (Dịch Công chứng)",
+      "03 ảnh thẻ 3,5x4,5 cm nền trắng",
+      "Giấy khám sức khoẻ lao phổi song ngữ (2 bản: 1 nộp trường + 1 nộp ĐSQ)",
+      "Chứng chỉ TOPIK/Sejong (nếu có)\n\nLưu ý nộp ĐSQ/LSQ:\n- Số tiền CMTC khi nộp hồ sơ xin Visa: 250–300 triệu VNĐ\n- Tem tím: 4 loại x 2 bản = 8 tem (1 bản nộp ĐSQ + 1 bản mang sang trường)\n- KHÔNG MỞ SỔ CMTC TẠI NGÂN HÀNG BẮC Á VÀ NGÂN HÀNG CHÍNH SÁCH XÃ HỘI"
+    ],
+    "documentsNote": "Invoice mẫu DWU-000001 (đính kèm trong catalog PDF)",
+    "partners": [
+      {
+        "code": "HN",
+        "name": "Cao đẳng Hà Nội",
+        "nameKr": "Cao đẳng Hà Nội"
+      },
+      {
+        "code": "HNC",
+        "name": "Cao đẳng Hữu Nghị",
+        "nameKr": "Cao đẳng Hữu Nghị"
+      },
+      {
+        "code": "HCCT",
+        "name": "Cao đẳng Thương mại và Du lịch Hà Nội",
+        "nameKr": "Cao đẳng Thương mại và Du lịch Hà Nội"
+      },
+      {
+        "code": "VTV",
+        "name": "Cao đẳng Truyền hình Việt Nam",
+        "nameKr": "Cao đẳng Truyền hình Việt Nam"
+      },
+      {
+        "code": "BGIT",
+        "name": "Cao đẳng Công nghiệp Bắc Giang",
+        "nameKr": "Cao đẳng Công nghiệp Bắc Giang"
+      },
+      {
+        "code": "HPC-HP",
+        "name": "Cao đẳng Y tế Hải Phòng",
+        "nameKr": "Cao đẳng Y tế Hải Phòng"
+      },
+      {
+        "code": "PMDT",
+        "name": "Cao đẳng Công nghệ Y Dược Việt Nam",
+        "nameKr": "Cao đẳng Công nghệ Y Dược Việt Nam"
+      },
+      {
+        "code": "TWU",
+        "name": "Đại học Trưng Vương",
+        "nameKr": "Đại học Trưng Vương"
+      },
+      {
+        "code": "UTM",
+        "name": "ĐH Quản lý và Kinh doanh Hữu Nghị",
+        "nameKr": "ĐH Quản lý và Kinh doanh Hữu Nghị"
+      },
+      {
+        "code": "KTTT",
+        "name": "Cao đẳng Kinh tế Kỹ thuật Thương mại",
+        "nameKr": "Cao đẳng Kinh tế Kỹ thuật Thương mại"
+      },
+      {
+        "code": "SGT",
+        "name": "Cao đẳng Công nghệ Sài Gòn",
+        "nameKr": "Cao đẳng Công nghệ Sài Gòn"
+      },
+      {
+        "code": "ISPACE",
+        "name": "Cao đẳng Công nghệ i-Space",
+        "nameKr": "Cao đẳng Công nghệ i-Space"
+      },
+      {
+        "code": "DA",
+        "name": "Cao đẳng Đồng An",
+        "nameKr": "Cao đẳng Đồng An"
+      },
+      {
+        "code": "SDU",
+        "name": "Đại học Sao Đỏ",
+        "nameKr": "Đại học Sao Đỏ"
+      },
+      {
+        "code": "DH",
+        "name": "Cao đẳng Duyên hải",
+        "nameKr": "Cao đẳng Duyên hải"
+      }
+    ],
+    "mou": "Cập nhật sau (đang xác nhận với trường)"
   }
 };
 
@@ -2727,6 +2892,14 @@ const EXTRA_SHEETS = {
         "quota": 200,
         "mou": "HN, HNC, HCCT, BGIT, PMDT, DH",
         "catalog": "documents/Semyung-University-Catalog.pdf"
+      },
+      {
+        "name": "DongDuk",
+        "nameKr": "동덕여자대학교 | Đại học 4 năm tại Seoul - Cái nôi nghệ thuật nữ sinh - Học bổng 50% - Chỉ dành cho nữ",
+        "system": "D2-6 > D2-2 (Đại học 4 năm)",
+        "quota": 200,
+        "mou": "Cập nhật sau (đang xác nhận với trường)",
+        "catalog": "documents/Đại-học-Nữ-sinh-Dongduk-Catalog.pdf"
       }
     ]
   }
