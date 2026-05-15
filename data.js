@@ -490,7 +490,7 @@ const SCHOOLS_DATA = {
     },
     "links": {
       "website": "",
-      "catalog": "documents/Sangmyung-University-Catalog.pdf"
+      "catalog": "https://drive.google.com/file/d/1U79U2e7tqad3s4rHVBWOh1v7-bqe4Y76/view?usp=sharing"
     },
     "video": {
       "url": "https://www.youtube.com/watch?v=umdE4TXwaXI",
@@ -1408,7 +1408,7 @@ const SCHOOLS_DATA = {
     },
     "links": {
       "website": "",
-      "catalog": "documents/Catholic-University-of-Busan-Catalog.pdf"
+      "catalog": "https://drive.google.com/file/d/1c4XfGO424-5OINQI9YuaCNPYY4WXNeaC/view?usp=sharing"
     },
     "video": {
       "url": "https://www.youtube.com/watch?v=Uw413FDFQG8",
@@ -1562,7 +1562,7 @@ const SCHOOLS_DATA = {
     },
     "links": {
       "website": "",
-      "catalog": "documents/Gimhae-College-Catalog.pdf"
+      "catalog": "https://drive.google.com/file/d/1Yy3ceBqYGYelV-tmfAl-9ZVprNvctmhN/view?usp=sharing"
     },
     "video": {
       "url": "https://www.youtube.com/watch?v=FTKBjPUMesA",
@@ -2638,7 +2638,7 @@ const EXTRA_SHEETS = {
         "system": "D2-6 > D2-2 (Đại học 4 năm)",
         "quota": 200,
         "mou": "HN, HNC, HCCT, VTV, BGIT, HPC-HP, KTTT, DH",
-        "catalog": "documents/Sangmyung-University-Catalog.pdf"
+        "catalog": "https://drive.google.com/file/d/1U79U2e7tqad3s4rHVBWOh1v7-bqe4Y76/view?usp=sharing"
       },
       {
         "name": "KyungGin",
@@ -2686,7 +2686,7 @@ const EXTRA_SHEETS = {
         "system": "D2-6 > D2-1 (Cao Đẳng)",
         "quota": 200,
         "mou": "HNC, HCCT, BGIT, HPC-HP, PMDT, UTM, KTTT, DA",
-        "catalog": "documents/Catholic-University-of-Busan-Catalog.pdf"
+        "catalog": "https://drive.google.com/file/d/1c4XfGO424-5OINQI9YuaCNPYY4WXNeaC/view?usp=sharing"
       },
       {
         "name": "Gimhae",
@@ -2694,7 +2694,7 @@ const EXTRA_SHEETS = {
         "system": "D2-6 > D2-1 (Cao Đẳng)",
         "quota": 200,
         "mou": "HCCT, VTV, BGIT, HPC-HP, PMDT, UTM, ISPACE, DA, SDU",
-        "catalog": "documents/Gimhae-College-Catalog.pdf"
+        "catalog": "https://drive.google.com/file/d/1Yy3ceBqYGYelV-tmfAl-9ZVprNvctmhN/view?usp=sharing"
       },
       {
         "name": "Gwangju",
