@@ -2335,7 +2335,7 @@ const SCHOOLS_DATA = {
     },
     "links": {
       "website": "",
-      "catalog": "documents/Đại-học-Nữ-sinh-Dongduk-Catalog.pdf"
+      "catalog": "https://drive.google.com/file/d/1jjenscO1WB2cBjLkAut7IxTSCLxDHUEt/view?usp=sharing"
     },
     "video": {
       "url": "https://www.dongduk.ac.kr",
@@ -2899,7 +2899,7 @@ const EXTRA_SHEETS = {
         "system": "D2-6 > D2-2 (Đại học 4 năm)",
         "quota": 200,
         "mou": "Cập nhật sau (đang xác nhận với trường)",
-        "catalog": "documents/Đại-học-Nữ-sinh-Dongduk-Catalog.pdf"
+        "catalog": "https://drive.google.com/file/d/1jjenscO1WB2cBjLkAut7IxTSCLxDHUEt/view?usp=sharing"
       }
     ]
   }
