@@ -106,7 +106,10 @@ function renderExtra() {
   const SEMESTER_GOOGLE_SHEET = "https://docs.google.com/spreadsheets/d/1H5tFffhJeLETHrNeRLV2l_gpg-KDQITD/edit?usp=sharing&ouid=112929137164133989656&rtpof=true&sd=true";
   let html = `<section class="sheet-view">
     <h2 class="sheet-title">Tài liệu chung</h2>
-    <p class="extra-intro"><a href="${SEMESTER_GOOGLE_SHEET}" target="_blank" rel="noopener">📋 Mở Google Sheet gốc</a></p>
+    <p class="extra-intro">
+      <a href="${SEMESTER_GOOGLE_SHEET}" target="_blank" rel="noopener">📋 Mở Google Sheet gốc</a>
+      · <a href="#" class="ebook-tab-link" data-school="ebook">📘 Ebook Visa D2-6 (FASTGO)</a>
+    </p>
     <table class="data-table extra-table" aria-label="Poster tuyển sinh D2-6">
       <thead><tr><th class="table-header">Poster tuyển sinh — Kỳ tháng 3/2027 · Chương trình D2-6</th></tr></thead>
       <tbody><tr><td class="col-value extra-poster-cell">
@@ -190,32 +193,51 @@ function showSchool(schoolId) {
   const content = document.getElementById("school-content");
   const extra = document.getElementById("extra-content");
   const map = document.getElementById("map-content");
+  const ebook = document.getElementById("ebook-content");
 
   document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
   document.querySelector(`[data-school="${schoolId}"]`)?.classList.add("active");
 
-  // TAB BẢN ĐỒ
-  if (schoolId === "map") {
+  const hideAll = () => {
     content.classList.add("hidden");
     extra.classList.add("hidden");
+    map.classList.add("hidden");
+    ebook.classList.add("hidden");
+  };
+
+  // TAB BẢN ĐỒ
+  if (schoolId === "map") {
+    hideAll();
     map.classList.remove("hidden");
     return;
   }
 
   // TAB TÀI LIỆU CHUNG
   if (schoolId === "extra") {
-    content.classList.add("hidden");
-    map.classList.add("hidden");
-
+    hideAll();
     extra.classList.remove("hidden");
     extra.innerHTML = renderExtra();
-  } else {
-    extra.classList.add("hidden");
-    map.classList.add("hidden");
-
-    content.classList.remove("hidden");
-    content.innerHTML = renderSchool(schoolId) || `<p class="empty">Chưa có dữ liệu.</p>`;
+    extra.querySelector(".ebook-tab-link")?.addEventListener("click", (e) => {
+      e.preventDefault();
+      showSchool("ebook");
+    });
+    return;
   }
+
+  // TAB EBOOK VISA D2-6
+  if (schoolId === "ebook") {
+    hideAll();
+    ebook.classList.remove("hidden");
+    const frame = ebook.querySelector(".ebook-frame");
+    if (frame && !frame.getAttribute("src")) {
+      frame.src = frame.dataset.src || "./EBOOK_SALEKIT_VISA_D2-6_FASTGO_1.html";
+    }
+    return;
+  }
+
+  hideAll();
+  content.classList.remove("hidden");
+  content.innerHTML = renderSchool(schoolId) || `<p class="empty">Chưa có dữ liệu.</p>`;
 }
 
 document.querySelectorAll(".tab-btn").forEach(btn => {
