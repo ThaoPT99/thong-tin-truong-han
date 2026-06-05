@@ -2028,7 +2028,7 @@ const SCHOOLS_DATA = {
     },
     "links": {
       "website": "",
-      "catalog": "documents/Deawon-catalog-.pdf"
+      "catalog": "https://drive.google.com/file/d/1UY4eFsyTNxAiOxseN5Ofxu5hfPNGE_P5/view?usp=sharing"
     },
     "video": {
       "url": "https://www.youtube.com/watch?v=Qcui82cohB4",
@@ -2883,7 +2883,7 @@ const EXTRA_SHEETS = {
         "system": "D2-6 > D2-1 (Cao Đẳng)",
         "quota": 200,
         "mou": "HCCT, BGIT, PMDT, UTM, DH, KTTU",
-        "catalog": "documents/Deawon-catalog-.pdf"
+        "catalog": "https://drive.google.com/file/d/1UY4eFsyTNxAiOxseN5Ofxu5hfPNGE_P5/view?usp=sharing"
       },
       {
         "name": "Sengmyung",
