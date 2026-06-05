@@ -69,7 +69,33 @@
         <p>Nguồn: <a href="https://docs.google.com/spreadsheets/d/1H5tFffhJeLETHrNeRLV2l_gpg-KDQITD/edit?usp=sharing&ouid=112929137164133989656&rtpof=true&sd=true" target="_blank">Google Sheet</a> | Cập nhật dữ liệu trong file <code>data.js</code></p>
     </footer>
 
+    <!-- Popup tham gia nhóm Zalo -->
+    <div id="zalo-popup" class="zalo-popup" role="dialog" aria-modal="true" aria-labelledby="zalo-popup-title">
+        <div class="zalo-popup-backdrop"></div>
+        <div class="zalo-popup-card">
+            <button type="button" class="zalo-popup-close" aria-label="Đóng">&times;</button>
+            <h2 id="zalo-popup-title" class="zalo-popup-title">Cộng Đồng Visa D2-6</h2>
+            <p class="zalo-popup-subtitle">Quét mã QR hoặc tham gia nhóm để nhận thêm thông tin tuyển sinh</p>
+            <div class="zalo-popup-qr-wrap">
+                <img src="./zalo-qr-d2-6.png" alt="Mã QR tham gia nhóm Zalo Cộng Đồng Visa D2-6" class="zalo-popup-qr">
+            </div>
+            <p class="zalo-popup-hint">Quét mã QR bằng ứng dụng Zalo trên điện thoại</p>
+            <div class="zalo-popup-actions">
+                <a href="https://zalo.me/g/1oq8ngti4pcbfmxdbe9g" target="_blank" rel="noopener noreferrer" class="zalo-popup-join">
+                    Tham gia nhóm Zalo
+                </a>
+                <button type="button" class="zalo-popup-later">Để sau (24 giờ)</button>
+            </div>
+        </div>
+    </div>
+
+    <button type="button" class="zalo-fab" onclick="openZaloPopup()" title="Tham gia nhóm Zalo D2-6" aria-label="Mở popup tham gia nhóm Zalo">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M12 2C6.48 2 2 5.58 2 10c0 2.54 1.19 4.81 3.05 6.27L4 22l5.86-2.34C10.53 19.89 11.25 20 12 20c5.52 0 10-3.58 10-8s-4.48-8-10-8z"/></svg>
+        Zalo
+    </button>
+
     <script src="./data.js"></script>
     <script src="./render.js"></script>
+    <script src="./zalo-popup.js"></script>
 </body>
 </html>
