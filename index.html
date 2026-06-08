@@ -6,70 +6,94 @@
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📋</text></svg>">
     <title>Thông tin trường Hàn</title>
-    <!-- Open Graph - sẽ cập nhật bằng JS -->
-    <meta property="og:title" id="og-title" content="Thông tin trường Hàn" />
-    <meta property="og:description" id="og-desc" content="Thông tin các trường Hàn" />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://thong-tin-truong-han.vercel.app/" />
+    <meta property="og:title" id="og-title" content="Thông tin trường Hàn">
+    <meta property="og:description" id="og-desc" content="Thông tin các trường Hàn">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://thong-tin-truong-han.vercel.app/">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIINfQzGXL9O4UJ4IMqYoE2cLkHhCcQyI=" crossorigin="">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header class="header">
-        <div class="header-inner">
-            <h1 class="logo">Thông tin trường Hàn</h1>
-            <p class="subtitle">Kỳ tuyển sinh tháng 3/2027</p>
-        </div>
-    </header>
+    <div class="app-shell">
+        <aside class="app-sidebar">
+            <header class="header">
+                <div class="header-inner">
+                    <h1 class="logo">D2-6 Match</h1>
+                    <p class="subtitle">Kỳ tuyển sinh tháng 3/2027</p>
+                </div>
+            </header>
 
-    <!-- Chọn trường -->
-    <nav class="school-tabs">
-        <div class="tabs-inner">
-            <button class="tab-btn" data-school="map">Vị trí các trường</button>
-            <button class="tab-btn active" data-school="dh-osan">Osan</button>
-            <button class="tab-btn" data-school="dh-induk">Induk</button>
-            <button class="tab-btn" data-school="dh-yeonsung">Yeonsung</button>
-            <button class="tab-btn" data-school="dh-sangmyung">Sangmyung</button>
-            <button class="tab-btn" data-school="dh-nu-sinh-kyungin">Nu Sinh Kyungin</button>
-            <button class="tab-btn" data-school="dh-y-te-dongnam">Y Te Dongnam</button>
-            <button class="tab-btn" data-school="dh-dongeui">DongEui</button>
-            <button class="tab-btn" data-school="cd-suncheon-jeil">Suncheon Jeil</button>
-            <button class="tab-btn" data-school="dh-nu-sinh-busan">Nu Sinh Busan</button>
-            <button class="tab-btn" data-school="dh-busan-catholic">Busan Catholic</button>
-            <button class="tab-btn" data-school="dh-gimhae">Gimhae</button>
-            <button class="tab-btn" data-school="dh-gwangju">Gwangju</button>
-            <button class="tab-btn" data-school="dh-nambu">Nambu</button>
-            <button class="tab-btn" data-school="dh-daewon">Daewon</button>
-            <button class="tab-btn" data-school="dh-sengmyung">Sengmyung</button>
-            <button class="tab-btn" data-school="dh-nu-sinh-dongduk">Nu Sinh Dongduk</button>
-            <button class="tab-btn" data-school="extra">Tai lieu chung</button>
-            <button class="tab-btn" data-school="ebook">Ebook Visa D2-6</button>
-        </div>
-    </nav>
+            <nav class="school-tabs" aria-label="Menu chính">
+                <div class="tabs-inner">
+                    <button class="tab-btn active" data-school="schools">Trường</button>
+                    <button class="tab-btn advisor-tab-btn" data-school="advisor">Tư vấn</button>
+                    <button class="tab-btn" data-school="compare">So sánh</button>
+                    <button class="tab-btn" data-school="map">Bản đồ</button>
+                    <button class="tab-btn" data-school="extra">Tài liệu</button>
+                    <button class="tab-btn" data-school="ebook">Ebook Visa D2-6</button>
+                </div>
+            </nav>
 
-    <main class="main">
-        <div id="school-content"></div>
-        <div id="map-content" class="hidden"><div class="map-wrapper">
-        <img src="./maphanquoc.png" alt="Vị trí các trường Hàn Quốc" class="korea-map">
+            <div class="sidebar-zalo">
+                <h2>Cộng đồng Zalo</h2>
+                <p>Nhận checklist, catalog và tư vấn hồ sơ D2-6.</p>
+                <button type="button" onclick="openZaloPopup()">Mở Zalo</button>
+            </div>
+        </aside>
+
+        <div class="app-main">
+            <section class="app-topbar">
+                <div>
+                    <p class="advisor-kicker">Danh sách trường Hàn</p>
+                    <h2>Thông tin trường Visa D2-6</h2>
+                    <p>Tra cứu danh sách trường, xem thông tin chi tiết và so sánh các lựa chọn phù hợp theo từng kỳ tuyển sinh.</p>
+                </div>
+                <div class="topbar-stats" aria-label="Thông tin nhanh">
+                    <span><strong id="topbar-school-count">--</strong> trường</span>
+                    <span>D2-6</span>
+                </div>
+                <button type="button" class="topbar-action" data-school="advisor">Phân tích hồ sơ</button>
+            </section>
+
+            <main class="main">
+                <div id="advisor-content"></div>
+                <div id="schools-content" class="hidden"></div>
+                <div id="compare-content" class="hidden"></div>
+                <div id="school-content" class="hidden"></div>
+                <div id="map-content" class="hidden">
+                    <section class="real-map-view">
+                        <div class="directory-head">
+                            <div>
+                                <p class="advisor-kicker">Bản đồ trường</p>
+                                <h2>Vị trí các trường tại Hàn Quốc</h2>
+                                <p>Bấm vào từng ghim trên bản đồ để xem tên trường và mở trang chi tiết.</p>
+                            </div>
+                        </div>
+                        <div class="map-layout">
+                            <div id="school-map" class="school-map" aria-label="Bản đồ vị trí các trường Hàn Quốc"></div>
+                            <div id="map-school-list" class="map-school-list"></div>
+                        </div>
+                    </section>
+                </div>
+                <div id="extra-content" class="hidden"></div>
+                <div id="ebook-content" class="hidden">
+                    <iframe
+                        class="ebook-frame"
+                        data-src="./EBOOK_SALEKIT_VISA_D2-6_FASTGO_1.html"
+                        title="Ebook Visa D2-6 FASTGO"
+                    ></iframe>
+                </div>
+            </main>
+
+            <footer class="footer">
+                <p>Thông tin được tổng hợp và cập nhật theo từng kỳ tuyển sinh. <a href="https://docs.google.com/spreadsheets/d/1H5tFffhJeLETHrNeRLV2l_gpg-KDQITD/edit?usp=sharing&ouid=112929137164133989656&rtpof=true&sd=true" target="_blank" rel="noopener">Xem nguồn dữ liệu</a></p>
+            </footer>
+        </div>
     </div>
-</div>
-        <div id="extra-content" class="hidden"></div>
-        <div id="ebook-content" class="hidden">
-            <iframe
-                class="ebook-frame"
-                data-src="./EBOOK_SALEKIT_VISA_D2-6_FASTGO_1.html"
-                title="Ebook Visa D2-6 FASTGO"
-            ></iframe>
-        </div>
-    </main>
 
-    <footer class="footer">
-        <p>Nguồn: <a href="https://docs.google.com/spreadsheets/d/1H5tFffhJeLETHrNeRLV2l_gpg-KDQITD/edit?usp=sharing&ouid=112929137164133989656&rtpof=true&sd=true" target="_blank">Google Sheet</a> | Cập nhật dữ liệu trong file <code>data.js</code></p>
-    </footer>
-
-    <!-- Popup tham gia nhóm Zalo -->
     <div id="zalo-popup" class="zalo-popup" role="dialog" aria-modal="true" aria-labelledby="zalo-popup-title">
         <div class="zalo-popup-backdrop"></div>
         <div class="zalo-popup-card">
@@ -95,6 +119,8 @@
     </button>
 
     <script src="./data.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="./advisor.js"></script>
     <script src="./render.js"></script>
     <script src="./zalo-popup.js"></script>
 </body>
