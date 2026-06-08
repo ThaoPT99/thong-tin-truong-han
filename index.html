@@ -13,7 +13,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIINfQzGXL9O4UJ4IMqYoE2cLkHhCcQyI=" crossorigin="">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -73,7 +72,9 @@
                             </div>
                         </div>
                         <div class="map-layout">
-                            <div id="school-map" class="school-map" aria-label="Bản đồ vị trí các trường Hàn Quốc"></div>
+                            <div class="static-map-frame">
+                                <img src="./images/korea-school-map-static.webp" alt="Bản đồ vị trí các trường Hàn Quốc Visa D2-6" class="static-school-map" loading="lazy">
+                            </div>
                             <div id="map-school-list" class="map-school-list"></div>
                         </div>
                     </section>
@@ -119,7 +120,6 @@
     </button>
 
     <script src="./data.js"></script>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script src="./advisor.js"></script>
     <script src="./render.js"></script>
     <script src="./zalo-popup.js"></script>

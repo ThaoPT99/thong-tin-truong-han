@@ -1,6 +1,4 @@
 const PLACEHOLDER = "images/placeholder.svg";
-let schoolMapInstance = null;
-let schoolMapMarkers = [];
 
 const SCHOOL_COORDINATES = {
   "dh-osan": { lat: 37.1551204, lng: 127.0609771 },
@@ -304,75 +302,28 @@ function bindSchoolsDirectory(container) {
 }
 
 function initSchoolMap() {
-  const mapEl = document.getElementById("school-map");
   const listEl = document.getElementById("map-school-list");
-  if (!mapEl || !listEl) return;
+  if (!listEl) return;
 
   const schools = getSchools().filter(school => SCHOOL_COORDINATES[school.id]);
   listEl.innerHTML = schools.map(school => {
     const rules = getAdvisorRules(school.id, school);
+    const coord = SCHOOL_COORDINATES[school.id];
+    const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${coord.lat},${coord.lng}`;
     return `
-      <button type="button" class="map-school-item" data-map-school="${escapeHtml(school.id)}">
-        <strong>${escapeHtml(school.name)}</strong>
-        <span>${escapeHtml(getRegionLabel(rules.region))}</span>
-      </button>
+      <article class="map-school-item">
+        <button type="button" data-open-school="${escapeHtml(school.id)}">
+          <strong>${escapeHtml(school.name)}</strong>
+          <span>${escapeHtml(getRegionLabel(rules.region))}</span>
+        </button>
+        <a href="${mapsUrl}" target="_blank" rel="noopener">Google Maps</a>
+      </article>
     `;
   }).join("");
 
-  if (typeof L === "undefined") {
-    mapEl.innerHTML = `<p class="empty">Chưa tải được bản đồ. Vui lòng kiểm tra kết nối mạng.</p>`;
-    return;
-  }
-
-  if (!schoolMapInstance) {
-    schoolMapInstance = L.map(mapEl, {
-      scrollWheelZoom: true,
-      zoomControl: true
-    }).setView([36.25, 127.85], 7);
-
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      maxZoom: 18,
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(schoolMapInstance);
-  }
-
-  schoolMapMarkers.forEach(marker => marker.remove());
-  schoolMapMarkers = [];
-
-  const bounds = [];
-  schools.forEach(school => {
-    const coord = SCHOOL_COORDINATES[school.id];
-    const marker = L.marker([coord.lat, coord.lng]).addTo(schoolMapInstance);
-    marker.bindPopup(`
-      <strong>${escapeHtml(school.name)}</strong><br>
-      ${escapeHtml(school.nameEn || "")}<br>
-      <button type="button" class="map-popup-link" data-popup-school="${escapeHtml(school.id)}">Xem chi tiết</button>
-    `);
-    marker.on("popupopen", () => {
-      document.querySelector(`[data-popup-school="${school.id}"]`)?.addEventListener("click", () => showSchool(school.id));
-    });
-    marker.schoolId = school.id;
-    schoolMapMarkers.push(marker);
-    bounds.push([coord.lat, coord.lng]);
+  listEl.querySelectorAll("[data-open-school]").forEach(button => {
+    button.addEventListener("click", () => showSchool(button.dataset.openSchool));
   });
-
-  if (bounds.length) {
-    schoolMapInstance.fitBounds(bounds, { padding: [34, 34] });
-  }
-
-  listEl.querySelectorAll("[data-map-school]").forEach(button => {
-    button.addEventListener("click", () => {
-      const schoolId = button.dataset.mapSchool;
-      const marker = schoolMapMarkers.find(item => item.schoolId === schoolId);
-      const coord = SCHOOL_COORDINATES[schoolId];
-      if (marker && coord) {
-        schoolMapInstance.setView([coord.lat, coord.lng], 13);
-        marker.openPopup();
-      }
-    });
-  });
-
-  setTimeout(() => schoolMapInstance.invalidateSize(), 120);
 }
 
 function renderCompare() {

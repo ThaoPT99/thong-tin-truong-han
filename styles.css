@@ -2030,13 +2030,19 @@ html {
     gap: 1rem;
 }
 
-.school-map {
-    height: 640px;
+.static-map-frame {
+    min-height: 0;
     border: 1px solid #dbe3ee;
     border-radius: 16px;
     overflow: hidden;
     background: #dff0fb;
     box-shadow: 0 10px 26px rgba(20, 32, 51, 0.08);
+}
+
+.static-school-map {
+    display: block;
+    width: 100%;
+    height: auto;
 }
 
 .map-school-list {
@@ -2053,10 +2059,19 @@ html {
 }
 
 .map-school-item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.45rem;
     padding: 0.65rem 0.75rem;
     border: 1px solid #e6edf5;
     border-radius: 10px;
     background: #f8fafc;
+}
+
+.map-school-item button {
+    border: 0;
+    background: transparent;
     color: #142033;
     font: inherit;
     text-align: left;
@@ -2080,17 +2095,12 @@ html {
     font-weight: 700;
 }
 
-.map-popup-link {
-    margin-top: 0.45rem;
-    padding: 0.35rem 0.55rem;
-    border: 0;
-    border-radius: 7px;
-    background: #2563eb;
-    color: #fff;
-    font: inherit;
-    font-size: 0.82rem;
+.map-school-item a {
+    color: #1d4ed8;
+    font-size: 0.78rem;
     font-weight: 800;
-    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
 }
 
 @media (max-width: 760px) {
@@ -2113,10 +2123,6 @@ html {
 
     .map-layout {
         grid-template-columns: 1fr;
-    }
-
-    .school-map {
-        height: 520px;
     }
 
     .map-school-list {
