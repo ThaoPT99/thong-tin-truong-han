@@ -1,24 +1,5 @@
 const PLACEHOLDER = "images/placeholder.svg";
 
-const SCHOOL_COORDINATES = {
-  "dh-osan": { lat: 37.1551204, lng: 127.0609771 },
-  "dh-induk": { lat: 37.6313043, lng: 127.0543265 },
-  "dh-yeonsung": { lat: 37.3970961, lng: 126.9085375 },
-  "dh-sangmyung": { lat: 37.6025021, lng: 126.9548314 },
-  "dh-nu-sinh-kyungin": { lat: 37.5454323, lng: 126.7190608 },
-  "dh-y-te-dongnam": { lat: 37.3008, lng: 126.9848 },
-  "dh-dongeui": { lat: 35.1654781, lng: 129.0727761 },
-  "cd-suncheon-jeil": { lat: 34.9334365, lng: 127.486719 },
-  "dh-nu-sinh-busan": { lat: 35.1672, lng: 129.0712 },
-  "dh-busan-catholic": { lat: 35.2447, lng: 129.0958 },
-  "dh-gimhae": { lat: 35.3046686, lng: 128.8079349 },
-  "dh-gwangju": { lat: 35.1031004, lng: 126.8983257 },
-  "dh-nambu": { lat: 35.2064503, lng: 126.8402985 },
-  "dh-daewon": { lat: 37.1788, lng: 128.1918 },
-  "dh-sengmyung": { lat: 37.1797, lng: 128.1949 },
-  "dh-nu-sinh-dongduk": { lat: 37.6068, lng: 127.0428 }
-};
-
 function escapeHtml(str) {
   if (typeof str !== "string") return "";
   const d = document.createElement("div");
@@ -103,6 +84,54 @@ function getSchoolSummary(school) {
   return short.length > 120 ? `${short.slice(0, 120)}...` : short || "Thông tin chi tiết được cập nhật theo từng kỳ tuyển sinh.";
 }
 
+function getRecentSchools() {
+  try {
+    return JSON.parse(localStorage.getItem("recentSchools") || "[]");
+  } catch (e) {
+    return [];
+  }
+}
+
+function saveRecentSchool(schoolId) {
+  if (!schoolId) return;
+  const next = [schoolId, ...getRecentSchools().filter(id => id !== schoolId)]
+    .filter(id => getSchoolById(id))
+    .slice(0, 5);
+  localStorage.setItem("recentSchools", JSON.stringify(next));
+}
+
+function renderRecentSchools() {
+  const recent = getRecentSchools().map(id => getSchoolById(id)).filter(Boolean);
+  if (!recent.length) return "";
+  return `
+    <div class="recent-schools">
+      <span>Đã xem gần đây</span>
+      <div>
+        ${recent.map(s => `<button type="button" data-open-school="${escapeHtml(s.id)}">${escapeHtml(s.name)}</button>`).join("")}
+      </div>
+    </div>
+  `;
+}
+
+function buildSchoolSearchText(school) {
+  return [
+    school.name,
+    school.nameKr,
+    school.nameEn,
+    school.system,
+    school.location,
+    school.tuition,
+    school.ktx,
+    school.mou,
+    ...(school.conditions || []),
+    ...(school.majors || []),
+    ...(school.advantages || []),
+    ...(school.conversion || []),
+    ...(school.documents || []),
+    ...(school.partners || []).flatMap(p => [p.code, p.name])
+  ].filter(Boolean).join(" ").toLowerCase();
+}
+
 function renderSchool(schoolId) {
   const s = getSchoolById(schoolId);
   if (!s) return "";
@@ -148,9 +177,17 @@ function renderSchool(schoolId) {
         </div>
         <div class="detail-actions">
           <button type="button" class="copy-school-info" data-school-id="${escapeHtml(schoolId)}">Copy thông tin</button>
+          <button type="button" class="copy-school-link" data-school-id="${escapeHtml(schoolId)}">Copy link</button>
           <button type="button" class="open-zalo-detail">Tư vấn Zalo</button>
         </div>
       </div>
+      <nav class="detail-jump" aria-label="Mục trong trang">
+        <a href="#tong-quan">Tổng quan</a>
+        <a href="#dieu-kien">Điều kiện</a>
+        <a href="#hoc-phi">Học phí</a>
+        <a href="#ho-so">Hồ sơ</a>
+        <a href="#tai-lieu">Tài liệu</a>
+      </nav>
       <div class="detail-overview">
         <div><span>Hệ học</span><strong>${renderValue(s.system)}</strong></div>
         <div><span>Khu vực</span><strong>${escapeHtml(getRegionLabel(rules.region))}</strong></div>
@@ -158,15 +195,15 @@ function renderSchool(schoolId) {
         <div><span>Đối tượng</span><strong>${rules.gender === "female" ? "Nữ sinh" : "Nam/Nữ"}</strong></div>
       </div>
       <div class="detail-grid">
-        <article class="detail-card detail-card-wide">
+        <article class="detail-card detail-card-wide" id="tong-quan">
           <h3>Tổng quan</h3>
-          <div>${introVal}</div>
+          <div class="detail-readable">${introVal}</div>
         </article>
         <article class="detail-card">
           <h3>Vị trí</h3>
           <div>${locationVal}</div>
         </article>
-        <article class="detail-card">
+        <article class="detail-card" id="dieu-kien">
           <h3>Điều kiện tuyển sinh</h3>
           ${renderSimpleList(s.conditions)}
         </article>
@@ -174,7 +211,7 @@ function renderSchool(schoolId) {
           <h3>Chuyên ngành</h3>
           ${renderSimpleList(s.majors)}
         </article>
-        <article class="detail-card">
+        <article class="detail-card" id="hoc-phi">
           <h3>Học phí</h3>
           <div>${renderValue(s.tuition)}</div>
         </article>
@@ -190,11 +227,14 @@ function renderSchool(schoolId) {
           <h3>Lộ trình chuyển đổi</h3>
           ${renderSimpleList(s.conversion)}
         </article>
-        <article class="detail-card detail-card-wide">
+        <article class="detail-card detail-card-wide" id="ho-so">
           <h3>Hồ sơ cần lưu ý</h3>
-          <div>${docsVal}</div>
+          <details class="detail-more" open>
+            <summary>Xem danh sách hồ sơ</summary>
+            <div>${docsVal}</div>
+          </details>
         </article>
-        <article class="detail-card">
+        <article class="detail-card" id="tai-lieu">
           <h3>Tài liệu</h3>
           <div class="detail-links">
             ${catalogVal || `<span class="muted-empty">Catalog đang cập nhật</span>`}
@@ -246,9 +286,12 @@ function renderSchoolsDirectory() {
         <button type="button" data-quick-filter="female">Chỉ nữ</button>
         <button type="button" data-quick-filter="e7">Dễ E7</button>
       </div>
+      ${renderRecentSchools()}
+      <div class="directory-count"><span id="school-result-count">${schools.length}</span> trường đang hiển thị</div>
       <div id="school-card-grid" class="school-name-grid">
         ${schools.map(renderSchoolCard).join("")}
       </div>
+      <p id="school-empty-state" class="muted-empty directory-empty hidden">Không tìm thấy trường phù hợp với bộ lọc hiện tại.</p>
     </section>
   `;
 }
@@ -261,7 +304,7 @@ function renderSchoolCard(school) {
     rules.e7Opportunity >= 4 ? "e7" : ""
   ].filter(Boolean).join(" ");
   return `
-    <button type="button" class="school-name-item" data-school-card data-region="${escapeHtml(rules.region)}" data-tags="${escapeHtml(tags)}" data-search="${escapeHtml([school.name, school.nameKr, school.nameEn, school.system, school.location].join(" ").toLowerCase())}" data-open-school="${escapeHtml(school.id)}">
+    <button type="button" class="school-name-item" data-school-card data-region="${escapeHtml(rules.region)}" data-tags="${escapeHtml(tags)}" data-search="${escapeHtml(buildSchoolSearchText(school))}" data-open-school="${escapeHtml(school.id)}">
       ${escapeHtml(school.name)}
     </button>
   `;
@@ -272,19 +315,26 @@ function bindSchoolsDirectory(container) {
   const region = container.querySelector("#school-region-filter");
   const quickButtons = Array.from(container.querySelectorAll("[data-quick-filter]"));
   const cards = Array.from(container.querySelectorAll("[data-school-card]"));
+  const count = container.querySelector("#school-result-count");
+  const empty = container.querySelector("#school-empty-state");
   let quickFilter = "all";
 
   const applyFilters = () => {
     const q = (search.value || "").trim().toLowerCase();
     const selectedRegion = region.value;
+    let visible = 0;
     cards.forEach(card => {
       const matchSearch = !q || card.dataset.search.includes(q);
       const matchRegion = selectedRegion === "all" || card.dataset.region === selectedRegion;
       const matchQuick = quickFilter === "all"
         || card.dataset.region === quickFilter
         || (card.dataset.tags || "").split(" ").includes(quickFilter);
-      card.classList.toggle("hidden", !(matchSearch && matchRegion && matchQuick));
+      const isVisible = matchSearch && matchRegion && matchQuick;
+      card.classList.toggle("hidden", !isVisible);
+      if (isVisible) visible += 1;
     });
+    if (count) count.textContent = String(visible);
+    empty?.classList.toggle("hidden", visible !== 0);
   };
 
   search.addEventListener("input", applyFilters);
@@ -297,31 +347,6 @@ function bindSchoolsDirectory(container) {
     });
   });
   container.querySelectorAll("[data-open-school]").forEach(button => {
-    button.addEventListener("click", () => showSchool(button.dataset.openSchool));
-  });
-}
-
-function initSchoolMap() {
-  const listEl = document.getElementById("map-school-list");
-  if (!listEl) return;
-
-  const schools = getSchools().filter(school => SCHOOL_COORDINATES[school.id]);
-  listEl.innerHTML = schools.map(school => {
-    const rules = getAdvisorRules(school.id, school);
-    const coord = SCHOOL_COORDINATES[school.id];
-    const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${coord.lat},${coord.lng}`;
-    return `
-      <article class="map-school-item">
-        <button type="button" data-open-school="${escapeHtml(school.id)}">
-          <strong>${escapeHtml(school.name)}</strong>
-          <span>${escapeHtml(getRegionLabel(rules.region))}</span>
-        </button>
-        <a href="${mapsUrl}" target="_blank" rel="noopener">Google Maps</a>
-      </article>
-    `;
-  }).join("");
-
-  listEl.querySelectorAll("[data-open-school]").forEach(button => {
     button.addEventListener("click", () => showSchool(button.dataset.openSchool));
   });
 }
@@ -370,26 +395,54 @@ function getSchoolShareText(school) {
   ].filter(Boolean).join("\n");
 }
 
+function showCopyToast(container, message) {
+  const toast = container.querySelector(".copy-toast");
+  if (!toast) return;
+  toast.textContent = message;
+  toast.hidden = false;
+  window.setTimeout(() => { toast.hidden = true; }, 1800);
+}
+
+function updatePageMeta(viewId, school) {
+  const semester = typeof SEMESTER_INFO !== "undefined"
+    ? `Kỳ tháng ${SEMESTER_INFO.ky || "3"}/${SEMESTER_INFO.nam || "2027"}`
+    : "Visa D2-6";
+  const title = school
+    ? `${school.name} - Thông tin trường Hàn`
+    : `Thông tin trường Hàn - ${semester}`;
+  const desc = school
+    ? `${school.name}: điều kiện, học phí, ký túc xá, hồ sơ và tài liệu liên quan cho chương trình Visa D2-6.`
+    : `${semester} - Tra cứu danh sách trường Hàn, so sánh lựa chọn và phân tích hồ sơ D2-6.`;
+
+  document.title = title;
+  const ogTitle = document.getElementById("og-title");
+  const ogDesc = document.getElementById("og-desc");
+  if (ogTitle) ogTitle.content = title;
+  if (ogDesc) ogDesc.content = desc;
+}
+
 function bindSchoolDetail(container, schoolId) {
   const school = getSchoolById(schoolId);
+  saveRecentSchool(schoolId);
   container.querySelector(".back-to-schools")?.addEventListener("click", () => showSchool("schools"));
   container.querySelector(".open-zalo-detail")?.addEventListener("click", () => {
     if (typeof openZaloPopup === "function") openZaloPopup();
   });
   container.querySelector(".copy-school-info")?.addEventListener("click", async () => {
-    const toast = container.querySelector(".copy-toast");
     try {
       await navigator.clipboard.writeText(getSchoolShareText(school));
-      if (toast) {
-        toast.hidden = false;
-        window.setTimeout(() => { toast.hidden = true; }, 1800);
-      }
+      showCopyToast(container, "Đã copy thông tin trường");
     } catch (e) {
-      if (toast) {
-        toast.hidden = false;
-        toast.textContent = "Trình duyệt chưa cho phép copy tự động";
-        window.setTimeout(() => { toast.hidden = true; }, 2200);
-      }
+      showCopyToast(container, "Trình duyệt chưa cho phép copy tự động");
+    }
+  });
+  container.querySelector(".copy-school-link")?.addEventListener("click", async () => {
+    const link = `${location.origin}${location.pathname}?school=${encodeURIComponent(schoolId)}`;
+    try {
+      await navigator.clipboard.writeText(link);
+      showCopyToast(container, "Đã copy link trường");
+    } catch (e) {
+      showCopyToast(container, "Trình duyệt chưa cho phép copy tự động");
     }
   });
 }
@@ -594,19 +647,67 @@ function bindD26Checklist(container) {
   });
 }
 
-function renderExtra() {
-  const sheet = "https://docs.google.com/spreadsheets/d/1H5tFffhJeLETHrNeRLV2l_gpg-KDQITD/edit?usp=sharing&ouid=112929137164133989656&rtpof=true&sd=true";
-  let html = `${renderD26Checklist()}<section class="sheet-view">
-    <h2 class="sheet-title">Tài liệu chung</h2>
-    <p class="extra-intro">
-      <a href="${sheet}" target="_blank" rel="noopener">Mở Google Sheet gốc</a>
-      · <a href="#" class="ebook-tab-link" data-school="ebook">Ebook Visa D2-6 FASTGO</a>
-    </p>`;
+function getDataHealthReport() {
+  const required = [
+    ["Hệ học", s => s.system],
+    ["Khu vực", s => s.location],
+    ["Điều kiện", s => s.conditions?.length],
+    ["Chuyên ngành", s => s.majors?.length],
+    ["Học phí", s => s.tuition],
+    ["Ký túc xá", s => s.ktx],
+    ["Catalog", s => s.links?.catalog || s.images?.catalog],
+    ["Video", s => s.video?.url || s.video?.youtubeId]
+  ];
+
+  return getSchools().map(school => {
+    const missing = required.filter(([, hasValue]) => !hasValue(school)).map(([label]) => label);
+    return { school, missing };
+  });
+}
+
+function renderDataHealthReport() {
+  const rows = getDataHealthReport();
+  const complete = rows.filter(row => row.missing.length === 0).length;
+  return `
+    <section class="data-health">
+      <div class="docs-section-head">
+        <div>
+          <p class="advisor-kicker">Kiểm tra thông tin</p>
+          <h2>Tình trạng thông tin trường</h2>
+        </div>
+        <span>${complete}/${rows.length} trường đủ mục chính</span>
+      </div>
+      <div class="data-health-grid">
+        ${rows.map(({ school, missing }) => `
+          <div class="data-health-row ${missing.length ? "" : "is-complete"}">
+            <strong>${escapeHtml(school.name)}</strong>
+            <span>${missing.length ? `Cần bổ sung: ${escapeHtml(missing.join(", "))}` : "Đã đủ các mục chính"}</span>
+          </div>
+        `).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function renderGeneralDocs(sheet) {
+  let html = `
+    <section class="docs-panel">
+      <div class="docs-section-head">
+        <div>
+          <p class="advisor-kicker">Tài liệu tham khảo</p>
+          <h2>Tài liệu chung</h2>
+        </div>
+        <div class="docs-actions">
+          <a href="${sheet}" target="_blank" rel="noopener">Mở bảng tổng hợp</a>
+          <a href="#" class="ebook-tab-link" data-school="ebook">Ebook Visa D2-6</a>
+        </div>
+      </div>
+  `;
 
   if (EXTRA_SHEETS?.danhSach?.rows?.length) {
-    html += `<table class="data-table extra-table">
-      <thead><tr><th class="table-header">${escapeHtml(EXTRA_SHEETS.danhSach.name)}</th></tr></thead>
-      <tbody><tr><td><table class="summary-table">
+    html += `<details class="docs-detail">
+      <summary>Danh sách trường tổng hợp</summary>
+      <div class="table-scroll"><table class="summary-table">
         <tr><th>Trường</th><th>Hệ</th><th>Chỉ tiêu</th><th>MOU</th><th>Catalog</th></tr>
         ${EXTRA_SHEETS.danhSach.rows.map(r => `<tr>
           <td>${escapeHtml(r.name)} ${r.nameKr ? `<span class="korean">${escapeHtml(r.nameKr)}</span>` : ""}</td>
@@ -615,23 +716,36 @@ function renderExtra() {
           <td>${escapeHtml(r.mou || "")}</td>
           <td>${r.catalog ? `<a href="${r.catalog}" target="_blank" rel="noopener">Mở</a>` : ""}</td>
         </tr>`).join("")}
-      </table></td></tr></tbody>
-    </table>`;
+      </table></div>
+    </details>`;
   }
 
   if (EXTRA_SHEETS?.visaChecklist?.items?.length) {
-    html += `<table class="data-table extra-table">
-      <thead><tr><th class="table-header">${escapeHtml(EXTRA_SHEETS.visaChecklist.name)}</th></tr></thead>
-      <tbody>${EXTRA_SHEETS.visaChecklist.items.map(it => `<tr>
-        <td class="col-label">${escapeHtml(it.stt || "")}</td>
-        <td class="col-value">${escapeHtml(it.noidung || "")}${it.luuy ? `<br><em>${escapeHtml(it.luuy)}</em>` : ""}
-        ${it.link ? `<br><a href="${it.link}" target="_blank" rel="noopener">${escapeHtml(it.linkText || "Mở tài liệu")}</a>` : it.linkText ? `<br>${escapeHtml(it.linkText)}` : ""}
-        </td></tr>`).join("")}</tbody>
-    </table>`;
+    html += `<details class="docs-detail">
+      <summary>Checklist từ bảng tổng hợp</summary>
+      <div class="table-scroll"><table class="summary-table">
+        ${EXTRA_SHEETS.visaChecklist.items.map(it => `<tr>
+          <td>${escapeHtml(it.stt || "")}</td>
+          <td>${escapeHtml(it.noidung || "")}${it.luuy ? `<br><em>${escapeHtml(it.luuy)}</em>` : ""}
+          ${it.link ? `<br><a href="${it.link}" target="_blank" rel="noopener">${escapeHtml(it.linkText || "Mở tài liệu")}</a>` : it.linkText ? `<br>${escapeHtml(it.linkText)}` : ""}
+          </td></tr>`).join("")}
+      </table></div>
+    </details>`;
   }
 
   html += `</section>`;
   return html;
+}
+
+function renderExtra() {
+  const sheet = "https://docs.google.com/spreadsheets/d/1H5tFffhJeLETHrNeRLV2l_gpg-KDQITD/edit?usp=sharing&ouid=112929137164133989656&rtpof=true&sd=true";
+  return `
+    <section class="docs-view">
+      ${renderD26Checklist()}
+      ${renderGeneralDocs(sheet)}
+      ${renderDataHealthReport()}
+    </section>
+  `;
 }
 
 function showSchool(viewId) {
@@ -647,6 +761,7 @@ function showSchool(viewId) {
   document.querySelector(`[data-school="${viewId}"]`)?.classList.add("active");
   if (getSchoolById(viewId)) document.querySelector(`[data-school="schools"]`)?.classList.add("active");
   updateUrlForView(viewId);
+  updatePageMeta(viewId, getSchoolById(viewId));
 
   const hideAll = () => {
     [content, schools, compare, extra, map, ebook, advisor].forEach(el => el?.classList.add("hidden"));
@@ -679,7 +794,6 @@ function showSchool(viewId) {
   if (viewId === "map") {
     hideAll();
     map.classList.remove("hidden");
-    initSchoolMap();
     return;
   }
 

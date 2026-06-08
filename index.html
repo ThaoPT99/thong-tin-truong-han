@@ -63,21 +63,12 @@
                 <div id="compare-content" class="hidden"></div>
                 <div id="school-content" class="hidden"></div>
                 <div id="map-content" class="hidden">
-                    <section class="real-map-view">
-                        <div class="directory-head">
-                            <div>
-                                <p class="advisor-kicker">Bản đồ trường</p>
-                                <h2>Vị trí các trường tại Hàn Quốc</h2>
-                                <p>Bấm vào từng ghim trên bản đồ để xem tên trường và mở trang chi tiết.</p>
-                            </div>
-                        </div>
-                        <div class="map-layout">
-                            <div class="static-map-frame">
-                                <img src="./images/korea-school-map-static.webp" alt="Bản đồ vị trí các trường Hàn Quốc Visa D2-6" class="static-school-map" loading="lazy">
-                            </div>
-                            <div id="map-school-list" class="map-school-list"></div>
-                        </div>
-                    </section>
+                    <div class="map-wrapper">
+                        <picture>
+                            <source srcset="./images/maphanquoc-optimized.webp" type="image/webp">
+                            <img src="./maphanquoc.png" alt="Vị trí các trường Hàn Quốc" class="korea-map" loading="lazy" decoding="async">
+                        </picture>
+                    </div>
                 </div>
                 <div id="extra-content" class="hidden"></div>
                 <div id="ebook-content" class="hidden">

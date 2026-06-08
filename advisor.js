@@ -527,10 +527,29 @@ function getFitLevel(score) {
   return "Rủi ro cao";
 }
 
+function buildAdvisorShareText(profile, results) {
+  const top = results.slice(0, 3);
+  const priorities = profile.priorities.map((p) => PRIORITY_LABELS[p]).join(", ") || "chưa chọn";
+  return [
+    "Kết quả gợi ý trường D2-6",
+    `Khu vực ưu tiên: ${REGION_LABELS[profile.region]}`,
+    `Ưu tiên: ${priorities}`,
+    "",
+    ...top.map(item => [
+      `#${item.rank} ${item.school.name} - ${item.score}% (${item.level})`,
+      `Lý do: ${item.reasons.slice(0, 2).join("; ")}`,
+      item.risks.length ? `Cần kiểm tra: ${item.risks.slice(0, 2).join("; ")}` : ""
+    ].filter(Boolean).join("\n")),
+    "",
+    `Link web: ${location.origin}${location.pathname}`
+  ].filter(Boolean).join("\n\n");
+}
+
 function renderAdvisorResults(target, profile, results) {
   const top = results.slice(0, 3);
   const excluded = results.filter((item) => item.score < 35).length;
   const priorities = profile.priorities.map((p) => PRIORITY_LABELS[p]).join(", ") || "chưa chọn";
+  const shareText = buildAdvisorShareText(profile, results);
 
   target.innerHTML = `
     <div class="advisor-summary">
@@ -540,6 +559,12 @@ function renderAdvisorResults(target, profile, results) {
         <p>Ưu tiên: ${advisorEscapeHtml(priorities)}. Khu vực: ${advisorEscapeHtml(REGION_LABELS[profile.region])}.</p>
       </div>
       <div class="advisor-score-pill">${top[0]?.score || 0}% phù hợp nhất</div>
+    </div>
+    <div class="advisor-result-actions">
+      <button type="button" data-copy-advisor>Copy kết quả</button>
+      <button type="button" data-save-advisor>Lưu kết quả</button>
+      <button type="button" data-zalo-advisor>Gửi Zalo</button>
+      <span class="advisor-save-status" hidden></span>
     </div>
 
     <div class="advisor-result-list">
@@ -554,6 +579,39 @@ function renderAdvisorResults(target, profile, results) {
 
   target.querySelectorAll("[data-open-school]").forEach((button) => {
     button.addEventListener("click", () => showSchool(button.dataset.openSchool));
+  });
+  const status = target.querySelector(".advisor-save-status");
+  const showStatus = (message) => {
+    if (!status) return;
+    status.textContent = message;
+    status.hidden = false;
+    window.setTimeout(() => { status.hidden = true; }, 1800);
+  };
+  target.querySelector("[data-copy-advisor]")?.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(shareText);
+      showStatus("Đã copy kết quả");
+    } catch (e) {
+      showStatus("Trình duyệt chưa cho phép copy tự động");
+    }
+  });
+  target.querySelector("[data-save-advisor]")?.addEventListener("click", () => {
+    localStorage.setItem("d26AdvisorLastResult", JSON.stringify({
+      savedAt: new Date().toISOString(),
+      profile,
+      top: top.map(item => ({
+        id: item.id,
+        name: item.school.name,
+        score: item.score,
+        level: item.level,
+        reasons: item.reasons,
+        risks: item.risks
+      }))
+    }));
+    showStatus("Đã lưu trên trình duyệt này");
+  });
+  target.querySelector("[data-zalo-advisor]")?.addEventListener("click", () => {
+    if (typeof openZaloPopup === "function") openZaloPopup();
   });
 }
 
