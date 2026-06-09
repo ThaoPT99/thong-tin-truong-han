@@ -309,20 +309,213 @@ body {
     box-shadow: 0 8px 30px rgba(0,0,0,0.15);
 }
 
-/* Ebook Visa D2-6 */
+/* Cẩm nang D2-6 */
 #ebook-content {
     max-width: 100%;
     margin: 0 auto;
 }
 
-.ebook-frame {
+.guide-view {
+    display: grid;
+    gap: 1rem;
+}
+
+.guide-hero {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1.2rem;
+    padding: 1.35rem;
+    border: 1px solid #dbe3ee;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #12355b 0%, #0f766e 100%);
+    color: #fff;
+    box-shadow: 0 10px 26px rgba(20, 32, 51, 0.08);
+}
+
+.guide-hero h2 {
+    margin: 0;
+    font-size: 1.55rem;
+}
+
+.guide-hero p {
+    max-width: 760px;
+    margin-top: 0.45rem;
+    color: rgba(255,255,255,0.84);
+}
+
+.guide-hero-actions {
+    display: flex;
+    flex: 0 0 auto;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+}
+
+.guide-hero-actions .topbar-action,
+.guide-zalo-btn {
+    min-height: 2.55rem;
+    padding: 0.6rem 0.85rem;
+    border-radius: 9px;
+    font: inherit;
+    font-weight: 900;
+    cursor: pointer;
+}
+
+.guide-zalo-btn {
+    border: 1px solid rgba(255,255,255,0.24);
+    background: rgba(255,255,255,0.12);
+    color: #fff;
+}
+
+.guide-menu-layout {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: 1rem;
+}
+
+.guide-menu,
+.guide-content {
+    border: 1px solid #dbe3ee;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 10px 26px rgba(20, 32, 51, 0.08);
+    overflow: hidden;
+}
+
+.guide-menu {
+    align-self: start;
+    position: sticky;
+    top: 1rem;
+    display: grid;
+    padding: 0.55rem;
+    gap: 0.35rem;
+}
+
+.guide-menu button {
+    min-height: 2.65rem;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    background: transparent;
+    color: #475569;
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 900;
+    text-align: left;
+    cursor: pointer;
+}
+
+.guide-menu button.active,
+.guide-menu button:hover {
+    border-color: #99f6e4;
+    background: #e7f7f3;
+    color: #0f766e;
+}
+
+.guide-content {
+    min-height: 520px;
+}
+
+.guide-section {
+    display: none;
+    padding: 1.2rem;
+}
+
+.guide-section.active {
+    display: grid;
+    gap: 1rem;
+}
+
+.guide-section h2 {
+    margin: 0;
+    color: #142033;
+    font-size: 1.35rem;
+}
+
+.guide-section p {
+    margin: 0;
+    max-width: 860px;
+    color: #475569;
+    line-height: 1.7;
+}
+
+.guide-highlight-grid,
+.guide-list-grid,
+.guide-doc-groups {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+
+.guide-list-grid,
+.guide-doc-groups {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.guide-highlight-grid article,
+.guide-list-grid article,
+.guide-doc-groups article {
+    padding: 0.9rem;
+    border: 1px solid #e6edf5;
+    border-radius: 10px;
+    background: #f8fafc;
+}
+
+.guide-highlight-grid strong,
+.guide-list-grid h3,
+.guide-doc-groups h3 {
     display: block;
-    width: 100%;
-    min-height: calc(100vh - 200px);
-    border: none;
-    border-radius: 12px;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
-    background: #e9eef5;
+    margin: 0 0 0.35rem;
+    color: #142033;
+    font-weight: 900;
+}
+
+.guide-highlight-grid span,
+.guide-list-grid p,
+.guide-doc-groups p {
+    color: #64748b;
+    font-size: 0.9rem;
+    line-height: 1.55;
+}
+
+.guide-check-list,
+.guide-timeline {
+    display: grid;
+    gap: 0.7rem;
+    margin: 0;
+    padding-left: 1.2rem;
+    color: #334155;
+    line-height: 1.65;
+}
+
+.guide-warning-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.65rem;
+}
+
+.guide-warning-list span {
+    padding: 0.75rem;
+    border: 1px solid #fed7aa;
+    border-radius: 10px;
+    background: #fff7ed;
+    color: #7c2d12;
+    font-size: 0.9rem;
+    font-weight: 800;
+    line-height: 1.45;
+}
+
+.guide-inline-action {
+    justify-self: start;
+    min-height: 2.5rem;
+    padding: 0.55rem 0.8rem;
+    border: 1px solid #bfdbfe;
+    border-radius: 9px;
+    background: #eff6ff;
+    color: #1d4ed8;
+    font: inherit;
+    font-weight: 900;
+    cursor: pointer;
 }
 
 .extra-intro .ebook-tab-link {
@@ -1534,14 +1727,16 @@ html {
     text-align: left;
 }
 
-.app-sidebar .logo {
-    font-size: 1.55rem;
-    letter-spacing: 0;
+.app-sidebar .header-inner {
+    display: block;
 }
 
-.app-sidebar .subtitle {
-    color: rgba(255, 255, 255, 0.68);
-    font-size: 0.86rem;
+.brand-logo {
+    display: block;
+    width: 100%;
+    max-width: 210px;
+    height: auto;
+    filter: drop-shadow(0 14px 26px rgba(0, 0, 0, 0.18));
 }
 
 .app-sidebar .school-tabs {
@@ -2235,7 +2430,11 @@ html {
 @media (max-width: 760px) {
     .detail-overview,
     .detail-grid,
-    .data-health-grid {
+    .data-health-grid,
+    .guide-highlight-grid,
+    .guide-list-grid,
+    .guide-doc-groups,
+    .guide-warning-list {
         grid-template-columns: 1fr;
     }
 
@@ -2259,6 +2458,31 @@ html {
 
     .detail-jump {
         position: static;
+    }
+
+    .guide-hero {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .guide-hero-actions .topbar-action,
+    .guide-zalo-btn {
+        flex: 1;
+    }
+
+    .guide-menu-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .guide-menu {
+        position: static;
+        display: flex;
+        overflow-x: auto;
+    }
+
+    .guide-menu button {
+        flex: 0 0 auto;
+        white-space: nowrap;
     }
 
 }

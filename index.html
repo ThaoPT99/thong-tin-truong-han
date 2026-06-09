@@ -20,8 +20,7 @@
         <aside class="app-sidebar">
             <header class="header">
                 <div class="header-inner">
-                    <h1 class="logo">D2-6 Match</h1>
-                    <p class="subtitle">Kỳ tuyển sinh tháng 3/2027</p>
+                    <img src="./images/logo-d26-sidebar.svg" alt="D26 Schools" class="brand-logo">
                 </div>
             </header>
 
@@ -32,7 +31,7 @@
                     <button class="tab-btn" data-school="compare">So sánh</button>
                     <button class="tab-btn" data-school="map">Bản đồ</button>
                     <button class="tab-btn" data-school="extra">Tài liệu</button>
-                    <button class="tab-btn" data-school="ebook">Ebook Visa D2-6</button>
+                    <button class="tab-btn" data-school="ebook">Cẩm nang D2-6</button>
                 </div>
             </nav>
 
@@ -72,11 +71,115 @@
                 </div>
                 <div id="extra-content" class="hidden"></div>
                 <div id="ebook-content" class="hidden">
-                    <iframe
-                        class="ebook-frame"
-                        data-src="./EBOOK_SALEKIT_VISA_D2-6_FASTGO_1.html"
-                        title="Ebook Visa D2-6 FASTGO"
-                    ></iframe>
+                    <section class="guide-view">
+                        <div class="guide-hero">
+                            <div>
+                                <p class="advisor-kicker">Cẩm nang Visa D2-6</p>
+                                <h2>Lộ trình chọn trường và chuẩn bị hồ sơ</h2>
+                                <p>Phiên bản tóm tắt giúp học sinh hiểu nhanh điều kiện, giấy tờ, cách chọn trường và các rủi ro cần kiểm tra trước khi nộp hồ sơ.</p>
+                            </div>
+                            <div class="guide-hero-actions">
+                                <button type="button" class="topbar-action" data-school="advisor">Kiểm tra hồ sơ</button>
+                                <button type="button" class="guide-zalo-btn" onclick="openZaloPopup()">Nhận tư vấn Zalo</button>
+                            </div>
+                        </div>
+
+                        <div class="guide-menu-layout">
+                            <nav class="guide-menu" aria-label="Mục cẩm nang D2-6">
+                                <button type="button" class="active" data-guide-section="overview">Tổng quan</button>
+                                <button type="button" data-guide-section="benefits">Lợi ích</button>
+                                <button type="button" data-guide-section="conditions">Điều kiện</button>
+                                <button type="button" data-guide-section="documents">Hồ sơ</button>
+                                <button type="button" data-guide-section="process">Lộ trình</button>
+                                <button type="button" data-guide-section="e7">D2-6 đến E7</button>
+                                <button type="button" data-guide-section="mistakes">Lỗi thường gặp</button>
+                            </nav>
+
+                            <div class="guide-content">
+                                <section class="guide-section active" data-guide-panel="overview">
+                                    <p class="advisor-kicker">Tổng quan</p>
+                                    <h2>Visa D2-6 là gì?</h2>
+                                    <p>Visa D2-6 là diện du học trao đổi sinh viên, thường dựa trên thỏa thuận hợp tác giữa trường tại Việt Nam và trường tại Hàn Quốc. Điểm quan trọng của diện này là học sinh cần có lộ trình học tập rõ ràng, trường tiếp nhận phù hợp và bộ hồ sơ chứng minh được mục đích học thật.</p>
+                                    <div class="guide-highlight-grid">
+                                        <article><strong>Phù hợp</strong><span>Sinh viên muốn học chuyên ngành, chuyển tiếp hoặc tham gia chương trình liên kết.</span></article>
+                                        <article><strong>Cần kiểm tra</strong><span>MOU, thư mời, điều kiện trường, tài chính, học lực và lịch sử visa.</span></article>
+                                        <article><strong>Mục tiêu</strong><span>Học tập tại Hàn, tích lũy kinh nghiệm và mở rộng cơ hội chuyển đổi sau tốt nghiệp.</span></article>
+                                    </div>
+                                </section>
+
+                                <section class="guide-section" data-guide-panel="benefits">
+                                    <p class="advisor-kicker">Lợi ích</p>
+                                    <h2>Vì sao nhiều hồ sơ chọn D2-6?</h2>
+                                    <div class="guide-list-grid">
+                                        <article><h3>Lộ trình rõ hơn</h3><p>Hồ sơ có cơ sở từ chương trình hợp tác, giúp câu chuyện học tập dễ giải thích hơn nếu trường và ngành khớp.</p></article>
+                                        <article><h3>Học chuyên ngành sớm</h3><p>Nhiều chương trình cho phép học chuyên ngành thay vì chỉ học tiếng dài hạn.</p></article>
+                                        <article><h3>Cơ hội việc làm</h3><p>Nếu chọn đúng ngành và khu vực, học sinh có thể thuận lợi hơn khi tìm thực tập, làm thêm hoặc định hướng việc làm sau tốt nghiệp.</p></article>
+                                        <article><h3>Nền tảng chuyển đổi</h3><p>Sau khi hoàn thành chương trình, học sinh có thể cân nhắc các lộ trình D10 hoặc E7 tùy điều kiện thực tế.</p></article>
+                                    </div>
+                                </section>
+
+                                <section class="guide-section" data-guide-panel="conditions">
+                                    <p class="advisor-kicker">Điều kiện</p>
+                                    <h2>Những điều kiện cần soi trước</h2>
+                                    <ul class="guide-check-list">
+                                        <li><strong>Học lực:</strong> GPA, bảng điểm, số buổi nghỉ và quá trình học có hợp lý hay không.</li>
+                                        <li><strong>Tiếng Hàn:</strong> TOPIK, Sejong hoặc năng lực giao tiếp phục vụ phỏng vấn và học chuyên ngành.</li>
+                                        <li><strong>Tài chính:</strong> sổ tiết kiệm, xác nhận số dư, thu nhập, tài sản và logic dòng tiền gia đình.</li>
+                                        <li><strong>Trường liên kết:</strong> MOU, quyết định trao đổi, thư mời và giấy tờ trường Hàn phải khớp nhau.</li>
+                                        <li><strong>Lịch sử visa:</strong> nếu từng trượt visa cần giải trình rõ và chọn trường thận trọng hơn.</li>
+                                    </ul>
+                                </section>
+
+                                <section class="guide-section" data-guide-panel="documents">
+                                    <p class="advisor-kicker">Hồ sơ</p>
+                                    <h2>4 nhóm giấy tờ chính</h2>
+                                    <div class="guide-doc-groups">
+                                        <article><h3>Hồ sơ học tập</h3><p>Bằng, học bạ, bảng điểm, giấy xác nhận sinh viên, kế hoạch học tập và giới thiệu bản thân.</p></article>
+                                        <article><h3>Hồ sơ nhân thân</h3><p>Hộ chiếu, CCCD, giấy khai sinh, thông tin cư trú và giấy tờ gia đình liên quan.</p></article>
+                                        <article><h3>Hồ sơ tài chính</h3><p>Sổ tiết kiệm, xác nhận số dư, thu nhập, sao kê, tài sản và giấy tờ giải trình khi cần.</p></article>
+                                        <article><h3>Hồ sơ trường</h3><p>Thư mời, MOU, giấy tờ trường Hàn, quyết định trao đổi và các mẫu theo yêu cầu từng kỳ.</p></article>
+                                    </div>
+                                    <button type="button" class="guide-inline-action" data-school="extra">Xem checklist hồ sơ</button>
+                                </section>
+
+                                <section class="guide-section" data-guide-panel="process">
+                                    <p class="advisor-kicker">Lộ trình</p>
+                                    <h2>5 bước xử lý hồ sơ D2-6</h2>
+                                    <ol class="guide-timeline">
+                                        <li><strong>Đánh giá hồ sơ:</strong> kiểm tra học lực, nghỉ học, tuổi, tiếng Hàn, tài chính và lịch sử visa.</li>
+                                        <li><strong>Chọn trường phù hợp:</strong> lọc trường theo điều kiện tuyển sinh, chi phí, khu vực và mục tiêu dài hạn.</li>
+                                        <li><strong>Chuẩn bị giấy tờ:</strong> gom hồ sơ học tập, tài chính, nhân thân, MOU và tài liệu trường Hàn.</li>
+                                        <li><strong>Nộp trường:</strong> xử lý phản hồi, bổ sung giấy tờ, phỏng vấn hoặc giải trình nếu trường yêu cầu.</li>
+                                        <li><strong>Nộp visa:</strong> kiểm tra bản gốc, bản dịch, tài chính và câu chuyện học tập trước ngày nộp.</li>
+                                    </ol>
+                                </section>
+
+                                <section class="guide-section" data-guide-panel="e7">
+                                    <p class="advisor-kicker">Định hướng dài hạn</p>
+                                    <h2>Từ D2-6 đến D10/E7</h2>
+                                    <p>D2-6 không nên được nhìn như “đi cho nhanh”, mà nên là bước đầu của một lộ trình học chuyên ngành, tích lũy kinh nghiệm và chuẩn bị điều kiện việc làm. Sau tốt nghiệp, học sinh có thể cân nhắc D10 hoặc E7 tùy ngành, bằng cấp, năng lực tiếng Hàn, kinh nghiệm và doanh nghiệp tiếp nhận.</p>
+                                    <div class="guide-highlight-grid">
+                                        <article><strong>D2-6</strong><span>Học tập tại trường Hàn theo chương trình phù hợp.</span></article>
+                                        <article><strong>D10</strong><span>Tìm việc sau tốt nghiệp nếu đáp ứng điều kiện.</span></article>
+                                        <article><strong>E7</strong><span>Làm việc chuyên môn khi đủ ngành, năng lực và đơn vị bảo lãnh.</span></article>
+                                    </div>
+                                </section>
+
+                                <section class="guide-section" data-guide-panel="mistakes">
+                                    <p class="advisor-kicker">Lỗi thường gặp</p>
+                                    <h2>Những lỗi dễ làm hồ sơ yếu</h2>
+                                    <div class="guide-warning-list">
+                                        <span>Chọn trường chỉ vì ở Seoul nhưng hồ sơ không khớp điều kiện.</span>
+                                        <span>Không giải thích rõ dòng tiền hoặc nghề nghiệp gia đình.</span>
+                                        <span>Kế hoạch học tập viết chung chung, không gắn với ngành và trường.</span>
+                                        <span>Thiếu kiểm tra MOU, thư mời, thời hạn giấy tờ và yêu cầu mới nhất.</span>
+                                        <span>Để hồ sơ học tập, nhân thân và tài chính có thông tin lệch nhau.</span>
+                                        <span>Chốt trường quá muộn khiến lịch nộp trường và visa bị gấp.</span>
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
+                    </section>
                 </div>
             </main>
 

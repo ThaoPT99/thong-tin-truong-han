@@ -1,0 +1,22 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1024" height="1024" rx="236" fill="#071B34"/>
+  <rect x="74" y="74" width="876" height="876" rx="196" fill="url(#bg)"/>
+  <path d="M188 604C257 349 551 201 806 310" stroke="url(#orbit)" stroke-width="24" stroke-linecap="round"/>
+  <circle cx="188" cy="604" r="24" fill="#CCFBF1"/>
+  <circle cx="806" cy="310" r="30" fill="#BFDBFE"/>
+  <text x="512" y="614" text-anchor="middle" fill="white" font-family="Arial Black, Arial, sans-serif" font-size="290" font-weight="900" letter-spacing="-28">D26</text>
+  <path d="M663 248L689 300L746 308L704 348L714 405L663 378L612 405L622 348L580 308L637 300L663 248Z" fill="#FBBF24"/>
+  <text x="512" y="724" text-anchor="middle" fill="#CCFBF1" font-family="Arial, sans-serif" font-size="54" font-weight="900" letter-spacing="7">SCHOOLS</text>
+  <defs>
+    <linearGradient id="bg" x1="112" y1="120" x2="891" y2="883" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#20E3B2"/>
+      <stop offset="0.5" stop-color="#2F80ED"/>
+      <stop offset="1" stop-color="#8B5CF6"/>
+    </linearGradient>
+    <linearGradient id="orbit" x1="188" y1="436" x2="806" y2="436" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FBBF24"/>
+      <stop offset="0.48" stop-color="#CCFBF1"/>
+      <stop offset="1" stop-color="#60A5FA"/>
+    </linearGradient>
+  </defs>
+</svg>

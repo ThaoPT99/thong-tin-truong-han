@@ -465,6 +465,23 @@ function getInitialView() {
   return "schools";
 }
 
+function bindGuide(container) {
+  if (!container || container.dataset.bound === "true") return;
+  const buttons = Array.from(container.querySelectorAll("[data-guide-section]"));
+  const panels = Array.from(container.querySelectorAll("[data-guide-panel]"));
+  buttons.forEach(button => {
+    button.addEventListener("click", () => {
+      const section = button.dataset.guideSection;
+      buttons.forEach(btn => btn.classList.toggle("active", btn === button));
+      panels.forEach(panel => panel.classList.toggle("active", panel.dataset.guidePanel === section));
+    });
+  });
+  container.querySelectorAll("[data-school]").forEach(button => {
+    button.addEventListener("click", () => showSchool(button.dataset.school));
+  });
+  container.dataset.bound = "true";
+}
+
 function renderCompareResult(container) {
   const target = container.querySelector("#compare-result");
   const ids = Array.from(container.querySelectorAll(".compare-select")).map(select => select.value);
@@ -699,7 +716,7 @@ function renderGeneralDocs(sheet) {
         </div>
         <div class="docs-actions">
           <a href="${sheet}" target="_blank" rel="noopener">Mở bảng tổng hợp</a>
-          <a href="#" class="ebook-tab-link" data-school="ebook">Ebook Visa D2-6</a>
+          <a href="#" class="ebook-tab-link" data-school="ebook">Cẩm nang D2-6</a>
         </div>
       </div>
   `;
@@ -812,10 +829,7 @@ function showSchool(viewId) {
   if (viewId === "ebook") {
     hideAll();
     ebook.classList.remove("hidden");
-    const frame = ebook.querySelector(".ebook-frame");
-    if (frame && !frame.getAttribute("src")) {
-      frame.src = frame.dataset.src || "./EBOOK_SALEKIT_VISA_D2-6_FASTGO_1.html";
-    }
+    bindGuide(ebook);
     return;
   }
 
