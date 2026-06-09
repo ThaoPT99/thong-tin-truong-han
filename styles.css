@@ -13,6 +13,7 @@
     --accent-soft: #dbeafe;
     --font: 'Be Vietnam Pro', sans-serif;
     --font-kr: 'Noto Sans KR', sans-serif;
+    --sidebar-width: 248px;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -1682,20 +1683,35 @@ html {
 
 .app-shell {
     display: grid;
-    grid-template-columns: 248px minmax(0, 1fr);
+    grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+    height: 100vh;
     min-height: 100vh;
+    overflow: hidden;
 }
 
 .app-sidebar {
     position: sticky;
     top: 0;
+    align-self: start;
     display: flex;
     flex-direction: column;
+    width: var(--sidebar-width);
+    min-width: var(--sidebar-width);
+    max-width: var(--sidebar-width);
+    height: 100vh;
     min-height: 100vh;
     padding: 1.6rem 1.1rem;
     background: #0f2f4f;
     color: #fff;
-    overflow: hidden;
+    overflow: hidden auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
+}
+
+.app-main {
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .app-sidebar::before {
@@ -1735,6 +1751,7 @@ html {
     display: block;
     width: 100%;
     max-width: 210px;
+    aspect-ratio: 430 / 150;
     height: auto;
     filter: drop-shadow(0 14px 26px rgba(0, 0, 0, 0.18));
 }
@@ -1762,6 +1779,8 @@ html {
 .app-sidebar .tab-btn {
     display: flex;
     align-items: center;
+    width: 100%;
+    height: 2.9rem;
     min-height: 2.9rem;
     padding: 0.75rem 0.9rem;
     border: 1px solid transparent;
@@ -1770,6 +1789,10 @@ html {
     color: rgba(255, 255, 255, 0.78);
     text-align: left;
     font-size: 0.95rem;
+    line-height: 1.2;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .app-sidebar .tab-btn:hover {
@@ -1797,6 +1820,7 @@ html {
     padding: 1rem;
     border-radius: 14px;
     background: #173f66;
+    flex: 0 0 auto;
 }
 
 .sidebar-zalo h2 {
@@ -1961,10 +1985,17 @@ html {
 @media (max-width: 900px) {
     .app-shell {
         display: block;
+        height: auto;
+        min-height: 100vh;
+        overflow: visible;
     }
 
     .app-sidebar {
         position: static;
+        width: 100%;
+        min-width: 0;
+        max-width: none;
+        height: auto;
         min-height: auto;
         padding: 1rem;
     }
@@ -1981,6 +2012,7 @@ html {
 
     .app-sidebar .tab-btn {
         flex: 0 0 auto;
+        width: auto;
         white-space: nowrap;
     }
 
@@ -1993,6 +2025,8 @@ html {
     }
 
     .app-main {
+        height: auto;
+        overflow: visible;
         padding: 1rem;
     }
 
