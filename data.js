@@ -2483,6 +2483,160 @@ const SCHOOLS_DATA = {
       }
     ],
     "mou": "Cập nhật sau (đang xác nhận với trường)"
+  },
+  "dh-catholic-kwandong": {
+    "id": "dh-catholic-kwandong",
+    "name": "Catholic Kwandong",
+    "nameKr": "가톨릭관동대학교 | Trường đại học 4 năm tại Gangneung - Nhiều ngành học - Học bổng lên đến 80%",
+    "nameEn": "Catholic Kwandong University | 가톨릭관동대학교 - Trường ĐH tư thục 70 năm truyền thống ",
+    "system": "D2-2 (Đại học 4 năm) - Nhập học tháng 3",
+    "quota": 0,
+    "images": {
+      "main": "images/placeholder.svg",
+      "catalog": "",
+      "locationMap": "",
+      "invoice": "",
+      "gallery": []
+    },
+    "links": {
+      "website": "",
+      "catalog": "https://drive.google.com/file/d/1-udyYf1vbgkUrX1QMPNpsfJnUyxoUXfA/view?usp=sharing"
+    },
+    "video": {
+      "url": "https://www.youtube.com/watch?v=noj5lFV5Feg",
+      "youtubeId": "noj5lFV5Feg",
+      "title": ""
+    },
+    "location": "24, Beomil-ro 579 beon-gil, Gangneung-si, Gangwon-do 25601, Hàn Quốc (cách Seoul ~3 giờ, gần biển Gangneung)",
+    "intro": "- Tên tiếng Hàn: 가톨릭관동대학교\n- Tên tiếng Anh: Catholic Kwandong University (CKU)\n- Năm thành lập: 1955 (70 năm truyền thống)\n- Loại trường: Đại học tư thục (Công giáo)\n- Vị trí: Thành phố Gangneung, tỉnh Gangwon-do - thành phố biển nổi tiếng với bãi biển Gyeongpo, trường quay của nhiều bộ phim và MV K-pop (BTS, Goblin, Mr. Sunshine...).\n- Hệ thống đào tạo: Trinity Convergence University - đào tạo đa ngành, tích hợp AI và công nghệ.\n- Trường là cơ sở thi TOPIK chính thức, tổ chức 6 lần/năm - tiện lợi cho sinh viên luyện thi.\n- Có trung tâm hỗ trợ du học sinh toàn diện (유학생원스톱서비스센터): từ học tập, visa, KTX đến việc làm và định cư sau tốt nghiệp.\n- Website: www.cku.ac.kr",
+    "conditions": [
+      "Tiêu chí xét tuyển (Track Hàn Quốc):",
+      "Bố và mẹ đều là người nước ngoài (không có quốc tịch Hàn Quốc)",
+      "Đã tốt nghiệp THPT (tương đương)",
+      "Đáp ứng một trong các tiêu chí tiếng Hàn sau:\n   - TOPIK 3 trở lên (track chính), hoặc TOPIK 2 với một số ngành thể dục/nghệ thuật\n   - Sejonghakdang Trung cấp 1 trở lên\n   - Chương trình hội nhập xã hội Bộ Tư pháp cấp 3 hoặc điểm sơ khảo ≥ 61\n   - Đạt CKU-TOPIK nội bộ hoặc hoàn thành khóa tiếng Hàn cấp 3 tại trường ngôn ngữ trong nước",
+      "Track Tiếng Anh: TOEFL iBT 71 / IELTS 5.5 / CEFR B2 / TEPS 601 trở lên",
+      "Không phân biệt vùng miền tại Việt Nam",
+      "Có sức khỏe tốt (cần nộp giấy khám bao gồm viêm gan, lao phổi)"
+    ],
+    "majors": [
+      "Các ngành tuyển sinh (Track Hàn Quốc - D2-2 Đại học 4 năm):\n■ Tự chọn ngành (자율전공학부) - Chọn ngành sau năm 1\n■ Kinh doanh - Quản trị (경영학전공)\n■ Hành chính học (행정학전공)\n■ Cảnh sát - An ninh hàng hải (경찰행정학전공 / 해양경찰학전공)\n■ Công tác xã hội (사회복지학전공)\n■ Quảng cáo & PR (광고홍보학전공)\n■ Quản trị khách sạn & du lịch (호텔관광경영학전공)\n■ Ẩm thực & kinh doanh nhà hàng (조리외식경영학전공)\n■ Quản trị y tế (의료경영학전공)\n■ Logistics hàng không (항공교통물류전공)\n■ Truyền thông đa phương tiện (미디어콘텐츠전공)\n■ Khoa học Y sinh (의생명과학전공)\n■ Kỹ thuật xây dựng / Kiến trúc 5 năm (건축공학전공 / 건축학전공)\n■ AI & Phần mềm (AI·소프트웨어융합학부)\n■ Điều khiển máy bay (항공운항전공)\n■ Kỹ thuật bảo trì hàng không (항공정비학전공)\n■ Cảng thông minh (스마트항만공학전공)\n■ Thể thao - Giải trí - Huấn luyện (스포츠레저/재활의학/지도학전공)\n■ Âm nhạc thực dụng (실용음악전공)\n■ CG Design (CG디자인전공)"
+    ],
+    "conversion": [
+      "Vào thẳng chương trình đại học D2-2 (không qua D2-6)",
+      "Thời gian học: 4 năm (riêng Kiến trúc 5 năm)",
+      "Điều kiện tốt nghiệp: Đạt TOPIK 4 trở lên (hoặc tương đương)",
+      "Từ năm 2, một số ngành yêu cầu TOPIK 3 (ngành khoa học xã hội) hoặc TOPIK 2 (ngành thể dục/nghệ thuật)"
+    ],
+    "tuition": "Học phí (năm học 2025, dự kiến 2026 có thể thay đổi):\n- Ngành Tự chọn/Quảng học (광역): 3.772.000 KRW/học kỳ\n- Ngành Nhân văn - Xã hội: 3.397.000 KRW/học kỳ\n- Ngành Khoa học tự nhiên: 3.951.000 KRW/học kỳ\n- Ngành Kỹ thuật / Hàng không: 4.438.000 KRW/học kỳ\n- Ngành Nghệ thuật - Thể thao: 4.482.000 KRW/học kỳ\n\nSau học bổng tân sinh viên 80%, ví dụ:\n- Nhân văn-Xã hội: còn ~679.400 KRW/học kỳ (~12 triệu VND)\n- Kỹ thuật: còn ~887.600 KRW/học kỳ (~16 triệu VND)\n\nLệ phí thi tuyển: 70.000 KRW (không hoàn lại)",
+    "insurance": "",
+    "ktx": "- KTX (Ký túc xá) nội trú: 1.200.000 KRW/6 tháng (phòng đôi, chưa bao gồm ăn)\n- Chi phí sinh hoạt ước tính: 400.000 - 600.000 KRW/tháng (thấp hơn Seoul đáng kể)\n- Gangneung có nhiều cơ hội việc làm thêm (du lịch, dịch vụ, khu resort biển)",
+    "schedule": "",
+    "advantages": [
+      "Học bổng lên đến 80% ngay khi nhập học (tân sinh viên ngoại quốc đặc biệt).",
+      "Trong quá trình học có thể đạt học bổng 100% nếu đạt TOPIK 5 trở lên.",
+      "Trường tổ chức TOPIK 6 lần/năm - tiện lợi, không phải di chuyển xa.",
+      "Hệ thống đào tạo linh hoạt: có thể học đa ngành, nhận 2 bằng, hoặc tự thiết kế chương trình học.",
+      "Học tiếng Hàn và văn hóa Hàn tập trung trong 2 năm đầu - hỗ trợ thích nghi nhanh.",
+      "Trung tâm hỗ trợ du học sinh toàn diện (visa, KTX, việc làm thêm, tư vấn pháp lý, tâm lý).",
+      "Thành phố Gangneung chi phí sinh hoạt thấp hơn Seoul, dễ tìm nhà, nhiều cơ hội việc làm thêm.",
+      "Sau tốt nghiệp có thể học liên thông lên cao học tại CKU với học bổng đặc biệt.",
+      "Môi trường sống sôi động: gần biển, nhiều địa điểm du lịch nổi tiếng, nhiều phim Hàn quay tại đây."
+    ],
+    "documents": [
+      "Hồ sơ nộp lần đầu (bản gốc + bản scan):",
+      "Phiếu chuyển tiền học phí thi tuyển 70.000 KRW",
+      "Đơn đăng ký nhập học (theo mẫu trường - tải tại https://ipsi.cku.ac.kr)",
+      "Bản sao hộ chiếu của thí sinh",
+      "Bản sao hộ chiếu hoặc CCCD của bố/mẹ",
+      "Giấy khai sinh hoặc giấy chứng nhận quan hệ gia đình (dịch công chứng)",
+      "Bằng tốt nghiệp THPT (bản gốc, có Apostille hoặc xác nhận lãnh sự)",
+      "Bảng điểm THPT (bản gốc, có Apostille)",
+      "Chứng chỉ tiếng Hàn (TOPIK/Sejonghakdang/Chương trình hội nhập...) - trong vòng 2 năm\n   * Track Tiếng Anh: TOEFL/IELTS/CEFR/TEPS",
+      "Giấy khám sức khỏe (bao gồm viêm gan, lao phổi) - song ngữ\n\nHồ sơ bổ sung sau khi đậu (để xin Visa D2-2):",
+      "Xác nhận số dư ngân hàng tiếng Anh (tối thiểu 16 triệu KRW/năm - đứng tên học sinh, gửi trên 6 tháng)\n   * Nếu học tại CKU Korean Language Institute trước: chỉ cần 8 triệu KRW/năm",
+      "Giấy xác nhận việc làm và thu nhập của bố mẹ",
+      "Giấy khám sức khỏe (viêm gan + lao phổi)",
+      "Đơn xin cấp visa (mẫu theo Luật Xuất nhập cảnh)\n\nLưu ý: Tất cả giấy tờ nước ngoài phải có Apostille hoặc xác nhận lãnh sự Hàn Quốc\nĐịa chỉ nộp: Phòng Quan hệ Quốc tế - John Bosco Hall 101, CKU\nEmail: irc@cku.ac.kr | Tel: +82-33-649-7085 / 7970"
+    ],
+    "documentsNote": "TalkFile_가톨릭관동대학교_학부_모집_국문_pdf.pdf",
+    "partners": [
+      {
+        "code": "HN",
+        "name": "Cao đẳng Hà Nội",
+        "nameKr": "Cao đẳng Hà Nội"
+      },
+      {
+        "code": "HNC",
+        "name": "Cao đẳng Hữu Nghị",
+        "nameKr": "Cao đẳng Hữu Nghị"
+      },
+      {
+        "code": "HCCT",
+        "name": "Cao đẳng Thương mại và Du lịch Hà Nội",
+        "nameKr": "Cao đẳng Thương mại và Du lịch Hà Nội"
+      },
+      {
+        "code": "VTV",
+        "name": "Cao đẳng Truyền hình Việt Nam",
+        "nameKr": "Cao đẳng Truyền hình Việt Nam"
+      },
+      {
+        "code": "BGIT",
+        "name": "Cao đẳng Công nghiệp Bắc Giang",
+        "nameKr": "Cao đẳng Công nghiệp Bắc Giang"
+      },
+      {
+        "code": "HPC-HP",
+        "name": "Cao đẳng Y tế Hải Phòng",
+        "nameKr": "Cao đẳng Y tế Hải Phòng"
+      },
+      {
+        "code": "PMDT",
+        "name": "Cao đẳng Công nghệ Y Dược Việt Nam",
+        "nameKr": "Cao đẳng Công nghệ Y Dược Việt Nam"
+      },
+      {
+        "code": "TWU",
+        "name": "Đại học Trưng Vương",
+        "nameKr": "Đại học Trưng Vương"
+      },
+      {
+        "code": "UTM",
+        "name": "ĐH Quản lý và Kinh doanh Hữu Nghị",
+        "nameKr": "ĐH Quản lý và Kinh doanh Hữu Nghị"
+      },
+      {
+        "code": "KTTT",
+        "name": "Cao đẳng Kinh tế Kỹ thuật Thương mại",
+        "nameKr": "Cao đẳng Kinh tế Kỹ thuật Thương mại"
+      },
+      {
+        "code": "SGT",
+        "name": "Cao đẳng Công nghệ Sài Gòn",
+        "nameKr": "Cao đẳng Công nghệ Sài Gòn"
+      },
+      {
+        "code": "ISPACE",
+        "name": "Cao đẳng Công nghệ i-Space",
+        "nameKr": "Cao đẳng Công nghệ i-Space"
+      },
+      {
+        "code": "DA",
+        "name": "Cao đẳng Đồng An",
+        "nameKr": "Cao đẳng Đồng An"
+      },
+      {
+        "code": "SDU",
+        "name": "Đại học Sao Đỏ",
+        "nameKr": "Đại học Sao Đỏ"
+      },
+      {
+        "code": "DH",
+        "name": "Cao đẳng Duyên hải",
+        "nameKr": "Cao đẳng Duyên hải"
+      }
+    ],
+    "mou": "Không có MOU cụ thể - Đây là chương trình tuyển sinh 순수외국인 (thuần nước ngoài), không cần MOU"
   }
 };
 
@@ -2900,6 +3054,14 @@ const EXTRA_SHEETS = {
         "quota": 200,
         "mou": "Cập nhật sau (đang xác nhận với trường)",
         "catalog": "https://drive.google.com/file/d/1jjenscO1WB2cBjLkAut7IxTSCLxDHUEt/view?usp=sharing"
+      },
+      {
+        "name": "Catholic Kwandong",
+        "nameKr": "가톨릭관동대학교 | Trường đại học 4 năm tại Gangneung - Nhiều ngành học - Học bổng lên đến 80%",
+        "system": "D2-2 (Đại học 4 năm) - Nhập học tháng 3",
+        "quota": 0,
+        "mou": "Không có MOU cụ thể - Đây là chương trình tuyển sinh 순수외국인 (thuần nước ngoài), không cần MOU",
+        "catalog": "https://drive.google.com/file/d/1-udyYf1vbgkUrX1QMPNpsfJnUyxoUXfA/view?usp=sharing"
       }
     ]
   }
