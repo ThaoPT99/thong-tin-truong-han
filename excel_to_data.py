@@ -248,6 +248,7 @@ def parse_school_sheet(ws, sheet_name):
         "links": {"website": "", "catalog": ""},
         "video": {"url": "", "youtubeId": "", "title": ""},
         "location": "",
+        "region": "",
         "intro": "",
         "conditions": [],
         "majors": [],
@@ -303,6 +304,20 @@ def parse_school_sheet(ws, sheet_name):
     
     data["mou"] = get_val_with_color("Trường Việt Nam ký MOU")
     data["location"] = get_val_with_color("Vị trí địa lý", "Vị trí")
+    # Optional region field - try common labels in Excel (multiple label variants)
+    region_val = get_val("Khu vực", "Khu vuc", "Region", "Vung", "Vùng")
+    if region_val:
+        rv = str(region_val).lower()
+        if "seoul" in rv:
+            data["region"] = "seoul"
+        elif "busan" in rv:
+            data["region"] = "busan"
+        elif "gwangju" in rv:
+            data["region"] = "gwangju"
+        elif "tinh" in rv or "tỉnh" in rv or "province" in rv:
+            data["region"] = "province"
+        else:
+            data["region"] = rv.replace(" ", "-")[:40]
     data["intro"] = get_val_with_color("Giới thiệu về trường", "Giới thiệu")
     
     # Catalog - ưu tiên link trong ô Excel (Drive), giữ nguyên

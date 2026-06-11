@@ -220,12 +220,31 @@ const PRIORITY_LABELS = {
 
 const REGION_LABELS = {
   any: "không ưu tiên khu vực",
+
+  // Nhóm cũ (giữ để tương thích)
   seoul: "Seoul",
   "near-seoul": "gần Seoul",
   busan: "Busan",
   gwangju: "Gwangju",
-  province: "tỉnh/thành khác"
+  province: "tỉnh/thành khác",
+
+  // Key region chi tiết theo data.js
+  incheon: "Incheon",
+  gyeonggi: "Gyeonggi",
+  chungcheongbuk: "Chungcheongbuk",
+  jeollanam: "Jeollanam",
+  jeollabuk: "Jeollabuk",
+  gyeongsangnam: "Gyeongsangnam",
+  gyeongsangbuk: "Gyeongsangbuk",
+  gangwon: "Gangwon",
+  chungcheongnam: "Chungcheongnam",
+  daegu: "Daegu",
+  daejeon: "Daejeon",
+  ulsan: "Ulsan",
+  sejong: "Sejong",
+  jeju: "Jeju"
 };
+
 
 function advisorEscapeHtml(str) {
   const d = document.createElement("div");
@@ -297,15 +316,11 @@ function getAdvisorTemplate() {
 
           <label class="advisor-field">
             <span>Khu vực mong muốn</span>
-            <select name="region">
+            <select name="region" id="advisor-region-select">
               <option value="any">Không ưu tiên</option>
-              <option value="seoul">Seoul</option>
-              <option value="near-seoul">Gần Seoul</option>
-              <option value="busan">Busan</option>
-              <option value="gwangju">Gwangju</option>
-              <option value="province">Tỉnh/thành khác</option>
             </select>
           </label>
+
 
           <label class="advisor-field">
             <span>Ngân sách</span>
@@ -341,6 +356,25 @@ function getAdvisorTemplate() {
 function bindAdvisorEvents(container) {
   const form = container.querySelector("#advisor-form");
   const reset = container.querySelector(".advisor-reset");
+
+  const regionSelect = container.querySelector("#advisor-region-select");
+  if (regionSelect && !regionSelect.dataset.populated) {
+    // Chỉ hiển thị các khu vực thực sự xuất hiện trong data (SCHOOLS_DATA)
+    const regionKeys = Array.from(new Set(
+      Object.values(SCHOOLS_DATA || {})
+        .map(s => s?.region)
+        .filter(Boolean)
+    ));
+    // Fill region dropdown based on region keys from data.js
+    regionKeys.forEach((key) => {
+      const opt = document.createElement("option");
+      opt.value = key;
+      opt.textContent = REGION_LABELS[key] || key;
+      regionSelect.appendChild(opt);
+    });
+    regionSelect.dataset.populated = "true";
+  }
+
   form.addEventListener("submit", (event) => {
     event.preventDefault();
     const profile = readAdvisorForm(form);
@@ -376,7 +410,11 @@ function analyzeSchools(profile) {
 }
 
 function scoreSchool(schoolId, school, profile) {
-  const rules = ADVISOR_PROFILES[schoolId] || buildFallbackAdvisorProfile(school);
+  let rules = ADVISOR_PROFILES[schoolId] ? Object.assign({}, ADVISOR_PROFILES[schoolId]) : (buildFallbackAdvisorProfile(school) || {});
+  // Prefer canonical region from SCHOOLS_DATA when provided
+  if (school && school.region) {
+    rules.region = school.region;
+  }
   const reasons = [];
   const risks = [];
   let score = 55;

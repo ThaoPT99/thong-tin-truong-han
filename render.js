@@ -48,22 +48,29 @@ function getSchoolById(schoolId) {
 }
 
 function getAdvisorRules(schoolId, school) {
+  let rules = null;
   if (typeof ADVISOR_PROFILES !== "undefined" && ADVISOR_PROFILES[schoolId]) {
-    return ADVISOR_PROFILES[schoolId];
+    rules = Object.assign({}, ADVISOR_PROFILES[schoolId]);
+  } else if (typeof buildFallbackAdvisorProfile === "function") {
+    rules = buildFallbackAdvisorProfile(school) || {};
+  } else {
+    rules = {
+      gender: "all",
+      region: "province",
+      costLevel: 3,
+      visaChance: 3,
+      jobOpportunity: 3,
+      e7Opportunity: 3,
+      studyLoad: 3,
+      tags: []
+    };
   }
-  if (typeof buildFallbackAdvisorProfile === "function") {
-    return buildFallbackAdvisorProfile(school);
+
+  // If the canonical data contains an explicit region, prefer it.
+  if (school && school.region) {
+    rules.region = school.region;
   }
-  return {
-    gender: "all",
-    region: "province",
-    costLevel: 3,
-    visaChance: 3,
-    jobOpportunity: 3,
-    e7Opportunity: 3,
-    studyLoad: 3,
-    tags: []
-  };
+  return rules;
 }
 
 function getRegionLabel(region) {
@@ -75,7 +82,14 @@ function getRegionLabel(region) {
     gwangju: "Gwangju",
     province: "Tỉnh/thành khác"
   };
-  return labels[region] || "Đang cập nhật";
+  if (!region) return "Đang cập nhật";
+  if (labels[region]) return labels[region];
+  // Fallback: humanize unknown region keys (e.g. "my-region" -> "My Region")
+  try {
+    return String(region).replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+  } catch (e) {
+    return "Đang cập nhật";
+  }
 }
 
 function getSchoolSummary(school) {
@@ -257,6 +271,18 @@ function renderSchool(schoolId) {
 
 function renderSchoolsDirectory() {
   const schools = getSchools();
+  // Collect unique regions from canonical data or advisor fallback
+  const regionSet = new Set();
+  schools.forEach(s => {
+    if (s && s.region) regionSet.add(s.region);
+    else {
+      const r = getAdvisorRules(s?.id, s)?.region;
+      if (r) regionSet.add(r);
+    }
+  });
+  const regions = Array.from(regionSet).filter(Boolean);
+  const regionOptions = [`<option value="all">Tất cả khu vực</option>`, ...regions.map(r => `<option value="${escapeHtml(r)}">${escapeHtml(getRegionLabel(r))}</option>`)].join("\n");
+
   return `
     <section class="directory-view">
       <div class="directory-head">
@@ -267,14 +293,7 @@ function renderSchoolsDirectory() {
         </div>
         <div class="directory-tools">
           <input id="school-search" type="search" placeholder="Tìm trường, khu vực, hệ học...">
-          <select id="school-region-filter">
-            <option value="all">Tất cả khu vực</option>
-            <option value="seoul">Seoul</option>
-            <option value="near-seoul">Gần Seoul</option>
-            <option value="busan">Busan</option>
-            <option value="gwangju">Gwangju</option>
-            <option value="province">Tỉnh/thành khác</option>
-          </select>
+          <select id="school-region-filter">` + regionOptions + `</select>
         </div>
       </div>
       <div class="quick-filter-bar" aria-label="Bộ lọc nhanh">
@@ -347,7 +366,11 @@ function bindSchoolsDirectory(container) {
     });
   });
   container.querySelectorAll("[data-open-school]").forEach(button => {
-    button.addEventListener("click", () => showSchool(button.dataset.openSchool));
+    button.addEventListener("click", () => {
+      // Ưu tiên gọi bản global để tránh lỗi phụ thuộc script
+      if (window && typeof window.showSchool === "function") return window.showSchool(button.dataset.openSchool);
+      return showSchool(button.dataset.openSchool);
+    });
   });
 }
 
@@ -766,6 +789,8 @@ function renderExtra() {
 }
 
 function showSchool(viewId) {
+  // Expose để các file khác (vd advisor.js) gọi an toàn
+  window.showSchool = showSchool;
   const content = document.getElementById("school-content");
   const schools = document.getElementById("schools-content");
   const compare = document.getElementById("compare-content");
