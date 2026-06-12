@@ -2654,6 +2654,182 @@ const SCHOOLS_DATA = {
       }
     ],
     "mou": "HN, HNC, HCCT, BGIT, PMDT, DH"
+  },
+  "dh-jeonju": {
+    "id": "dh-jeonju",
+    "name": "Jeonju",
+    "nameKr": "전주대학교 | Đại học nuôi dưỡng siêu sao - Chi phí hợp lý - Tỷ lệ Visa tốt",
+    "nameEn": "Jeonju University",
+    "system": "D2-6 > D2-2 (Đại học 4 năm)",
+    "quota": 200,
+    "images": {
+      "main": "images/placeholder.svg",
+      "catalog": "",
+      "locationMap": "",
+      "invoice": "",
+      "gallery": []
+    },
+    "links": {
+      "website": "",
+      "catalog": "https://drive.google.com/file/d/1SRni65v84X5v6ujbKBsdLHbj2JHAZGpo/view?usp=sharing",
+      "invoice": "https://drive.google.com/file/d/1vFPfCVRaBn8rZvKwl4-ZYvodimvmQ8DM/view?usp=sharing"
+    },
+    "video": {
+      "url": "https://www.youtube.com/watch?v=el1j8k0C_ek",
+      "youtubeId": "el1j8k0C_ek",
+      "title": ""
+    },
+    "location": [
+      {
+        "t": "Tọa lạc tại khu đô thị mới Jeonju. Cách bến xe phía Nam Seoul ~3 tiếng (12 chuyến/ngày). Gần làng cổ Hanok nổi tiếng.",
+        "c": "#000000"
+      }
+    ],
+    "region": "jeollabuk",
+    "intro": [
+      {
+        "t": "- Tên tiếng Hàn: 전주대학교\n- Tên tiếng Anh: Jeonju University\n- Loại hình: Đại học tư thục 4 năm\n- Quy mô: ~10,422 sinh viên đang học, 91,860 cựu sinh viên, 334 giáo sư chính, 73 khoa\n- Website: www.jeonju.ac.kr\n\nJeonju University là trường đại học tọa lạc tại thành phố Jeonju - trung tâm văn hóa đặc trưng nhất của Hàn Quốc, được chỉ định là thành phố du lịch văn hóa trọng điểm. Khuôn viên trường nổi tiếng là địa điểm quay phim nhiều bộ phim/drama Hàn Quốc (Our Beloved Summer, Love Alarm 2, The Bequeathed, In Our Prime).\n\nTrường có quan hệ hợp tác quốc tế với 264 trường tại 31 quốc gia và 23 cơ quan tại 11 quốc gia.",
+        "c": "#000000"
+      }
+    ],
+    "conditions": [
+      "Dưới 25 tuổi",
+      "Có học bạ cấp 3",
+      "Có bằng tốt nghiệp cấp 3",
+      "Số buổi nghỉ không quá quy định",
+      "Không phân biệt vùng miền",
+      "Có sức khỏe tốt, không mắc bệnh truyền nhiễm"
+    ],
+    "majors": [
+      "Đại học Kinh doanh: Quản trị kinh doanh, Thương mại & Logistic, Tài chính & Bảo hiểm, Kế toán & Thuế, Tài chính IT, Thông tin Đất đai & BĐS\nĐại học Hội tụ Phần mềm: Trí tuệ Nhân tạo, Máy tính, Phương tiện thông minh, Kỹ thuật Dữ liệu\nĐại học Văn hóa Du lịch: Quản trị Du lịch, Quản trị Khách sạn, Ẩm thực Hàn Quốc, Công nghiệp Thời trang, Quản lý & Dịch vụ ẩm thực\nĐại học Hội tụ Văn hóa: Thiết kế đồ họa, Thiết kế Công nghiệp, Điện ảnh & Truyền hình, Nghệ thuật biểu diễn, Taekwondo, Bóng đá, Thể dục...\nĐại học Kỹ thuật: Kiến trúc, Kỹ thuật Cơ khí, Kỹ thuật Điện & Điện tử, Phòng cháy Chữa cháy...\nĐại học Nội dung Nhân văn, Khoa học Xã hội, Y học..."
+    ],
+    "conversion": [
+      "Học D2-6 trong vòng 1 năm (tiếng Hàn)",
+      "Sau 1 năm chuyển tiếp lên chuyên ngành D2-2 và học tiếp 3-4 năm",
+      "Điều kiện để tốt nghiệp: Có chứng chỉ TOPIK 4 trở lên",
+      "Cũng có chương trình chuyển tiếp 1+3, 2+2, 3+1 từ trường Việt Nam"
+    ],
+    "tuition": [
+      {
+        "t": "Học phí theo ngành (mỗi học kỳ, dựa trên năm 2026):\n- Đại học Nhân văn / Khoa học Xã hội / Kinh doanh: 3,665,000 KRW (~2,440 USD)\n- Đại học Hội tụ Văn hóa (Trị liệu, Thể thao, Taekwondo, Bóng đá) / Y học / Văn hóa Du lịch: 4,302,000 KRW (~2,870 USD)\n- Đại học Hội tụ Phần mềm / Kỹ thuật / Hội tụ Văn hóa (Game, Thiết kế, Nghệ thuật...): 4,788,000 KRW (~3,200 USD)\n\nHọc bổng khi nhập học (dựa trên TOPIK):\n- Cấp 3: Giảm 20% | Cấp 4: Giảm 50% | Cấp 5: Giảm 80% | Cấp 6: Giảm 100%\n- Học bổng đặc biệt: Giảm 20%-100% tùy trường hợp",
+        "c": "#000000"
+      }
+    ],
+    "insurance": "",
+    "ktx": [
+      {
+        "t": "StarTower (kiểu khách sạn, 18 tầng, ~1,000 chỗ):\n- Phòng đơn: 1,890,000 KRW/kỳ (~1,360 USD)\n- Phòng đôi: 1,252,000 KRW/kỳ (~900 USD)\n- Phòng 4 người: 954,000 KRW/kỳ (~690 USD)\n\nStarvill: Phòng đơn ~730 USD/kỳ | Phòng đôi ~580 USD/kỳ\nStarhome: Phòng đơn ~860 USD/kỳ | Phòng đôi ~625 USD/kỳ\n(Chi phí trên chưa bao gồm ăn uống, dựa trên năm 2024)\n\nThu nhập làm thêm: 10,320 KRW/giờ (2026), 20h/tuần ~ 825,600 KRW/tháng (~350 USD)\nPhí sinh hoạt dự kiến (ăn uống): ~500,000 KRW/tháng (~330 USD)",
+        "c": "#000000"
+      }
+    ],
+    "schedule": "",
+    "advantages": [
+      "Trường tọa lạc tại thành phố văn hóa nổi tiếng nhất Hàn Quốc (Jeonju)",
+      "Khuôn viên đẹp, nổi tiếng là địa điểm quay phim nhiều bộ phim/drama Hàn Quốc",
+      "Ký túc xá Star Tower kiểu khách sạn 18 tầng (~1,000 chỗ), ưu tiên cho sinh viên quốc tế",
+      "Học bổng đa dạng dựa trên thành tích TOPIK (50%-100%)",
+      "Hỗ trợ trợ giảng theo quốc gia (có tiếng Việt)",
+      "Đứng đầu khu vực về tỷ lệ ra visa làm việc F2-R",
+      "Chi phí học tập thấp hơn so với trường thủ đô (~10,000$/năm vs >15,000$/năm)",
+      "Chương trình Hostfamily - kết nối sinh viên với gia đình Hàn Quốc địa phương"
+    ],
+    "documents": [
+      "Hồ sơ sinh viên trao đổi (Visa D-2-6):",
+      "Đơn xin nhập học (mẫu trường)",
+      "Thư giới thiệu (bản gốc tiếng Anh, có dấu xác nhận trường)",
+      "Bằng tốt nghiệp THPT (dịch thuật, công chứng, hợp pháp hóa)",
+      "Học bạ (dịch thuật, công chứng, hợp pháp hóa)",
+      "Giấy xác nhận sinh viên (bản gốc tiếng Anh, hợp pháp hóa)",
+      "Bảng điểm (bản gốc tiếng Anh, hợp pháp hóa)",
+      "Hộ chiếu (photo, còn hạn)",
+      "CCCD của bố, mẹ và sinh viên (dịch thuật, công chứng)",
+      "Giấy khai sinh (dịch thuật, công chứng)",
+      "Hộ khẩu (dịch thuật, công chứng)",
+      "Chứng minh tài chính: 8,000,000 KRW (6 tháng) / 16,000,000 KRW (1 năm)",
+      "Giấy xác nhận nghề nghiệp và thu nhập bố mẹ (dịch thuật, công chứng)",
+      "Chứng chỉ ngoại ngữ: TOPIK cấp 2 trở lên HOẶC IELTS 5.5/iBT 71 trở lên",
+      "Phiếu xác nhận sức khỏe (khám lao)",
+      "Ảnh thẻ 3.5x4.5 nền trắng"
+    ],
+    "documentsNote": "",
+    "partners": [
+      {
+        "code": "HN",
+        "name": "Cao đẳng Hà Nội",
+        "nameKr": "Cao đẳng Hà Nội"
+      },
+      {
+        "code": "HNC",
+        "name": "Cao đẳng Hữu Nghị",
+        "nameKr": "Cao đẳng Hữu Nghị"
+      },
+      {
+        "code": "HCCT",
+        "name": "Cao đẳng Thương mại và Du lịch Hà Nội",
+        "nameKr": "Cao đẳng Thương mại và Du lịch Hà Nội"
+      },
+      {
+        "code": "VTV",
+        "name": "Cao đẳng Truyền hình Việt Nam",
+        "nameKr": "Cao đẳng Truyền hình Việt Nam"
+      },
+      {
+        "code": "BGIT",
+        "name": "Cao đẳng Công nghiệp Bắc Giang",
+        "nameKr": "Cao đẳng Công nghiệp Bắc Giang"
+      },
+      {
+        "code": "HPC-HP",
+        "name": "Cao đẳng Y tế Hải Phòng",
+        "nameKr": "Cao đẳng Y tế Hải Phòng"
+      },
+      {
+        "code": "PMDT",
+        "name": "Cao đẳng Công nghệ Y Dược Việt Nam",
+        "nameKr": "Cao đẳng Công nghệ Y Dược Việt Nam"
+      },
+      {
+        "code": "TWU",
+        "name": "Đại học Trưng Vương",
+        "nameKr": "Đại học Trưng Vương"
+      },
+      {
+        "code": "UTM",
+        "name": "ĐH Quản lý và Kinh doanh Hữu Nghị",
+        "nameKr": "ĐH Quản lý và Kinh doanh Hữu Nghị"
+      },
+      {
+        "code": "KTTT",
+        "name": "Cao đẳng Kinh tế Kỹ thuật Thương mại",
+        "nameKr": "Cao đẳng Kinh tế Kỹ thuật Thương mại"
+      },
+      {
+        "code": "SGT",
+        "name": "Cao đẳng Công nghệ Sài Gòn",
+        "nameKr": "Cao đẳng Công nghệ Sài Gòn"
+      },
+      {
+        "code": "ISPACE",
+        "name": "Cao đẳng Công nghệ i-Space",
+        "nameKr": "Cao đẳng Công nghệ i-Space"
+      },
+      {
+        "code": "DA",
+        "name": "Cao đẳng Đồng An",
+        "nameKr": "Cao đẳng Đồng An"
+      },
+      {
+        "code": "SDU",
+        "name": "Đại học Sao Đỏ",
+        "nameKr": "Đại học Sao Đỏ"
+      },
+      {
+        "code": "DH",
+        "name": "Cao đẳng Duyên hải",
+        "nameKr": "Cao đẳng Duyên hải"
+      }
+    ],
+    "mou": "HN, HCCT, VTV, BGIT, UTM, KTTT, SGT"
   }
 };
 
@@ -3079,6 +3255,14 @@ const EXTRA_SHEETS = {
         "quota": 200,
         "mou": "HN, HNC, HCCT, BGIT, PMDT, DH",
         "catalog": "https://drive.google.com/file/d/1-udyYf1vbgkUrX1QMPNpsfJnUyxoUXfA/view?usp=sharing"
+      },
+      {
+        "name": "Jeonju",
+        "nameKr": "전주대학교 | Đại học nuôi dưỡng siêu sao - Chi phí hợp lý - Tỷ lệ Visa tốt",
+        "system": "D2-6 > D2-2 (Đại học 4 năm)",
+        "quota": 200,
+        "mou": "HN, HCCT, VTV, BGIT, UTM, KTTT, SGT",
+        "catalog": "https://drive.google.com/file/d/1SRni65v84X5v6ujbKBsdLHbj2JHAZGpo/view?usp=sharing"
       }
     ]
   }
