@@ -348,7 +348,6 @@ def login():
     if not user:
         return jsonify({'error': 'Sai tên đăng nhập hoặc mật khẩu'}), 401
 
-    import bcrypt
     if not check_password_hash(user.password_hash, password):
         return jsonify({'error': 'Sai tên đăng nhập hoặc mật khẩu'}), 401
 
