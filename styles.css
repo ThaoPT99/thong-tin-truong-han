@@ -289,12 +289,71 @@ body {
 
 .footer a { color: var(--accent); font-weight: 500; }
 
-/* Anim nhẹ khi load */
+/* Animations */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(8px); }
     to { opacity: 1; transform: translateY(0); }
 }
+
+@keyframes slideIn {
+    from { opacity: 0.3; transform: translateX(16px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
 .sheet-view { animation: fadeIn 0.35s ease-out; }
+.directory-view { animation: fadeIn 0.3s ease-out; }
+.compare-view { animation: fadeIn 0.3s ease-out; }
+.advisor-view { animation: fadeIn 0.35s ease-out; }
+.guide-view { animation: fadeIn 0.3s ease-out; }
+.school-detail { animation: slideIn 0.3s ease-out; }
+.docs-view { animation: fadeIn 0.3s ease-out; }
+
+/* Skeleton loading */
+.skeleton {
+    background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 8px;
+}
+
+[data-theme="dark"] .skeleton {
+    background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
+}
+
+.skeleton-card {
+    min-height: 180px;
+    padding: 1rem;
+}
+
+.skeleton-line {
+    height: 14px;
+    margin-bottom: 8px;
+    width: 80%;
+}
+
+.skeleton-line:last-child {
+    width: 55%;
+}
+
+.skeleton-heading {
+    height: 24px;
+    width: 60%;
+    margin-bottom: 12px;
+}
+
+/* Tab transition */
+.tab-btn {
+    transition: all 0.2s ease;
+}
+
+.tab-btn.active {
+    transition: all 0.25s ease;
+}
 .map-wrapper {
     max-width: 1200px;
     margin: 30px auto;
@@ -1592,6 +1651,82 @@ body.zalo-popup-open {
     box-shadow: 0 6px 24px rgba(0, 104, 255, 0.5);
 }
 
+/* ===== PRINT STYLES ===== */
+@media print {
+    .app-sidebar,
+    .zalo-fab,
+    .theme-toggle,
+    .tab-btn,
+    .school-tabs,
+    .detail-actions,
+    .detail-jump,
+    .advisor-result-actions,
+    .advisor-actions,
+    .recent-schools,
+    .footer,
+    .sidebar-zalo,
+    .detail-breadcrumb,
+    .guide-hero-actions,
+    .guide-menu,
+    .checklist-item input,
+    .advisor-form { display: none !important; }
+
+    .app-shell { display: block; height: auto; }
+    .app-main { height: auto; overflow: visible; padding: 0; }
+    .app-main .main { max-width: 100%; }
+
+    body {
+        background: #fff;
+        color: #000;
+        font-size: 11pt;
+    }
+
+    .sheet-view,
+    .school-detail,
+    .detail-card,
+    .detail-overview,
+    .compare-table-wrap {
+        box-shadow: none;
+        border: 1px solid #ddd;
+        background: #fff;
+    }
+
+    .detail-card {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    a { color: #000; text-decoration: underline; }
+
+    .col-label { background: #f5f5f5; }
+
+    .advisor-view::before,
+    .d26-checklist::before,
+    .sheet-view::before { display: none; }
+
+    .guide-section.active { display: block !important; }
+    .guide-section { display: block !important; }
+    .guide-content { min-height: auto; }
+
+    .detail-hero {
+        background: #1a365d !important;
+        color: #fff !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .data-table th {
+        background: #1a365d !important;
+        color: #fff !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    @page {
+        margin: 1.5cm;
+    }
+}
+
 @media (max-width: 480px) {
     .advisor-head,
     .advisor-form,
@@ -1665,6 +1800,169 @@ body.zalo-popup-open {
         padding: 0.6rem 0.85rem;
         font-size: 0.85rem;
     }
+}
+
+/* ===== DARK MODE ===== */
+[data-theme="dark"] {
+  --bg: #0f172a;
+  --table-bg: #1e293b;
+  --header-bg: linear-gradient(135deg, #0a1628 0%, #1a365d 100%);
+  --label-bg: #1e293b;
+  --border: #334155;
+  --text: #e2e8f0;
+  --text-muted: #94a3b8;
+  --accent: #3b82f6;
+  --accent-soft: #1e3a5f;
+
+  background: var(--bg);
+  color: var(--text);
+}
+
+[data-theme="dark"] .app-sidebar {
+  background: #0a1628;
+}
+[data-theme="dark"] .sidebar-zalo {
+  background: #0f2940;
+}
+[data-theme="dark"] .school-tabs {
+  background: #1e293b;
+  border-bottom-color: #334155;
+}
+[data-theme="dark"] .tab-btn {
+  background: #1e293b;
+  color: #94a3b8;
+}
+[data-theme="dark"] .tab-btn.active {
+  background: #3b82f6;
+  color: #fff;
+}
+[data-theme="dark"] .sheet-view,
+[data-theme="dark"] .advisor-view,
+[data-theme="dark"] .d26-checklist,
+[data-theme="dark"] .compare-table-wrap,
+[data-theme="dark"] .school-list-wrap,
+[data-theme="dark"] .school-card,
+[data-theme="dark"] .directory-head,
+[data-theme="dark"] .compare-picker,
+[data-theme="dark"] .docs-panel,
+[data-theme="dark"] .data-health,
+[data-theme="dark"] .app-topbar,
+[data-theme="dark"] .footer {
+  background: #1e293b;
+  border-color: #334155;
+}
+[data-theme="dark"] .app-topbar {
+  background: rgba(30, 41, 59, 0.92);
+}
+[data-theme="dark"] .data-table tbody tr:hover,
+[data-theme="dark"] .school-list-table tbody tr:hover {
+  background: #0f172a;
+}
+[data-theme="dark"] .col-label {
+  background: #1e293b;
+}
+[data-theme="dark"] .col-value {
+  background: #0f172a;
+}
+[data-theme="dark"] .checklist-item:hover {
+  background: #0f2940;
+}
+[data-theme="dark"] .recent-schools {
+  background: #1e293b;
+  border-color: #334155;
+}
+[data-theme="dark"] .zalo-popup-card {
+  background: #1e293b;
+  color: #e2e8f0;
+}
+[data-theme="dark"] .zalo-popup-title {
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .guide-menu,
+[data-theme="dark"] .guide-content {
+  background: #1e293b;
+  border-color: #334155;
+}
+[data-theme="dark"] .guide-menu button {
+  color: #94a3b8;
+}
+[data-theme="dark"] .guide-menu button.active,
+[data-theme="dark"] .guide-menu button:hover {
+  background: #0f2940;
+  color: #2dd4bf;
+}
+[data-theme="dark"] .school-name-item {
+  background: #1e293b;
+  border-color: #334155;
+  color: #e2e8f0;
+}
+[data-theme="dark"] .school-name-item:hover {
+  background: #0f2940;
+  border-color: #3b82f6;
+  color: #60a5fa;
+}
+[data-theme="dark"] .detail-table {
+  background: #1e293b;
+}
+[data-theme="dark"] .detail-card {
+  background: #1e293b;
+  border-color: #334155;
+}
+[data-theme="dark"] .detail-overview {
+  background: #1e293b;
+  border-color: #334155;
+}
+[data-theme="dark"] .detail-overview div {
+  background: #0f172a;
+}
+[data-theme="dark"] .guide-highlight-grid article,
+[data-theme="dark"] .guide-list-grid article,
+[data-theme="dark"] .guide-doc-groups article {
+  background: #0f172a;
+  border-color: #334155;
+}
+[data-theme="dark"] .data-table th,
+[data-theme="dark"] .data-table td,
+[data-theme="dark"] .compare-table td,
+[data-theme="dark"] .compare-table th {
+  border-color: #334155;
+}
+[data-theme="dark"] .checklist-group {
+  background: #0f172a;
+}
+[data-theme="dark"] .checklist-group h3 {
+  background: #1e293b;
+}
+[data-theme="dark"] .docs-section-head {
+  background: #0f172a;
+}
+
+/* Dark mode toggle button */
+.theme-toggle {
+  position: fixed;
+  right: 1rem;
+  bottom: 5rem;
+  z-index: 9998;
+  width: 2.6rem;
+  height: 2.6rem;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--table-bg);
+  color: var(--text);
+  font-size: 1.2rem;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+  transition: transform 0.2s;
+}
+.theme-toggle:hover {
+  transform: scale(1.1);
+}
+
+[data-theme="dark"] .theme-toggle {
+  border-color: #334155;
+  background: #1e293b;
+  color: #fbbf24;
 }
 
 /* Dashboard concept override */
@@ -2077,6 +2375,52 @@ html {
         grid-column: 2;
         justify-self: start;
     }
+}
+
+/* Search autocomplete */
+.search-suggestions {
+    position: absolute;
+    z-index: 50;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 2px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--table-bg);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    overflow: hidden;
+}
+
+.suggestion-item {
+    display: block;
+    width: 100%;
+    padding: 0.65rem 0.8rem;
+    border: none;
+    background: transparent;
+    color: var(--text);
+    font: inherit;
+    font-size: 0.9rem;
+    text-align: left;
+    cursor: pointer;
+}
+
+.suggestion-item:hover,
+.suggestion-item:focus {
+    background: var(--accent-soft);
+    color: var(--accent);
+}
+
+.suggestion-item + .suggestion-item {
+    border-top: 1px solid var(--border);
+}
+
+.suggestion-name {
+    font-weight: 700;
+}
+
+.directory-tools {
+    position: relative;
 }
 
 /* Visual polish */

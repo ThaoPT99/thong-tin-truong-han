@@ -283,6 +283,12 @@ function renderSchoolsDirectory() {
   const regions = Array.from(regionSet).filter(Boolean);
   const regionOptions = [`<option value="all">Tất cả khu vực</option>`, ...regions.map(r => `<option value="${escapeHtml(r)}">${escapeHtml(getRegionLabel(r))}</option>`)].join("\n");
 
+  // Collect unique systems
+  const systemSet = new Set();
+  schools.forEach(s => { if (s && s.system) systemSet.add(s.system); });
+  const systems = Array.from(systemSet).filter(Boolean);
+  const systemOptions = [`<option value="all">Tất cả hệ học</option>`, ...systems.map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`)].join("\n");
+
   return `
     <section class="directory-view">
       <div class="directory-head">
@@ -292,8 +298,10 @@ function renderSchoolsDirectory() {
           <p>Chọn tên trường để xem thông tin chi tiết về điều kiện, học phí, hồ sơ, ký túc xá và tài liệu liên quan.</p>
         </div>
         <div class="directory-tools">
-          <input id="school-search" type="search" placeholder="Tìm trường, khu vực, hệ học...">
+          <input id="school-search" type="search" placeholder="Tìm trường, khu vực, hệ học..." autocomplete="off" role="combobox" aria-expanded="false" aria-controls="search-suggestions">
+          <div id="search-suggestions" class="search-suggestions" role="listbox" hidden></div>
           <select id="school-region-filter">` + regionOptions + `</select>
+          <select id="school-system-filter">` + systemOptions + `</select>
         </div>
       </div>
       <div class="quick-filter-bar" aria-label="Bộ lọc nhanh">
@@ -323,7 +331,7 @@ function renderSchoolCard(school) {
     rules.e7Opportunity >= 4 ? "e7" : ""
   ].filter(Boolean).join(" ");
   return `
-    <button type="button" class="school-name-item" data-school-card data-region="${escapeHtml(rules.region)}" data-tags="${escapeHtml(tags)}" data-search="${escapeHtml(buildSchoolSearchText(school))}" data-open-school="${escapeHtml(school.id)}">
+    <button type="button" class="school-name-item" data-school-card data-region="${escapeHtml(rules.region)}" data-system="${escapeHtml(school.system || '')}" data-tags="${escapeHtml(tags)}" data-search="${escapeHtml(buildSchoolSearchText(school))}" data-open-school="${escapeHtml(school.id)}">
       ${escapeHtml(school.name)}
     </button>
   `;
@@ -332,6 +340,8 @@ function renderSchoolCard(school) {
 function bindSchoolsDirectory(container) {
   const search = container.querySelector("#school-search");
   const region = container.querySelector("#school-region-filter");
+  const systemFilter = container.querySelector("#school-system-filter");
+  const suggestions = container.querySelector("#search-suggestions");
   const quickButtons = Array.from(container.querySelectorAll("[data-quick-filter]"));
   const cards = Array.from(container.querySelectorAll("[data-school-card]"));
   const count = container.querySelector("#school-result-count");
@@ -341,14 +351,16 @@ function bindSchoolsDirectory(container) {
   const applyFilters = () => {
     const q = (search.value || "").trim().toLowerCase();
     const selectedRegion = region.value;
+    const selectedSystem = systemFilter ? systemFilter.value : "all";
     let visible = 0;
     cards.forEach(card => {
       const matchSearch = !q || card.dataset.search.includes(q);
       const matchRegion = selectedRegion === "all" || card.dataset.region === selectedRegion;
+      const matchSystem = selectedSystem === "all" || (card.dataset.system || "").includes(selectedSystem);
       const matchQuick = quickFilter === "all"
         || card.dataset.region === quickFilter
         || (card.dataset.tags || "").split(" ").includes(quickFilter);
-      const isVisible = matchSearch && matchRegion && matchQuick;
+      const isVisible = matchSearch && matchRegion && matchSystem && matchQuick;
       card.classList.toggle("hidden", !isVisible);
       if (isVisible) visible += 1;
     });
@@ -356,8 +368,75 @@ function bindSchoolsDirectory(container) {
     empty?.classList.toggle("hidden", visible !== 0);
   };
 
-  search.addEventListener("input", applyFilters);
+  // Guard null suggestions (search autocomplete)
+  const safeSuggestions = suggestions;
+
+  // Search autocomplete
+  let autocompleteTimer = null;
+  search.addEventListener("input", () => {
+    applyFilters();
+    if (!safeSuggestions) return;
+    clearTimeout(autocompleteTimer);
+    autocompleteTimer = setTimeout(() => {
+      const q = (search.value || "").trim().toLowerCase();
+      if (q.length < 1) {
+        safeSuggestions.hidden = true;
+        search.setAttribute("aria-expanded", "false");
+        return;
+      }
+      // Find matching schools
+      const matches = cards.filter(card => card.dataset.search.includes(q)).slice(0, 8);
+      if (matches.length === 0) {
+        safeSuggestions.hidden = true;
+        search.setAttribute("aria-expanded", "false");
+        return;
+      }
+      safeSuggestions.innerHTML = matches.map(card => {
+        const name = card.textContent.trim();
+        const id = card.dataset.openSchool;
+        return `<button type="button" class="suggestion-item" role="option" data-open-school="${escapeHtml(id)}">
+          <span class="suggestion-name">${escapeHtml(name)}</span>
+        </button>`;
+      }).join("");
+      safeSuggestions.hidden = false;
+      search.setAttribute("aria-expanded", "true");
+      // Bind mousedown on suggestions (fires before blur, avoids race condition)
+      safeSuggestions.querySelectorAll(".suggestion-item").forEach(btn => {
+        btn.addEventListener("mousedown", (e) => {
+          e.preventDefault();
+          safeSuggestions.hidden = true;
+          search.setAttribute("aria-expanded", "false");
+          const schoolId = btn.dataset.openSchool;
+          if (window && typeof window.showSchool === "function") {
+            window.showSchool(schoolId);
+          }
+        });
+      });
+    }, 200);
+  });
+
+  // Close suggestions on blur
+  search.addEventListener("blur", () => {
+    if (!safeSuggestions) return;
+    setTimeout(() => {
+      safeSuggestions.hidden = true;
+      search.setAttribute("aria-expanded", "false");
+    }, 200);
+  });
+
+  // Close suggestions on Escape
+  search.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      if (safeSuggestions) {
+        safeSuggestions.hidden = true;
+        search.setAttribute("aria-expanded", "false");
+      }
+      search.blur();
+    }
+  });
+
   region.addEventListener("change", applyFilters);
+  if (systemFilter) systemFilter.addEventListener("change", applyFilters);
   quickButtons.forEach(button => {
     button.addEventListener("click", () => {
       quickFilter = button.dataset.quickFilter;
@@ -367,7 +446,7 @@ function bindSchoolsDirectory(container) {
   });
   container.querySelectorAll("[data-open-school]").forEach(button => {
     button.addEventListener("click", () => {
-      // Ưu tiên gọi bản global để tránh lỗi phụ thuộc script
+      suggestions.hidden = true;
       if (window && typeof window.showSchool === "function") return window.showSchool(button.dataset.openSchool);
       return showSchool(button.dataset.openSchool);
     });

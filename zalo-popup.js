@@ -37,10 +37,42 @@
 
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initZaloPopup);
-  } else {
+  // Dark mode toggle
+  function initThemeToggle() {
+    const btn = document.getElementById("theme-toggle");
+    const icon = document.getElementById("theme-icon");
+    if (!btn) return;
+
+    const saved = localStorage.getItem("d26Theme");
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if (saved === "dark" || (!saved && prefersDark)) {
+      document.documentElement.setAttribute("data-theme", "dark");
+      if (icon) icon.textContent = "☀️";
+    }
+
+    btn.addEventListener("click", () => {
+      const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+      if (isDark) {
+        document.documentElement.removeAttribute("data-theme");
+        localStorage.setItem("d26Theme", "light");
+        if (icon) icon.textContent = "🌙";
+      } else {
+        document.documentElement.setAttribute("data-theme", "dark");
+        localStorage.setItem("d26Theme", "dark");
+        if (icon) icon.textContent = "☀️";
+      }
+    });
+  }
+
+  function initAll() {
     initZaloPopup();
+    initThemeToggle();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initAll);
+  } else {
+    initAll();
   }
 
   window.openZaloPopup = openPopup;
