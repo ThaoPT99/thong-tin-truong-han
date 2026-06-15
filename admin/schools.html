@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý trường - Admin CMS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="admin.css">
+    <style>
+        .school-search { margin-bottom: 1rem; }
+        .school-search input {
+            width: 100%;
+            min-height: 2.65rem;
+            padding: 0.55rem 0.75rem;
+            border: 1px solid var(--admin-border);
+            border-radius: 8px;
+            background: var(--admin-input-bg);
+            font: inherit;
+            font-size: 0.92rem;
+        }
+        .admin-field textarea {
+            min-height: 5rem;
+            font-size: 0.85rem;
+            line-height: 1.45;
+        }
+        .json-list-input {
+            display: flex;
+            gap: 0.35rem;
+            margin-bottom: 0.35rem;
+            align-items: center;
+        }
+        .json-list-input input {
+            flex: 1;
+        }
+        .json-list-input button {
+            padding: 0.35rem 0.55rem;
+            border: 1px solid var(--admin-border);
+            border-radius: 6px;
+            background: #f8fafc;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        .json-list-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.35rem;
+            margin-bottom: 0.5rem;
+        }
+        .json-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+            background: #dbeafe;
+            color: #1d4ed8;
+            font-size: 0.82rem;
+        }
+        .json-tag button {
+            border: none;
+            background: transparent;
+            color: #1d4ed8;
+            cursor: pointer;
+            font-size: 0.9rem;
+            line-height: 1;
+        }
+        .school-id-preview {
+            color: var(--admin-text-muted);
+            font-size: 0.82rem;
+            margin-top: 0.2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <aside class="admin-sidebar">
+            <h2>Admin CMS</h2>
+            <p>Thông tin trường Hàn</p>
+            <nav class="admin-nav">
+                <a href="dashboard.html"><span class="nav-icon">📊</span> Dashboard</a>
+                <a href="schools.html" class="active"><span class="nav-icon">🏫</span> Trường</a>
+                <a href="#" id="nav-export"><span class="nav-icon">📦</span> Export data.js</a>
+                <a href="#" id="nav-import"><span class="nav-icon">📥</span> Import Excel</a>
+                <a href="#" id="nav-logout"><span class="nav-icon">🚪</span> Đăng xuất</a>
+            </nav>
+        </aside>
+
+        <main class="admin-main">
+            <div class="admin-page-head">
+                <div>
+                    <h1>Quản lý trường</h1>
+                    <p id="school-count">Đang tải...</p>
+                </div>
+                <button class="admin-btn admin-btn-primary" id="btn-add-school">+ Thêm trường</button>
+            </div>
+
+            <div class="school-search">
+                <input id="school-search" type="search" placeholder="Tìm kiếm trường..." autocomplete="off">
+            </div>
+
+            <div class="admin-card">
+                <div class="admin-table-wrap">
+                    <table class="admin-table" id="school-table">
+                        <thead>
+                            <tr>
+                                <th>Tên trường</th>
+                                <th>Hệ học</th>
+                                <th>Khu vực</th>
+                                <th>Chỉ tiêu</th>
+                                <th>Học phí</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="school-list"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div hidden>
+                <input type="file" id="import-file-input" accept=".xlsx">
+            </div>
+        </main>
+    </div>
+
+    <script src="admin.js"></script>
+    <script>
+        let allSchools = [];
+
+        async function loadSchools() {
+            const token = getToken();
+            try {
+                const res = await fetch(API + '/api/schools', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!res.ok) throw new Error('Unauthorized');
+                const data = await res.json();
+                allSchools = data.schools || [];
+                renderSchools(allSchools);
+                document.getElementById('school-count').textContent = `${allSchools.length} trường`;
+            } catch (err) {
+                if (err.message === 'Unauthorized') {
+                    localStorage.removeItem('adminToken');
+                    window.location.href = 'login.html';
+                }
+            }
+        }
+
+        function renderSchools(schools) {
+            const tbody = document.getElementById('school-list');
+            if (!schools.length) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--admin-text-muted);">Không có trường nào.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = schools.map(s => `
+                <tr>
+                    <td>
+                        <strong>${escapeHtml(s.name)}</strong>
+                        ${s.nameKr ? `<br><small style="color:var(--admin-text-muted);font-size:0.8rem;">${escapeHtml(s.nameKr)}</small>` : ''}
+                    </td>
+                    <td>${escapeHtml(s.system || '—')}</td>
+                    <td>${escapeHtml(s.region || '—')}</td>
+                    <td>${s.quota || '—'}</td>
+                    <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;">
+                        ${s.tuition ? escapeHtml(s.tuition.slice(0, 60)) + (s.tuition.length > 60 ? '...' : '') : '—'}
+                    </td>
+                    <td>
+                        <div class="actions">
+                            <button class="admin-btn admin-btn-outline admin-btn-sm" onclick="editSchool('${escapeHtml(s.id)}')">✏️ Sửa</button>
+                            <button class="admin-btn admin-btn-danger admin-btn-sm" onclick="deleteSchool('${escapeHtml(s.id)}')">🗑️</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Search
+        document.getElementById('school-search').addEventListener('input', (e) => {
+            const q = e.target.value.toLowerCase().trim();
+            if (!q) { renderSchools(allSchools); return; }
+            const filtered = allSchools.filter(s =>
+                (s.name || '').toLowerCase().includes(q) ||
+                (s.nameKr || '').toLowerCase().includes(q) ||
+                (s.nameEn || '').toLowerCase().includes(q) ||
+                (s.system || '').toLowerCase().includes(q) ||
+                (s.region || '').toLowerCase().includes(q)
+            );
+            renderSchools(filtered);
+        });
+
+        // ── Edit School Modal ──
+        function openSchoolModal(schoolData) {
+            const isEdit = !!schoolData;
+            const s = schoolData || { id: '', name: '', nameKr: '', nameEn: '', system: '', quota: 0,
+                location: '', region: '', intro: '', tuition: '', ktx: '', insurance: '', schedule: '',
+                mou: '', website: '', catalog: '', catalogLink: '', invoice: '', videoUrl: '', videoTitle: '',
+                conditions: [], majors: [], conversion: [], advantages: [], documents: [], partners: [],
+                documentsNote: '', images: {} };
+
+            function renderJsonList(items, name) {
+                const id = `json-${name}`;
+                return `
+                    <div id="${id}-items" class="json-list-items">
+                        ${(items || []).map((item, i) => `
+                            <span class="json-tag">
+                                ${escapeHtml(typeof item === 'string' ? item : JSON.stringify(item))}
+                                <button type="button" onclick="removeJsonItem('${id}-items', ${i})">&times;</button>
+                            </span>
+                        `).join('')}
+                    </div>
+                    <div class="json-list-input">
+                        <input id="${id}-input" placeholder="Thêm mục..." onkeydown="if(event.key==='Enter'){event.preventDefault();addJsonItem('${id}')}">
+                        <button type="button" onclick="addJsonItem('${id}')">+ Thêm</button>
+                    </div>
+                `;
+            }
+
+            const modal = showModal(`
+                <div class="admin-modal">
+                    <div class="admin-modal-head">
+                        <h2>${isEdit ? 'Sửa: ' + escapeHtml(s.name) : 'Thêm trường mới'}</h2>
+                        <button type="button" class="admin-modal-close">&times;</button>
+                    </div>
+                    <div class="admin-modal-body">
+                        <form id="school-form">
+                            <div class="admin-form-grid">
+                                <div class="admin-field">
+                                    <label>ID trường</label>
+                                    <input name="id" value="${escapeHtml(s.id)}" ${isEdit ? 'readonly' : ''} placeholder="vd: dh-osan" oninput="document.getElementById('id-preview').textContent='ID: '+this.value.toLowerCase().replace(/ /g,'-')">
+                                    <div id="id-preview" class="school-id-preview">${isEdit ? 'ID: ' + s.id : ''}</div>
+                                </div>
+                                <div class="admin-field">
+                                    <label>Tên trường *</label>
+                                    <input name="name" value="${escapeHtml(s.name)}" required>
+                                </div>
+                                <div class="admin-field">
+                                    <label>Tên tiếng Hàn</label>
+                                    <input name="nameKr" value="${escapeHtml(s.nameKr || '')}">
+                                </div>
+                                <div class="admin-field">
+                                    <label>Tên tiếng Anh</label>
+                                    <input name="nameEn" value="${escapeHtml(s.nameEn || '')}">
+                                </div>
+                                <div class="admin-field">
+                                    <label>Hệ học</label>
+                                    <input name="system" value="${escapeHtml(s.system || '')}" placeholder="D2-6 > D2-1 (Cao Đẳng)">
+                                </div>
+                                <div class="admin-field">
+                                    <label>Khu vực</label>
+                                    <select name="region">
+                                        <option value="">-- Chọn --</option>
+                                        ${['seoul','near-seoul','busan','gwangju','incheon','gyeonggi','province','jeollanam','chungcheongbuk','gyeongsangnam'].map(r =>
+                                            `<option value="${r}" ${s.region === r ? 'selected' : ''}>${r}</option>`
+                                        ).join('')}
+                                    </select>
+                                </div>
+                                <div class="admin-field">
+                                    <label>Chỉ tiêu</label>
+                                    <input name="quota" type="number" value="${s.quota || 0}">
+                                </div>
+                                <div class="admin-field">
+                                    <label>Website</label>
+                                    <input name="website" value="${escapeHtml(s.website || '')}">
+                                </div>
+                                <div class="admin-field">
+                                    <label>Link Catalog</label>
+                                    <input name="catalogLink" value="${escapeHtml(s.catalogLink || '')}">
+                                </div>
+                                <div class="admin-field">
+                                    <label>Link Invoice</label>
+                                    <input name="invoice" value="${escapeHtml(s.invoice || '')}">
+                                </div>
+                                <div class="admin-field">
+                                    <label>Video URL</label>
+                                    <input name="videoUrl" value="${escapeHtml(s.videoUrl || '')}">
+                                </div>
+                                <div class="admin-field">
+                                    <label>Video Title</label>
+                                    <input name="videoTitle" value="${escapeHtml(s.videoTitle || '')}">
+                                </div>
+                                <div class="admin-field admin-field-full">
+                                    <label>Địa điểm</label>
+                                    <textarea name="location" rows="2">${escapeHtml(s.location || '')}</textarea>
+                                </div>
+                                <div class="admin-field admin-field-full">
+                                    <label>Giới thiệu</label>
+                                    <textarea name="intro" rows="3">${escapeHtml(s.intro || '')}</textarea>
+                                </div>
+                                <div class="admin-field">
+                                    <label>Học phí</label>
+                                    <textarea name="tuition" rows="2">${escapeHtml(s.tuition || '')}</textarea>
+                                </div>
+                                <div class="admin-field">
+                                    <label>KTX</label>
+                                    <textarea name="ktx" rows="2">${escapeHtml(s.ktx || '')}</textarea>
+                                </div>
+                                <div class="admin-field">
+                                    <label>Bảo hiểm</label>
+                                    <textarea name="insurance" rows="1">${escapeHtml(s.insurance || '')}</textarea>
+                                </div>
+                                <div class="admin-field">
+                                    <label>Lịch học</label>
+                                    <textarea name="schedule" rows="1">${escapeHtml(s.schedule || '')}</textarea>
+                                </div>
+                                <div class="admin-field">
+                                    <label>MOU</label>
+                                    <textarea name="mou" rows="2">${escapeHtml(s.mou || '')}</textarea>
+                                </div>
+                                <div class="admin-field">
+                                    <label>Documents Note</label>
+                                    <textarea name="documentsNote" rows="2">${escapeHtml(s.documentsNote || '')}</textarea>
+                                </div>
+                            </div>
+
+                            <div style="margin-top:1rem;display:grid;gap:1rem;">
+                                <fieldset><legend style="font-weight:700;font-size:0.9rem;">Điều kiện</legend>${renderJsonList(s.conditions, 'conditions')}</fieldset>
+                                <fieldset><legend style="font-weight:700;font-size:0.9rem;">Chuyên ngành</legend>${renderJsonList(s.majors, 'majors')}</fieldset>
+                                <fieldset><legend style="font-weight:700;font-size:0.9rem;">Chuyển đổi</legend>${renderJsonList(s.conversion, 'conversion')}</fieldset>
+                                <fieldset><legend style="font-weight:700;font-size:0.9rem;">Ưu điểm</legend>${renderJsonList(s.advantages, 'advantages')}</fieldset>
+                                <fieldset><legend style="font-weight:700;font-size:0.9rem;">Documents</legend>${renderJsonList(s.documents, 'documents')}</fieldset>
+                            </div>
+
+                            <div class="admin-modal-actions">
+                                <button type="button" class="admin-btn admin-btn-outline admin-modal-close-btn">Huỷ</button>
+                                <button type="submit" class="admin-btn admin-btn-primary">${isEdit ? 'Lưu thay đổi' : 'Thêm trường'}</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `);
+
+            modal.querySelector('.admin-modal-close-btn')?.addEventListener('click', () => modal.remove());
+
+            // Form submit
+            modal.querySelector('#school-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const form = e.target;
+                const formData = new FormData(form);
+
+                const payload = {
+                    id: formData.get('id') || '',
+                    name: formData.get('name') || '',
+                    nameKr: formData.get('nameKr') || '',
+                    nameEn: formData.get('nameEn') || '',
+                    system: formData.get('system') || '',
+                    quota: parseInt(formData.get('quota')) || 0,
+                    region: formData.get('region') || '',
+                    location: formData.get('location') || '',
+                    intro: formData.get('intro') || '',
+                    tuition: formData.get('tuition') || '',
+                    ktx: formData.get('ktx') || '',
+                    insurance: formData.get('insurance') || '',
+                    schedule: formData.get('schedule') || '',
+                    mou: formData.get('mou') || '',
+                    website: formData.get('website') || '',
+                    catalogLink: formData.get('catalogLink') || '',
+                    invoice: formData.get('invoice') || '',
+                    videoUrl: formData.get('videoUrl') || '',
+                    videoTitle: formData.get('videoTitle') || '',
+                    documentsNote: formData.get('documentsNote') || '',
+                    conditions: getJsonListItems('json-conditions-items'),
+                    majors: getJsonListItems('json-majors-items'),
+                    conversion: getJsonListItems('json-conversion-items'),
+                    advantages: getJsonListItems('json-advantages-items'),
+                    documents: getJsonListItems('json-documents-items'),
+                    partners: [],
+                    images: {}
+                };
+
+                const token = getToken();
+                const url = isEdit
+                    ? API + '/api/schools/' + encodeURIComponent(payload.id)
+                    : API + '/api/schools';
+                const method = isEdit ? 'PUT' : 'POST';
+
+                try {
+                    const res = await fetch(url, {
+                        method, headers: apiHeaders(),
+                        body: JSON.stringify(payload)
+                    });
+                    const data = await res.json();
+                    if (res.ok) {
+                        showToast(data.message || 'Thành công!');
+                        modal.remove();
+                        loadSchools();
+                    } else {
+                        showToast(data.error || 'Lỗi!', 'error');
+                    }
+                } catch (err) {
+                    showToast('Lỗi kết nối server', 'error');
+                }
+            });
+        }
+
+        window.editSchool = function(schoolId) {
+            const s = allSchools.find(x => x.id === schoolId);
+            if (!s) { showToast('Không tìm thấy trường', 'error'); return; }
+            openSchoolModal(s);
+        };
+
+        window.deleteSchool = async function(schoolId) {
+            if (!confirm(`Xoá trường "${schoolId}"? Hành động này không thể hoàn tác.`)) return;
+            try {
+                const res = await fetch(API + '/api/schools/' + encodeURIComponent(schoolId), {
+                    method: 'DELETE',
+                    headers: apiHeaders()
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    showToast(data.message || 'Đã xoá');
+                    loadSchools();
+                } else {
+                    showToast(data.error || 'Lỗi', 'error');
+                }
+            } catch {
+                showToast('Lỗi kết nối', 'error');
+            }
+        };
+
+        document.getElementById('btn-add-school')?.addEventListener('click', () => openSchoolModal(null));
+
+        // Helper: JSON list management
+        window.addJsonItem = function(listId) {
+            const input = document.getElementById(listId + '-input');
+            const items = document.getElementById(listId + '-items');
+            if (!input || !items || !input.value.trim()) return;
+            const tag = document.createElement('span');
+            tag.className = 'json-tag';
+            const idx = items.children.length;
+            tag.innerHTML = `${escapeHtml(input.value.trim())} <button type="button" onclick="removeJsonItem('${listId}-items', ${idx})">&times;</button>`;
+            items.appendChild(tag);
+            input.value = '';
+            // Re-index
+            Array.from(items.children).forEach((el, i) => {
+                const btn = el.querySelector('button');
+                if (btn) btn.setAttribute('onclick', `removeJsonItem('${listId}-items', ${i})`);
+            });
+        };
+
+        window.removeJsonItem = function(itemsId, index) {
+            const container = document.getElementById(itemsId);
+            if (container && container.children[index]) {
+                container.children[index].remove();
+            }
+        };
+
+        function getJsonListItems(itemsId) {
+            const container = document.getElementById(itemsId);
+            if (!container) return [];
+            return Array.from(container.querySelectorAll('.json-tag')).map(el =>
+                el.textContent.replace('×', '').trim()
+            );
+        }
+
+        loadSchools();
+    </script>
+</body>
+</html>

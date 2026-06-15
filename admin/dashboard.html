@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Admin CMS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <div class="admin-layout">
+        <aside class="admin-sidebar">
+            <h2>Admin CMS</h2>
+            <p>Thông tin trường Hàn</p>
+            <nav class="admin-nav">
+                <a href="dashboard.html" class="active"><span class="nav-icon">📊</span> Dashboard</a>
+                <a href="schools.html"><span class="nav-icon">🏫</span> Trường</a>
+                <a href="#" id="nav-export"><span class="nav-icon">📦</span> Export data.js</a>
+                <a href="#" id="nav-import"><span class="nav-icon">📥</span> Import Excel</a>
+                <a href="#" id="nav-logout"><span class="nav-icon">🚪</span> Đăng xuất</a>
+            </nav>
+        </aside>
+
+        <main class="admin-main">
+            <div class="admin-page-head">
+                <div>
+                    <h1>Tổng quan</h1>
+                    <p id="page-subtitle">Dashboard quản trị</p>
+                </div>
+                <div style="display:flex;gap:0.65rem;">
+                    <button class="admin-btn admin-btn-outline admin-btn-sm" id="btn-refresh">🔄 Làm mới</button>
+                    <button class="admin-btn admin-btn-primary admin-btn-sm" id="btn-export">📦 Export data.js</button>
+                </div>
+            </div>
+
+            <div class="admin-stats" id="stats-grid">
+                <div class="admin-stat-card"><strong>—</strong><span>Tổng số trường</span></div>
+                <div class="admin-stat-card"><strong>—</strong><span>Thiếu học phí</span></div>
+                <div class="admin-stat-card"><strong>—</strong><span>Thiếu KTX</span></div>
+                <div class="admin-stat-card"><strong>—</strong><span>Thiếu chuyên ngành</span></div>
+            </div>
+
+            <div class="admin-card">
+                <div class="admin-card-head">
+                    <h2>Hoạt động gần đây</h2>
+                </div>
+                <div class="admin-card-body">
+                    <div id="recent-logs" class="admin-log-list">
+                        <p style="color:var(--admin-text-muted);padding:1rem;">Đang tải...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div hidden>
+                <input type="file" id="import-file-input" accept=".xlsx">
+            </div>
+        </main>
+    </div>
+
+    <script src="admin.js"></script>
+    <script>
+        async function loadDashboard() {
+            const token = localStorage.getItem('adminToken');
+            if (!token) { window.location.href = 'login.html'; return; }
+
+            try {
+                const res = await fetch(API + '/api/dashboard', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!res.ok) throw new Error('Unauthorized');
+                const data = await res.json();
+
+                // Stats
+                document.querySelector('#stats-grid').innerHTML = `
+                    <div class="admin-stat-card"><strong>${data.totalSchools}</strong><span>Tổng số trường</span></div>
+                    <div class="admin-stat-card"><strong>${data.missingData.tuition}</strong><span>Thiếu học phí</span></div>
+                    <div class="admin-stat-card"><strong>${data.missingData.ktx}</strong><span>Thiếu KTX</span></div>
+                    <div class="admin-stat-card"><strong>${data.missingData.majors}</strong><span>Thiếu chuyên ngành</span></div>
+                `;
+
+                // Logs
+                const logsHtml = data.recentChanges.length
+                    ? data.recentChanges.map(log => `
+                        <div class="admin-log-item">
+                            <span class="log-action ${log.action}">${log.action}</span>
+                            <span>${log.schoolId || log.details}</span>
+                            <span class="log-time">${new Date(log.time).toLocaleString('vi-VN')}</span>
+                        </div>
+                    `).join('')
+                    : '<p style="color:var(--admin-text-muted);">Chưa có hoạt động nào.</p>';
+                document.getElementById('recent-logs').innerHTML = logsHtml;
+
+            } catch (err) {
+                if (err.message === 'Unauthorized') {
+                    localStorage.removeItem('adminToken');
+                    window.location.href = 'login.html';
+                }
+            }
+        }
+
+        document.getElementById('btn-refresh')?.addEventListener('click', loadDashboard);
+        loadDashboard();
+    </script>
+</body>
+</html>
