@@ -237,12 +237,19 @@ def log_change(user_id, action, school_id=None, details=''):
     db.session.commit()
 
 
+def get_current_user():
+    """Get current user from JWT identity"""
+    user_id = get_jwt_identity()
+    if user_id:
+        return User.query.get(int(user_id))
+    return None
+
 def admin_required(fn):
     @wraps(fn)
     @jwt_required()
     def wrapper(*args, **kwargs):
-        identity = get_jwt_identity()
-        if not identity or identity.get('role') != 'admin':
+        user = get_current_user()
+        if not user or user.role != 'admin':
             return jsonify({'error': 'Admin access required'}), 403
         return fn(*args, **kwargs)
     return wrapper
@@ -363,9 +370,7 @@ def login():
     if not check_password_hash(user.password_hash, password):
         return jsonify({'error': 'Sai tên đăng nhập hoặc mật khẩu'}), 401
 
-    access_token = create_access_token(
-        identity={'id': user.id, 'username': user.username, 'role': user.role}
-    )
+    access_token = create_access_token(identity=str(user.id))
     return jsonify({
         'token': access_token,
         'user': {'id': user.id, 'username': user.username, 'role': user.role}
@@ -375,8 +380,10 @@ def login():
 @app.route('/api/auth/me', methods=['GET'])
 @jwt_required()
 def me():
-    identity = get_jwt_identity()
-    return jsonify({'user': identity})
+    user = get_current_user()
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+    return jsonify({'user': {'id': user.id, 'username': user.username, 'role': user.role}})
 
 
 # ── Schools CRUD ──
@@ -452,8 +459,9 @@ def create_school():
     db.session.add(school)
     db.session.commit()
 
-    identity = get_jwt_identity()
-    log_change(identity['id'], 'create', school_id)
+    user = get_current_user()
+    if user:
+        log_change(user.id, 'create', school_id)
 
     return jsonify({'school': school.to_dict(), 'message': 'Đã thêm trường thành công'}), 201
 
@@ -495,8 +503,9 @@ def update_school(school_id):
 
     db.session.commit()
 
-    identity = get_jwt_identity()
-    log_change(identity['id'], 'update', school_id)
+    user = get_current_user()
+    if user:
+        log_change(user.id, 'update', school_id)
 
     return jsonify({'school': school.to_dict(), 'message': 'Đã cập nhật trường'})
 
@@ -511,8 +520,9 @@ def delete_school(school_id):
     db.session.delete(school)
     db.session.commit()
 
-    identity = get_jwt_identity()
-    log_change(identity['id'], 'delete', school_id)
+    user = get_current_user()
+    if user:
+        log_change(user.id, 'delete', school_id)
 
     return jsonify({'message': 'Đã xoá trường'})
 
@@ -638,8 +648,9 @@ def import_excel():
 
         db.session.commit()
 
-        identity = get_jwt_identity()
-        log_change(identity['id'], 'import', details=f'Imported {schools_imported} schools from Excel')
+        user = get_current_user()
+        if user:
+            log_change(user.id, 'import', details=f'Imported {schools_imported} schools from Excel')
 
         # Clean up
         os.remove(excel_path)
@@ -669,8 +680,9 @@ def export_data_js():
         with open(data_js_path, 'w', encoding='utf-8') as f:
             f.write(js_content)
 
-        identity = get_jwt_identity()
-        log_change(identity['id'], 'export', details=f'Exported {len(schools_dict)} schools to data.js')
+        user = get_current_user()
+        if user:
+            log_change(user.id, 'export', details=f'Exported {len(schools_dict)} schools to data.js')
 
         return jsonify({
             'message': f'Đã export {len(schools_dict)} trường ra data.js',
