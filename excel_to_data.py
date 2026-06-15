@@ -4,56 +4,15 @@ import openpyxl
 import re
 import json
 import os
-import glob
-
-# Tìm file Excel trong thư mục hiện tại hoặc Downloads
-# Ưu tiên file kỳ 3/2027
 import glob as glob_module
-import os
 
-# Tìm file Excel kỳ 3/2027 trước
-possible_files = []
-# Thư mục hiện tại
-possible_files.extend(glob_module.glob(os.path.join(os.path.dirname(__file__), '*3_2027*.xlsx')))
-possible_files.extend(glob_module.glob(os.path.join(os.path.dirname(__file__), '*truong*Han*3*.xlsx')))
-possible_files.extend(glob_module.glob(os.path.join(os.path.dirname(__file__), '*truong*Han*.xlsx')))
-# Downloads
-downloads = os.environ.get('USERPROFILE', '')
-if downloads:
-    possible_files.extend(glob_module.glob(os.path.join(downloads, 'Downloads', '*3_2027*.xlsx')))
-    possible_files.extend(glob_module.glob(os.path.join(downloads, 'Downloads', '*truong*Han*.xlsx')))
-
-# Tìm file phù hợp nhất
-path = None
-for f in possible_files:
-    if os.path.exists(f):
-        # Ưu tiên file có "3_2027" trong tên
-        if '3_2027' in f.lower() or 'thang_3_2027' in f.lower():
-            path = f
-            break
-        
-if not path or not os.path.exists(path):
-    # Fallback - thử các tên có thể
-    for fname in ['Thong_tin_truong_Han_ky_thang_3_2027.xlsx', 'Thong tin truong Han ky thang 3_2027.xlsx']:
-        p = os.path.join(os.path.dirname(__file__), fname)
-        if os.path.exists(p):
-            path = p
-            break
-            
-if not path or not os.path.exists(path):
-    path = possible_files[0] if possible_files else os.path.join(os.path.dirname(__file__), 'Thong_tin_truong_Han_ky_thang_3_2027.xlsx')
-# data_only=False để lấy hyperlink, rich_text=True để đọc màu chữ
-wb = openpyxl.load_workbook(path, data_only=False, rich_text=True)
-
-# Tất cả trường đều liên kết với 7 đối tác này (theo Excel)
-# 15 trường VN đối tác - theo đúng Danh sách trong Excel
+# ── Constants ──
 PARTNER_CODES = [
     'HN', 'HNC', 'HCCT', 'VTV', 'BGIT', 'HPC-HP', 'PMDT', 
     'TWU', 'UTM', 'KTTT', 'SGT', 'ISPACE', 'DA', 'SDU', 'DH'
 ]
 PARTNER_ROWS = PARTNER_CODES
 
-# Tên đầy đủ của 15 trường VN
 PARTNER_NAMES = {
     'HN': 'Cao đẳng Hà Nội',
     'HNC': 'Cao đẳng Hữu Nghị',
@@ -72,8 +31,21 @@ PARTNER_NAMES = {
     'DH': 'Cao đẳng Duyên hải',
 }
 
+QUOTA_OVERRIDE = {
+    "dong-eui": 200, "ajou-motor": 200, "suncheon-jeil": 200, "dongnam": 200,
+    "induk": 100, "daewon": 100, "jangan": 200, "yeonseong": 200,
+    "kyunggin": 100, "nubusan": 100, "osan": 100,
+}
+
+EXCLUDED_SHEETS = ["Danh sách trường Hàn", "Check list  HS xin Visa D2-6",
+    "Check list HS xin Visa D2-6", 
+    "Tài liệu ôn phỏng vấn trường Hàn", "Tài liệu ôn PV trường Hàn",
+    "Appllication trường Hàn", "Application trường Hàn", "Thông tin làm tem các trường"]
+
+
+# ── Helper functions ──
+
 def _color_to_hex(color_obj):
-    """Chuyển màu Excel sang #RRGGBB. Hỗ trợ Font.color, InlineFont.color."""
     if not color_obj:
         return None
     s = None
@@ -92,15 +64,10 @@ def _color_to_hex(color_obj):
     return None
 
 def get_cell_segments(ws, row, col=2):
-    """
-    Lấy nội dung ô kèm màu chữ. Trả về list [{"t": text, "c": "#hex"|null}, ...].
-    Hỗ trợ: plain text, rich text (nhiều màu trong 1 ô).
-    """
     cell = ws.cell(row, col)
     val = cell.value
     if val is None:
         return []
-    # Rich text (CellRichText)
     try:
         from openpyxl.cell.rich_text import CellRichText
         from openpyxl.cell.rich_text import TextBlock
@@ -122,7 +89,6 @@ def get_cell_segments(ws, row, col=2):
                 return out
     except Exception as e:
         print(f"  [WARNING] get_cell_segments: {e}")
-    # Plain text - lấy màu từ cell font
     s = str(val).strip()
     if s.upper().startswith("=HYPERLINK"):
         m = re.search(r'HYPERLINK\s*\([^,]+,\s*["\']([^"\']+)["\']\s*\)', s, re.I)
@@ -133,7 +99,6 @@ def get_cell_segments(ws, row, col=2):
     return [{"t": s, "c": hex_c}] if s else []
 
 def _segments_to_value(segments):
-    """Chuẩn hóa: nếu tất cả không màu -> trả về string; ngược lại trả về list segments."""
     if not segments:
         return ""
     full = "".join(seg["t"] for seg in segments)
@@ -145,24 +110,20 @@ def _segments_to_value(segments):
     return segments
 
 def get_cell(ws, row, col=2):
-    """Lấy giá trị hiển thị ô - bỏ qua công thức, lấy text"""
     cell = ws.cell(row, col)
     val = cell.value
     if val is None:
         return ""
     s = str(val).strip()
-    # Nếu là công thức HYPERLINK, lấy phần text hiển thị
     if s.upper().startswith("=HYPERLINK"):
         m = re.search(r'HYPERLINK\s*\([^,]+,\s*["\']([^"\']+)["\']\s*\)', s, re.I)
         return m.group(1) if m else s
     return s
 
 def get_hyperlink(ws, row, col):
-    """Lấy URL từ hyperlink ô. Hỗ trợ: 1) cell.hyperlink.target 2) công thức =HYPERLINK()"""
     cell = ws.cell(row, col)
     if cell.hyperlink and hasattr(cell.hyperlink, 'target'):
         return cell.hyperlink.target
-    # Công thức =HYPERLINK("url","text")
     val = str(cell.value or "")
     if "HYPERLINK" in val.upper():
         m = re.search(r'HYPERLINK\s*\(\s*["\']([^"\']+)["\']', val, re.I)
@@ -170,16 +131,12 @@ def get_hyperlink(ws, row, col):
     return None
 
 def _row_label_match(lbl, cell_a):
-    """lbl khớp với tiêu đề dòng (cột A)."""
     if not lbl or not cell_a:
         return False
     a = cell_a.strip()
     return lbl.lower() in a.lower() or a.lower() == lbl.lower()
 
-
 def find_row_by_label(ws, labels, start=1, end=120, require_value=True):
-    """Tìm dòng chứa label - label ở cột A, value ở cột B/C.
-    require_value=True: bỏ qua dòng tiêu đề nhóm (cột B/C trống, không có link) — tránh lấy nhầm hàng section."""
     for r in range(start, min(end, ws.max_row + 1)):
         a = get_cell(ws, r, 1)
         if not a:
@@ -196,9 +153,7 @@ def find_row_by_label(ws, labels, start=1, end=120, require_value=True):
             return r, val or "", hyperlink
     return None, "", None
 
-
 def find_row_by_label_with_color(ws, labels, start=1, end=120, require_value=True):
-    """Tìm dòng chứa label, trả về (row, value_with_color, hyperlink). value = string hoặc segments."""
     for r in range(start, min(end, ws.max_row + 1)):
         a = get_cell(ws, r, 1)
         if not a:
@@ -221,16 +176,13 @@ def find_row_by_label_with_color(ws, labels, start=1, end=120, require_value=Tru
     return None, "", None
 
 def extract_youtube_id(text):
-    """Trích video ID từ URL YouTube"""
     if not text: return ""
     m = re.search(r'(?:youtube\.com/watch\?.*v=|youtu\.be/)([a-zA-Z0-9_-]{11})', text)
     return m.group(1) if m else ""
 
 def parse_school_sheet(ws, sheet_name):
     """Parse một sheet trường"""
-    # Xử lý tên sheet mới: "ĐH Osan", "CĐ Suncheon Jeil", etc.
     clean_name = sheet_name.strip()
-    # Loại bỏ prefix "ĐH ", "CĐ " để lấy tên cơ bản
     display_name = clean_name
     if clean_name.startswith("ĐH "):
         display_name = clean_name[3:].strip()
@@ -276,12 +228,9 @@ def parse_school_sheet(ws, sheet_name):
                     data["nameKr"] = " ".join(parts[i:])
                     data["name"] = " ".join(parts[:i]) if i > 0 else data["name"]
                     break
-    # Clean nameKr: tách bỏ phần tiếng Việt sau | hoặc - (mô tả)
     if data["nameKr"] and "|" in data["nameKr"]:
         data["nameKr"] = data["nameKr"].split("|")[0].strip()
     elif data["nameKr"] and " - " in data["nameKr"] and not data["nameKr"].endswith("대학교"):
-        # Nếu nameKr có dấu - nhưng không kết thúc bằng 대학교, có thể là tên ghép Hàn-Việt
-        # Chỉ lấy phần Hàn Quốc
         kr_text = ""
         for ch in data["nameKr"]:
             if '\uac00' <= ch <= '\ud7a3' or ch in ' ()[]-':
@@ -300,15 +249,12 @@ def parse_school_sheet(ws, sheet_name):
         return v, link
 
     def get_val_with_color(*labels):
-        """Trả về value (string hoặc segments) - dùng cho trường có màu chữ"""
         _, v, _ = find_row_by_label_with_color(ws, labels)
         return v
     
-    # Map các trường
     name_en = get_val("Tên tiếng anh", "Tên tiếng Anh")
     if name_en:
         data["nameEn"] = name_en.split("Tỷ lệ")[0].split("Việc làm")[0].split("Dễ chuyển")[0].strip()[:80]
-        # Clean nameEn: loại bỏ text tiếng Việt còn sót
         vn_keywords = ["học ít", "học nặng", "cạnh tranh", "lương cao", "gần ", "trường ", "nữ sinh",
                        "chi phí", "tỉ lệ", "tỷ lệ", "việc làm", "dễ chuyển", "không quá", "siêu khó"]
         lower_en = data["nameEn"].lower()
@@ -328,7 +274,6 @@ def parse_school_sheet(ws, sheet_name):
     
     data["mou"] = get_val_with_color("Trường Việt Nam ký MOU")
     data["location"] = get_val_with_color("Vị trí địa lý", "Vị trí")
-    # Optional region field - try common labels in Excel (multiple label variants)
     region_val = get_val("Khu vực", "Khu vuc", "Region", "Vung", "Vùng")
     if region_val:
         rv = str(region_val).lower()
@@ -344,21 +289,18 @@ def parse_school_sheet(ws, sheet_name):
             data["region"] = rv.replace(" ", "-")[:40]
     data["intro"] = get_val_with_color("Giới thiệu về trường", "Giới thiệu")
     
-    # Catalog - ưu tiên link trong ô Excel (Drive), giữ nguyên
     catalog, catalog_link = get_val_and_link("Catalog", "Catalog ")
     if catalog_link:
-        data["links"]["catalog"] = catalog_link  # Link Drive gốc từ Excel
+        data["links"]["catalog"] = catalog_link
     elif catalog and ("http" in str(catalog) or "drive" in str(catalog).lower()):
         data["links"]["catalog"] = catalog
     elif catalog and "pdf" in catalog.lower():
         data["links"]["catalog"] = f"documents/{catalog.replace(' ', '-')}"
     
-    # Điều kiện
     cond = get_val("Điều kiện tuyển sinh", "Điều kiện")
     if cond:
         data["conditions"] = [c.strip() for c in re.split(r'\d+:', cond) if c.strip()][:10]
     
-    # Các chuyên ngành tuyển sinh (Excel kỳ 3/2027 dùng thêm nhãn "Các chuyên ngành D2-6")
     majors = get_val(
         "Các chuyên ngành tuyển sinh",
         "Chuyên ngành tuyển sinh",
@@ -369,7 +311,6 @@ def parse_school_sheet(ws, sheet_name):
     if majors:
         data["majors"] = [m.strip() for m in re.split(r'\d+[.:]', str(majors)) if len(m.strip()) > 3][:40]
     
-    # Chuyển đổi (Excel thường dùng gạch đầu dòng - / • thay vì chỉ dấu - giữa cụm)
     conv = get_val("Thời gian chuyển đổi", "Thời gian chuyển đổi chuyên ngành")
     if conv:
         sconv = str(conv)
@@ -379,7 +320,6 @@ def parse_school_sheet(ws, sheet_name):
         else:
             data["conversion"] = [c.strip() for c in re.split(r'[-–]', sconv) if len(c.strip()) > 10][:12]
     
-    # Hồ sơ (bỏ header "HỒ SƠ TRƯỜNG HÀN..." nhờ require_value; thêm nhãn "Hồ sơ cần lưu ý")
     docs = get_val("Hồ sơ cần lưu ý", "Hồ sơ trường Hàn cần lưu ý", "Hồ sơ trường Hàn", "Hồ sơ")
     if docs:
         raw = str(docs)
@@ -388,7 +328,6 @@ def parse_school_sheet(ws, sheet_name):
             parts = re.split(r'(?:\n|^)\s*[-–•]\s+', raw)
         data["documents"] = [d.strip() for d in parts if len(d.strip()) > 5][:25]
     
-    # Ưu điểm
     adv = get_val("Ưu điểm")
     if adv:
         data["advantages"] = [a.strip() for a in re.split(r'\d+:', adv) if a.strip()][:12]
@@ -397,7 +336,6 @@ def parse_school_sheet(ws, sheet_name):
     data["ktx"] = get_val_with_color("KTX")
     data["insurance"] = get_val_with_color("Bảo hiểm", "Phí bảo hiểm")
     
-    # Video - lấy link từ Excel (giữ nguyên như Catalog)
     video_raw, video_link = get_val_and_link("Video Clip", "Clip giới thiệu", "Video tham khảo", "Video về trường", "Clip về trường")
     if video_link:
         data["video"]["url"] = video_link
@@ -417,18 +355,14 @@ def parse_school_sheet(ws, sheet_name):
     if video_raw and "http" not in str(video_raw)[:10] and "youtube.com" not in str(video_raw).lower():
         data["video"]["title"] = video_raw[:60]
     
-    # Mẫu Invoice - link Drive (giống Catalog)
     inv_val, inv_link = get_val_and_link("Mẫu Invoice")
     if inv_link:
         data["links"]["invoice"] = inv_link
     elif inv_val:
-        # Không có link: lưu text (có màu) vào documentsNote
         data["documentsNote"] = get_val_with_color("Mẫu Invoice") or inv_val
 
-    # Lịch học (nếu có)
     data["schedule"] = get_val_with_color("Lịch học", "Lịch")
     
-    # Partners - bảng mã CĐ/ĐH VN (Excel mới đặt từ khoảng dòng 31–48)
     found = {}
     for r in range(15, min(ws.max_row + 1, 80)):
         code = get_cell(ws, r, 1).strip()
@@ -439,36 +373,19 @@ def parse_school_sheet(ws, sheet_name):
                 name_kr = parts[0].strip() if parts else ""
                 name_vn = parts[1].strip() if len(parts) > 1 else val
                 found[code] = {"code": code, "name": name_vn[:60], "nameKr": name_kr[:40]}
-    # Giữ thứ tự theo Danh sách Excel
     for code in PARTNER_CODES:
         if code in found:
             data["partners"].append(found[code])
         elif code in PARTNER_NAMES:
-            # Nếu không có trong sheet, vẫn thêm từ danh sách chuẩn
             data["partners"].append({"code": code, "name": PARTNER_NAMES[code], "nameKr": ""})
     
-    # Bỏ trường trống
     if not data["name"] and not data["nameEn"]:
         return None
     return data
 
-# Chỉ tiêu D2-6 - ghi đè Excel nếu cần
-QUOTA_OVERRIDE = {
-    "dong-eui": 200, "ajou-motor": 200, "suncheon-jeil": 200, "dongnam": 200,
-    "induk": 100, "daewon": 100, "jangan": 200, "yeonseong": 200,
-    "kyunggin": 100, "nubusan": 100, "osan": 100,
-}
-
-# Danh sách sheet không phải trường — KHÔNG cần mapping nữa, tự động detect!
-EXCLUDED_SHEETS = ["Danh sách trường Hàn", "Check list  HS xin Visa D2-6",
-    "Check list HS xin Visa D2-6", 
-    "Tài liệu ôn phỏng vấn trường Hàn", "Tài liệu ôn PV trường Hàn",
-    "Appllication trường Hàn", "Application trường Hàn", "Thông tin làm tem các trường"]
-
 def generate_school_id(sheet_name):
     """Tự động sinh ID từ tên sheet"""
     sid = sheet_name.lower().strip()
-    # Chuẩn hóa ký tự tiếng Việt có dấu
     replacements = {
         'đ': 'd', 'Đ': 'd', 'ế': 'e', 'ệ': 'e', 'ể': 'e', 'ề': 'e', 'ễ': 'e',
         'ữ': 'u', 'ụ': 'u', 'ủ': 'u', 'ũ': 'u', 'ư': 'u', 'ứ': 'u', 'ự': 'u', 'ử': 'u', 'ừ': 'u', 'ữ': 'u',
@@ -479,19 +396,16 @@ def generate_school_id(sheet_name):
     }
     for k, v in replacements.items():
         sid = sid.replace(k, v)
-    # Loại bỏ prefix ĐH/CĐ rồi mới tạo id
     if sid.startswith("dh "):
         sid = "dh-" + sid[3:].strip().replace(" ", "-").replace("--", "-")
     elif sid.startswith("cd "):
         sid = "cd-" + sid[3:].strip().replace(" ", "-").replace("--", "-")
     else:
         sid = sid.replace(" ", "-").replace("--", "-")
-    # Xoá ký tự đặc biệt
     sid = re.sub(r'[^a-z0-9\-]', '', sid)
     return sid.strip("-")
 
 def get_cell_link(ws, row, col):
-    """Lấy hyperlink từ ô (Drive, etc.)"""
     cell = ws.cell(row, col)
     if cell.hyperlink and hasattr(cell.hyperlink, 'target'):
         return cell.hyperlink.target
@@ -502,7 +416,6 @@ def get_cell_link(ws, row, col):
     return None
 
 def parse_visa_checklist(ws):
-    """Parse sheet Check list HS xin Visa D2-6. Cột: STT, Nội dung, Lưu ý, Link"""
     items = []
     for r in range(2, min(ws.max_row + 1, 80)):
         stt = get_cell(ws, r, 1)
@@ -515,7 +428,6 @@ def parse_visa_checklist(ws):
     return items
 
 def parse_phong_van(ws):
-    """Parse Tài liệu ôn phỏng vấn. Cột: STT, Nội dung, Link"""
     items = []
     for r in range(2, min(ws.max_row + 1, 50)):
         stt = get_cell(ws, r, 1)
@@ -527,17 +439,16 @@ def parse_phong_van(ws):
     return items
 
 def parse_application(ws):
-    """Parse Application trường Hàn. Nhóm theo tên trường"""
     schools_app = []
     cur_school = None
     cur_items = []
     for r in range(2, min(ws.max_row + 1, 80)):
-        school_name = get_cell(ws, r, 2)  # Tên trường
+        school_name = get_cell(ws, r, 2)
         noidung = get_cell(ws, r, 3)
         link_text = get_cell(ws, r, 4)
         link_url = get_cell_link(ws, r, 4)
         stt = get_cell(ws, r, 1)
-        if stt and school_name:  # Dòng mới có STT + tên trường
+        if stt and school_name:
             if cur_school:
                 schools_app.append({"school": cur_school, "items": cur_items})
             cur_school = school_name
@@ -549,7 +460,6 @@ def parse_application(ws):
     return schools_app
 
 def parse_tem_info(ws):
-    """Parse Thông tin làm tem - trường CĐ/ĐH VN với địa chỉ, SĐT, email"""
     schools_tem = []
     cur = {}
     for r in range(1, min(ws.max_row + 1, 100)):
@@ -577,7 +487,6 @@ def parse_tem_info(ws):
     return schools_tem
 
 def build_danh_sach_truong(schools_dict):
-    """Tạo bảng tổng hợp từ schools - Danh sách trường Hàn"""
     rows = []
     for sid, s in schools_dict.items():
         rows.append({
@@ -591,7 +500,6 @@ def build_danh_sach_truong(schools_dict):
     return rows
 
 def _flatten_val(v):
-    """Chuẩn hóa giá trị (có thể là string, list segments, list string) về string"""
     if v is None:
         return ""
     if isinstance(v, str):
@@ -608,7 +516,6 @@ def _flatten_val(v):
 
 def generate_advisor_profile(school):
     """Tự động sinh advisor profile từ dữ liệu trường"""
-    # Flatten tất cả về string để tránh lỗi segment list
     flat_name = _flatten_val(school.get("name", ""))
     flat_namekr = _flatten_val(school.get("nameKr", ""))
     flat_location = _flatten_val(school.get("location", ""))
@@ -626,28 +533,14 @@ def generate_advisor_profile(school):
     ]).lower()
     
     profile = {}
+    profile["gender"] = "female" if ("nữ" in text or "여자" in text) else "all"
     
-    # Gender
-    if "nữ" in text or "여자" in text:
-        profile["gender"] = "female"
-    else:
-        profile["gender"] = "all"
-    
-    # GPA từ conditions
     gpa_match = re.search(r'gpa[\s:]*([\d.]+)', text)
-    if gpa_match:
-        profile["minGpa"] = float(gpa_match.group(1))
-    else:
-        profile["minGpa"] = 5.0
+    profile["minGpa"] = float(gpa_match.group(1)) if gpa_match else 5.0
     
-    # Absences từ conditions
     abs_match = re.search(r'(?:ngh[ỉi]|vắng)\s*(?:kh[ôo]ng\s*qu[áa]\s*)?(\d+)\s*bu[ổo]i', text)
-    if abs_match:
-        profile["maxAbsences"] = int(abs_match.group(1))
-    else:
-        profile["maxAbsences"] = 30
+    profile["maxAbsences"] = int(abs_match.group(1)) if abs_match else 30
     
-    # Region
     region = _flatten_val(school.get("region", "") or "")
     location = flat_location
     combined = (region + " " + location).lower()
@@ -664,14 +557,10 @@ def generate_advisor_profile(school):
     else:
         profile["region"] = "province"
     
-    # Cost level từ học phí + advantages
     tuition = flat_tuition.lower()
     adv = flat_advantages.lower()
     if "rẻ" in adv or "tiết kiệm" in adv or "chi phí thấp" in adv or "học phí rẻ" in adv:
-        if "1" in tuition[:10]:
-            profile["costLevel"] = 1
-        else:
-            profile["costLevel"] = 2
+        profile["costLevel"] = 1 if "1" in tuition[:10] else 2
     elif tuition and ("1" in tuition[:5] or "1." in tuition[:5]):
         profile["costLevel"] = 2
     elif tuition and ("2" in tuition[:5] or "2." in tuition[:5]):
@@ -681,178 +570,156 @@ def generate_advisor_profile(school):
     else:
         profile["costLevel"] = 3
     
-    # Visa chance
-    if "tỷ lệ đỗ" in text or "visa tốt" in text or "tỷ lệ visa" in text or "đỗ tuyệt đối" in text:
-        profile["visaChance"] = 5
-    elif "tỷ lệ" in text or "visa" in text:
-        profile["visaChance"] = 4
-    else:
-        profile["visaChance"] = 3
+    profile["visaChance"] = 5 if ("tỷ lệ đỗ" in text or "visa tốt" in text or "tỷ lệ visa" in text or "đỗ tuyệt đối" in text) else (4 if ("tỷ lệ" in text or "visa" in text) else 3)
+    profile["jobOpportunity"] = 5 if ("việc làm nhiều" in text or "làm thêm" in text) and "nhiều" in text else (4 if "việc làm" in text or "làm thêm" in text else 3)
+    profile["e7Opportunity"] = 5 if ("e7" in text or "chuyển đổi" in text) and ("tốt" in text or "dễ" in text) else (4 if "e7" in text or "chuyển đổi" in text else 3)
+    profile["studyLoad"] = 4 if ("học nặng" in text or "học khá" in text) else (2 if "học ít" in text else 3)
+    profile["interviewDifficulty"] = 5 if "phỏng vấn" in text and ("siêu khó" in text or "khó" in text) else (4 if "phỏng vấn" in text else 2)
     
-    # Job opportunity
-    if "việc làm nhiều" in text or "làm thêm" in text or "việc làm thêm" in text:
-        profile["jobOpportunity"] = 5 if "nhiều" in text else 4
-    elif "việc làm" in text:
-        profile["jobOpportunity"] = 3
-    else:
-        profile["jobOpportunity"] = 3
-    
-    # E7 opportunity
-    if "e7" in text or "chuyển đổi" in text:
-        if "tốt" in text or "dễ" in text:
-            profile["e7Opportunity"] = 5
-        else:
-            profile["e7Opportunity"] = 4
-    else:
-        profile["e7Opportunity"] = 3
-    
-    # Study load
-    if "học nặng" in text or "học khá" in text:
-        profile["studyLoad"] = 4
-    elif "học ít" in text:
-        profile["studyLoad"] = 2
-    else:
-        profile["studyLoad"] = 3
-    
-    # Interview difficulty
-    if "phỏng vấn" in text:
-        if "siêu khó" in text or "khó" in text:
-            profile["interviewDifficulty"] = 5
-        else:
-            profile["interviewDifficulty"] = 4
-    else:
-        profile["interviewDifficulty"] = 2
-    
-    # Tags
     tags = []
-    if profile.get("visaChance", 0) >= 4:
-        tags.append("visa")
-    if profile.get("jobOpportunity", 0) >= 4:
-        tags.append("job")
-    if profile.get("e7Opportunity", 0) >= 4:
-        tags.append("e7")
-    if profile.get("gender") == "female":
-        tags.append("female")
-    if profile.get("costLevel", 5) <= 2:
-        tags.append("low-cost")
-    if profile.get("studyLoad", 5) <= 2:
-        tags.append("low-study")
-    if "uy tín" in text or "prestige" in text:
-        tags.append("prestige")
-    if profile.get("region") == "seoul":
-        tags.append("seoul")
-    elif profile.get("region") == "near-seoul":
-        tags.append("near-seoul")
-    elif profile.get("region") == "busan":
-        tags.append("busan")
+    if profile.get("visaChance", 0) >= 4: tags.append("visa")
+    if profile.get("jobOpportunity", 0) >= 4: tags.append("job")
+    if profile.get("e7Opportunity", 0) >= 4: tags.append("e7")
+    if profile.get("gender") == "female": tags.append("female")
+    if profile.get("costLevel", 5) <= 2: tags.append("low-cost")
+    if profile.get("studyLoad", 5) <= 2: tags.append("low-study")
+    if "uy tín" in text or "prestige" in text: tags.append("prestige")
+    if profile.get("region") == "seoul": tags.append("seoul")
+    elif profile.get("region") == "near-seoul": tags.append("near-seoul")
+    elif profile.get("region") == "busan": tags.append("busan")
     profile["tags"] = tags[:8]
-    
     return profile
 
 
-schools = {}
-advisor_profiles = {}
-for sheet_name in wb.sheetnames:
-    sname = sheet_name.strip()
-    # Bỏ qua các sheet không phải trường
-    if sname in EXCLUDED_SHEETS:
-        continue
-    if any(excl in sname for excl in EXCLUDED_SHEETS):
-        continue
+def find_excel_file():
+    """Tìm file Excel trong thư mục dự án"""
+    base = os.path.dirname(os.path.abspath(__file__))
+    candidates = []
+    candidates.extend(glob_module.glob(os.path.join(base, '*3_2027*.xlsx')))
+    candidates.extend(glob_module.glob(os.path.join(base, '*truong*Han*3*.xlsx')))
+    candidates.extend(glob_module.glob(os.path.join(base, '*truong*Han*.xlsx')))
+    # Downloads
+    downloads = os.environ.get('USERPROFILE', '')
+    if downloads:
+        candidates.extend(glob_module.glob(os.path.join(downloads, 'Downloads', '*3_2027*.xlsx')))
+        candidates.extend(glob_module.glob(os.path.join(downloads, 'Downloads', '*truong*Han*.xlsx')))
     
-    # Thử parse sheet — nếu có dữ liệu trường thì auto-detect
-    d = parse_school_sheet(wb[sheet_name], sname)
-    if d and d.get("name"):
-        sid = generate_school_id(sname)
-        d["id"] = sid
-        schools[sid] = d
-        # Tự động sinh advisor profile
-        advisor_profiles[sid] = generate_advisor_profile(d)
+    path = None
+    for f in candidates:
+        if os.path.exists(f):
+            if '3_2027' in f.lower() or 'thang_3_2027' in f.lower():
+                path = f
+                break
+    if not path or not os.path.exists(path):
+        for fname in ['Thong_tin_truong_Han_ky_thang_3_2027.xlsx', 'Thong tin truong Han ky thang 3_2027.xlsx']:
+            p = os.path.join(base, fname)
+            if os.path.exists(p):
+                path = p
+                break
+    if not path or not os.path.exists(path):
+        path = candidates[0] if candidates else os.path.join(base, 'Thong_tin_truong_Han_ky_thang_3_2027.xlsx')
+    return path
 
-# Ghi data.js
-# Ensure proper structure for render.js
-for sid, s in schools.items():
-    s.setdefault("images", {"main": "images/placeholder.svg", "catalog": "", "locationMap": "", "invoice": "", "gallery": []})
-    s.setdefault("links", {"website": "", "catalog": "", "invoice": ""})
-    s.setdefault("video", {"url": "", "youtubeId": "", "title": ""})
-    if not s["images"].get("main"):
-        s["images"]["main"] = "images/placeholder.svg"
-    if sid in QUOTA_OVERRIDE:
-        s["quota"] = QUOTA_OVERRIDE[sid]
 
-# Parse các sheet Tài liệu chung
-extra_sheets = {
-    "visaChecklist": {"name": "Check list HS xin Visa D2-6", "items": []},
-    "phongVan": {"name": "Tài liệu ôn phỏng vấn trường Hàn", "items": []},
-    "application": {"name": "Application trường Hàn", "schools": []},
-    "tem": {"name": "Thông tin làm tem các trường", "schools": []},
-    "danhSach": {"name": "Danh sách trường Hàn", "rows": []}
-}
-for sname in wb.sheetnames:
-    ws = wb[sname]
-    if "Check list" in sname and "Visa" in sname:
-        extra_sheets["visaChecklist"]["items"] = parse_visa_checklist(ws)
-    elif "phỏng vấn" in sname or "phong vấn" in sname:
-        extra_sheets["phongVan"]["items"] = parse_phong_van(ws)
-    elif "Application" in sname or "Appllication" in sname:
-        extra_sheets["application"]["schools"] = parse_application(ws)
-    elif "tem" in sname.lower():
-        extra_sheets["tem"]["schools"] = parse_tem_info(ws)
-extra_sheets["danhSach"]["rows"] = build_danh_sach_truong(schools)
-
-# Chuẩn hóa mou (có thể là segments) cho danhSach
-for row in extra_sheets["danhSach"]["rows"]:
-    row["mou"] = _flatten_val(row.get("mou"))
-
-# Trích thông tin kỳ tuyển sinh từ sheet Danh sách
 def get_semester_info(wb):
-    """Lấy thông tin kỳ tuyển sinh từ sheet đầu tiên"""
     try:
         ws = wb["Danh sách trường Hàn"]
         title = get_cell(ws, 1, 1)
         if title:
-            # Trích "KỲ THÁNG X/YYYY" từ title
-            import re
             m = re.search(r'KỲ THÁNG\s*(\d+)/(\d+)', title, re.IGNORECASE)
             if m:
                 return {"ky": m.group(1), "nam": m.group(2), "title": title}
     except Exception as e:
         print(f"  [WARNING] Không đọc được thông tin kỳ: {e}")
-        pass
     return {"ky": "3", "nam": "2027", "title": "DANH SÁCH TRƯỜNG HÀN QUỐC - KỲ THÁNG 3/2027"}
 
-semester_info = get_semester_info(wb)
 
-js_content = """// Dữ liệu các trường Hàn - Tự động sinh từ Excel
+if __name__ == '__main__':
+    # Chạy script: python excel_to_data.py
+    path = find_excel_file()
+    if not os.path.exists(path):
+        print(f"  [ERROR] Không tìm thấy file Excel: {path}")
+        exit(1)
+    
+    wb = openpyxl.load_workbook(path, data_only=False, rich_text=True)
+    
+    schools = {}
+    advisor_profiles = {}
+    for sheet_name in wb.sheetnames:
+        sname = sheet_name.strip()
+        if sname in EXCLUDED_SHEETS:
+            continue
+        if any(excl in sname for excl in EXCLUDED_SHEETS):
+            continue
+        
+        d = parse_school_sheet(wb[sheet_name], sname)
+        if d and d.get("name"):
+            sid = generate_school_id(sname)
+            d["id"] = sid
+            schools[sid] = d
+            advisor_profiles[sid] = generate_advisor_profile(d)
+    
+    for sid, s in schools.items():
+        s.setdefault("images", {"main": "images/placeholder.svg", "catalog": "", "locationMap": "", "invoice": "", "gallery": []})
+        s.setdefault("links", {"website": "", "catalog": "", "invoice": ""})
+        s.setdefault("video", {"url": "", "youtubeId": "", "title": ""})
+        if not s["images"].get("main"):
+            s["images"]["main"] = "images/placeholder.svg"
+        if sid in QUOTA_OVERRIDE:
+            s["quota"] = QUOTA_OVERRIDE[sid]
+    
+    extra_sheets = {
+        "visaChecklist": {"name": "Check list HS xin Visa D2-6", "items": []},
+        "phongVan": {"name": "Tài liệu ôn phỏng vấn trường Hàn", "items": []},
+        "application": {"name": "Application trường Hàn", "schools": []},
+        "tem": {"name": "Thông tin làm tem các trường", "schools": []},
+        "danhSach": {"name": "Danh sách trường Hàn", "rows": []}
+    }
+    for sname in wb.sheetnames:
+        ws = wb[sname]
+        if "Check list" in sname and "Visa" in sname:
+            extra_sheets["visaChecklist"]["items"] = parse_visa_checklist(ws)
+        elif "phỏng vấn" in sname or "phong vấn" in sname:
+            extra_sheets["phongVan"]["items"] = parse_phong_van(ws)
+        elif "Application" in sname or "Appllication" in sname:
+            extra_sheets["application"]["schools"] = parse_application(ws)
+        elif "tem" in sname.lower():
+            extra_sheets["tem"]["schools"] = parse_tem_info(ws)
+    extra_sheets["danhSach"]["rows"] = build_danh_sach_truong(schools)
+    
+    for row in extra_sheets["danhSach"]["rows"]:
+        row["mou"] = _flatten_val(row.get("mou"))
+    
+    semester_info = get_semester_info(wb)
+    
+    js_content = """// Dữ liệu các trường Hàn - Tự động sinh từ Excel
 // File nguồn: """ + os.path.basename(path) + """
 // Chạy: python excel_to_data.py
 
 const SEMESTER_INFO = """ + json.dumps(semester_info, ensure_ascii=False) + """;
 
 const SCHOOLS_DATA = """
-js_content += json.dumps(schools, ensure_ascii=False, indent=2)
+    js_content += json.dumps(schools, ensure_ascii=False, indent=2)
+    js_content += """;
 
-js_content += """;
-
-// Advisor profiles tự động sinh từ dữ liệu trường — dùng làm fallback
-// Muốn ghi đè: sửa trong advisor.js
 const GENERATED_ADVISOR_PROFILES = """
-js_content += json.dumps(advisor_profiles, ensure_ascii=False, indent=2)
-
-js_content += """;
+    js_content += json.dumps(advisor_profiles, ensure_ascii=False, indent=2)
+    js_content += """;
 
 const EXTRA_SHEETS = """
-js_content += json.dumps(extra_sheets, ensure_ascii=False, indent=2)
-js_content += """;
+    js_content += json.dumps(extra_sheets, ensure_ascii=False, indent=2)
+    js_content += """;
 """
-
-out_dir = os.path.dirname(os.path.abspath(__file__))
-with open(os.path.join(out_dir, "data.js"), "w", encoding="utf-8") as f:
-    f.write(js_content)
-
-with open("excel_export_log.txt", "w", encoding="utf-8") as log:
-    log.write(f"Exported {len(schools)} schools: {list(schools.keys())}\n")
-    for sid, s in list(schools.items())[:3]:
-        log.write(f"\n--- {sid} ---\n")
-        log.write(f"catalog: {str(s.get('links',{}).get('catalog',''))[:80]}\n")
-        log.write(f"video.url: {str(s.get('video',{}).get('url',''))[:80]}\n")
+    
+    out_dir = os.path.dirname(os.path.abspath(__file__))
+    with open(os.path.join(out_dir, "data.js"), "w", encoding="utf-8") as f:
+        f.write(js_content)
+    
+    with open("excel_export_log.txt", "w", encoding="utf-8") as log:
+        log.write(f"Exported {len(schools)} schools: {list(schools.keys())}\n")
+        for sid, s in list(schools.items())[:3]:
+            log.write(f"\n--- {sid} ---\n")
+            log.write(f"catalog: {str(s.get('links',{}).get('catalog',''))[:80]}\n")
+            log.write(f"video.url: {str(s.get('video',{}).get('url',''))[:80]}\n")
+    
+    print(f"  => Đã export {len(schools)} trường ra data.js")
