@@ -740,6 +740,10 @@ def admin_static(path):
     return send_from_directory(app.static_folder, path)
 
 
+@app.route('/')
+def root():
+    return redirect('/admin')
+
 @app.route('/admin')
 def admin_index():
     return redirect('/admin/login')
