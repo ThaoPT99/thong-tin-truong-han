@@ -64,40 +64,44 @@ document.getElementById('nav-logout')?.addEventListener('click', (e) => {
     window.location.href = 'login.html';
 });
 
-// Export
-document.getElementById('nav-export')?.addEventListener('click', async (e) => {
-    e.preventDefault();
-    const btn = e.currentTarget;
-    btn.textContent = '⏳ Đang export...';
-    try {
-        const res = await fetch(API + '/api/export/data-js', {
-            method: 'POST',
-            headers: apiHeaders()
-        });
-        const data = await res.json();
-        if (res.ok) {
-            showToast(data.message || 'Export thành công!');
-        } else {
-            showToast(data.error || 'Export thất bại', 'error');
+// ── Helper: Export ──
+async function _callExport(url, btnEl, successMsg) {
+    if (btnEl) {
+        const orig = btnEl.innerHTML || btnEl.textContent;
+        btnEl.disabled = true;
+        btnEl.innerHTML = '⏳ Đang xử lý...';
+        try {
+            const res = await fetch(API + url, { method: 'POST', headers: apiHeaders() });
+            const data = await res.json();
+            if (res.ok) {
+                showToast(data.message || successMsg || 'Thành công!');
+            } else {
+                showToast(data.error || 'Thất bại', 'error');
+            }
+        } catch {
+            showToast('Lỗi kết nối server', 'error');
         }
-    } catch (err) {
-        showToast('Lỗi kết nối server', 'error');
+        btnEl.disabled = false;
+        btnEl.innerHTML = orig;
     }
-    btn.innerHTML = '<span class="nav-icon">📦</span> Export data.js';
+}
+
+// Export data.js (chỉ ghi file)
+document.getElementById('nav-export')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    _callExport('/api/export/data-js', e.currentTarget);
+});
+document.getElementById('btn-export')?.addEventListener('click', () => {
+    _callExport('/api/export/data-js', document.getElementById('btn-export'));
 });
 
-document.getElementById('btn-export')?.addEventListener('click', async () => {
-    try {
-        const res = await fetch(API + '/api/export/data-js', {
-            method: 'POST',
-            headers: apiHeaders()
-        });
-        const data = await res.json();
-        if (res.ok) showToast(data.message);
-        else showToast(data.error || 'Lỗi', 'error');
-    } catch {
-        showToast('Lỗi kết nối', 'error');
-    }
+// Export & Push (ghi file + git push lên GitHub)
+document.getElementById('nav-export-push')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    _callExport('/api/export/push', e.currentTarget, '✅ Đã push lên GitHub! Vercel sẽ cập nhật sau 1-2 phút.');
+});
+document.getElementById('btn-export-push')?.addEventListener('click', () => {
+    _callExport('/api/export/push', document.getElementById('btn-export-push'), '✅ Đã push lên GitHub!');
 });
 
 // Import

@@ -693,6 +693,67 @@ def export_data_js():
         return jsonify({'error': f'Lỗi export: {str(e)}'}), 500
 
 
+@app.route('/api/export/push', methods=['POST'])
+@admin_required
+def export_and_push():
+    """Export data.js + git commit + push lên GitHub"""
+    try:
+        # 1. Export data.js
+        schools_dict = load_schools_from_db()
+        js_content = generate_data_js(schools_dict)
+        data_js_path = os.path.join(PROJECT_DIR, 'data.js')
+        with open(data_js_path, 'w', encoding='utf-8') as f:
+            f.write(js_content)
+        
+        # 2. Git commit + push
+        github_token = os.getenv('GITHUB_TOKEN', '')
+        git_repo = os.getenv('GIT_REPO', 'ThaoPT99/thong-tin-truong-han')
+        
+        if not github_token:
+            return jsonify({
+                'message': f'Đã export {len(schools_dict)} trường, nhưng chưa push (thiếu GITHUB_TOKEN trong .env)',
+                'count': len(schools_dict),
+                'pushed': False
+            }), 200
+        
+        import subprocess
+        os.chdir(PROJECT_DIR)
+        
+        # Cấu hình git remote với token
+        remote_url = f'https://{github_token}@github.com/{git_repo}.git'
+        
+        # Chạy git lệnh
+        subprocess.run(['git', 'add', 'data.js'], capture_output=True, timeout=15)
+        commit = subprocess.run(
+            ['git', 'commit', '-m', f'auto-update data from admin CMS {datetime.now().strftime("%Y-%m-%d %H:%M")}'],
+            capture_output=True, text=True, timeout=15
+        )
+        
+        # Đẩy lên GitHub
+        push = subprocess.run(
+            ['git', 'push', remote_url, 'main'],
+            capture_output=True, text=True, timeout=30
+        )
+        
+        user = get_current_user()
+        if user:
+            log_change(user.id, 'export', details=f'Exported and pushed {len(schools_dict)} schools')
+        
+        push_msg = push.stdout[:200] if push.returncode == 0 else push.stderr[:200]
+        
+        return jsonify({
+            'message': f'✅ Đã export {len(schools_dict)} trường và push lên GitHub! Vercel sẽ tự động cập nhật trong 1-2 phút.',
+            'count': len(schools_dict),
+            'commit': commit.stdout[:100] if commit.returncode == 0 else 'no changes',
+            'push': push_msg,
+            'pushed': True
+        }), 200
+        
+    except Exception as e:
+        log_error(f'Export + push error: {str(e)}')
+        return jsonify({'error': f'Lỗi: {str(e)}'}), 500
+
+
 # ── Dashboard Stats ──
 
 @app.route('/api/dashboard', methods=['GET'])
