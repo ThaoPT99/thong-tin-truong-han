@@ -724,9 +724,13 @@ def export_and_push():
         
         remote_url = f'https://{github_token}@github.com/{git_repo}.git'
         
-        # Git add + commit
+        # Git add + commit (kèm user config để tránh lỗi "Author identity unknown")
         _git(['add', 'data.js'])
-        commit = _git(['commit', '-m', f'auto-update admin {datetime.now().strftime("%Y-%m-%d %H:%M")}'])
+        commit = _git([
+            '-c', 'user.name=Admin CMS',
+            '-c', 'user.email=admin@thongtintruonghan.com',
+            'commit', '-m', f'auto-update admin {datetime.now().strftime("%Y-%m-%d %H:%M")}'
+        ])
         
         if commit.returncode != 0:
             user = get_current_user()
