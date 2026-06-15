@@ -717,37 +717,43 @@ def export_and_push():
             }), 200
         
         import subprocess
-        os.chdir(PROJECT_DIR)
         
-        # Cấu hình git remote với token
+        def _git(args, timeout=15):
+            return subprocess.run(['git'] + args, capture_output=True, text=True,
+                                 timeout=timeout, cwd=PROJECT_DIR)
+        
         remote_url = f'https://{github_token}@github.com/{git_repo}.git'
         
-        # Chạy git lệnh
-        subprocess.run(['git', 'add', 'data.js'], capture_output=True, timeout=15)
-        commit = subprocess.run(
-            ['git', 'commit', '-m', f'auto-update data from admin CMS {datetime.now().strftime("%Y-%m-%d %H:%M")}'],
-            capture_output=True, text=True, timeout=15
-        )
+        # Git add + commit
+        _git(['add', 'data.js'])
+        commit = _git(['commit', '-m', f'auto-update admin {datetime.now().strftime("%Y-%m-%d %H:%M")}'])
         
-        # Đẩy lên GitHub
-        push = subprocess.run(
-            ['git', 'push', remote_url, 'main'],
-            capture_output=True, text=True, timeout=30
-        )
+        if commit.returncode != 0:
+            user = get_current_user()
+            if user:
+                log_change(user.id, 'export', details=f'Exported {len(schools_dict)} schools (no git changes)')
+            return jsonify({
+                'message': f'✅ Đã export {len(schools_dict)} trường (không có thay đổi để push)',
+                'count': len(schools_dict), 'pushed': False
+            }), 200
         
+        # Git push
+        push = _git(['push', remote_url, 'main'], timeout=30)
         user = get_current_user()
         if user:
             log_change(user.id, 'export', details=f'Exported and pushed {len(schools_dict)} schools')
         
-        push_msg = push.stdout[:200] if push.returncode == 0 else push.stderr[:200]
-        
-        return jsonify({
-            'message': f'✅ Đã export {len(schools_dict)} trường và push lên GitHub! Vercel sẽ tự động cập nhật trong 1-2 phút.',
-            'count': len(schools_dict),
-            'commit': commit.stdout[:100] if commit.returncode == 0 else 'no changes',
-            'push': push_msg,
-            'pushed': True
-        }), 200
+        if push.returncode == 0:
+            return jsonify({
+                'message': f'✅ Đã export {len(schools_dict)} trường và push lên GitHub! Vercel sẽ cập nhật sau 1-2 phút.',
+                'count': len(schools_dict), 'pushed': True
+            }), 200
+        else:
+            err = push.stderr[:200].replace(github_token, '***')
+            return jsonify({
+                'message': f'⚠️ Đã export {len(schools_dict)} trường, nhưng push thất bại: {err}',
+                'count': len(schools_dict), 'pushed': False
+            }), 200
         
     except Exception as e:
         log_error(f'Export + push error: {str(e)}')
