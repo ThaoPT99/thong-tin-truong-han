@@ -69,7 +69,21 @@
                 const res = await fetch(API + '/api/dashboard', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-                if (!res.ok) throw new Error('Unauthorized');
+
+                // Nếu 401 (token hết hạn/không hợp lệ) thì redirect về login
+                if (res.status === 401) {
+                    localStorage.removeItem('adminToken');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                if (!res.ok) {
+                    const errData = await res.json().catch(() => ({}));
+                    document.getElementById('recent-logs').innerHTML = 
+                        '<p style="color:var(--admin-error);padding:1rem;">❌ Lỗi server: ' + escapeHtml(errData.error || res.status) + '</p>';
+                    return;
+                }
+
                 const data = await res.json();
 
                 // Stats
@@ -93,10 +107,8 @@
                 document.getElementById('recent-logs').innerHTML = logsHtml;
 
             } catch (err) {
-                if (err.message === 'Unauthorized') {
-                    localStorage.removeItem('adminToken');
-                    window.location.href = 'login.html';
-                }
+                document.getElementById('recent-logs').innerHTML = 
+                    '<p style="color:var(--admin-error);padding:1rem;">❌ Không thể kết nối server: ' + escapeHtml(err.message) + '</p>';
             }
         }
 

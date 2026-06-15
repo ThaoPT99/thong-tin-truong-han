@@ -16,7 +16,7 @@
                 <h1>Quản trị CMS</h1>
                 <p>Thông tin trường Hàn — Visa D2-6</p>
             </div>
-            <form id="login-form" class="admin-login-form">
+            <form id="login-form" class="admin-login-form" onsubmit="return false;">
                 <div class="admin-field">
                     <label for="username">Tên đăng nhập</label>
                     <input id="username" name="username" type="text" required autocomplete="username" placeholder="admin">
@@ -26,7 +26,7 @@
                     <input id="password" name="password" type="password" required autocomplete="current-password" placeholder="••••••">
                 </div>
                 <div id="login-error" class="admin-error" hidden></div>
-                <button type="submit" class="admin-btn admin-btn-primary admin-btn-full">Đăng nhập</button>
+                <button type="button" class="admin-btn admin-btn-primary admin-btn-full" id="login-btn">Đăng nhập</button>
             </form>
         </div>
     </div>
@@ -36,10 +36,9 @@
         const errorDiv = document.getElementById('login-error');
         const API = window.location.origin;  // Tự động: localhost:5000 hoặc domain deploy
 
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
+        document.getElementById('login-btn').addEventListener('click', async () => {
             errorDiv.hidden = true;
-            const btn = form.querySelector('button');
+            const btn = document.getElementById('login-btn');
             btn.disabled = true;
             btn.textContent = 'Đang đăng nhập...';
 
@@ -48,8 +47,8 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        username: form.username.value,
-                        password: form.password.value
+                        username: document.getElementById('username').value,
+                        password: document.getElementById('password').value
                     })
                 });
                 const data = await res.json();
@@ -72,6 +71,11 @@
                 btn.disabled = false;
                 btn.textContent = 'Đăng nhập';
             }
+        });
+
+        // Enter key cũng submit
+        document.getElementById('password').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') document.getElementById('login-btn').click();
         });
     </script>
 </body>

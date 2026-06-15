@@ -48,8 +48,10 @@ CORS(app, resources={r"/api/*": {"origins": [
     "http://localhost:8768",
     "http://localhost:8769",
     "https://thongtintruonghan.vercel.app",
-    "https://thong-tin-truong-han.vercel.app"
-]}})
+    "https://thong-tin-truong-han.vercel.app",
+    "https://hoangtumua.pythonanywhere.com"
+]}}) 
+# Thêm PythonAnywhere domain vào CORS
 db = SQLAlchemy(app)
 jwt = JWTManager(app)
 
@@ -208,6 +210,16 @@ class ChangeLog(db.Model):
     details = db.Column(db.Text, default='')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+
+# ── Logging ──
+import logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s: %(message)s')
+
+def log_error(msg):
+    logging.error(f'[ADMIN] {msg}')
+
+def log_info(msg):
+    logging.info(f'[ADMIN] {msg}')
 
 # ── Helpers ──
 
@@ -674,27 +686,31 @@ def export_data_js():
 @app.route('/api/dashboard', methods=['GET'])
 @jwt_required()
 def dashboard():
-    total_schools = School.query.count()
-    recent_changes = ChangeLog.query.order_by(ChangeLog.created_at.desc()).limit(10).all()
+    try:
+        total_schools = School.query.count()
+        recent_changes = ChangeLog.query.order_by(ChangeLog.created_at.desc()).limit(10).all()
 
-    # Schools with missing fields
-    missing = {'tuition': 0, 'ktx': 0, 'conditions': 0, 'majors': 0}
-    for s in School.query.all():
-        if not s.tuition: missing['tuition'] += 1
-        if not s.ktx: missing['ktx'] += 1
-        if not s.conditions or s.conditions == '[]': missing['conditions'] += 1
-        if not s.majors or s.majors == '[]': missing['majors'] += 1
+        # Schools with missing fields
+        missing = {'tuition': 0, 'ktx': 0, 'conditions': 0, 'majors': 0}
+        for s in School.query.all():
+            if not s.tuition: missing['tuition'] += 1
+            if not s.ktx: missing['ktx'] += 1
+            if not s.conditions or s.conditions == '[]': missing['conditions'] += 1
+            if not s.majors or s.majors == '[]': missing['majors'] += 1
 
-    return jsonify({
-        'totalSchools': total_schools,
-        'missingData': missing,
-        'recentChanges': [{
-            'action': c.action,
-            'schoolId': c.school_id,
-            'details': c.details[:100],
-            'time': c.created_at.isoformat() if c.created_at else None,
-        } for c in recent_changes],
-    })
+        return jsonify({
+            'totalSchools': total_schools,
+            'missingData': missing,
+            'recentChanges': [{
+                'action': c.action,
+                'schoolId': c.school_id,
+                'details': c.details[:100],
+                'time': c.created_at.isoformat() if c.created_at else None,
+            } for c in recent_changes],
+        })
+    except Exception as e:
+        log_error(f'Dashboard error: {str(e)}')
+        return jsonify({'error': f'Lỗi dashboard: {str(e)}'}), 500
 
 
 @app.route('/api/change-logs', methods=['GET'])
