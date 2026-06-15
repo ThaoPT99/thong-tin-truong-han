@@ -5,7 +5,14 @@
     if (!overlay) return;
     overlay.classList.remove("is-open");
     document.body.classList.remove("zalo-popup-open");
+    // Lưu thời gian đóng để không tự động mở lại trong khoảng thời gian này
+    if (hours > 0) {
+      try {
+        localStorage.setItem("zaloPopupDismissedAt", Date.now().toString());
+      } catch (e) {}
+    }
   }
+
 
   function openPopup() {
     const overlay = document.getElementById("zalo-popup");

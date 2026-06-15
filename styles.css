@@ -1,5 +1,4 @@
 /* Giao diện nổi bật - dễ đọc, không chán */
-@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap');
 
 :root {
     --bg: #f0f4f8;
@@ -1452,6 +1451,7 @@ body.zalo-popup-open {
     position: absolute;
     inset: 0;
     background: rgba(15, 76, 129, 0.55);
+    -webkit-backdrop-filter: blur(4px);
     backdrop-filter: blur(4px);
 }
 

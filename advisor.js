@@ -410,7 +410,15 @@ function analyzeSchools(profile) {
 }
 
 function scoreSchool(schoolId, school, profile) {
-  let rules = ADVISOR_PROFILES[schoolId] ? Object.assign({}, ADVISOR_PROFILES[schoolId]) : (buildFallbackAdvisorProfile(school) || {});
+  // Ưu tiên: 1) Hardcoded ADVISOR_PROFILES > 2) GENERATED_ADVISOR_PROFILES > 3) Fallback
+  let rules = null;
+  if (ADVISOR_PROFILES[schoolId]) {
+    rules = Object.assign({}, ADVISOR_PROFILES[schoolId]);
+  } else if (typeof GENERATED_ADVISOR_PROFILES !== "undefined" && GENERATED_ADVISOR_PROFILES[schoolId]) {
+    rules = Object.assign({}, GENERATED_ADVISOR_PROFILES[schoolId]);
+  } else {
+    rules = buildFallbackAdvisorProfile(school) || {};
+  }
   // Prefer canonical region from SCHOOLS_DATA when provided
   if (school && school.region) {
     rules.region = school.region;
@@ -616,7 +624,9 @@ function renderAdvisorResults(target, profile, results) {
   `;
 
   target.querySelectorAll("[data-open-school]").forEach((button) => {
-    button.addEventListener("click", () => showSchool(button.dataset.openSchool));
+    button.addEventListener("click", () => {
+      if (typeof window.showSchool === "function") window.showSchool(button.dataset.openSchool);
+    });
   });
   const status = target.querySelector(".advisor-save-status");
   const showStatus = (message) => {

@@ -8,7 +8,7 @@ const SCHOOLS_DATA = {
   "dh-osan": {
     "id": "dh-osan",
     "name": "Osan",
-    "nameKr": "오산대학교 | Dễ chuyển đổi E7, học ít - Yêu cầu khó, việc làm nhiều - PV siêu khó",
+    "nameKr": "오산대학교",
     "nameEn": "Osan University",
     "system": "D2-6 > D2-1 (Cao Đẳng)",
     "quota": 200,
@@ -161,8 +161,8 @@ const SCHOOLS_DATA = {
   "dh-induk": {
     "id": "dh-induk",
     "name": "Induk",
-    "nameKr": "인덕대학교 | Học ít - Việc làm nhiều - Cạnh tranh cao, lương cao - Tỷ lệ Visa không quá tốt",
-    "nameEn": "Induk University Học ít -",
+    "nameKr": "인덕대학교",
+    "nameEn": "Induk University",
     "system": "D2-6 > D2-1 (Cao Đẳng)",
     "quota": 200,
     "images": {
@@ -322,7 +322,7 @@ const SCHOOLS_DATA = {
   "dh-yeonsung": {
     "id": "dh-yeonsung",
     "name": "YeonSung",
-    "nameKr": "연성대학교 | Việc làm nhiều - Tỷ lệ đỗ cực cao - Gần Seoul",
+    "nameKr": "연성대학교",
     "nameEn": "Yeonsung University",
     "system": "D2-6 > D2-1 (Cao Đẳng)",
     "quota": 200,
@@ -480,7 +480,7 @@ const SCHOOLS_DATA = {
   "dh-sangmyung": {
     "id": "dh-sangmyung",
     "name": "Sangmyung",
-    "nameKr": "상명대학교 | Trường 4 năm uy tín tại Seoul - Tỷ lệ chuyển E7 tốt - Học nặng hơn",
+    "nameKr": "상명대학교",
     "nameEn": "Sangmyung University",
     "system": "D2-6 > D2-2 (Đại học 4 năm)",
     "quota": 200,
@@ -634,7 +634,7 @@ const SCHOOLS_DATA = {
   "dh-nu-sinh-kyungin": {
     "id": "dh-nu-sinh-kyungin",
     "name": "KyungGin",
-    "nameKr": "경인여자대학교 | Tỷ lệ Visa rất tốt - Chuyển đổi E7 tốt - Gần sân bay Incheon - Chỉ dành cho nữ",
+    "nameKr": "경인여자대학교",
     "nameEn": "Kyungin Women’s University (KIWU)",
     "system": "D2-6 > D2-1 (Cao Đẳng )",
     "quota": 200,
@@ -784,7 +784,7 @@ const SCHOOLS_DATA = {
   "dh-y-te-dongnam": {
     "id": "dh-y-te-dongnam",
     "name": "Dongnam",
-    "nameKr": "동남보건대학교 | Tỷ lệ Đỗ tuyệt đối - Học khá nhiều - Việc làm thêm khá hạn chế",
+    "nameKr": "동남보건대학교",
     "nameEn": "Dongnam Health University",
     "system": "D2-6 > D2-1 (Cao Đẳng)",
     "quota": 200,
@@ -939,7 +939,7 @@ const SCHOOLS_DATA = {
   "dh-dongeui": {
     "id": "dh-dongeui",
     "name": "Dong-Eui",
-    "nameKr": "동의대학교 | Tỷ lệ đỗ cực cao - Việc làm thêm nhiều - Tỷ lệ chuyển đổi E7 tốt - Học khá nặng",
+    "nameKr": "동의대학교",
     "nameEn": "DongEui Institute Of Technology",
     "system": "D2-6 > D2-2 (Đại học)",
     "quota": 200,
@@ -1093,7 +1093,7 @@ const SCHOOLS_DATA = {
   "cd-suncheon-jeil": {
     "id": "cd-suncheon-jeil",
     "name": "Suncheon Jeil",
-    "nameKr": "순천제일 | Dễ chuyển đổi E7 - Tỷ lệ Visa tốt - Việc làm thêm đa dạng - Trường không hot",
+    "nameKr": "순천제일",
     "nameEn": "Suncheon Jeil College",
     "system": "D2-6 > D2-1 (Cao Đẳng)",
     "quota": 200,
@@ -1250,7 +1250,7 @@ const SCHOOLS_DATA = {
   "dh-nu-sinh-busan": {
     "id": "dh-nu-sinh-busan",
     "name": "Nữ Busan",
-    "nameKr": "부산여자대학교 | Trường nữ sinh Busan - Chi phí hợp lý - Gần trung tâm thành phố",
+    "nameKr": "부산여자대학교",
     "nameEn": "Busan Women's  College  New",
     "system": "D2-6 > D2-1 (Cao Đẳng)",
     "quota": 200,
@@ -1404,7 +1404,7 @@ const SCHOOLS_DATA = {
   "dh-busan-catholic": {
     "id": "dh-busan-catholic",
     "name": "Busan Catholic",
-    "nameKr": "부산가톨릭대학교 | Trường Công giáo uy tín tại Busan - Ngành Y tế nổi bật - Tỷ lệ Visa ổn định",
+    "nameKr": "부산가톨릭대학교",
     "nameEn": "Catholic University of Busan",
     "system": "D2-6 > D2-1 (Cao Đẳng)",
     "quota": 200,
@@ -1559,7 +1559,7 @@ const SCHOOLS_DATA = {
   "dh-gimhae": {
     "id": "dh-gimhae",
     "name": "Gimhae",
-    "nameKr": "김해대학교 | Gần sân bay Gimhae - Chi phí sinh hoạt thấp - Nhiều chuyên ngành kỹ thuật",
+    "nameKr": "김해대학교",
     "nameEn": "Gimhae College",
     "system": "D2-6 > D2-1 (Cao Đẳng)",
     "quota": 200,
@@ -1716,7 +1716,7 @@ const SCHOOLS_DATA = {
   "dh-gwangju": {
     "id": "dh-gwangju",
     "name": "Gwangju",
-    "nameKr": "광주대학교 | Đại học uy tín Gwangju - Chi phí thấp - Khu vực miền Nam nhiều việc làm",
+    "nameKr": "광주대학교",
     "nameEn": "Gwangju University",
     "system": "D2-6 > D2-2 (Đại học 4 năm)",
     "quota": 200,
@@ -1872,7 +1872,7 @@ const SCHOOLS_DATA = {
   "dh-nambu": {
     "id": "dh-nambu",
     "name": "Nambu",
-    "nameKr": "남부대학교 | Đại học miền Nam Gwangju - Chi phí thấp nhất - Tỷ lệ Visa tốt",
+    "nameKr": "남부대학교",
     "nameEn": "Nambu University",
     "system": "D2-6 > D2-2 (Đại học 4 năm)",
     "quota": 200,
@@ -2028,7 +2028,7 @@ const SCHOOLS_DATA = {
   "dh-daewon": {
     "id": "dh-daewon",
     "name": "Daewon",
-    "nameKr": "대원대학교 | Chi phí thấp - Hỗ trợ E7 liên kết Samsung & Hyundai - Có thể học Online",
+    "nameKr": "대원대학교",
     "nameEn": "Daewon College New",
     "system": "D2-6 > D2-1 (Cao Đẳng)",
     "quota": 200,
@@ -2181,7 +2181,7 @@ const SCHOOLS_DATA = {
   "dh-sengmyung": {
     "id": "dh-sengmyung",
     "name": "Sengmyung",
-    "nameKr": "세명대학교 | Trường địa phương ổn định - Chi phí thấp - Dễ chuyển đổi chuyên ngành",
+    "nameKr": "세명대학교",
     "nameEn": "Semyung University",
     "system": "D2-6 > D2-2 (Đại học 4 năm)",
     "quota": 200,
@@ -2337,7 +2337,7 @@ const SCHOOLS_DATA = {
   "dh-nu-sinh-dongduk": {
     "id": "dh-nu-sinh-dongduk",
     "name": "DongDuk",
-    "nameKr": "동덕여자대학교 | Đại học 4 năm tại Seoul - Cái nôi nghệ thuật nữ sinh - Học bổng 50% - Chỉ dành cho nữ",
+    "nameKr": "동덕여자대학교",
     "nameEn": "Dongduk Women's University - Đại học 4 năm tại trung tâm Seoul - Học bổng 50% - ",
     "system": "D2-6 > D2-2 (Đại học 4 năm)",
     "quota": 200,
@@ -2503,8 +2503,8 @@ const SCHOOLS_DATA = {
   "dh-catholic-kwandong": {
     "id": "dh-catholic-kwandong",
     "name": "Catholic Kwandong",
-    "nameKr": "가톨릭관동대학교 | Trường đại học 4 năm tại Gangneung - Nhiều ngành học - Học bổng lên đến 80%",
-    "nameEn": "Catholic Kwandong University | 가톨릭관동대학교 - Trường ĐH tư thục 70 năm truyền thống ",
+    "nameKr": "가톨릭관동대학교",
+    "nameEn": "Catholic Kwandong University | 가톨릭관동대학교",
     "system": "D2-2 (Đại học 4 năm)",
     "quota": 200,
     "images": {
@@ -2658,7 +2658,7 @@ const SCHOOLS_DATA = {
   "dh-jeonju": {
     "id": "dh-jeonju",
     "name": "Jeonju",
-    "nameKr": "전주대학교 | Đại học nuôi dưỡng siêu sao - Chi phí hợp lý - Tỷ lệ Visa tốt",
+    "nameKr": "전주대학교",
     "nameEn": "Jeonju University",
     "system": "D2-6 > D2-2 (Đại học 4 năm)",
     "quota": 200,
@@ -2830,6 +2830,331 @@ const SCHOOLS_DATA = {
       }
     ],
     "mou": "HN, HCCT, VTV, BGIT, UTM, KTTT, SGT"
+  }
+};
+
+// Advisor profiles tự động sinh từ dữ liệu trường — dùng làm fallback
+// Muốn ghi đè: sửa trong advisor.js
+const GENERATED_ADVISOR_PROFILES = {
+  "dh-osan": {
+    "gender": "all",
+    "minGpa": 6.0,
+    "maxAbsences": 15,
+    "region": "seoul",
+    "costLevel": 2,
+    "visaChance": 5,
+    "jobOpportunity": 5,
+    "e7Opportunity": 5,
+    "studyLoad": 3,
+    "interviewDifficulty": 4,
+    "tags": [
+      "visa",
+      "job",
+      "e7",
+      "low-cost",
+      "seoul"
+    ]
+  },
+  "dh-induk": {
+    "gender": "all",
+    "minGpa": 5.0,
+    "maxAbsences": 30,
+    "region": "seoul",
+    "costLevel": 2,
+    "visaChance": 5,
+    "jobOpportunity": 4,
+    "e7Opportunity": 5,
+    "studyLoad": 3,
+    "interviewDifficulty": 4,
+    "tags": [
+      "visa",
+      "job",
+      "e7",
+      "low-cost",
+      "seoul"
+    ]
+  },
+  "dh-yeonsung": {
+    "gender": "all",
+    "minGpa": 5.0,
+    "maxAbsences": 30,
+    "region": "seoul",
+    "costLevel": 2,
+    "visaChance": 5,
+    "jobOpportunity": 5,
+    "e7Opportunity": 5,
+    "studyLoad": 3,
+    "interviewDifficulty": 4,
+    "tags": [
+      "visa",
+      "job",
+      "e7",
+      "low-cost",
+      "seoul"
+    ]
+  },
+  "dh-sangmyung": {
+    "gender": "all",
+    "minGpa": 5.0,
+    "maxAbsences": 30,
+    "region": "seoul",
+    "costLevel": 3,
+    "visaChance": 4,
+    "jobOpportunity": 5,
+    "e7Opportunity": 5,
+    "studyLoad": 3,
+    "interviewDifficulty": 2,
+    "tags": [
+      "visa",
+      "job",
+      "e7",
+      "prestige",
+      "seoul"
+    ]
+  },
+  "dh-nu-sinh-kyungin": {
+    "gender": "female",
+    "minGpa": 5.0,
+    "maxAbsences": 30,
+    "region": "incheon",
+    "costLevel": 3,
+    "visaChance": 4,
+    "jobOpportunity": 4,
+    "e7Opportunity": 3,
+    "studyLoad": 3,
+    "interviewDifficulty": 4,
+    "tags": [
+      "visa",
+      "job",
+      "female"
+    ]
+  },
+  "dh-y-te-dongnam": {
+    "gender": "all",
+    "minGpa": 5.0,
+    "maxAbsences": 30,
+    "region": "seoul",
+    "costLevel": 1,
+    "visaChance": 5,
+    "jobOpportunity": 4,
+    "e7Opportunity": 5,
+    "studyLoad": 3,
+    "interviewDifficulty": 4,
+    "tags": [
+      "visa",
+      "job",
+      "e7",
+      "low-cost",
+      "seoul"
+    ]
+  },
+  "dh-dongeui": {
+    "gender": "all",
+    "minGpa": 5.0,
+    "maxAbsences": 30,
+    "region": "busan",
+    "costLevel": 3,
+    "visaChance": 4,
+    "jobOpportunity": 5,
+    "e7Opportunity": 3,
+    "studyLoad": 3,
+    "interviewDifficulty": 2,
+    "tags": [
+      "visa",
+      "job",
+      "busan"
+    ]
+  },
+  "cd-suncheon-jeil": {
+    "gender": "all",
+    "minGpa": 5.0,
+    "maxAbsences": 15,
+    "region": "province",
+    "costLevel": 2,
+    "visaChance": 5,
+    "jobOpportunity": 5,
+    "e7Opportunity": 5,
+    "studyLoad": 3,
+    "interviewDifficulty": 4,
+    "tags": [
+      "visa",
+      "job",
+      "e7",
+      "low-cost"
+    ]
+  },
+  "dh-nu-sinh-busan": {
+    "gender": "female",
+    "minGpa": 5.0,
+    "maxAbsences": 15,
+    "region": "busan",
+    "costLevel": 2,
+    "visaChance": 5,
+    "jobOpportunity": 5,
+    "e7Opportunity": 5,
+    "studyLoad": 3,
+    "interviewDifficulty": 4,
+    "tags": [
+      "visa",
+      "job",
+      "e7",
+      "female",
+      "low-cost",
+      "busan"
+    ]
+  },
+  "dh-busan-catholic": {
+    "gender": "all",
+    "minGpa": 5.0,
+    "maxAbsences": 30,
+    "region": "busan",
+    "costLevel": 3,
+    "visaChance": 5,
+    "jobOpportunity": 5,
+    "e7Opportunity": 3,
+    "studyLoad": 3,
+    "interviewDifficulty": 4,
+    "tags": [
+      "visa",
+      "job",
+      "busan"
+    ]
+  },
+  "dh-gimhae": {
+    "gender": "all",
+    "minGpa": 5.0,
+    "maxAbsences": 30,
+    "region": "busan",
+    "costLevel": 3,
+    "visaChance": 5,
+    "jobOpportunity": 5,
+    "e7Opportunity": 3,
+    "studyLoad": 3,
+    "interviewDifficulty": 4,
+    "tags": [
+      "visa",
+      "job",
+      "busan"
+    ]
+  },
+  "dh-gwangju": {
+    "gender": "all",
+    "minGpa": 5.0,
+    "maxAbsences": 30,
+    "region": "gwangju",
+    "costLevel": 3,
+    "visaChance": 4,
+    "jobOpportunity": 5,
+    "e7Opportunity": 3,
+    "studyLoad": 3,
+    "interviewDifficulty": 4,
+    "tags": [
+      "visa",
+      "job"
+    ]
+  },
+  "dh-nambu": {
+    "gender": "all",
+    "minGpa": 5.0,
+    "maxAbsences": 30,
+    "region": "gwangju",
+    "costLevel": 3,
+    "visaChance": 5,
+    "jobOpportunity": 4,
+    "e7Opportunity": 3,
+    "studyLoad": 3,
+    "interviewDifficulty": 4,
+    "tags": [
+      "visa",
+      "job"
+    ]
+  },
+  "dh-daewon": {
+    "gender": "all",
+    "minGpa": 5.0,
+    "maxAbsences": 15,
+    "region": "seoul",
+    "costLevel": 2,
+    "visaChance": 5,
+    "jobOpportunity": 5,
+    "e7Opportunity": 5,
+    "studyLoad": 3,
+    "interviewDifficulty": 4,
+    "tags": [
+      "visa",
+      "job",
+      "e7",
+      "low-cost",
+      "seoul"
+    ]
+  },
+  "dh-sengmyung": {
+    "gender": "all",
+    "minGpa": 5.0,
+    "maxAbsences": 30,
+    "region": "seoul",
+    "costLevel": 3,
+    "visaChance": 4,
+    "jobOpportunity": 3,
+    "e7Opportunity": 3,
+    "studyLoad": 3,
+    "interviewDifficulty": 4,
+    "tags": [
+      "visa",
+      "seoul"
+    ]
+  },
+  "dh-nu-sinh-dongduk": {
+    "gender": "female",
+    "minGpa": 5.0,
+    "maxAbsences": 30,
+    "region": "seoul",
+    "costLevel": 3,
+    "visaChance": 4,
+    "jobOpportunity": 5,
+    "e7Opportunity": 3,
+    "studyLoad": 3,
+    "interviewDifficulty": 4,
+    "tags": [
+      "visa",
+      "job",
+      "female",
+      "prestige",
+      "seoul"
+    ]
+  },
+  "dh-catholic-kwandong": {
+    "gender": "all",
+    "minGpa": 5.0,
+    "maxAbsences": 30,
+    "region": "seoul",
+    "costLevel": 3,
+    "visaChance": 4,
+    "jobOpportunity": 5,
+    "e7Opportunity": 3,
+    "studyLoad": 3,
+    "interviewDifficulty": 2,
+    "tags": [
+      "visa",
+      "job",
+      "seoul"
+    ]
+  },
+  "dh-jeonju": {
+    "gender": "all",
+    "minGpa": 5.0,
+    "maxAbsences": 30,
+    "region": "seoul",
+    "costLevel": 3,
+    "visaChance": 4,
+    "jobOpportunity": 3,
+    "e7Opportunity": 3,
+    "studyLoad": 3,
+    "interviewDifficulty": 2,
+    "tags": [
+      "visa",
+      "seoul"
+    ]
   }
 };
 
@@ -3122,7 +3447,7 @@ const EXTRA_SHEETS = {
     "rows": [
       {
         "name": "Osan",
-        "nameKr": "오산대학교 | Dễ chuyển đổi E7, học ít - Yêu cầu khó, việc làm nhiều - PV siêu khó",
+        "nameKr": "오산대학교",
         "system": "D2-6 > D2-1 (Cao Đẳng)",
         "quota": 200,
         "mou": "HNC, HCCT, VTV, SGT, KTTU",
@@ -3130,7 +3455,7 @@ const EXTRA_SHEETS = {
       },
       {
         "name": "Induk",
-        "nameKr": "인덕대학교 | Học ít - Việc làm nhiều - Cạnh tranh cao, lương cao - Tỷ lệ Visa không quá tốt",
+        "nameKr": "인덕대학교",
         "system": "D2-6 > D2-1 (Cao Đẳng)",
         "quota": 200,
         "mou": "HNC, VTV, BGIT, TWU, SDU, DH",
@@ -3138,7 +3463,7 @@ const EXTRA_SHEETS = {
       },
       {
         "name": "YeonSung",
-        "nameKr": "연성대학교 | Việc làm nhiều - Tỷ lệ đỗ cực cao - Gần Seoul",
+        "nameKr": "연성대학교",
         "system": "D2-6 > D2-1 (Cao Đẳng)",
         "quota": 200,
         "mou": "HNC, HCCT, BGIT, KTTT, SGT, DA, SDU, KTTU",
@@ -3146,7 +3471,7 @@ const EXTRA_SHEETS = {
       },
       {
         "name": "Sangmyung",
-        "nameKr": "상명대학교 | Trường 4 năm uy tín tại Seoul - Tỷ lệ chuyển E7 tốt - Học nặng hơn",
+        "nameKr": "상명대학교",
         "system": "D2-6 > D2-2 (Đại học 4 năm)",
         "quota": 200,
         "mou": "HN, HNC, HCCT, VTV, BGIT, HPC-HP, KTTT, DH",
@@ -3154,7 +3479,7 @@ const EXTRA_SHEETS = {
       },
       {
         "name": "KyungGin",
-        "nameKr": "경인여자대학교 | Tỷ lệ Visa rất tốt - Chuyển đổi E7 tốt - Gần sân bay Incheon - Chỉ dành cho nữ",
+        "nameKr": "경인여자대학교",
         "system": "D2-6 > D2-1 (Cao Đẳng )",
         "quota": 200,
         "mou": "HNC, VTV, BGIT, UTM, SGT, KTTU",
@@ -3162,7 +3487,7 @@ const EXTRA_SHEETS = {
       },
       {
         "name": "Dongnam",
-        "nameKr": "동남보건대학교 | Tỷ lệ Đỗ tuyệt đối - Học khá nhiều - Việc làm thêm khá hạn chế",
+        "nameKr": "동남보건대학교",
         "system": "D2-6 > D2-1 (Cao Đẳng)",
         "quota": 200,
         "mou": "HNC, HPC, HCCT, SGT, BCIT",
@@ -3170,7 +3495,7 @@ const EXTRA_SHEETS = {
       },
       {
         "name": "Dong-Eui",
-        "nameKr": "동의대학교 | Tỷ lệ đỗ cực cao - Việc làm thêm nhiều - Tỷ lệ chuyển đổi E7 tốt - Học khá nặng",
+        "nameKr": "동의대학교",
         "system": "D2-6 > D2-2 (Đại học)",
         "quota": 200,
         "mou": "HN, HNC, HCCT, VTV, HPC-HP, PMDT, UTM, SGT, SDU",
@@ -3178,7 +3503,7 @@ const EXTRA_SHEETS = {
       },
       {
         "name": "Suncheon Jeil",
-        "nameKr": "순천제일 | Dễ chuyển đổi E7 - Tỷ lệ Visa tốt - Việc làm thêm đa dạng - Trường không hot",
+        "nameKr": "순천제일",
         "system": "D2-6 > D2-1 (Cao Đẳng)",
         "quota": 200,
         "mou": "HN, HNC, HCCT, VTV, HPC-HP, SGT, DH",
@@ -3186,7 +3511,7 @@ const EXTRA_SHEETS = {
       },
       {
         "name": "Nữ Busan",
-        "nameKr": "부산여자대학교 | Trường nữ sinh Busan - Chi phí hợp lý - Gần trung tâm thành phố",
+        "nameKr": "부산여자대학교",
         "system": "D2-6 > D2-1 (Cao Đẳng)",
         "quota": 200,
         "mou": "HN, HCCT, VTV, UTM, SGT, DH",
@@ -3194,7 +3519,7 @@ const EXTRA_SHEETS = {
       },
       {
         "name": "Busan Catholic",
-        "nameKr": "부산가톨릭대학교 | Trường Công giáo uy tín tại Busan - Ngành Y tế nổi bật - Tỷ lệ Visa ổn định",
+        "nameKr": "부산가톨릭대학교",
         "system": "D2-6 > D2-1 (Cao Đẳng)",
         "quota": 200,
         "mou": "HNC, HCCT, BGIT, HPC-HP, PMDT, UTM, KTTT, DA",
@@ -3202,7 +3527,7 @@ const EXTRA_SHEETS = {
       },
       {
         "name": "Gimhae",
-        "nameKr": "김해대학교 | Gần sân bay Gimhae - Chi phí sinh hoạt thấp - Nhiều chuyên ngành kỹ thuật",
+        "nameKr": "김해대학교",
         "system": "D2-6 > D2-1 (Cao Đẳng)",
         "quota": 200,
         "mou": "HCCT, VTV, BGIT, HPC-HP, PMDT, UTM, ISPACE, DA, SDU",
@@ -3210,7 +3535,7 @@ const EXTRA_SHEETS = {
       },
       {
         "name": "Gwangju",
-        "nameKr": "광주대학교 | Đại học uy tín Gwangju - Chi phí thấp - Khu vực miền Nam nhiều việc làm",
+        "nameKr": "광주대학교",
         "system": "D2-6 > D2-2 (Đại học 4 năm)",
         "quota": 200,
         "mou": "HN, HCCT, VTV, BGIT, UTM, KTTT, SGT",
@@ -3218,7 +3543,7 @@ const EXTRA_SHEETS = {
       },
       {
         "name": "Nambu",
-        "nameKr": "남부대학교 | Đại học miền Nam Gwangju - Chi phí thấp nhất - Tỷ lệ Visa tốt",
+        "nameKr": "남부대학교",
         "system": "D2-6 > D2-2 (Đại học 4 năm)",
         "quota": 200,
         "mou": "HNC, HCCT, VTV, BGIT, HPC-HP, PMDT, UTM, SGT, SDU, KTTU",
@@ -3226,7 +3551,7 @@ const EXTRA_SHEETS = {
       },
       {
         "name": "Daewon",
-        "nameKr": "대원대학교 | Chi phí thấp - Hỗ trợ E7 liên kết Samsung & Hyundai - Có thể học Online",
+        "nameKr": "대원대학교",
         "system": "D2-6 > D2-1 (Cao Đẳng)",
         "quota": 200,
         "mou": "HCCT, BGIT, PMDT, UTM, DH, KTTU",
@@ -3234,7 +3559,7 @@ const EXTRA_SHEETS = {
       },
       {
         "name": "Sengmyung",
-        "nameKr": "세명대학교 | Trường địa phương ổn định - Chi phí thấp - Dễ chuyển đổi chuyên ngành",
+        "nameKr": "세명대학교",
         "system": "D2-6 > D2-2 (Đại học 4 năm)",
         "quota": 200,
         "mou": "HN, HNC, HCCT, BGIT, PMDT, DH",
@@ -3242,7 +3567,7 @@ const EXTRA_SHEETS = {
       },
       {
         "name": "DongDuk",
-        "nameKr": "동덕여자대학교 | Đại học 4 năm tại Seoul - Cái nôi nghệ thuật nữ sinh - Học bổng 50% - Chỉ dành cho nữ",
+        "nameKr": "동덕여자대학교",
         "system": "D2-6 > D2-2 (Đại học 4 năm)",
         "quota": 200,
         "mou": "HN, HNC, HCCT, BGIT, PMDT, DH",
@@ -3250,7 +3575,7 @@ const EXTRA_SHEETS = {
       },
       {
         "name": "Catholic Kwandong",
-        "nameKr": "가톨릭관동대학교 | Trường đại học 4 năm tại Gangneung - Nhiều ngành học - Học bổng lên đến 80%",
+        "nameKr": "가톨릭관동대학교",
         "system": "D2-2 (Đại học 4 năm)",
         "quota": 200,
         "mou": "HN, HNC, HCCT, BGIT, PMDT, DH",
@@ -3258,7 +3583,7 @@ const EXTRA_SHEETS = {
       },
       {
         "name": "Jeonju",
-        "nameKr": "전주대학교 | Đại học nuôi dưỡng siêu sao - Chi phí hợp lý - Tỷ lệ Visa tốt",
+        "nameKr": "전주대학교",
         "system": "D2-6 > D2-2 (Đại học 4 năm)",
         "quota": 200,
         "mou": "HN, HCCT, VTV, BGIT, UTM, KTTT, SGT",

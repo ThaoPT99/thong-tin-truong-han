@@ -120,8 +120,8 @@ def get_cell_segments(ws, row, col=2):
                         out.append({"t": txt, "c": hex_c})
             if out:
                 return out
-    except Exception:
-        pass
+    except Exception as e:
+        print(f"  [WARNING] get_cell_segments: {e}")
     # Plain text - lấy màu từ cell font
     s = str(val).strip()
     if s.upper().startswith("=HYPERLINK"):
@@ -276,6 +276,20 @@ def parse_school_sheet(ws, sheet_name):
                     data["nameKr"] = " ".join(parts[i:])
                     data["name"] = " ".join(parts[:i]) if i > 0 else data["name"]
                     break
+    # Clean nameKr: tách bỏ phần tiếng Việt sau | hoặc - (mô tả)
+    if data["nameKr"] and "|" in data["nameKr"]:
+        data["nameKr"] = data["nameKr"].split("|")[0].strip()
+    elif data["nameKr"] and " - " in data["nameKr"] and not data["nameKr"].endswith("대학교"):
+        # Nếu nameKr có dấu - nhưng không kết thúc bằng 대학교, có thể là tên ghép Hàn-Việt
+        # Chỉ lấy phần Hàn Quốc
+        kr_text = ""
+        for ch in data["nameKr"]:
+            if '\uac00' <= ch <= '\ud7a3' or ch in ' ()[]-':
+                kr_text += ch
+            else:
+                break
+        if kr_text.strip():
+            data["nameKr"] = kr_text.strip().rstrip("-").strip()
     
     def get_val(*labels):
         _, v, _ = find_row_by_label(ws, labels)
@@ -294,13 +308,23 @@ def parse_school_sheet(ws, sheet_name):
     name_en = get_val("Tên tiếng anh", "Tên tiếng Anh")
     if name_en:
         data["nameEn"] = name_en.split("Tỷ lệ")[0].split("Việc làm")[0].split("Dễ chuyển")[0].strip()[:80]
+        # Clean nameEn: loại bỏ text tiếng Việt còn sót
+        vn_keywords = ["học ít", "học nặng", "cạnh tranh", "lương cao", "gần ", "trường ", "nữ sinh",
+                       "chi phí", "tỉ lệ", "tỷ lệ", "việc làm", "dễ chuyển", "không quá", "siêu khó"]
+        lower_en = data["nameEn"].lower()
+        for kw in vn_keywords:
+            idx = lower_en.find(kw)
+            if idx > 0:
+                data["nameEn"] = data["nameEn"][:idx].strip().rstrip("-").strip()
+                break
     
     data["system"] = get_val("Hệ giáo dục")
     quota_val = get_val("Chỉ tiêu tuyển sinh")
     if quota_val:
         try:
             data["quota"] = int(float(str(quota_val).replace(",", "")))
-        except: pass
+        except Exception as e:
+            print(f"  [WARNING] Không parse được quota '{quota_val}': {e}")
     
     data["mou"] = get_val_with_color("Trường Việt Nam ký MOU")
     data["location"] = get_val_with_color("Vị trí địa lý", "Vị trí")
@@ -428,46 +452,43 @@ def parse_school_sheet(ws, sheet_name):
         return None
     return data
 
-# Sheet mapping
-# Chỉ tiêu D2-6 kỳ 9/2026 - ghi đè Excel
+# Chỉ tiêu D2-6 - ghi đè Excel nếu cần
 QUOTA_OVERRIDE = {
     "dong-eui": 200, "ajou-motor": 200, "suncheon-jeil": 200, "dongnam": 200,
     "induk": 100, "daewon": 100, "jangan": 200, "yeonseong": 200,
     "kyunggin": 100, "nubusan": 100, "osan": 100,
 }
 
-SHEET_TO_ID = {
-    # ĐH Osan
-    "ĐH Osan": "dh-osan",
-    # ĐH Induk
-    "ĐH Induk": "dh-induk",
-    # ĐH Yeonsung
-    "ĐH Yeonsung": "dh-yeonsung",
-    # ĐH Sangmyung
-    "ĐH Sangmyung": "dh-sangmyung",
-    # ĐH Nữ sinh Kyungin
-    "ĐH Nữ sinh Kyungin": "dh-nu-sinh-kyungin",
-    # ĐH Y Tế Dongnam
-    "ĐH Y Tế Dongnam": "dh-y-te-dongnam",
-    # ĐH Dongeui
-    "ĐH Dongeui": "dh-dongeui",
-    # CĐ Suncheon Jeil
-    "CĐ Suncheon Jeil": "cd-suncheon-jeil",
-    # ĐH Nữ sinh Busan
-    "ĐH Nữ sinh Busan": "dh-nu-sinh-busan",
-    # ĐH Busan Catholic
-    "ĐH Busan Catholic": "dh-busan-catholic",
-    # ĐH Gimhae
-    "ĐH Gimhae": "dh-gimhae",
-    # ĐH Gwangju
-    "ĐH Gwangju": "dh-gwangju",
-    # ĐH Nambu
-    "ĐH Nambu": "dh-nambu",
-    # ĐH Daewon
-    "ĐH Daewon": "dh-daewon",
-    # ĐH Sengmyung
-    "ĐH Sengmyung": "dh-sengmyung",
-}
+# Danh sách sheet không phải trường — KHÔNG cần mapping nữa, tự động detect!
+EXCLUDED_SHEETS = ["Danh sách trường Hàn", "Check list  HS xin Visa D2-6",
+    "Check list HS xin Visa D2-6", 
+    "Tài liệu ôn phỏng vấn trường Hàn", "Tài liệu ôn PV trường Hàn",
+    "Appllication trường Hàn", "Application trường Hàn", "Thông tin làm tem các trường"]
+
+def generate_school_id(sheet_name):
+    """Tự động sinh ID từ tên sheet"""
+    sid = sheet_name.lower().strip()
+    # Chuẩn hóa ký tự tiếng Việt có dấu
+    replacements = {
+        'đ': 'd', 'Đ': 'd', 'ế': 'e', 'ệ': 'e', 'ể': 'e', 'ề': 'e', 'ễ': 'e',
+        'ữ': 'u', 'ụ': 'u', 'ủ': 'u', 'ũ': 'u', 'ư': 'u', 'ứ': 'u', 'ự': 'u', 'ử': 'u', 'ừ': 'u', 'ữ': 'u',
+        'ộ': 'o', 'ố': 'o', 'ồ': 'o', 'ổ': 'o', 'ỗ': 'o', 'ơ': 'o', 'ớ': 'o', 'ờ': 'o', 'ở': 'o', 'ỡ': 'o',
+        'ắ': 'a', 'ằ': 'a', 'ẳ': 'a', 'ẵ': 'a', 'ặ': 'a', 'ạ': 'a', 'ả': 'a', 'ã': 'a', 'á': 'a', 'à': 'a',
+        'í': 'i', 'ì': 'i', 'ỉ': 'i', 'ĩ': 'i', 'ị': 'i',
+        'ý': 'y', 'ỳ': 'y', 'ỷ': 'y', 'ỹ': 'y', 'ỵ': 'y',
+    }
+    for k, v in replacements.items():
+        sid = sid.replace(k, v)
+    # Loại bỏ prefix ĐH/CĐ rồi mới tạo id
+    if sid.startswith("dh "):
+        sid = "dh-" + sid[3:].strip().replace(" ", "-").replace("--", "-")
+    elif sid.startswith("cd "):
+        sid = "cd-" + sid[3:].strip().replace(" ", "-").replace("--", "-")
+    else:
+        sid = sid.replace(" ", "-").replace("--", "-")
+    # Xoá ký tự đặc biệt
+    sid = re.sub(r'[^a-z0-9\-]', '', sid)
+    return sid.strip("-")
 
 def get_cell_link(ws, row, col):
     """Lấy hyperlink từ ô (Drive, etc.)"""
@@ -569,23 +590,184 @@ def build_danh_sach_truong(schools_dict):
         })
     return rows
 
+def _flatten_val(v):
+    """Chuẩn hóa giá trị (có thể là string, list segments, list string) về string"""
+    if v is None:
+        return ""
+    if isinstance(v, str):
+        return v
+    if isinstance(v, list):
+        parts = []
+        for item in v:
+            if isinstance(item, dict):
+                parts.append(str(item.get("t", "")))
+            else:
+                parts.append(str(item))
+        return " ".join(parts)
+    return str(v)
+
+def generate_advisor_profile(school):
+    """Tự động sinh advisor profile từ dữ liệu trường"""
+    # Flatten tất cả về string để tránh lỗi segment list
+    flat_name = _flatten_val(school.get("name", ""))
+    flat_namekr = _flatten_val(school.get("nameKr", ""))
+    flat_location = _flatten_val(school.get("location", ""))
+    flat_conditions = " ".join(_flatten_val(c) for c in (school.get("conditions") or []))
+    flat_advantages = " ".join(_flatten_val(a) for a in (school.get("advantages") or []))
+    flat_majors = " ".join(_flatten_val(m) for m in (school.get("majors") or []))
+    flat_tuition = _flatten_val(school.get("tuition", ""))
+    flat_system = _flatten_val(school.get("system", ""))
+    flat_intro = _flatten_val(school.get("intro", ""))
+    
+    text = " ".join([
+        flat_name, flat_namekr, flat_location,
+        flat_conditions, flat_advantages, flat_majors,
+        flat_tuition, flat_system, flat_intro
+    ]).lower()
+    
+    profile = {}
+    
+    # Gender
+    if "nữ" in text or "여자" in text:
+        profile["gender"] = "female"
+    else:
+        profile["gender"] = "all"
+    
+    # GPA từ conditions
+    gpa_match = re.search(r'gpa[\s:]*([\d.]+)', text)
+    if gpa_match:
+        profile["minGpa"] = float(gpa_match.group(1))
+    else:
+        profile["minGpa"] = 5.0
+    
+    # Absences từ conditions
+    abs_match = re.search(r'(?:ngh[ỉi]|vắng)\s*(?:kh[ôo]ng\s*qu[áa]\s*)?(\d+)\s*bu[ổo]i', text)
+    if abs_match:
+        profile["maxAbsences"] = int(abs_match.group(1))
+    else:
+        profile["maxAbsences"] = 30
+    
+    # Region
+    region = _flatten_val(school.get("region", "") or "")
+    location = flat_location
+    combined = (region + " " + location).lower()
+    if "seoul" in combined:
+        profile["region"] = "seoul"
+    elif "busan" in combined:
+        profile["region"] = "busan"
+    elif "gwangju" in combined:
+        profile["region"] = "gwangju"
+    elif "incheon" in combined:
+        profile["region"] = "incheon"
+    elif "gyeonggi" in combined or "gần seoul" in text or "near-seoul" in text or "cách seoul" in text:
+        profile["region"] = "near-seoul"
+    else:
+        profile["region"] = "province"
+    
+    # Cost level từ học phí + advantages
+    tuition = flat_tuition.lower()
+    adv = flat_advantages.lower()
+    if "rẻ" in adv or "tiết kiệm" in adv or "chi phí thấp" in adv or "học phí rẻ" in adv:
+        if "1" in tuition[:10]:
+            profile["costLevel"] = 1
+        else:
+            profile["costLevel"] = 2
+    elif tuition and ("1" in tuition[:5] or "1." in tuition[:5]):
+        profile["costLevel"] = 2
+    elif tuition and ("2" in tuition[:5] or "2." in tuition[:5]):
+        profile["costLevel"] = 3
+    elif "phí cao" in adv or "đắt" in adv:
+        profile["costLevel"] = 4
+    else:
+        profile["costLevel"] = 3
+    
+    # Visa chance
+    if "tỷ lệ đỗ" in text or "visa tốt" in text or "tỷ lệ visa" in text or "đỗ tuyệt đối" in text:
+        profile["visaChance"] = 5
+    elif "tỷ lệ" in text or "visa" in text:
+        profile["visaChance"] = 4
+    else:
+        profile["visaChance"] = 3
+    
+    # Job opportunity
+    if "việc làm nhiều" in text or "làm thêm" in text or "việc làm thêm" in text:
+        profile["jobOpportunity"] = 5 if "nhiều" in text else 4
+    elif "việc làm" in text:
+        profile["jobOpportunity"] = 3
+    else:
+        profile["jobOpportunity"] = 3
+    
+    # E7 opportunity
+    if "e7" in text or "chuyển đổi" in text:
+        if "tốt" in text or "dễ" in text:
+            profile["e7Opportunity"] = 5
+        else:
+            profile["e7Opportunity"] = 4
+    else:
+        profile["e7Opportunity"] = 3
+    
+    # Study load
+    if "học nặng" in text or "học khá" in text:
+        profile["studyLoad"] = 4
+    elif "học ít" in text:
+        profile["studyLoad"] = 2
+    else:
+        profile["studyLoad"] = 3
+    
+    # Interview difficulty
+    if "phỏng vấn" in text:
+        if "siêu khó" in text or "khó" in text:
+            profile["interviewDifficulty"] = 5
+        else:
+            profile["interviewDifficulty"] = 4
+    else:
+        profile["interviewDifficulty"] = 2
+    
+    # Tags
+    tags = []
+    if profile.get("visaChance", 0) >= 4:
+        tags.append("visa")
+    if profile.get("jobOpportunity", 0) >= 4:
+        tags.append("job")
+    if profile.get("e7Opportunity", 0) >= 4:
+        tags.append("e7")
+    if profile.get("gender") == "female":
+        tags.append("female")
+    if profile.get("costLevel", 5) <= 2:
+        tags.append("low-cost")
+    if profile.get("studyLoad", 5) <= 2:
+        tags.append("low-study")
+    if "uy tín" in text or "prestige" in text:
+        tags.append("prestige")
+    if profile.get("region") == "seoul":
+        tags.append("seoul")
+    elif profile.get("region") == "near-seoul":
+        tags.append("near-seoul")
+    elif profile.get("region") == "busan":
+        tags.append("busan")
+    profile["tags"] = tags[:8]
+    
+    return profile
+
+
 schools = {}
+advisor_profiles = {}
 for sheet_name in wb.sheetnames:
     sname = sheet_name.strip()
-    sid = SHEET_TO_ID.get(sname) or SHEET_TO_ID.get(sheet_name)
-    # Nếu không tìm thấy trong mapping, kiểm tra xem có phải sheet trường không
-    if not sid and sname not in ["Danh sách trường Hàn", "Check list  HS xin Visa D2-6", 
-        "Tài liệu ôn phỏng vấn trường Hàn", "Tài liệu ôn PV trường Hàn",
-        "Appllication trường Hàn", "Application trường Hàn", "Thông tin làm tem các trường"]:
-        # Kiểm tra xem có phải sheet trường (bắt đầu bằng ĐH hoặc CĐ)
-        if sname.startswith("ĐH ") or sname.startswith("CĐ "):
-            # Tạo ID từ tên sheet
-            sid = sname.lower().replace(" ", "-").replace("đ", "d").replace("Đ", "d").replace("ế", "e").replace("ữ", "u").replace("ú", "u").replace("ộ", "o")
-    if sid:
-        d = parse_school_sheet(wb[sheet_name], sname)
-        if d and d.get("name"):
-            d["id"] = sid
-            schools[sid] = d
+    # Bỏ qua các sheet không phải trường
+    if sname in EXCLUDED_SHEETS:
+        continue
+    if any(excl in sname for excl in EXCLUDED_SHEETS):
+        continue
+    
+    # Thử parse sheet — nếu có dữ liệu trường thì auto-detect
+    d = parse_school_sheet(wb[sheet_name], sname)
+    if d and d.get("name"):
+        sid = generate_school_id(sname)
+        d["id"] = sid
+        schools[sid] = d
+        # Tự động sinh advisor profile
+        advisor_profiles[sid] = generate_advisor_profile(d)
 
 # Ghi data.js
 # Ensure proper structure for render.js
@@ -619,12 +801,8 @@ for sname in wb.sheetnames:
 extra_sheets["danhSach"]["rows"] = build_danh_sach_truong(schools)
 
 # Chuẩn hóa mou (có thể là segments) cho danhSach
-def _flatten(v):
-    if isinstance(v, list):
-        return "".join(s.get("t", "") if isinstance(s, dict) else str(s) for s in v)
-    return str(v) if v is not None else ""
 for row in extra_sheets["danhSach"]["rows"]:
-    row["mou"] = _flatten(row.get("mou"))
+    row["mou"] = _flatten_val(row.get("mou"))
 
 # Trích thông tin kỳ tuyển sinh từ sheet Danh sách
 def get_semester_info(wb):
@@ -638,7 +816,8 @@ def get_semester_info(wb):
             m = re.search(r'KỲ THÁNG\s*(\d+)/(\d+)', title, re.IGNORECASE)
             if m:
                 return {"ky": m.group(1), "nam": m.group(2), "title": title}
-    except:
+    except Exception as e:
+        print(f"  [WARNING] Không đọc được thông tin kỳ: {e}")
         pass
     return {"ky": "3", "nam": "2027", "title": "DANH SÁCH TRƯỜNG HÀN QUỐC - KỲ THÁNG 3/2027"}
 
@@ -652,6 +831,13 @@ const SEMESTER_INFO = """ + json.dumps(semester_info, ensure_ascii=False) + """;
 
 const SCHOOLS_DATA = """
 js_content += json.dumps(schools, ensure_ascii=False, indent=2)
+
+js_content += """;
+
+// Advisor profiles tự động sinh từ dữ liệu trường — dùng làm fallback
+// Muốn ghi đè: sửa trong advisor.js
+const GENERATED_ADVISOR_PROFILES = """
+js_content += json.dumps(advisor_profiles, ensure_ascii=False, indent=2)
 
 js_content += """;
 
