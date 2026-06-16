@@ -48,9 +48,10 @@ function getSchoolById(schoolId) {
 }
 
 function getAdvisorRules(schoolId, school) {
+  var profiles = window.ADVISOR_PROFILES || {};
   let rules = null;
-  if (typeof ADVISOR_PROFILES !== "undefined" && ADVISOR_PROFILES[schoolId]) {
-    rules = Object.assign({}, ADVISOR_PROFILES[schoolId]);
+  if (profiles[schoolId]) {
+    rules = Object.assign({}, profiles[schoolId]);
   } else if (typeof buildFallbackAdvisorProfile === "function") {
     rules = buildFallbackAdvisorProfile(school) || {};
   } else {
@@ -111,7 +112,7 @@ function saveRecentSchool(schoolId) {
   const next = [schoolId, ...getRecentSchools().filter(id => id !== schoolId)]
     .filter(id => getSchoolById(id))
     .slice(0, 5);
-  localStorage.setItem("recentSchools", JSON.stringify(next));
+  try { localStorage.setItem("recentSchools", JSON.stringify(next)); } catch (e) {}
 }
 
 function renderRecentSchools() {
@@ -635,74 +636,13 @@ function getCompareRisk(school) {
   return risks.join("; ") || "Chưa có rủi ro nổi bật";
 }
 
-const D26_SAMPLE_CHECKLIST = [
-  {
-    group: "Hồ sơ visa",
-    items: [
-      { name: "Application form Đại sứ quán", level: "Bắt buộc", note: "Điền đúng mẫu hiện hành của ĐSQ/LSQ." },
-      { name: "Đơn xác nhận lịch sử bị từ chối visa", level: "Bắt buộc", note: "Cần khai trung thực lịch sử visa trước đó." },
-      { name: "Thư mời nhập học", level: "Bắt buộc", note: "Dùng bản do trường Hàn phát hành." },
-      { name: "Đăng ký kinh doanh trường Hàn", level: "Bắt buộc", note: "Thường nộp bản photo hoặc file trường cung cấp." },
-      { name: "MOU giữa trường Việt Nam và trường Hàn", level: "Bắt buộc", note: "Kiểm tra đúng cặp trường/hệ chương trình." },
-      { name: "Quyết định trao đổi sinh viên", level: "Bắt buộc", note: "Thông tin học sinh và trường phải khớp hồ sơ." },
-      { name: "Thư tiến cử", level: "Bắt buộc", note: "Thường do trường Việt Nam cấp theo mẫu." },
-      { name: "Giấy khám sức khỏe", level: "Bắt buộc", note: "Lưu ý yêu cầu lao phổi và thời hạn giấy khám." }
-    ]
-  },
-  {
-    group: "Hồ sơ học tập",
-    items: [
-      { name: "Kế hoạch học tập", level: "Bắt buộc", note: "Nội dung cần hợp lý với ngành, trường và lộ trình D2-6." },
-      { name: "Giới thiệu bản thân", level: "Bắt buộc", note: "Tránh viết chung chung, cần khớp hoàn cảnh hồ sơ." },
-      { name: "Giấy xác nhận sinh viên", level: "Bắt buộc", note: "Chuẩn bị cả bản dịch/công chứng nếu được yêu cầu." },
-      { name: "Bảng điểm cao đẳng/đại học", level: "Bắt buộc", note: "Thông tin điểm, kỳ học, tên trường phải rõ ràng." },
-      { name: "Học bạ THPT", level: "Bắt buộc", note: "Kiểm tra GPA và số buổi nghỉ trước khi chọn trường." },
-      { name: "Bằng tốt nghiệp THPT", level: "Bắt buộc", note: "Cần đối chiếu bản gốc khi nộp hoặc phỏng vấn." },
-      { name: "Tem tím bằng tốt nghiệp", level: "Bắt buộc", note: "Số lượng bản tùy yêu cầu trường/ĐSQ." },
-      { name: "Tem tím học bạ", level: "Bắt buộc", note: "Nên chuẩn bị dư theo kế hoạch nộp trường và visa." },
-      { name: "Tem tím bảng điểm", level: "Bắt buộc", note: "Áp dụng với hồ sơ đang học/đã học CĐ/ĐH." },
-      { name: "Tem tím giấy xác nhận sinh viên", level: "Bắt buộc", note: "Thông tin phải khớp giấy xác nhận gốc." }
-    ]
-  },
-  {
-    group: "Hồ sơ tài chính",
-    items: [
-      { name: "Sổ tiết kiệm học sinh", level: "Bắt buộc", note: "Ưu tiên đứng tên học sinh, kiểm tra số tiền và thời hạn." },
-      { name: "Xác nhận số dư tài khoản", level: "Bắt buộc", note: "Phát hành gần thời điểm nộp theo yêu cầu hồ sơ." },
-      { name: "Xác nhận thu nhập", level: "Bắt buộc", note: "Cần logic với nghề nghiệp và dòng tiền gia đình." },
-      { name: "Hợp đồng lao động hoặc giấy xác nhận công việc", level: "Nên có", note: "Giúp làm rõ nguồn thu nhập của người bảo lãnh." },
-      { name: "Sao kê tài khoản bố", level: "Nên có", note: "Cần khi chứng minh dòng tiền hoặc thu nhập gia đình." },
-      { name: "Sao kê tài khoản mẹ", level: "Nên có", note: "Bổ sung nếu mẹ là người bảo lãnh hoặc có dòng tiền chính." },
-      { name: "Sổ đỏ hoặc giấy tờ tài sản", level: "Nên có", note: "Tăng độ tin cậy tài chính nếu gia đình có tài sản." },
-      { name: "Giải trình sao kê", level: "Tùy trường hợp", note: "Cần khi dòng tiền lớn, bất thường hoặc khó giải thích." },
-      { name: "Giải trình đăng ký kinh doanh", level: "Tùy trường hợp", note: "Dùng khi gia đình kinh doanh hoặc nguồn thu từ hộ kinh doanh." },
-      { name: "Cam kết bảo lãnh tài chính", level: "Bắt buộc", note: "Thông tin người bảo lãnh phải khớp giấy tờ nhân thân." }
-    ]
-  },
-  {
-    group: "Hồ sơ nhân thân",
-    items: [
-      { name: "Giấy khai sinh", level: "Bắt buộc", note: "Dùng để chứng minh quan hệ gia đình." },
-      { name: "CT07", level: "Bắt buộc", note: "Cần đúng mẫu và thông tin cư trú phải khớp." },
-      { name: "Photo hộ chiếu", level: "Bắt buộc", note: "Hộ chiếu còn hạn và thông tin rõ nét." },
-      { name: "CCCD học sinh", level: "Bắt buộc", note: "Thông tin phải khớp hộ chiếu và hồ sơ học tập." },
-      { name: "CCCD bố", level: "Bắt buộc", note: "Cần nếu bố là người bảo lãnh hoặc chứng minh quan hệ." },
-      { name: "CCCD mẹ", level: "Bắt buộc", note: "Cần nếu mẹ là người bảo lãnh hoặc chứng minh quan hệ." }
-    ]
-  },
-  {
-    group: "Hồ sơ bổ sung",
-    items: [
-      { name: "Giải trình địa chỉ", level: "Tùy trường hợp", note: "Dùng khi địa chỉ trên các giấy tờ chưa thống nhất." },
-      { name: "Bảo hiểm nhân thọ", level: "Nên có", note: "Có thể bổ sung như một bằng chứng tài sản nếu phù hợp." },
-      { name: "Giấy tờ nghề nghiệp đặc thù của gia đình", level: "Tùy trường hợp", note: "Ví dụ giấy tờ tàu cá, nông nghiệp, kinh doanh, cho thuê tài sản." },
-      { name: "Hồ sơ gốc mang theo khi nộp/đối chiếu", level: "Bắt buộc", note: "Bằng gốc, học bạ gốc, bảng điểm gốc, giấy xác nhận sinh viên gốc." }
-    ]
-  }
-];
+function getChecklistData() {
+  return window.CHECKLIST_GROUPED || [];
+}
 
 function renderD26Checklist() {
-  const total = D26_SAMPLE_CHECKLIST.reduce((sum, group) => sum + group.items.length, 0);
+  const groups = getChecklistData();
+  const total = groups.reduce(function(sum, g) { return sum + g.items.length; }, 0);
   return `
     <section class="d26-checklist">
       <div class="checklist-head">
@@ -714,26 +654,28 @@ function renderD26Checklist() {
         <span>${total} đầu mục</span>
       </div>
       <div class="checklist-groups">
-        ${D26_SAMPLE_CHECKLIST.map((group, groupIndex) => `
-          <article class="checklist-group">
-            <h3>${escapeHtml(group.group)}</h3>
-            <div class="checklist-items">
-              ${group.items.map((item, itemIndex) => {
-                const id = `d26-check-${groupIndex}-${itemIndex}`;
-                return `
-                  <label class="checklist-item" for="${id}">
-                    <input id="${id}" type="checkbox" data-check-id="${id}">
-                    <span class="checklist-main">
-                      <strong>${escapeHtml(item.name)}</strong>
-                      <small>${escapeHtml(item.note)}</small>
-                    </span>
-                    <span class="checklist-level checklist-level-${getChecklistLevelClass(item.level)}">${escapeHtml(item.level)}</span>
-                  </label>
-                `;
-              }).join("")}
-            </div>
-          </article>
-        `).join("")}
+        ${groups.map(function(group, groupIndex) {
+          return `
+            <article class="checklist-group">
+              <h3>${escapeHtml(group.group || 'Khác')}</h3>
+              <div class="checklist-items">
+                ${group.items.map(function(item, itemIndex) {
+                  const id = 'd26-check-' + groupIndex + '-' + itemIndex;
+                  return `
+                    <label class="checklist-item" for="${id}">
+                      <input id="${id}" type="checkbox" data-check-id="${id}">
+                      <span class="checklist-main">
+                        <strong>${escapeHtml(item.name)}</strong>
+                        <small>${escapeHtml(item.note)}</small>
+                      </span>
+                      <span class="checklist-level checklist-level-${getChecklistLevelClass(item.level)}">${escapeHtml(item.level)}</span>
+                    </label>
+                  `;
+                }).join('')}
+              </div>
+            </article>
+          `;
+        }).join('')}
       </div>
       <div class="checklist-warning">
         Không dùng checklist này thay thế việc kiểm tra yêu cầu mới nhất từ trường, ĐSQ/LSQ và từng hồ sơ cụ thể.
@@ -761,7 +703,7 @@ function bindD26Checklist(container) {
     input.checked = Boolean(state[input.dataset.checkId]);
     input.addEventListener("change", () => {
       state[input.dataset.checkId] = input.checked;
-      localStorage.setItem(storageKey, JSON.stringify(state));
+      try { localStorage.setItem(storageKey, JSON.stringify(state)); } catch (e) {}
     });
   });
 }
@@ -952,8 +894,14 @@ document.querySelectorAll(".topbar-action").forEach(btn => {
 });
 
 function init() {
+  if (!window.__DATA_READY__) {
+    // API loader chưa hoàn thành, hẹn init lại
+    document.addEventListener('app-data-ready', init, { once: true });
+    return;
+  }
+
   const content = document.getElementById("advisor-content");
-  if (typeof SCHOOLS_DATA === "undefined") {
+  if (typeof SCHOOLS_DATA === "undefined" || Object.keys(SCHOOLS_DATA).length === 0) {
     content.innerHTML = `<p class="empty" style="padding:2rem;color:#dc2626;">
       Chưa tải được thông tin trường. Vui lòng thử lại sau.
     </p>`;

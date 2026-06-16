@@ -166,7 +166,7 @@ const SCHOOLS_DATA = {
     "system": "D2-6 > D2-1 (Cao Đẳng)",
     "quota": 200,
     "images": {
-      "main": "images/placeholder.svg",
+      "main": "images/dh-induk/logo.jpg",
       "catalog": "",
       "locationMap": "",
       "invoice": "",
@@ -485,7 +485,7 @@ const SCHOOLS_DATA = {
     "system": "D2-6 > D2-2 (Đại học 4 năm)",
     "quota": 200,
     "images": {
-      "main": "images/placeholder.svg",
+      "main": "images/dh-sangmyung/logo.jpg",
       "catalog": "",
       "locationMap": "",
       "invoice": "",
@@ -944,7 +944,7 @@ const SCHOOLS_DATA = {
     "system": "D2-6 > D2-2 (Đại học)",
     "quota": 200,
     "images": {
-      "main": "images/placeholder.svg",
+      "main": "images/dh-dongeui/logo.png",
       "catalog": "",
       "locationMap": "",
       "invoice": "",
@@ -2833,7 +2833,7 @@ const SCHOOLS_DATA = {
   }
 };
 
-// Advisor profiles tự động sinh từ dữ liệu trường — dùng làm fallback
+// Advisor profiles tự động sinh từ dữ liệu trường - dùng làm fallback
 // Muốn ghi đè: sửa trong advisor.js
 const GENERATED_ADVISOR_PROFILES = {
   "dh-osan": {

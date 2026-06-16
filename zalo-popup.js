@@ -1,5 +1,4 @@
 (function () {
-  const ZALO_GROUP_URL = "https://zalo.me/g/1oq8ngti4pcbfmxdbe9g";
   function dismissPopup(hours) {
     const overlay = document.getElementById("zalo-popup");
     if (!overlay) return;
@@ -43,22 +42,24 @@
     const icon = document.getElementById("theme-icon");
     if (!btn) return;
 
-    const saved = localStorage.getItem("d26Theme");
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    if (saved === "dark" || (!saved && prefersDark)) {
-      document.documentElement.setAttribute("data-theme", "dark");
-      if (icon) icon.textContent = "☀️";
-    }
+    try {
+      const saved = localStorage.getItem("d26Theme");
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      if (saved === "dark" || (!saved && prefersDark)) {
+        document.documentElement.setAttribute("data-theme", "dark");
+        if (icon) icon.textContent = "☀️";
+      }
+    } catch (e) {}
 
     btn.addEventListener("click", () => {
       const isDark = document.documentElement.getAttribute("data-theme") === "dark";
       if (isDark) {
         document.documentElement.removeAttribute("data-theme");
-        localStorage.setItem("d26Theme", "light");
+        try { localStorage.setItem("d26Theme", "light"); } catch (e) {}
         if (icon) icon.textContent = "🌙";
       } else {
         document.documentElement.setAttribute("data-theme", "dark");
-        localStorage.setItem("d26Theme", "dark");
+        try { localStorage.setItem("d26Theme", "dark"); } catch (e) {}
         if (icon) icon.textContent = "☀️";
       }
     });
@@ -76,5 +77,4 @@
   }
 
   window.openZaloPopup = openPopup;
-  window.ZALO_GROUP_URL = ZALO_GROUP_URL;
 })();

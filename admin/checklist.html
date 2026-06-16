@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checklist Visa — Admin Thông Tin Trường Hàn</title>
+<link rel="stylesheet" href="admin.css">
+<style>
+.checklist-header { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; }
+.checklist-header h2 { margin:0; font-size:18px; }
+.checklist-header .stats { font-size:13px; color:var(--gray-500); }
+.group-section { margin-bottom:24px; border:1px solid var(--gray-200); border-radius:8px; overflow:hidden; }
+.group-head { display:flex; justify-content:space-between; align-items:center; padding:12px 16px; background:var(--gray-50); border-bottom:1px solid var(--gray-200); font-weight:600; font-size:14px; }
+.group-head .count { font-weight:400; color:var(--gray-400); font-size:12px; }
+.item-row-check { display:flex; align-items:center; gap:8px; padding:8px 16px; border-bottom:1px solid var(--gray-100); }
+.item-row-check:last-child { border-bottom:none; }
+.item-row-check .item-handle { cursor:grab; color:var(--gray-400); font-size:16px; user-select:none; }
+.item-row-check .item-content { flex:2; }
+.item-row-check .item-content input { width:100%; padding:6px 8px; border:1px solid var(--gray-200); border-radius:4px; font-size:13px; }
+.item-row-check .item-note { flex:1.5; }
+.item-row-check .item-note input { width:100%; padding:6px 8px; border:1px solid var(--gray-200); border-radius:4px; font-size:13px; }
+.item-row-check .item-level select { padding:6px 8px; border:1px solid var(--gray-200); border-radius:4px; font-size:13px; background:white; }
+.item-row-check .item-actions { display:flex; gap:4px; }
+.item-row-check .item-actions button { padding:4px 8px; font-size:12px; }
+.item-row-check.is-new { background:#f0fdf4; }
+.item-row-check.is-dirty { background:#fffbeb; }
+.empty-group { padding:24px; text-align:center; color:var(--gray-400); font-size:13px; }
+.modal-small .modal-box { max-width:400px; }
+</style>
+</head>
+<body>
+<script src="admin.js"></script>
+<script>checkAuth();</script>
+
+<div class="admin-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h2>🏫 Trường Hàn</h2>
+      <div class="sub">Quản lý dữ liệu</div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+        Dashboard
+      </a>
+      <a href="editor.html?mode=new">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Thêm trường
+      </a>
+      <a href="checklist.html" class="active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        Checklist Visa
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div id="sidebar-user"></div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main-content">
+    <div class="top-bar">
+      <h1>Checklist Visa D2-6</h1>
+      <div class="user-info">
+        <span id="user-display"></span>
+        <button class="btn btn-outline btn-sm" onclick="logout()">Đăng xuất</button>
+      </div>
+    </div>
+
+    <div class="content-area">
+      <div class="card">
+        <div class="card-header checklist-header">
+          <div>
+            <h2>Danh sách hồ sơ</h2>
+            <span class="stats" id="total-stats">Đang tải...</span>
+          </div>
+          <div class="toolbar">
+            <button class="btn btn-primary btn-sm" onclick="showAddModal()">+ Thêm mục</button>
+            <button class="btn btn-outline btn-sm" onclick="saveAllChanges()" id="save-all-btn" disabled>💾 Lưu tất cả</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div id="checklist-container">
+            <div class="spinner"></div> Đang tải...
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Add/Edit Modal -->
+<div class="modal-overlay" id="item-modal">
+  <div class="modal-box modal-small">
+    <h3 id="modal-title">Thêm mục mới</h3>
+    <div class="form-group">
+      <label for="modal-group">Nhóm</label>
+      <select id="modal-group">
+        <option value="Hồ sơ visa">Hồ sơ visa</option>
+        <option value="Hồ sơ học tập">Hồ sơ học tập</option>
+        <option value="Hồ sơ tài chính">Hồ sơ tài chính</option>
+        <option value="Hồ sơ nhân thân">Hồ sơ nhân thân</option>
+        <option value="Hồ sơ bổ sung">Hồ sơ bổ sung</option>
+        <option value="Khác">Khác</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="modal-content">Tên hồ sơ *</label>
+      <input type="text" id="modal-content" placeholder="VD: Application form Đại sứ quán">
+    </div>
+    <div class="form-group">
+      <label for="modal-note">Ghi chú</label>
+      <input type="text" id="modal-note" placeholder="VD: Điền đúng mẫu hiện hành của ĐSQ/LSQ">
+    </div>
+    <div class="form-group">
+      <label for="modal-level">Mức độ</label>
+      <select id="modal-level">
+        <option value="Bắt buộc">Bắt buộc</option>
+        <option value="Nên có">Nên có</option>
+        <option value="Tùy trường hợp">Tùy trường hợp</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('item-modal')">Huỷ</button>
+      <button class="btn btn-primary" id="modal-save-btn" onclick="saveModalItem()">Thêm</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete modal -->
+<div class="modal-overlay" id="delete-modal">
+  <div class="modal-box modal-small">
+    <h3>Xoá mục</h3>
+    <p>Bạn có chắc muốn xoá <strong id="delete-name"></strong>?</p>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('delete-modal')">Huỷ</button>
+      <button class="btn btn-danger" id="delete-confirm-btn">Xoá</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let items = [];
+let changedIds = new Set();
+let deleteTarget = null;
+let editingId = null;
+
+// User
+const user = getUser();
+if (user) {
+  document.getElementById('user-display').textContent = user.displayName || user.email;
+  document.getElementById('sidebar-user').textContent = user.email;
+}
+
+// ─── Load ───
+async function loadItems() {
+  try {
+    const res = await api('GET', '/admin/checklist');
+    items = res.data || [];
+    renderGroups();
+  } catch (err) {
+    document.getElementById('checklist-container').innerHTML =
+      '<p style="color:var(--danger);text-align:center;padding:40px;">Lỗi: ' + escapeHtml(err.message) + '</p>';
+  }
+}
+
+function renderGroups() {
+  const container = document.getElementById('checklist-container');
+  const grouped = {};
+  const order = [];
+
+  items.forEach(function(item) {
+    const g = item.group_name || 'Khác';
+    if (!grouped[g]) {
+      grouped[g] = [];
+      order.push(g);
+    }
+    grouped[g].push(item);
+  });
+
+  document.getElementById('total-stats').textContent = items.length + ' mục · ' + order.length + ' nhóm';
+
+  if (items.length === 0) {
+    container.innerHTML = '<div class="empty-state"><p>Chưa có mục nào trong checklist. Nhấn "+ Thêm mục" để bắt đầu.</p></div>';
+    return;
+  }
+
+  let html = '';
+  order.forEach(function(g, gi) {
+    const groupItems = grouped[g];
+    html += '<div class="group-section" data-group="' + escapeHtml(g) + '">';
+    html += '<div class="group-head">' + escapeHtml(g) + ' <span class="count">' + groupItems.length + ' mục</span></div>';
+
+    groupItems.forEach(function(item, i) {
+      const isNew = item.__isNew;
+      const rowClass = isNew ? 'is-new' : '';
+      html += '<div class="item-row-check ' + rowClass + '" data-id="' + item.id + '">';
+      html += '<span class="item-handle">⋮⋮</span>';
+      html += '<div class="item-content"><input type="text" value="' + escapeHtml(item.content || '') + '" data-field="content" oninput="markChanged(this)"></div>';
+      html += '<div class="item-note"><input type="text" value="' + escapeHtml(item.note || '') + '" data-field="note" oninput="markChanged(this)"></div>';
+      html += '<div class="item-level"><select data-field="level" oninput="markChanged(this)">';
+      ['Bắt buộc','Nên có','Tùy trường hợp'].forEach(function(lv) {
+        html += '<option value="' + lv + '"' + (lv === item.level ? ' selected' : '') + '>' + lv + '</option>';
+      });
+      html += '</select></div>';
+      html += '<div class="item-actions">';
+      html += '<button class="btn btn-outline btn-sm" onclick="editItem(\'' + item.id + '\')">Sửa</button>';
+      html += '<button class="btn btn-danger btn-sm" onclick="showDeleteItem(\'' + item.id + '\', \'' + escapeHtml(item.content || '') + '\')">Xoá</button>';
+      html += '</div></div>';
+    });
+
+    html += '</div>';
+  });
+
+  container.innerHTML = html;
+  changedIds.clear();
+  document.getElementById('save-all-btn').disabled = true;
+}
+
+// ─── Change tracking ───
+function markChanged(input) {
+  const row = input.closest('.item-row-check');
+  if (row) {
+    row.classList.add('is-dirty');
+    changedIds.add(row.dataset.id);
+    document.getElementById('save-all-btn').disabled = false;
+  }
+}
+
+// ─── Add via modal ───
+function showAddModal() {
+  editingId = null;
+  document.getElementById('modal-title').textContent = 'Thêm mục mới';
+  document.getElementById('modal-save-btn').textContent = 'Thêm';
+  document.getElementById('modal-group').value = 'Hồ sơ visa';
+  document.getElementById('modal-content').value = '';
+  document.getElementById('modal-note').value = '';
+  document.getElementById('modal-level').value = 'Bắt buộc';
+  document.getElementById('item-modal').classList.add('show');
+}
+
+function editItem(id) {
+  const item = items.find(function(i) { return i.id === id; });
+  if (!item) return;
+  editingId = id;
+  document.getElementById('modal-title').textContent = 'Sửa mục';
+  document.getElementById('modal-save-btn').textContent = 'Lưu';
+  document.getElementById('modal-group').value = item.group_name || 'Hồ sơ visa';
+  document.getElementById('modal-content').value = item.content || '';
+  document.getElementById('modal-note').value = item.note || '';
+  document.getElementById('modal-level').value = item.level || 'Bắt buộc';
+  document.getElementById('item-modal').classList.add('show');
+}
+
+async function saveModalItem() {
+  const group = document.getElementById('modal-group').value;
+  const content = document.getElementById('modal-content').value.trim();
+  const note = document.getElementById('modal-note').value.trim();
+  const level = document.getElementById('modal-level').value;
+
+  if (!content) {
+    toast('Vui lòng nhập tên hồ sơ', 'error');
+    return;
+  }
+
+  try {
+    if (editingId) {
+      // Update existing
+      await api('PUT', '/admin/checklist/' + editingId, { groupName: group, content: content, note: note, level: level });
+      toast('Đã cập nhật!', 'success');
+    } else {
+      // Create new
+      await api('POST', '/admin/checklist', { groupName: group, content: content, note: note, level: level });
+      toast('Đã thêm mục mới!', 'success');
+    }
+    closeModal('item-modal');
+    loadItems();
+  } catch (err) {
+    toast('Lỗi: ' + err.message, 'error');
+  }
+}
+
+// ─── Save all inline changes ───
+async function saveAllChanges() {
+  const btn = document.getElementById('save-all-btn');
+  btn.disabled = true;
+  btn.textContent = 'Đang lưu...';
+
+  let success = 0;
+  let failed = 0;
+
+  const rows = document.querySelectorAll('.item-row-check');
+  for (const row of rows) {
+    const id = row.dataset.id;
+    if (!changedIds.has(id)) continue;
+
+    const content = row.querySelector('[data-field="content"]').value.trim();
+    const note = row.querySelector('[data-field="note"]').value.trim();
+    const level = row.querySelector('[data-field="level"]').value;
+
+    if (!content) continue;
+
+    try {
+      await api('PUT', '/admin/checklist/' + id, { content: content, note: note, level: level });
+      success++;
+      row.classList.remove('is-dirty');
+    } catch (err) {
+      failed++;
+      console.error('Save error for', id, err);
+    }
+  }
+
+  changedIds.clear();
+  btn.textContent = '💾 Lưu tất cả';
+  btn.disabled = (changedIds.size === 0);
+
+  if (failed === 0) {
+    toast('Đã lưu ' + success + ' thay đổi!', 'success');
+  } else {
+    toast('Lưu ' + success + ' mục, ' + failed + ' lỗi', 'error');
+  }
+
+  loadItems();
+}
+
+// ─── Delete ───
+function showDeleteItem(id, name) {
+  deleteTarget = id;
+  document.getElementById('delete-name').textContent = name;
+  document.getElementById('delete-modal').classList.add('show');
+}
+
+document.getElementById('delete-confirm-btn').addEventListener('click', async function() {
+  if (!deleteTarget) return;
+  try {
+    await api('DELETE', '/admin/checklist/' + deleteTarget);
+    toast('Đã xoá mục!', 'success');
+    closeModal('delete-modal');
+    loadItems();
+  } catch (err) {
+    toast('Lỗi: ' + err.message, 'error');
+    closeModal('delete-modal');
+  }
+});
+
+// ─── Modal helpers ───
+function closeModal(id) {
+  document.getElementById(id).classList.remove('show');
+}
+
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(function(el) {
+  el.addEventListener('click', function(e) {
+    if (e.target === e.currentTarget) closeModal(this.id);
+  });
+});
+
+// ─── Init ───
+loadItems();
+</script>
+</body>
+</html>

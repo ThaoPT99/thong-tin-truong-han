@@ -1,138 +1,111 @@
-// ── Admin JS — shared utilities ──
+/* ============================================
+   Admin JS — Shared helpers for Admin UI
+   ============================================ */
 
-const API = window.location.origin;  // Same origin in production
+const API_BASE = window.location.origin + '/api';
 
-function getToken() {
-    return localStorage.getItem('adminToken');
-}
+// ─── Auth ───
+
+function getToken() { return localStorage.getItem('admin_token'); }
+function setToken(token) { localStorage.setItem('admin_token', token); }
+function clearToken() { localStorage.removeItem('admin_token'); }
 
 function getUser() {
-    try { return JSON.parse(localStorage.getItem('adminUser')); }
-    catch { return null; }
+  try { return JSON.parse(localStorage.getItem('admin_user')); }
+  catch { return null; }
 }
 
-function apiHeaders() {
-    const h = { 'Content-Type': 'application/json' };
-    const token = getToken();
-    if (token) h['Authorization'] = 'Bearer ' + token;
-    return h;
+function setUser(user) { localStorage.setItem('admin_user', JSON.stringify(user)); }
+function clearUser() { localStorage.removeItem('admin_user'); }
+
+function checkAuth() {
+  const token = getToken();
+  if (!token) {
+    window.location.href = '/admin/login.html';
+    return false;
+  }
+  return true;
 }
 
-function showToast(message, type = 'success') {
-    const existing = document.querySelector('.admin-toast');
-    if (existing) existing.remove();
-
-    const toast = document.createElement('div');
-    toast.className = 'admin-toast' + (type === 'error' ? ' error' : '');
-    toast.textContent = message;
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 3000);
-}
-
-function showModal(html) {
-    const backdrop = document.createElement('div');
-    backdrop.className = 'admin-modal-backdrop';
-    backdrop.innerHTML = html;
-    backdrop.addEventListener('click', (e) => {
-        if (e.target === backdrop) backdrop.remove();
+// Verify token asynchronously (redirect if invalid, no flash)
+document.addEventListener('DOMContentLoaded', async () => {
+  const token = getToken();
+  if (!token) return;
+  try {
+    const r = await fetch(API_BASE + '/auth/verify', {
+      headers: { 'Authorization': 'Bearer ' + token }
     });
-    document.body.appendChild(backdrop);
-    backdrop.querySelector('.admin-modal-close')?.addEventListener('click', () => backdrop.remove());
-    return backdrop;
+    if (!r.ok) {
+      clearToken();
+      clearUser();
+      window.location.href = '/admin/login.html';
+    }
+  } catch {}
+});
+
+function logout() {
+  clearToken();
+  clearUser();
+  window.location.href = '/admin/login.html';
 }
+
+// ─── API Helper ───
+
+async function api(method, path, body) {
+  const token = getToken();
+  const headers = { 'Content-Type': 'application/json' };
+  if (token) headers['Authorization'] = 'Bearer ' + token;
+
+  const opts = { method, headers };
+  if (body) opts.body = JSON.stringify(body);
+
+  const res = await fetch(API_BASE + path, opts);
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.error || 'API error: ' + res.status);
+  }
+  return data;
+}
+
+// ─── Toast notifications ───
+
+function toast(message, type = 'info') {
+  const container = document.getElementById('toast-container');
+  if (!container) return;
+  const el = document.createElement('div');
+  el.className = 'toast toast-' + type;
+  el.textContent = message;
+  container.appendChild(el);
+  setTimeout(() => { el.style.opacity = '0'; el.style.transform = 'translateX(100%)'; el.style.transition = '.3s ease'; }, 3000);
+  setTimeout(() => el.remove(), 3500);
+}
+
+// ─── Format helpers ───
 
 function escapeHtml(str) {
-    const d = document.createElement('div');
-    d.textContent = String(str ?? '');
-    return d.innerHTML;
+  if (!str) return '';
+  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-// Auth check
-(function checkAuth() {
-    const token = getToken();
-    if (!token) {
-        window.location.href = 'login.html';
-        return;
-    }
-})();
-
-// Logout
-document.getElementById('nav-logout')?.addEventListener('click', (e) => {
-    e.preventDefault();
-    localStorage.removeItem('adminToken');
-    localStorage.removeItem('adminUser');
-    window.location.href = 'login.html';
-});
-
-// ── Helper: Export ──
-async function _callExport(url, btnEl, successMsg) {
-    if (btnEl) {
-        const orig = btnEl.innerHTML || btnEl.textContent;
-        btnEl.disabled = true;
-        btnEl.innerHTML = '⏳ Đang xử lý...';
-        try {
-            const res = await fetch(API + url, { method: 'POST', headers: apiHeaders() });
-            const data = await res.json();
-            if (res.ok) {
-                showToast(data.message || successMsg || 'Thành công!');
-            } else {
-                showToast(data.error || 'Thất bại', 'error');
-            }
-        } catch {
-            showToast('Lỗi kết nối server', 'error');
-        }
-        btnEl.disabled = false;
-        btnEl.innerHTML = orig;
-    }
+function regionLabel(r) {
+  const map = {
+    seoul: 'Seoul', busan: 'Busan', gyeonggi: 'Gyeonggi', incheon: 'Incheon',
+    gwangju: 'Gwangju', daegu: 'Daegu', daejeon: 'Daejeon', ulsan: 'Ulsan',
+    chungcheongbuk: 'Chungcheongbuk', chungcheongnam: 'Chungcheongnam',
+    jeollabuk: 'Jeollabuk', jeollanam: 'Jeollanam',
+    gyeongsangbuk: 'Gyeongsangbuk', gyeongsangnam: 'Gyeongsangnam',
+    gangwon: 'Gangwon', jeju: 'Jeju'
+  };
+  return map[r] || r;
 }
 
-// Export data.js (chỉ ghi file)
-document.getElementById('nav-export')?.addEventListener('click', (e) => {
-    e.preventDefault();
-    _callExport('/api/export/data-js', e.currentTarget);
-});
-document.getElementById('btn-export')?.addEventListener('click', () => {
-    _callExport('/api/export/data-js', document.getElementById('btn-export'));
-});
+// ─── DOM ready ───
 
-// Export & Push (ghi file + git push lên GitHub)
-document.getElementById('nav-export-push')?.addEventListener('click', (e) => {
-    e.preventDefault();
-    _callExport('/api/export/push', e.currentTarget, '✅ Đã push lên GitHub! Vercel sẽ cập nhật sau 1-2 phút.');
-});
-document.getElementById('btn-export-push')?.addEventListener('click', () => {
-    _callExport('/api/export/push', document.getElementById('btn-export-push'), '✅ Đã push lên GitHub!');
-});
-
-// Import
-document.getElementById('nav-import')?.addEventListener('click', (e) => {
-    e.preventDefault();
-    document.getElementById('import-file-input')?.click();
-});
-
-document.getElementById('import-file-input')?.addEventListener('change', async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append('file', file);
-
-    showToast('Đang import...', 'success');
-    try {
-        const res = await fetch(API + '/api/import/excel', {
-            method: 'POST',
-            headers: { 'Authorization': 'Bearer ' + getToken() },
-            body: formData
-        });
-        const data = await res.json();
-        if (res.ok) {
-            showToast(data.message || 'Import thành công!');
-            setTimeout(() => location.reload(), 1000);
-        } else {
-            showToast(data.error || 'Import thất bại', 'error');
-        }
-    } catch {
-        showToast('Lỗi kết nối server', 'error');
-    }
-    e.target.value = '';
+document.addEventListener('DOMContentLoaded', () => {
+  // Add toast container
+  const tc = document.createElement('div');
+  tc.id = 'toast-container';
+  tc.className = 'toast-container';
+  document.body.appendChild(tc);
 });

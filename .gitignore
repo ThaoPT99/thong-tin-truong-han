@@ -6,3 +6,7 @@ __pycache__/
 *.pyc
 .env
 .DS_Store
+admin.db
+import_temp.xlsx
+uploads/
+.vercel

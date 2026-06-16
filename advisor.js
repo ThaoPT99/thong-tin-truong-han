@@ -1,214 +1,3 @@
-const ADVISOR_PROFILES = {
-  "dh-osan": {
-    gender: "all",
-    minGpa: 6.3,
-    maxAbsences: 15,
-    region: "near-seoul",
-    costLevel: 2,
-    visaChance: 4,
-    jobOpportunity: 5,
-    e7Opportunity: 5,
-    studyLoad: 2,
-    interviewDifficulty: 5,
-    tags: ["job", "e7", "low-cost", "near-seoul"]
-  },
-  "dh-induk": {
-    gender: "all",
-    minGpa: 5,
-    maxAbsences: 30,
-    region: "seoul",
-    costLevel: 2,
-    visaChance: 3,
-    jobOpportunity: 5,
-    e7Opportunity: 4,
-    studyLoad: 2,
-    interviewDifficulty: 4,
-    tags: ["job", "low-study", "seoul"]
-  },
-  "dh-yeonsung": {
-    gender: "all",
-    minGpa: 5.5,
-    maxAbsences: 25,
-    region: "near-seoul",
-    costLevel: 3,
-    visaChance: 5,
-    jobOpportunity: 4,
-    e7Opportunity: 4,
-    studyLoad: 3,
-    interviewDifficulty: 3,
-    tags: ["visa", "near-seoul", "balanced"]
-  },
-  "dh-sangmyung": {
-    gender: "all",
-    minGpa: 6,
-    maxAbsences: 20,
-    region: "seoul",
-    costLevel: 4,
-    visaChance: 4,
-    jobOpportunity: 4,
-    e7Opportunity: 5,
-    studyLoad: 5,
-    interviewDifficulty: 4,
-    tags: ["prestige", "e7", "seoul"]
-  },
-  "dh-nu-sinh-kyungin": {
-    gender: "female",
-    minGpa: 5.5,
-    maxAbsences: 25,
-    region: "near-seoul",
-    costLevel: 3,
-    visaChance: 5,
-    jobOpportunity: 4,
-    e7Opportunity: 5,
-    studyLoad: 3,
-    interviewDifficulty: 3,
-    tags: ["visa", "female", "e7", "near-seoul"]
-  },
-  "dh-y-te-dongnam": {
-    gender: "all",
-    minGpa: 5.5,
-    maxAbsences: 20,
-    region: "near-seoul",
-    costLevel: 3,
-    visaChance: 5,
-    jobOpportunity: 2,
-    e7Opportunity: 4,
-    studyLoad: 4,
-    interviewDifficulty: 3,
-    tags: ["visa", "healthcare", "near-seoul"]
-  },
-  "dh-dongeui": {
-    gender: "all",
-    minGpa: 5.5,
-    maxAbsences: 25,
-    region: "busan",
-    costLevel: 3,
-    visaChance: 5,
-    jobOpportunity: 5,
-    e7Opportunity: 5,
-    studyLoad: 4,
-    interviewDifficulty: 3,
-    tags: ["visa", "job", "e7", "busan"]
-  },
-  "cd-suncheon-jeil": {
-    gender: "all",
-    minGpa: 5,
-    maxAbsences: 30,
-    region: "province",
-    costLevel: 2,
-    visaChance: 4,
-    jobOpportunity: 4,
-    e7Opportunity: 5,
-    studyLoad: 3,
-    interviewDifficulty: 2,
-    tags: ["e7", "low-cost", "province"]
-  },
-  "dh-nu-sinh-busan": {
-    gender: "female",
-    minGpa: 5,
-    maxAbsences: 30,
-    region: "busan",
-    costLevel: 2,
-    visaChance: 4,
-    jobOpportunity: 4,
-    e7Opportunity: 4,
-    studyLoad: 3,
-    interviewDifficulty: 2,
-    tags: ["female", "low-cost", "busan"]
-  },
-  "dh-busan-catholic": {
-    gender: "all",
-    minGpa: 5.5,
-    maxAbsences: 25,
-    region: "busan",
-    costLevel: 3,
-    visaChance: 4,
-    jobOpportunity: 3,
-    e7Opportunity: 4,
-    studyLoad: 4,
-    interviewDifficulty: 3,
-    tags: ["healthcare", "busan", "stable"]
-  },
-  "dh-gimhae": {
-    gender: "all",
-    minGpa: 5,
-    maxAbsences: 30,
-    region: "busan",
-    costLevel: 2,
-    visaChance: 4,
-    jobOpportunity: 4,
-    e7Opportunity: 4,
-    studyLoad: 3,
-    interviewDifficulty: 2,
-    tags: ["low-cost", "technical", "busan"]
-  },
-  "dh-gwangju": {
-    gender: "all",
-    minGpa: 5,
-    maxAbsences: 30,
-    region: "gwangju",
-    costLevel: 2,
-    visaChance: 4,
-    jobOpportunity: 4,
-    e7Opportunity: 4,
-    studyLoad: 3,
-    interviewDifficulty: 2,
-    tags: ["low-cost", "gwangju", "province"]
-  },
-  "dh-nambu": {
-    gender: "all",
-    minGpa: 5,
-    maxAbsences: 30,
-    region: "gwangju",
-    costLevel: 1,
-    visaChance: 5,
-    jobOpportunity: 3,
-    e7Opportunity: 4,
-    studyLoad: 3,
-    interviewDifficulty: 2,
-    tags: ["visa", "low-cost", "gwangju"]
-  },
-  "dh-daewon": {
-    gender: "all",
-    minGpa: 5,
-    maxAbsences: 30,
-    region: "province",
-    costLevel: 1,
-    visaChance: 4,
-    jobOpportunity: 4,
-    e7Opportunity: 5,
-    studyLoad: 2,
-    interviewDifficulty: 2,
-    tags: ["low-cost", "e7", "low-study", "province"]
-  },
-  "dh-sengmyung": {
-    gender: "all",
-    minGpa: 5,
-    maxAbsences: 30,
-    region: "province",
-    costLevel: 2,
-    visaChance: 4,
-    jobOpportunity: 3,
-    e7Opportunity: 4,
-    studyLoad: 3,
-    interviewDifficulty: 2,
-    tags: ["stable", "low-cost", "province"]
-  },
-  "dh-nu-sinh-dongduk": {
-    gender: "female",
-    minGpa: 6,
-    maxAbsences: 20,
-    region: "seoul",
-    costLevel: 4,
-    visaChance: 4,
-    jobOpportunity: 4,
-    e7Opportunity: 4,
-    studyLoad: 4,
-    interviewDifficulty: 4,
-    tags: ["female", "prestige", "seoul", "arts"]
-  }
-};
-
 const PRIORITY_LABELS = {
   visa: "dễ đỗ visa",
   cost: "chi phí thấp",
@@ -410,12 +199,11 @@ function analyzeSchools(profile) {
 }
 
 function scoreSchool(schoolId, school, profile) {
-  // Ưu tiên: 1) Hardcoded ADVISOR_PROFILES > 2) GENERATED_ADVISOR_PROFILES > 3) Fallback
+  // Ưu tiên: 1) API advisor profiles > 2) Fallback
+  var profiles = window.ADVISOR_PROFILES || {};
   let rules = null;
-  if (ADVISOR_PROFILES[schoolId]) {
-    rules = Object.assign({}, ADVISOR_PROFILES[schoolId]);
-  } else if (typeof GENERATED_ADVISOR_PROFILES !== "undefined" && GENERATED_ADVISOR_PROFILES[schoolId]) {
-    rules = Object.assign({}, GENERATED_ADVISOR_PROFILES[schoolId]);
+  if (profiles[schoolId]) {
+    rules = Object.assign({}, profiles[schoolId]);
   } else {
     rules = buildFallbackAdvisorProfile(school) || {};
   }
@@ -644,18 +432,20 @@ function renderAdvisorResults(target, profile, results) {
     }
   });
   target.querySelector("[data-save-advisor]")?.addEventListener("click", () => {
-    localStorage.setItem("d26AdvisorLastResult", JSON.stringify({
-      savedAt: new Date().toISOString(),
-      profile,
-      top: top.map(item => ({
-        id: item.id,
-        name: item.school.name,
-        score: item.score,
-        level: item.level,
-        reasons: item.reasons,
-        risks: item.risks
-      }))
-    }));
+    try {
+      localStorage.setItem("d26AdvisorLastResult", JSON.stringify({
+        savedAt: new Date().toISOString(),
+        profile,
+        top: top.map(item => ({
+          id: item.id,
+          name: item.school.name,
+          score: item.score,
+          level: item.level,
+          reasons: item.reasons,
+          risks: item.risks
+        }))
+      }));
+    } catch (e) {}
     showStatus("Đã lưu trên trình duyệt này");
   });
   target.querySelector("[data-zalo-advisor]")?.addEventListener("click", () => {

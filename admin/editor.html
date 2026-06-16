@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chi tiết trường — Admin Thông Tin Trường Hàn</title>
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<script src="admin.js"></script>
+<script>checkAuth();</script>
+
+<div class="admin-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h2>🏫 Trường Hàn</h2>
+      <div class="sub">Quản lý dữ liệu</div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+        Dashboard
+      </a>
+      <a href="editor.html?mode=new">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Thêm trường
+      </a>      <a href="checklist.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        Checklist Visa
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div id="sidebar-user"></div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main-content editor-page">
+    <div class="top-bar">
+      <h1 id="page-title">Thêm trường mới</h1>
+      <div class="user-info">
+        <span id="user-display"></span>
+        <button class="btn btn-outline btn-sm" onclick="logout()">Đăng xuất</button>
+      </div>
+    </div>
+
+    <div class="content-area">
+      <div class="editor-form" id="editor-form">
+        <!-- Section 1: Basic Info -->
+        <div class="form-section" id="section-basic">
+          <div class="section-header" onclick="toggleSection(this)">
+            <h3>📋 Thông tin cơ bản</h3>
+            <span class="toggle-icon">▼</span>
+          </div>
+          <div class="section-body">
+            <div class="form-row three">
+              <div class="form-group">
+                <label for="name">Tên trường *</label>
+                <input type="text" id="name" required>
+              </div>
+              <div class="form-group">
+                <label for="nameKr">Tên tiếng Hàn</label>
+                <input type="text" id="nameKr">
+              </div>
+              <div class="form-group">
+                <label for="nameEn">Tên tiếng Anh</label>
+                <input type="text" id="nameEn">
+              </div>
+            </div>
+            <div class="form-row three">
+              <div class="form-group">
+                <label for="slug">Slug *</label>
+                <input type="text" id="slug" placeholder="dh-osan" required>
+                <div class="help-text">ID unique của trường, không khoảng trắng</div>
+              </div>
+              <div class="form-group">
+                <label for="system">Hệ đào tạo</label>
+                <input type="text" id="system" placeholder="D2-6 > D2-1 (Cao Đẳng)">
+              </div>
+              <div class="form-group">
+                <label for="quota">Chỉ tiêu</label>
+                <input type="number" id="quota" min="0">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="region">Vùng</label>
+                <select id="region">
+                  <option value="">— Chọn vùng —</option>
+                  <option value="seoul">Seoul</option>
+                  <option value="busan">Busan</option>
+                  <option value="gyeonggi">Gyeonggi</option>
+                  <option value="incheon">Incheon</option>
+                  <option value="gwangju">Gwangju</option>
+                  <option value="daegu">Daegu</option>
+                  <option value="daejeon">Daejeon</option>
+                  <option value="chungcheongbuk">Chungcheongbuk</option>
+                  <option value="chungcheongnam">Chungcheongnam</option>
+                  <option value="jeollabuk">Jeollabuk</option>
+                  <option value="jeollanam">Jeollanam</option>
+                  <option value="gyeongsangbuk">Gyeongsangbuk</option>
+                  <option value="gyeongsangnam">Gyeongsangnam</option>
+                  <option value="gangwon">Gangwon</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="location">Địa chỉ</label>
+                <input type="text" id="location">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 2: Images & Media -->
+        <div class="form-section" id="section-media">
+          <div class="section-header" onclick="toggleSection(this)">
+            <h3>🖼️ Hình ảnh & Media</h3>
+            <span class="toggle-icon">▼</span>
+          </div>
+          <div class="section-body">
+            <div class="form-row three">
+              <div class="form-group">
+                <label for="imageMain">Ảnh chính</label>
+                <input type="text" id="imageMain" placeholder="images/dh-osan/logo.png">
+              </div>
+              <div class="form-group">
+                <label for="catalogUrl">Link Catalog</label>
+                <input type="text" id="catalogUrl" placeholder="documents/catalog.pdf">
+              </div>
+              <div class="form-group">
+                <label for="invoiceUrl">Link Invoice</label>
+                <input type="text" id="invoiceUrl" placeholder="https://...">
+              </div>
+            </div>
+            <div class="form-row three">
+              <div class="form-group">
+                <label for="website">Website</label>
+                <input type="text" id="website" placeholder="https://www.osan.ac.kr">
+              </div>
+              <div class="form-group">
+                <label for="videoUrl">Video URL</label>
+                <input type="text" id="videoUrl" placeholder="https://www.youtube.com/watch?v=...">
+              </div>
+              <div class="form-group">
+                <label for="videoYoutubeId">Youtube ID</label>
+                <input type="text" id="videoYoutubeId" placeholder="noj5lFV5Feg">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="videoTitle">Video Title</label>
+              <input type="text" id="videoTitle">
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3: Details -->
+        <div class="form-section" id="section-details">
+          <div class="section-header" onclick="toggleSection(this)">
+            <h3>📝 Chi tiết</h3>
+            <span class="toggle-icon">▼</span>
+          </div>
+          <div class="section-body">
+            <div class="form-group">
+              <label for="intro">Giới thiệu trường</label>
+              <textarea id="intro" rows="6" placeholder="Giới thiệu về trường..."></textarea>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="tuition">Học phí</label>
+                <textarea id="tuition" rows="3" placeholder="Chi tiết học phí..."></textarea>
+              </div>
+              <div class="form-group">
+                <label for="ktx">Ký túc xá</label>
+                <textarea id="ktx" rows="3" placeholder="Thông tin KTX..."></textarea>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="insurance">Bảo hiểm</label>
+                <input type="text" id="insurance">
+              </div>
+              <div class="form-group">
+                <label for="schedule">Lịch học</label>
+                <input type="text" id="schedule">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="documentsNote">Ghi chú hồ sơ</label>
+                <input type="text" id="documentsNote">
+              </div>
+              <div class="form-group">
+                <label for="mou">MOU Partners</label>
+                <input type="text" id="mou" placeholder="HNC, HCCT, VTV...">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 4: Lists (conditions, majors, advantages, conversion) -->
+        <div class="form-section" id="section-lists">
+          <div class="section-header" onclick="toggleSection(this)">
+            <h3>📋 Danh sách</h3>
+            <span class="toggle-icon">▼</span>
+          </div>
+          <div class="section-body">
+            <!-- Conditions -->
+            <h4 style="margin-bottom:8px;font-size:13px;color:var(--gray-600);">Điều kiện tuyển sinh</h4>
+            <div class="list-editor" id="conditions-editor">
+              <div id="conditions-list"></div>
+              <button class="btn btn-outline btn-sm add-btn" onclick="addListItem('conditions')">+ Thêm điều kiện</button>
+            </div>
+            <hr style="margin:16px 0;border:none;border-top:1px solid var(--gray-200);">
+
+            <!-- Majors -->
+            <h4 style="margin-bottom:8px;font-size:13px;color:var(--gray-600);">Chuyên ngành</h4>
+            <div class="list-editor" id="majors-editor">
+              <div id="majors-list"></div>
+              <button class="btn btn-outline btn-sm add-btn" onclick="addListItem('majors')">+ Thêm chuyên ngành</button>
+            </div>
+            <hr style="margin:16px 0;border:none;border-top:1px solid var(--gray-200);">
+
+            <!-- Advantages -->
+            <h4 style="margin-bottom:8px;font-size:13px;color:var(--gray-600);">Ưu điểm</h4>
+            <div class="list-editor" id="advantages-editor">
+              <div id="advantages-list"></div>
+              <button class="btn btn-outline btn-sm add-btn" onclick="addListItem('advantages')">+ Thêm ưu điểm</button>
+            </div>
+            <hr style="margin:16px 0;border:none;border-top:1px solid var(--gray-200);">
+
+            <!-- Conversion -->
+            <h4 style="margin-bottom:8px;font-size:13px;color:var(--gray-600);">Lộ trình chuyển đổi</h4>
+            <div class="list-editor" id="conversion-editor">
+              <div id="conversion-list"></div>
+              <button class="btn btn-outline btn-sm add-btn" onclick="addListItem('conversion')">+ Thêm lộ trình</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 5: Documents -->
+        <div class="form-section" id="section-docs">
+          <div class="section-header" onclick="toggleSection(this)">
+            <h3>📄 Hồ sơ cần chuẩn bị</h3>
+            <span class="toggle-icon">▼</span>
+          </div>
+          <div class="section-body">
+            <div class="list-editor" id="documents-editor">
+              <div id="documents-list"></div>
+              <button class="btn btn-outline btn-sm add-btn" onclick="addListItem('documents')">+ Thêm hồ sơ</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 6: Partners -->
+        <div class="form-section" id="section-partners">
+          <div class="section-header" onclick="toggleSection(this)">
+            <h3>🤝 Đối tác</h3>
+            <span class="toggle-icon">▼</span>
+          </div>
+          <div class="section-body">
+            <div id="partners-list"></div>
+            <button class="btn btn-outline btn-sm" onclick="addPartner()">+ Thêm đối tác</button>
+          </div>
+        </div>
+
+        <!-- Section 7: Advisor Profile -->
+        <div class="form-section" id="section-advisor">
+          <div class="section-header" onclick="toggleSection(this)">
+            <h3>👤 Advisor Profile</h3>
+            <span class="toggle-icon">▼</span>
+          </div>
+          <div class="section-body">
+            <div class="advisor-grid">
+              <div class="form-group">
+                <label>Giới tính</label>
+                <select id="advisor-gender">
+                  <option value="all">Tất cả</option>
+                  <option value="male">Nam</option>
+                  <option value="female">Nữ</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Min GPA</label>
+                <select id="advisor-minGpa">
+                  <option value="5.0">5.0</option>
+                  <option value="5.5">5.5</option>
+                  <option value="6.0">6.0</option>
+                  <option value="6.5">6.5</option>
+                  <option value="7.0">7.0</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Max Absences</label>
+                <select id="advisor-maxAbsences">
+                  <option value="15">15</option>
+                  <option value="30">30</option>
+                  <option value="45">45</option>
+                  <option value="60">60</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Chi phí</label>
+                <select id="advisor-costLevel">
+                  <option value="1">1 - Rất rẻ</option>
+                  <option value="2">2 - Rẻ</option>
+                  <option value="3">3 - Trung bình</option>
+                  <option value="4">4 - Cao</option>
+                  <option value="5">5 - Rất cao</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Cơ hội Visa</label>
+                <select id="advisor-visaChance">
+                  <option value="1">1 - Rất thấp</option>
+                  <option value="2">2 - Thấp</option>
+                  <option value="3">3 - Trung bình</option>
+                  <option value="4">4 - Cao</option>
+                  <option value="5">5 - Rất cao</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Cơ hội việc</label>
+                <select id="advisor-jobOpportunity">
+                  <option value="1">1 - Rất thấp</option>
+                  <option value="2">2 - Thấp</option>
+                  <option value="3">3 - Trung bình</option>
+                  <option value="4">4 - Cao</option>
+                  <option value="5">5 - Rất cao</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Cơ hội E7</label>
+                <select id="advisor-e7Opportunity">
+                  <option value="1">1 - Rất thấp</option>
+                  <option value="2">2 - Thấp</option>
+                  <option value="3">3 - Trung bình</option>
+                  <option value="4">4 - Cao</option>
+                  <option value="5">5 - Rất cao</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Áp lực học</label>
+                <select id="advisor-studyLoad">
+                  <option value="1">1 - Rất nhẹ</option>
+                  <option value="2">2 - Nhẹ</option>
+                  <option value="3">3 - Trung bình</option>
+                  <option value="4">4 - Nặng</option>
+                  <option value="5">5 - Rất nặng</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Phỏng vấn</label>
+                <select id="advisor-interviewDifficulty">
+                  <option value="1">1 - Rất dễ</option>
+                  <option value="2">2 - Dễ</option>
+                  <option value="3">3 - Trung bình</option>
+                  <option value="4">4 - Khó</option>
+                  <option value="5">5 - Rất khó</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group" style="margin-top:12px;">
+              <label>Tags</label>
+              <input type="text" id="advisor-tags" placeholder="visa, job, e7, low-cost, prestige...">
+              <div class="help-text">Cách nhau bằng dấu phẩy</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Save / Cancel -->
+        <div style="display:flex;gap:12px;padding:16px 0;position:sticky;bottom:0;background:var(--gray-50);">
+          <button class="btn btn-primary" id="save-btn" onclick="saveSchool()">💾 Lưu thay đổi</button>
+          <button class="btn btn-outline" onclick="window.location='dashboard.html'">Huỷ</button>
+          <div style="flex:1"></div>
+          <span id="save-status" style="color:var(--gray-400);font-size:13px;align-self:center;"></span>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+let editingSlug = null;
+let originalData = null;
+
+// User info
+const user = getUser();
+if (user) {
+  document.getElementById('user-display').textContent = user.displayName || user.email;
+  document.getElementById('sidebar-user').textContent = user.email;
+}
+
+// ─── Init ───
+async function init() {
+  const params = new URLSearchParams(window.location.search);
+  const slug = params.get('slug');
+  const mode = params.get('mode');
+
+  if (slug && mode !== 'new') {
+    editingSlug = slug;
+    document.getElementById('page-title').textContent = 'Sửa trường: ' + slug;
+    document.getElementById('save-btn').textContent = '💾 Cập nhật';
+
+    try {
+      const res = await api('GET', '/schools/' + encodeURIComponent(slug));
+      const school = res.data;
+      originalData = school;
+      populateForm(school);
+    } catch (err) {
+      toast('Lỗi tải dữ liệu: ' + err.message, 'error');
+    }
+  } else {
+    document.getElementById('page-title').textContent = 'Thêm trường mới';
+    document.getElementById('save-btn').textContent = '💾 Tạo trường';
+    // Auto-generate slug from name
+    document.getElementById('name').addEventListener('input', function() {
+      if (!document.getElementById('slug').dataset.userEdited) {
+        const slug = this.value.toLowerCase()
+          .replace(/đ/g, 'd').replace(/Đ/g, 'd')
+          .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+        document.getElementById('slug').value = slug ? 'dh-' + slug : '';
+      }
+    });
+    document.getElementById('slug').addEventListener('input', function() {
+      this.dataset.userEdited = 'true';
+    });
+  }
+}
+
+function populateForm(school) {
+  // Basic
+  document.getElementById('name').value = school.name || '';
+  document.getElementById('nameKr').value = school.name_kr || '';
+  document.getElementById('nameEn').value = school.name_en || '';
+  document.getElementById('slug').value = school.slug || '';
+  document.getElementById('slug').dataset.userEdited = 'true';
+  document.getElementById('system').value = school.system || '';
+  document.getElementById('quota').value = school.quota || 0;
+  document.getElementById('region').value = school.region || '';
+  document.getElementById('location').value = school.location || '';
+
+  // Media
+  document.getElementById('imageMain').value = school.image_main || '';
+  document.getElementById('catalogUrl').value = school.catalog_url || '';
+  document.getElementById('invoiceUrl').value = school.invoice_url || '';
+  document.getElementById('website').value = school.website || '';
+  document.getElementById('videoUrl').value = school.video_url || '';
+  document.getElementById('videoYoutubeId').value = school.video_youtube_id || '';
+  document.getElementById('videoTitle').value = school.video_title || '';
+
+  // Details
+  document.getElementById('intro').value = school.intro || '';
+  document.getElementById('tuition').value = school.tuition || '';
+  document.getElementById('ktx').value = school.ktx || '';
+  document.getElementById('insurance').value = school.insurance || '';
+  document.getElementById('schedule').value = school.schedule || '';
+  document.getElementById('documentsNote').value = school.documents_note || '';
+  document.getElementById('mou').value = school.mou || '';
+
+  // Lists
+  loadList('conditions', school.conditions.map(c => typeof c === 'string' ? c : c.text));
+  loadList('majors', school.majors.map(m => typeof m === 'string' ? m : m.text));
+  loadList('advantages', school.advantages.map(a => typeof a === 'string' ? a : a.text));
+  loadList('conversion', school.conversion.map(c => typeof c === 'string' ? c : c.text));
+  loadList('documents', school.documents.map(d => typeof d === 'string' ? d : d.text));
+
+  // Partners
+  const partners = school.partners || [];
+  partners.forEach(p => addPartner(p.code || '', p.name || '', p.name_kr || ''));
+
+  // Advisor Profile
+  const ap = school.advisorProfile;
+  if (ap) {
+    document.getElementById('advisor-gender').value = ap.gender || 'all';
+    document.getElementById('advisor-minGpa').value = String(ap.min_gpa || 5.0);
+    document.getElementById('advisor-maxAbsences').value = ap.max_absences || 30;
+    document.getElementById('advisor-costLevel').value = ap.cost_level || 3;
+    document.getElementById('advisor-visaChance').value = ap.visa_chance || 3;
+    document.getElementById('advisor-jobOpportunity').value = ap.job_opportunity || 3;
+    document.getElementById('advisor-e7Opportunity').value = ap.e7_opportunity || 3;
+    document.getElementById('advisor-studyLoad').value = ap.study_load || 3;
+    document.getElementById('advisor-interviewDifficulty').value = ap.interview_difficulty || 2;
+    document.getElementById('advisor-tags').value = (ap.tags || []).join(', ');
+  }
+}
+
+// ─── List helpers ───
+function addListItem(type, value) {
+  const list = document.getElementById(type + '-list');
+  const div = document.createElement('div');
+  div.className = 'item-row';
+  const textarea = type === 'documents' || type === 'conversion' || type === 'advantages';
+  div.innerHTML = `
+    ${textarea
+      ? '<textarea rows="2" placeholder="' + getPlaceholder(type) + '">' + escapeHtml(value || '') + '</textarea>'
+      : '<input type="text" placeholder="' + getPlaceholder(type) + '" value="' + escapeHtml(value || '') + '">'
+    }
+    <button class="btn-remove" onclick="this.closest('.item-row').remove()">✕</button>
+  `;
+  list.appendChild(div);
+}
+
+function getPlaceholder(type) {
+  const map = {
+    conditions: 'VD: Dưới 25 tuổi',
+    majors: 'VD: Kỹ thuật cơ khí - MECHANICAL ENGINEERING',
+    advantages: 'VD: Không đóng băng tài chính',
+    conversion: 'VD: Học D2-6 trong 6 tháng',
+    documents: 'VD: Application form - Theo mẫu trường'
+  };
+  return map[type] || '';
+}
+
+function loadList(type, values) {
+  document.getElementById(type + '-list').innerHTML = '';
+  if (!values || values.length === 0) {
+    addListItem(type, '');
+    return;
+  }
+  values.forEach(v => addListItem(type, v));
+}
+
+// ─── Partner helpers ───
+function addPartner(code, name, nameKr) {
+  const list = document.getElementById('partners-list');
+  const div = document.createElement('div');
+  div.className = 'partner-row';
+  div.innerHTML = `
+    <input type="text" placeholder="Code" value="${escapeHtml(code || '')}">
+    <input type="text" placeholder="Tên đối tác" value="${escapeHtml(name || '')}">
+    <div style="display:flex;gap:8px;">
+      <input type="text" placeholder="Tên KR" value="${escapeHtml(nameKr || '')}" style="flex:1;">
+      <button class="btn-remove" onclick="this.closest('.partner-row').remove()">✕</button>
+    </div>
+  `;
+  list.appendChild(div);
+}
+
+// ─── Section toggle ───
+function toggleSection(header) {
+  header.closest('.form-section').classList.toggle('collapsed');
+}
+
+// ─── Save ───
+function getListValues(type) {
+  const items = [];
+  document.querySelectorAll('#' + type + '-list .item-row').forEach(row => {
+    const input = row.querySelector('input, textarea');
+    if (input && input.value.trim()) items.push(input.value.trim());
+  });
+  return items;
+}
+
+function getPartners() {
+  const items = [];
+  document.querySelectorAll('#partners-list .partner-row').forEach(row => {
+    const inputs = row.querySelectorAll('input');
+    if (inputs[1] && inputs[1].value.trim()) {
+      items.push({
+        code: inputs[0]?.value.trim() || '',
+        name: inputs[1].value.trim(),
+        nameKr: inputs[2]?.value.trim() || '',
+      });
+    }
+  });
+  return items;
+}
+
+function collectForm() {
+  const data = {
+    name: document.getElementById('name').value.trim(),
+    nameKr: document.getElementById('nameKr').value.trim(),
+    nameEn: document.getElementById('nameEn').value.trim(),
+    slug: document.getElementById('slug').value.trim(),
+    system: document.getElementById('system').value.trim(),
+    quota: parseInt(document.getElementById('quota').value) || 0,
+    region: document.getElementById('region').value,
+    location: document.getElementById('location').value.trim(),
+    imageMain: document.getElementById('imageMain').value.trim(),
+    catalogUrl: document.getElementById('catalogUrl').value.trim(),
+    invoiceUrl: document.getElementById('invoiceUrl').value.trim(),
+    website: document.getElementById('website').value.trim(),
+    videoUrl: document.getElementById('videoUrl').value.trim(),
+    videoYoutubeId: document.getElementById('videoYoutubeId').value.trim(),
+    videoTitle: document.getElementById('videoTitle').value.trim(),
+    intro: document.getElementById('intro').value.trim(),
+    tuition: document.getElementById('tuition').value.trim(),
+    ktx: document.getElementById('ktx').value.trim(),
+    insurance: document.getElementById('insurance').value.trim(),
+    schedule: document.getElementById('schedule').value.trim(),
+    documentsNote: document.getElementById('documentsNote').value.trim(),
+    mou: document.getElementById('mou').value.trim(),
+    conditions: getListValues('conditions'),
+    majors: getListValues('majors'),
+    advantages: getListValues('advantages'),
+    conversion: getListValues('conversion'),
+    documents: getListValues('documents'),
+    partners: getPartners(),
+    advisorProfile: {
+      gender: document.getElementById('advisor-gender').value,
+      minGpa: parseFloat(document.getElementById('advisor-minGpa').value) || 5.0,
+      maxAbsences: parseInt(document.getElementById('advisor-maxAbsences').value) || 30,
+      costLevel: parseInt(document.getElementById('advisor-costLevel').value) || 3,
+      visaChance: parseInt(document.getElementById('advisor-visaChance').value) || 3,
+      jobOpportunity: parseInt(document.getElementById('advisor-jobOpportunity').value) || 3,
+      e7Opportunity: parseInt(document.getElementById('advisor-e7Opportunity').value) || 3,
+      studyLoad: parseInt(document.getElementById('advisor-studyLoad').value) || 3,
+      interviewDifficulty: parseInt(document.getElementById('advisor-interviewDifficulty').value) || 2,
+      tags: document.getElementById('advisor-tags').value.split(',').map(t => t.trim()).filter(Boolean),
+    },
+  };
+
+  if (!data.name || !data.slug) {
+    throw new Error('Vui lòng nhập tên trường và slug');
+  }
+
+  return data;
+}
+
+function validateForm(data) {
+  let valid = true;
+  const fields = ['name', 'slug'];
+  fields.forEach(id => {
+    const el = document.getElementById(id);
+    el.classList.remove('invalid');
+    if (!data[id]) {
+      el.classList.add('invalid');
+      valid = false;
+    }
+  });
+  return valid;
+}
+
+async function saveSchool() {
+  const btn = document.getElementById('save-btn');
+  const status = document.getElementById('save-status');
+
+  try {
+    const data = collectForm();
+    if (!validateForm(data)) {
+      throw new Error('Vui lòng điền đầy đủ thông tin bắt buộc (tên, slug)');
+    }
+
+    btn.disabled = true;
+    status.textContent = 'Đang lưu...';
+
+    if (editingSlug && originalData) {
+      await api('PUT', '/admin/schools/' + originalData.id, data);
+      toast('Đã cập nhật trường!', 'success');
+    } else {
+      await api('POST', '/admin/schools', data);
+      toast('Đã tạo trường mới!', 'success');
+      setTimeout(() => window.location = 'editor.html?slug=' + encodeURIComponent(data.slug), 1000);
+    }
+    status.textContent = '✅ Đã lưu';
+  } catch (err) {
+    toast('Lỗi: ' + err.message, 'error');
+    status.textContent = '❌ Lỗi: ' + err.message;
+  } finally {
+    btn.disabled = false;
+    setTimeout(() => { status.textContent = ''; }, 3000);
+  }
+}
+
+// ─── Start ───
+init();
+</script>
+</body>
+</html>

@@ -1,121 +1,212 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Admin CMS</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="admin.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — Admin Thông Tin Trường Hàn</title>
+<link rel="stylesheet" href="admin.css">
 </head>
 <body>
-    <div class="admin-layout">
-        <aside class="admin-sidebar">
-            <h2>Admin CMS</h2>
-            <p>Thông tin trường Hàn</p>
-            <nav class="admin-nav">
-                <a href="dashboard.html" class="active"><span class="nav-icon">📊</span> Dashboard</a>
-                <a href="schools.html"><span class="nav-icon">🏫</span> Trường</a>
-                <a href="#" id="nav-export"><span class="nav-icon">📦</span> Export data.js</a>
-                <a href="#" id="nav-export-push"><span class="nav-icon">📤</span> Export & Push</a>
-                <a href="#" id="nav-import"><span class="nav-icon">📥</span> Import Excel</a>
-                <a href="#" id="nav-logout"><span class="nav-icon">🚪</span> Đăng xuất</a>
-            </nav>
-        </aside>
+<script src="admin.js"></script>
+<script>checkAuth();</script>
 
-        <main class="admin-main">
-            <div class="admin-page-head">
-                <div>
-                    <h1>Tổng quan</h1>
-                    <p id="page-subtitle">Dashboard quản trị</p>
-                </div>
-                <div style="display:flex;gap:0.65rem;">
-                    <button class="admin-btn admin-btn-outline admin-btn-sm" id="btn-refresh">🔄 Làm mới</button>
-                    <button class="admin-btn admin-btn-primary admin-btn-sm" id="btn-export-push" style="background:#059669;">📤 Export & Push</button>
-                    <button class="admin-btn admin-btn-primary admin-btn-sm" id="btn-export">📦 Export</button>
-                </div>
-            </div>
+<div class="admin-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h2>🏫 Trường Hàn</h2>
+      <div class="sub">Quản lý dữ liệu</div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" class="active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+        Dashboard
+      </a>
+      <a href="editor.html?mode=new">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Thêm trường
+      </a>      <a href="checklist.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        Checklist Visa
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div id="sidebar-user"></div>
+    </div>
+  </aside>
 
-            <div class="admin-stats" id="stats-grid">
-                <div class="admin-stat-card"><strong>—</strong><span>Tổng số trường</span></div>
-                <div class="admin-stat-card"><strong>—</strong><span>Thiếu học phí</span></div>
-                <div class="admin-stat-card"><strong>—</strong><span>Thiếu KTX</span></div>
-                <div class="admin-stat-card"><strong>—</strong><span>Thiếu chuyên ngành</span></div>
-            </div>
-
-            <div class="admin-card">
-                <div class="admin-card-head">
-                    <h2>Hoạt động gần đây</h2>
-                </div>
-                <div class="admin-card-body">
-                    <div id="recent-logs" class="admin-log-list">
-                        <p style="color:var(--admin-text-muted);padding:1rem;">Đang tải...</p>
-                    </div>
-                </div>
-            </div>
-
-            <div hidden>
-                <input type="file" id="import-file-input" accept=".xlsx">
-            </div>
-        </main>
+  <!-- Main -->
+  <main class="main-content">
+    <div class="top-bar">
+      <h1>Dashboard</h1>
+      <div class="user-info">
+        <span id="user-display"></span>
+        <button class="btn btn-outline btn-sm" onclick="logout()">Đăng xuất</button>
+      </div>
     </div>
 
-    <script src="admin.js"></script>
-    <script>
-        async function loadDashboard() {
-            const token = localStorage.getItem('adminToken');
-            if (!token) { window.location.href = 'login.html'; return; }
+    <div class="content-area">
+      <!-- Stats -->
+      <div class="stats-grid" id="stats-container">
+        <div class="stat-card"><div class="stat-label">Tổng trường</div><div class="stat-value" id="stat-total">—</div></div>
+        <div class="stat-card"><div class="stat-label">Seoul</div><div class="stat-value" id="stat-seoul">—</div></div>
+        <div class="stat-card"><div class="stat-label">Busan</div><div class="stat-value" id="stat-busan">—</div></div>
+        <div class="stat-card"><div class="stat-label">Gyeonggi</div><div class="stat-value" id="stat-gyeonggi">—</div></div>
+        <div class="stat-card"><div class="stat-label">Khác</div><div class="stat-value" id="stat-other">—</div></div>
+      </div>
 
-            try {
-                const res = await fetch(API + '/api/dashboard', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
+      <!-- School table -->
+      <div class="card">
+        <div class="card-header">
+          <h3>Danh sách trường</h3>
+          <div class="toolbar">
+            <input type="text" id="search-input" placeholder="Tìm kiếm..." oninput="filterTable()">
+            <button class="btn btn-primary btn-sm" onclick="window.location='editor.html?mode=new'">+ Thêm trường</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="table-wrap">
+            <table class="data-table" id="school-table">
+              <thead>
+                <tr>
+                  <th>Stt</th>
+                  <th>Tên trường</th>
+                  <th>Slug</th>
+                  <th>Vùng</th>
+                  <th>Hệ</th>
+                  <th>Chỉ tiêu</th>
+                  <th>Hành động</th>
+                </tr>
+              </thead>
+              <tbody id="school-tbody">
+                <tr><td colspan="7" class="loading"><div class="spinner"></div> Đang tải...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
 
-                // Nếu 401 (token hết hạn/không hợp lệ) thì redirect về login
-                if (res.status === 401) {
-                    localStorage.removeItem('adminToken');
-                    window.location.href = 'login.html';
-                    return;
-                }
+<!-- Delete modal -->
+<div class="modal-overlay" id="delete-modal">
+  <div class="modal-box">
+    <h3>Xoá trường</h3>
+    <p id="delete-modal-text">Bạn có chắc muốn xoá trường <strong id="delete-name"></strong>? Hành động này không thể hoàn tác.</p>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeDeleteModal()">Huỷ</button>
+      <button class="btn btn-danger" id="delete-confirm-btn">Xoá</button>
+    </div>
+  </div>
+</div>
 
-                if (!res.ok) {
-                    const errData = await res.json().catch(() => ({}));
-                    document.getElementById('recent-logs').innerHTML = 
-                        '<p style="color:var(--admin-error);padding:1rem;">❌ Lỗi server: ' + escapeHtml(errData.error || res.status) + '</p>';
-                    return;
-                }
+<script>
+let schools = [];
+let deleteTargetId = null;
 
-                const data = await res.json();
+// Show user
+const user = getUser();
+if (user) {
+  document.getElementById('user-display').textContent = user.displayName || user.email;
+  document.getElementById('sidebar-user').textContent = user.email;
+}
 
-                // Stats
-                document.querySelector('#stats-grid').innerHTML = `
-                    <div class="admin-stat-card"><strong>${data.totalSchools}</strong><span>Tổng số trường</span></div>
-                    <div class="admin-stat-card"><strong>${data.missingData.tuition}</strong><span>Thiếu học phí</span></div>
-                    <div class="admin-stat-card"><strong>${data.missingData.ktx}</strong><span>Thiếu KTX</span></div>
-                    <div class="admin-stat-card"><strong>${data.missingData.majors}</strong><span>Thiếu chuyên ngành</span></div>
-                `;
+// Load schools
+async function loadSchools() {
+  try {
+    const res = await api('GET', '/schools');
+    schools = res.data;
+    renderStats();
+    renderTable();
+  } catch (err) {
+    document.getElementById('school-tbody').innerHTML =
+      '<tr><td colspan="7" style="color:var(--danger);text-align:center;padding:40px;">Lỗi: ' + escapeHtml(err.message) + '</td></tr>';
+  }
+}
 
-                // Logs
-                const logsHtml = data.recentChanges.length
-                    ? data.recentChanges.map(log => `
-                        <div class="admin-log-item">
-                            <span class="log-action ${log.action}">${log.action}</span>
-                            <span>${log.schoolId || log.details}</span>
-                            <span class="log-time">${new Date(log.time).toLocaleString('vi-VN')}</span>
-                        </div>
-                    `).join('')
-                    : '<p style="color:var(--admin-text-muted);">Chưa có hoạt động nào.</p>';
-                document.getElementById('recent-logs').innerHTML = logsHtml;
+function renderStats() {
+  const total = schools.length;
+  const byRegion = {};
+  for (const s of schools) {
+    byRegion[s.region] = (byRegion[s.region] || 0) + 1;
+  }
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-seoul').textContent = byRegion.seoul || 0;
+  document.getElementById('stat-busan').textContent = byRegion.busan || 0;
+  document.getElementById('stat-gyeonggi').textContent = byRegion.gyeonggi || 0;
+  document.getElementById('stat-other').textContent = total - (byRegion.seoul || 0) - (byRegion.busan || 0) - (byRegion.gyeonggi || 0);
+}
 
-            } catch (err) {
-                document.getElementById('recent-logs').innerHTML = 
-                    '<p style="color:var(--admin-error);padding:1rem;">❌ Không thể kết nối server: ' + escapeHtml(err.message) + '</p>';
-            }
-        }
+function renderTable(data) {
+  const list = data || schools;
+  const tbody = document.getElementById('school-tbody');
 
-        document.getElementById('btn-refresh')?.addEventListener('click', loadDashboard);
-        loadDashboard();
-    </script>
+  if (list.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><p>Không có trường nào</p></div></td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = list.map((s, i) => `
+    <tr>
+      <td>${i + 1}</td>
+      <td><strong>${escapeHtml(s.name)}</strong><br><small style="color:var(--gray-400)">${escapeHtml(s.name_kr || '')}</small></td>
+      <td><code>${escapeHtml(s.slug)}</code></td>
+      <td><span class="badge badge-region">${regionLabel(s.region)}</span></td>
+      <td><span class="badge badge-system">${escapeHtml(s.system || '—')}</span></td>
+      <td>${s.quota || 0}</td>
+      <td class="actions">
+        <button class="btn btn-outline btn-sm" onclick="window.location='editor.html?slug=${encodeURIComponent(s.slug)}'">Sửa</button>
+        <button class="btn btn-danger btn-sm" onclick="showDeleteModal('${s.id}', '${escapeHtml(s.name)}')">Xoá</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function filterTable() {
+  const q = document.getElementById('search-input').value.toLowerCase().trim();
+  if (!q) { renderTable(schools); return; }
+  const filtered = schools.filter(s =>
+    s.name.toLowerCase().includes(q) ||
+    s.name_kr?.toLowerCase().includes(q) ||
+    s.name_en?.toLowerCase().includes(q) ||
+    s.slug.toLowerCase().includes(q) ||
+    (s.region && s.region.toLowerCase().includes(q)) ||
+    (s.system && s.system.toLowerCase().includes(q))
+  );
+  renderTable(filtered);
+}
+
+// Delete modal
+function showDeleteModal(id, name) {
+  deleteTargetId = id;
+  document.getElementById('delete-name').textContent = name;
+  document.getElementById('delete-modal').classList.add('show');
+}
+function closeDeleteModal() {
+  deleteTargetId = null;
+  document.getElementById('delete-modal').classList.remove('show');
+}
+
+document.getElementById('delete-confirm-btn').addEventListener('click', async () => {
+  if (!deleteTargetId) return;
+  try {
+    await api('DELETE', '/admin/schools/' + deleteTargetId);
+    toast('Đã xoá trường', 'success');
+    closeDeleteModal();
+    loadSchools();
+  } catch (err) {
+    toast('Lỗi: ' + err.message, 'error');
+    closeDeleteModal();
+  }
+});
+
+// Close modal on overlay click
+document.getElementById('delete-modal').addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) closeDeleteModal();
+});
+
+loadSchools();
+</script>
 </body>
 </html>
