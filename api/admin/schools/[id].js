@@ -1,6 +1,7 @@
 // PUT/DELETE /api/admin/schools/:id — sửa/xoá trường
 const { requireAdmin } = require('../../../lib/auth');
 const { supabase } = require('../../../lib/supabase');
+const { replaceChildTable, replacePartners, upsertAdvisorProfile } = require('../../../lib/helpers');
 
 module.exports = requireAdmin(async (req, res) => {
   try {
@@ -76,54 +77,15 @@ module.exports = requireAdmin(async (req, res) => {
 
       if (updErr) throw new Error(updErr.message);
 
-      // Child tables: delete old, insert new
-      async function replaceChildTable(table, items) {
-        if (!items || !Array.isArray(items) || items.length === 0) return;
-        await supabase.from(table).delete().eq('school_id', schoolId);
-        var rows = items.map(function(t, i) { return { school_id: schoolId, text: String(t), sort_order: i }; });
-        var { error: insErr } = await supabase.from(table).insert(rows);
-        if (insErr) console.error(table + ' insert error:', insErr.message);
-      }
+      // Child tables: dùng shared helper
+      try { await replaceChildTable('school_conditions', schoolId, body.conditions); } catch (e) { console.error('conditions:', e.message); }
+      try { await replaceChildTable('school_majors', schoolId, body.majors); } catch (e) { console.error('majors:', e.message); }
+      try { await replaceChildTable('school_advantages', schoolId, body.advantages); } catch (e) { console.error('advantages:', e.message); }
+      try { await replaceChildTable('school_conversions', schoolId, body.conversion); } catch (e) { console.error('conversion:', e.message); }
+      try { await replaceChildTable('school_documents', schoolId, body.documents); } catch (e) { console.error('documents:', e.message); }
 
-      // Run sequentially, catch individual errors
-      try { await replaceChildTable('school_conditions', body.conditions); } catch (e) { console.error('conditions:', e.message); }
-      try { await replaceChildTable('school_majors', body.majors); } catch (e) { console.error('majors:', e.message); }
-      try { await replaceChildTable('school_advantages', body.advantages); } catch (e) { console.error('advantages:', e.message); }
-      try { await replaceChildTable('school_conversions', body.conversion); } catch (e) { console.error('conversion:', e.message); }
-      try { await replaceChildTable('school_documents', body.documents); } catch (e) { console.error('documents:', e.message); }
-
-      // Partners
-      if (body.partners && Array.isArray(body.partners)) {
-        await supabase.from('school_partners').delete().eq('school_id', schoolId);
-        if (body.partners.length > 0) {
-          var pr = body.partners.map(function(p) {
-            return { school_id: schoolId, code: p.code || '', name: p.name || '', name_kr: p.nameKr || '' };
-          });
-          await supabase.from('school_partners').insert(pr);
-        }
-      }
-
-      // Advisor profile (upsert)
-      if (body.advisorProfile) {
-        var ap = body.advisorProfile;
-        var { data: existingAp } = await supabase.from('school_advisor_profiles')
-          .select('id').eq('school_id', schoolId).maybeSingle();
-
-        var ad = {
-          school_id: schoolId, gender: ap.gender || 'all',
-          min_gpa: ap.minGpa || 5.0, max_absences: ap.maxAbsences || 30,
-          cost_level: ap.costLevel || 3, visa_chance: ap.visaChance || 3,
-          job_opportunity: ap.jobOpportunity || 3, e7_opportunity: ap.e7Opportunity || 3,
-          study_load: ap.studyLoad || 3, interview_difficulty: ap.interviewDifficulty || 2,
-          tags: ap.tags || [], updated_at: new Date().toISOString(),
-        };
-
-        if (existingAp) {
-          await supabase.from('school_advisor_profiles').update(ad).eq('id', existingAp.id);
-        } else {
-          await supabase.from('school_advisor_profiles').insert(ad);
-        }
-      }
+      try { await replacePartners(schoolId, body.partners); } catch (e) { console.error('partners:', e.message); }
+      try { await upsertAdvisorProfile(schoolId, body.advisorProfile); } catch (e) { console.error('advisorProfile:', e.message); }
 
       return res.json({ success: true, message: 'School updated' });
     }

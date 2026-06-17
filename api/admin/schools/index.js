@@ -1,6 +1,7 @@
 // POST /api/admin/schools — tạo trường mới (Supabase client)
 const { requireAdmin } = require('../../../lib/auth');
 const { supabase } = require('../../../lib/supabase');
+const { insertChildTable, replacePartners, upsertAdvisorProfile } = require('../../../lib/helpers');
 
 module.exports = requireAdmin(async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -66,25 +67,17 @@ module.exports = requireAdmin(async (req, res) => {
 
     const school = data;
 
-    // Insert child records
-    const insertChild = async (table, items, schoolId) => {
-      if (!items || !Array.isArray(items) || items.length === 0) return;
-      const rows = items.map((text, i) => ({
-        school_id: schoolId,
-        text: String(text),
-        sort_order: i,
-      }));
-      const { error: err } = await supabase.from(table).insert(rows);
-      if (err) console.error(`Error inserting ${table}:`, err);
-    };
-
+    // Insert child records (dùng shared helper)
     await Promise.all([
-      insertChild('school_conditions', body.conditions, school.id),
-      insertChild('school_majors', body.majors, school.id),
-      insertChild('school_advantages', body.advantages, school.id),
-      insertChild('school_conversions', body.conversion, school.id),
-      insertChild('school_documents', body.documents, school.id),
+      insertChildTable('school_conditions', school.id, body.conditions),
+      insertChildTable('school_majors', school.id, body.majors),
+      insertChildTable('school_advantages', school.id, body.advantages),
+      insertChildTable('school_conversions', school.id, body.conversion),
+      insertChildTable('school_documents', school.id, body.documents),
     ]);
+
+    try { await replacePartners(school.id, body.partners); } catch (e) {}
+    try { await upsertAdvisorProfile(school.id, body.advisorProfile); } catch (e) {}
 
     return res.status(201).json({ success: true, data: school });
   } catch (err) {

@@ -162,18 +162,6 @@ CREATE TABLE IF NOT EXISTS users (
   updated_at      TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 8. Change logs
-CREATE TABLE IF NOT EXISTS change_logs (
-  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id       UUID REFERENCES users(id),
-  action        VARCHAR(20) NOT NULL,
-  entity_type   VARCHAR(50) NOT NULL,
-  entity_id     UUID,
-  old_data      JSONB,
-  new_data      JSONB,
-  created_at    TIMESTAMPTZ DEFAULT NOW()
-);
-
 -- 9. Indexes
 CREATE INDEX IF NOT EXISTS idx_conditions_school ON school_conditions(school_id);
 CREATE INDEX IF NOT EXISTS idx_majors_school ON school_majors(school_id);

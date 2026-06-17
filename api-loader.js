@@ -58,10 +58,9 @@ window.REGION_LABELS = {
       const controller = new AbortController();
       const timeout = setTimeout(function() { controller.abort(); }, 15000);
 
-      const [schoolsRes, extrasRes, advisorRes] = await Promise.all([
+      const [schoolsRes, extrasRes] = await Promise.all([
         fetch(API_BASE + '/schools', { signal: controller.signal }),
-        fetch(API_BASE + '/extras', { signal: controller.signal }),
-        fetch(API_BASE + '/advisor-profiles', { signal: controller.signal })
+        fetch(API_BASE + '/extras', { signal: controller.signal })
       ]);
 
       clearTimeout(timeout);
@@ -72,7 +71,6 @@ window.REGION_LABELS = {
 
       const schoolsJson = await schoolsRes.json();
       const extrasJson = await extrasRes.json();
-      const advisorJson = advisorRes.ok ? await advisorRes.json() : { data: {} };
 
       // === Transform SCHOOLS_DATA ===
       var SCHOOLS_DATA = {};
@@ -136,8 +134,27 @@ window.REGION_LABELS = {
 
       window.SCHOOLS_DATA = SCHOOLS_DATA;
 
-      // === Advisor profiles từ API ===
-      window.ADVISOR_PROFILES = advisorJson.data || {};
+      // === Advisor profiles — lấy từ /api/schools (đã JOIN sẵn) ===
+      var ADVISOR_PROFILES = {};
+      rawSchools.forEach(function(school) {
+        var ap = school.advisorProfile;
+        if (ap && school.slug) {
+          ADVISOR_PROFILES[school.slug] = {
+            gender: ap.gender || 'all',
+            minGpa: parseFloat(ap.min_gpa) || 5.5,
+            maxAbsences: ap.max_absences || 30,
+            region: ap.region || school.region || '',
+            costLevel: ap.cost_level || 3,
+            visaChance: ap.visa_chance || 3,
+            jobOpportunity: ap.job_opportunity || 3,
+            e7Opportunity: ap.e7_opportunity || 3,
+            studyLoad: ap.study_load || 3,
+            interviewDifficulty: ap.interview_difficulty || 2,
+            tags: ap.tags || [],
+          };
+        }
+      });
+      window.ADVISOR_PROFILES = ADVISOR_PROFILES;
 
       // === Semester info ===
       var semInfo = extrasJson.data && extrasJson.data.semesterInfo;

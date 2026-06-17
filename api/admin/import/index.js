@@ -1,6 +1,7 @@
 // POST /api/admin/import — Import dữ liệu từ Excel (JSON payload)
 const { requireAdmin } = require('../../../lib/auth');
 const { supabase } = require('../../../lib/supabase');
+const { replaceChildTable, replacePartners, upsertAdvisorProfile } = require('../../../lib/helpers');
 
 module.exports = requireAdmin(async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -91,67 +92,15 @@ module.exports = requireAdmin(async (req, res) => {
           results.created++;
         }
 
-        // ─── Replace child tables ───
-        async function replaceChildTable(table, items) {
-          if (!items || !Array.isArray(items) || items.length === 0) return;
-          await supabase.from(table).delete().eq('school_id', schoolId);
-          const rows = items.map((text, i) => ({
-            school_id: schoolId,
-            text: String(text),
-            sort_order: i,
-          }));
-          const { error: insErr } = await supabase.from(table).insert(rows);
-          if (insErr) console.error(table + ' insert error:', insErr.message);
-        }
+        // ─── Replace child tables (dùng shared helper) ───
+        try { await replaceChildTable('school_conditions', schoolId, school.conditions); } catch (e) {}
+        try { await replaceChildTable('school_majors', schoolId, school.majors); } catch (e) {}
+        try { await replaceChildTable('school_advantages', schoolId, school.advantages); } catch (e) {}
+        try { await replaceChildTable('school_conversions', schoolId, school.conversion); } catch (e) {}
+        try { await replaceChildTable('school_documents', schoolId, school.documents); } catch (e) {}
 
-        try { await replaceChildTable('school_conditions', school.conditions); } catch (e) {}
-        try { await replaceChildTable('school_majors', school.majors); } catch (e) {}
-        try { await replaceChildTable('school_advantages', school.advantages); } catch (e) {}
-        try { await replaceChildTable('school_conversions', school.conversion); } catch (e) {}
-        try { await replaceChildTable('school_documents', school.documents); } catch (e) {}
-
-        // Partners
-        if (school.partners && Array.isArray(school.partners)) {
-          await supabase.from('school_partners').delete().eq('school_id', schoolId);
-          if (school.partners.length > 0) {
-            const pr = school.partners.map(p => ({
-              school_id: schoolId,
-              code: p.code || '',
-              name: p.name || '',
-              name_kr: p.nameKr || '',
-            }));
-            await supabase.from('school_partners').insert(pr);
-          }
-        }
-
-        // Advisor profile (upsert)
-        if (school.advisorProfile) {
-          const ap = school.advisorProfile;
-          const { data: existingAp } = await supabase
-            .from('school_advisor_profiles')
-            .select('id').eq('school_id', schoolId).maybeSingle();
-
-          const ad = {
-            school_id: schoolId,
-            gender: ap.gender || 'all',
-            min_gpa: ap.minGpa || 5.0,
-            max_absences: ap.maxAbsences || 30,
-            cost_level: ap.costLevel || 3,
-            visa_chance: ap.visaChance || 3,
-            job_opportunity: ap.jobOpportunity || 3,
-            e7_opportunity: ap.e7Opportunity || 3,
-            study_load: ap.studyLoad || 3,
-            interview_difficulty: ap.interviewDifficulty || 2,
-            tags: ap.tags || [],
-            updated_at: new Date().toISOString(),
-          };
-
-          if (existingAp) {
-            await supabase.from('school_advisor_profiles').update(ad).eq('id', existingAp.id);
-          } else {
-            await supabase.from('school_advisor_profiles').insert(ad);
-          }
-        }
+        try { await replacePartners(schoolId, school.partners); } catch (e) {}
+        try { await upsertAdvisorProfile(schoolId, school.advisorProfile); } catch (e) {}
       } catch (err) {
         results.errors.push({ slug: school.slug || 'unknown', error: err.message || 'Unknown error' });
       }
