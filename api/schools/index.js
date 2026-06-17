@@ -16,8 +16,6 @@ module.exports = async (req, res) => {
   try {
     const fullQuery = req.query.full !== 'false';
 
-    let query = supabase.from('schools').select('*').order('slug');
-
     if (fullQuery) {
       // Only JOIN child tables when full data is requested
       const { data, error } = await supabase
@@ -59,7 +57,7 @@ module.exports = async (req, res) => {
     }
 
     // Lightweight: chỉ lấy thông tin cơ bản (không JOIN child tables)
-    const { data, error } = await query;
+    const { data, error } = await supabase.from('schools').select('*').order('slug');
     if (error) throw error;
 
     return res.json({
