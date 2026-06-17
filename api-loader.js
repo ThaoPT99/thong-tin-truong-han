@@ -51,6 +51,87 @@ window.REGION_LABELS = {
     return order.map(function(g) { return groups[g]; });
   }
 
+  // ─── Nếu trang pre-rendered có dữ liệu inline, dùng luôn, không fetch API ───
+  if (window.__PRERENDERED_DATA__) {
+    try {
+      var preData = window.__PRERENDERED_DATA__;
+
+      // Chuyển đổi schools data sang format SCHOOLS_DATA
+      var SCHOOLS_DATA = {};
+      (preData.schoolsData || []).forEach(function(school) {
+        var slug = school.slug;
+        if (!slug) return;
+        SCHOOLS_DATA[slug] = {
+          id: slug,
+          name: school.name || '',
+          nameKr: school.name_kr || '',
+          nameEn: school.name_en || '',
+          system: school.system || '',
+          quota: school.quota || 0,
+          images: {
+            main: school.image_main || 'images/placeholder.svg',
+            catalog: school.image_catalog || '',
+            locationMap: school.image_location || '',
+            invoice: school.image_invoice || '',
+            gallery: []
+          },
+          links: {
+            website: school.website || '',
+            catalog: school.catalog_url || '',
+            invoice: school.invoice_url || ''
+          },
+          video: {
+            url: school.video_url || '',
+            youtubeId: school.video_youtube_id || '',
+            title: school.video_title || ''
+          },
+          location: school.location || '',
+          region: school.region || '',
+          intro: school.intro || '',
+          conditions: (school.conditions || []).map(function(c) { return c.text || c; }).filter(Boolean),
+          majors: (school.majors || []).map(function(m) { return m.text || m; }).filter(Boolean),
+          conversion: (school.conversion || []).map(function(c) { return c.text || c; }).filter(Boolean),
+          tuition: school.tuition || '',
+          insurance: school.insurance || '',
+          ktx: school.ktx || '',
+          schedule: school.schedule || '',
+          advantages: (school.advantages || []).map(function(a) { return a.text || a; }).filter(Boolean),
+          documents: (school.documents || []).map(function(d) { return d.text || d; }).filter(Boolean),
+          documentsNote: school.documents_note || '',
+          partners: (school.partners || []).map(function(p) {
+            return { code: p.code || '', name: p.name || '', nameKr: p.name_kr || '' };
+          }),
+          mou: school.mou || ''
+        };
+      });
+
+      window.SCHOOLS_DATA = SCHOOLS_DATA;
+      window.ADVISOR_PROFILES = preData.advisorProfilesData || {};
+      window.SEMESTER_INFO = preData.semesterInfo || { ky: '3', nam: '2027', title: '' };
+
+      // Build checklist
+      window.EXTRA_SHEETS = { visaChecklist: { items: preData.extrasChecklist || [] } };
+      window.CHECKLIST_GROUPED = buildChecklistGroups(preData.extrasChecklist || []);
+
+      // Update page title
+      var si = window.SEMESTER_INFO;
+      if (si && si.ky && si.nam) {
+        var semesterTitle = 'Kỳ tháng ' + si.ky + '/' + si.nam;
+        var sub = document.querySelector('.subtitle');
+        if (sub) sub.textContent = semesterTitle;
+      }
+      if (window.topbarSchoolCount) {
+        window.topbarSchoolCount.textContent = String(Object.keys(SCHOOLS_DATA).length);
+      }
+
+      window.__DATA_READY__ = true;
+      document.dispatchEvent(new CustomEvent('app-data-ready'));
+      return;
+    } catch (e) {
+      console.error('Prerender data error, falling back to API:', e);
+    }
+  }
+
   (async function() {
     try {
       const API_BASE = '/api';

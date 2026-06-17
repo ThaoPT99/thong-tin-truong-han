@@ -140,15 +140,6 @@ CREATE TABLE IF NOT EXISTS extra_interviews (
   created_at    TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE TABLE IF NOT EXISTS extra_applications (
-  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  school_name   VARCHAR(200),
-  item_type     TEXT,
-  link_url      VARCHAR(500),
-  link_text     VARCHAR(200),
-  created_at    TIMESTAMPTZ DEFAULT NOW()
-);
-
 -- 7. Users (admin)
 CREATE TABLE IF NOT EXISTS users (
   id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -184,7 +175,6 @@ ALTER TABLE school_partners ENABLE ROW LEVEL SECURITY;
 ALTER TABLE school_advisor_profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE extra_visa_checklist ENABLE ROW LEVEL SECURITY;
 ALTER TABLE extra_interviews ENABLE ROW LEVEL SECURITY;
-ALTER TABLE extra_applications ENABLE ROW LEVEL SECURITY;
 ALTER TABLE semester_info ENABLE ROW LEVEL SECURITY;
 
 -- Public read policies
@@ -198,5 +188,4 @@ CREATE POLICY "public_read_partners" ON school_partners FOR SELECT USING (true);
 CREATE POLICY "public_read_advisor" ON school_advisor_profiles FOR SELECT USING (true);
 CREATE POLICY "public_read_checklist" ON extra_visa_checklist FOR SELECT USING (true);
 CREATE POLICY "public_read_interviews" ON extra_interviews FOR SELECT USING (true);
-CREATE POLICY "public_read_apps" ON extra_applications FOR SELECT USING (true);
 CREATE POLICY "public_read_semester" ON semester_info FOR SELECT USING (true);
