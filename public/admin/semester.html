@@ -230,7 +230,7 @@ async function showDetail(semesterId) {
   // Lấy danh sách school_ids đã gán cho kỳ này
   let assignedIds = [];
   try {
-    const ssRes = await api('GET', '/admin/semester-schools?semester_id=' + encodeURIComponent(semesterId));
+    const ssRes = await api('GET', '/admin/semesters?action=schools&semester_id=' + encodeURIComponent(semesterId));
     assignedIds = (ssRes.data || []).map(r => r.school_id);
   } catch (e) {
     // ignore
@@ -393,12 +393,12 @@ async function onSchoolToggle(semesterId, schoolId, checked) {
   toggleQueue = toggleQueue.then(async () => {
     try {
       if (checked) {
-        await api('POST', '/admin/semester-schools', {
+        await api('POST', '/admin/semesters?action=schools', {
           semester_id: semesterId,
           school_ids: [schoolId],
         });
       } else {
-        await api('DELETE', '/admin/semester-schools?semester_id=' + encodeURIComponent(semesterId) + '&school_id=' + encodeURIComponent(schoolId));
+        await api('DELETE', '/admin/semesters?action=schools&semester_id=' + encodeURIComponent(semesterId) + '&school_id=' + encodeURIComponent(schoolId));
       }
       // Update count
       const checks = document.querySelectorAll('.school-check-item input:checked');
