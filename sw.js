@@ -45,6 +45,9 @@ self.addEventListener('activate', function(event) {
 
 // Fetch: stale-while-revalidate cho API, cache-first cho static
 self.addEventListener('fetch', function(event) {
+  // Chỉ cache GET requests (POST/PUT/DELETE không được Cache API hỗ trợ)
+  if (event.request.method !== 'GET') return;
+
   var url = new URL(event.request.url);
 
   // Chỉ xử lý request cùng origin (không proxy CDN, Google Fonts, v.v.)

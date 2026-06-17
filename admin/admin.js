@@ -81,13 +81,10 @@ function toast(message, type = 'info') {
   setTimeout(() => el.remove(), 3500);
 }
 
-// ─── Format helpers (dùng global từ api-loader.js nếu có, fallback nếu không) ───
+// ─── Format helpers ───
 
 function escapeHtml(str) {
-  if (typeof window.escapeHtml === 'function') {
-    return window.escapeHtml(str);
-  }
-  // Fallback: DOM-based (giống api-loader.js)
+  // DOM-based approach (giống api-loader.js)
   var d = document.createElement('div');
   d.textContent = String(str ?? '');
   return d.innerHTML;
