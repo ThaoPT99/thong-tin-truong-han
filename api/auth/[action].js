@@ -1,14 +1,32 @@
-// POST /api/auth/login
+// /api/auth/[action].js — handles login (POST) and verify (GET)
+// Routes: POST /api/auth/login, GET /api/auth/verify
 const bcrypt = require('bcryptjs');
 const { supabase } = require('../../lib/supabase');
-const { signToken } = require('../../lib/auth');
+const { signToken, requireAdmin } = require('../../lib/auth');
 
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
   if (req.method === 'OPTIONS') return res.status(200).end();
+
+  const { action } = req.query;
+
+  if (action === 'login') {
+    return handleLogin(req, res);
+  }
+
+  if (action === 'verify') {
+    return requireAdmin(async (req2, res2) => {
+      return res2.json({ valid: true, user: req2.user });
+    })(req, res);
+  }
+
+  return res.status(404).json({ error: 'Not found' });
+};
+
+async function handleLogin(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -61,4 +79,4 @@ module.exports = async (req, res) => {
     console.error('Login error:', err);
     return res.status(500).json({ error: 'Internal server error' });
   }
-};
+}
