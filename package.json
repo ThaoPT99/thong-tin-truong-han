@@ -4,6 +4,7 @@
   "description": "Website tra cứu thông tin du học Visa D2-6: danh sách 18 trường Hàn Quốc, điều kiện tuyển sinh, học phí, hồ sơ và công cụ tư vấn chọn trường.",
   "main": "advisor.js",
   "scripts": {
+    "build": "node scripts/pre-render.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
