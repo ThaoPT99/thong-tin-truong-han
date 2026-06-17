@@ -120,9 +120,7 @@ window.REGION_LABELS = {
         var sub = document.querySelector('.subtitle');
         if (sub) sub.textContent = semesterTitle;
       }
-      if (window.topbarSchoolCount) {
-        window.topbarSchoolCount.textContent = String(Object.keys(SCHOOLS_DATA).length);
-      }
+      // render.js's init() sẽ cập nhật school count khi load
 
       window.__DATA_READY__ = true;
       document.dispatchEvent(new CustomEvent('app-data-ready'));
