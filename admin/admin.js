@@ -81,15 +81,26 @@ function toast(message, type = 'info') {
   setTimeout(() => el.remove(), 3500);
 }
 
-// ─── Format helpers ───
+// ─── Format helpers (dùng global từ api-loader.js nếu có, fallback nếu không) ───
 
 function escapeHtml(str) {
-  if (!str) return '';
-  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  if (typeof window.escapeHtml === 'function') {
+    return window.escapeHtml(str);
+  }
+  // Fallback: DOM-based (giống api-loader.js)
+  var d = document.createElement('div');
+  d.textContent = String(str ?? '');
+  return d.innerHTML;
 }
 
 function regionLabel(r) {
-  const map = {
+  if (!r) return r || '';
+  if (typeof window.REGION_LABELS !== 'undefined' && window.REGION_LABELS[r]) {
+    var label = window.REGION_LABELS[r];
+    return label.charAt(0).toUpperCase() + label.slice(1);
+  }
+  // Fallback map (giống global REGION_LABELS)
+  var map = {
     seoul: 'Seoul', busan: 'Busan', gyeonggi: 'Gyeonggi', incheon: 'Incheon',
     gwangju: 'Gwangju', daegu: 'Daegu', daejeon: 'Daejeon', ulsan: 'Ulsan',
     chungcheongbuk: 'Chungcheongbuk', chungcheongnam: 'Chungcheongnam',
