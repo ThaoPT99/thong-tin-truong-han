@@ -1,17 +1,13 @@
 (function () {
-  function dismissPopup(hours) {
+  function dismissPopup() {
     const overlay = document.getElementById("zalo-popup");
     if (!overlay) return;
     overlay.classList.remove("is-open");
     document.body.classList.remove("zalo-popup-open");
-    // Lưu thời gian đóng để không tự động mở lại trong khoảng thời gian này
-    if (hours > 0) {
-      try {
-        localStorage.setItem("zaloPopupDismissedAt", Date.now().toString());
-      } catch (e) {}
-    }
+    try {
+      localStorage.setItem("zaloPopupDismissedAt", Date.now().toString());
+    } catch (e) {}
   }
-
 
   function openPopup() {
     const overlay = document.getElementById("zalo-popup");
@@ -20,20 +16,33 @@
     document.body.classList.add("zalo-popup-open");
   }
 
+  function checkAutoShowPopup() {
+    try {
+      const dismissedAt = localStorage.getItem("zaloPopupDismissedAt");
+      const now = Date.now();
+      // 12 giờ = 12 * 60 * 60 * 1000 = 43200000 ms
+      if (!dismissedAt || (now - parseInt(dismissedAt, 10)) > 43200000) {
+        // Tự động mở sau khi load trang 15 giây
+        setTimeout(openPopup, 15000);
+      }
+    } catch (e) {}
+  }
+
   function initZaloPopup() {
     const overlay = document.getElementById("zalo-popup");
     if (!overlay) return;
 
-    overlay.querySelector(".zalo-popup-close")?.addEventListener("click", () => dismissPopup(24));
-    overlay.querySelector(".zalo-popup-later")?.addEventListener("click", () => dismissPopup(24));
-    overlay.querySelector(".zalo-popup-backdrop")?.addEventListener("click", () => dismissPopup(24));
+    overlay.querySelector(".zalo-popup-close")?.addEventListener("click", dismissPopup);
+    overlay.querySelector(".zalo-popup-later")?.addEventListener("click", dismissPopup);
+    overlay.querySelector(".zalo-popup-backdrop")?.addEventListener("click", dismissPopup);
 
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape" && overlay.classList.contains("is-open")) {
-        dismissPopup(24);
+        dismissPopup();
       }
     });
 
+    checkAutoShowPopup();
   }
 
   // Dark mode toggle
