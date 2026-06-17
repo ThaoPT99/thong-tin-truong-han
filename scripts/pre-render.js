@@ -53,6 +53,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 function escapeHtml(str) {
   if (!str) return '';
   return String(str)
+    .replace(/\0/g, '')       // Loại bỏ null bytes trước
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
