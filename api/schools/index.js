@@ -1,5 +1,7 @@
 // GET /api/schools — danh sách tất cả trường (Supabase client)
-// Query params: ?full=false — bỏ JOIN child tables, chỉ lấy thông tin cơ bản
+// Query params:
+//   ?full=false — bỏ JOIN child tables, chỉ lấy thông tin cơ bản
+//   ?semester=id — lọc trường theo kỳ tuyển sinh
 const { supabase } = require('../../lib/supabase');
 
 module.exports = async (req, res) => {
@@ -15,10 +17,26 @@ module.exports = async (req, res) => {
 
   try {
     const fullQuery = req.query.full !== 'false';
+    const semesterFilter = req.query.semester || null;
+
+    // ─── Lấy semester_schools map ───
+    const { data: semesterSchoolsRaw } = await supabase
+      .from('semester_schools')
+      .select('semester_id, school_id');
+
+    // Build map: school_id -> [semester_id, ...]
+    const semesterSchoolsMap = {};
+    const allSchoolIdsWithSemester = new Set();
+    for (const ss of semesterSchoolsRaw || []) {
+      if (!semesterSchoolsMap[ss.school_id]) {
+        semesterSchoolsMap[ss.school_id] = [];
+      }
+      semesterSchoolsMap[ss.school_id].push(ss.semester_id);
+      allSchoolIdsWithSemester.add(ss.school_id);
+    }
 
     if (fullQuery) {
-      // Only JOIN child tables when full data is requested
-      const { data, error } = await supabase
+      let query = supabase
         .from('schools')
         .select(`
           *,
@@ -29,12 +47,28 @@ module.exports = async (req, res) => {
           school_documents(*),
           school_partners(*),
           school_advisor_profiles(*)
-        `)
-        .order('slug');
+        `);
 
+      // Nếu có semester filter, chỉ lấy schools thuộc kỳ đó
+      if (semesterFilter) {
+        // Lấy danh sách school_id thuộc kỳ đó
+        const { data: filtered } = await supabase
+          .from('semester_schools')
+          .select('school_id')
+          .eq('semester_id', semesterFilter);
+
+        const schoolIds = (filtered || []).map(r => r.school_id);
+        if (schoolIds.length > 0) {
+          query = query.in('id', schoolIds);
+        } else {
+          // Không có trường nào trong kỳ này
+          return res.json({ success: true, count: 0, data: [], semesterSchools: semesterSchoolsMap });
+        }
+      }
+
+      const { data, error } = await query.order('slug');
       if (error) throw error;
 
-      // Transform to match expected format
       const result = (data || []).map((school) => ({
         ...school,
         school_conditions: undefined,
@@ -51,13 +85,35 @@ module.exports = async (req, res) => {
         documents: school.school_documents || [],
         partners: school.school_partners || [],
         advisorProfile: (school.school_advisor_profiles || []).length > 0 ? school.school_advisor_profiles[0] : null,
+        // Thêm semester_schools info cho client-side filtering
+        semesterIds: semesterSchoolsMap[school.id] || [],
       }));
 
-      return res.json({ success: true, count: result.length, data: result });
+      return res.json({
+        success: true,
+        count: result.length,
+        data: result,
+        semesterSchools: semesterSchoolsMap,
+      });
     }
 
-    // Lightweight: chỉ lấy thông tin cơ bản (không JOIN child tables)
-    const { data, error } = await supabase.from('schools').select('*').order('slug');
+    // Lightweight
+    let query = supabase.from('schools').select('*');
+    if (semesterFilter) {
+      const { data: filtered } = await supabase
+        .from('semester_schools')
+        .select('school_id')
+        .eq('semester_id', semesterFilter);
+
+      const schoolIds = (filtered || []).map(r => r.school_id);
+      if (schoolIds.length > 0) {
+        query = query.in('id', schoolIds);
+      } else {
+        return res.json({ success: true, count: 0, data: [], semesterSchools: semesterSchoolsMap });
+      }
+    }
+
+    const { data, error } = await query.order('slug');
     if (error) throw error;
 
     return res.json({
@@ -82,7 +138,9 @@ module.exports = async (req, res) => {
         documents: [],
         partners: [],
         advisorProfile: null,
+        semesterIds: semesterSchoolsMap[school.id] || [],
       })),
+      semesterSchools: semesterSchoolsMap,
     });
   } catch (err) {
     console.error('GET /api/schools error:', err);

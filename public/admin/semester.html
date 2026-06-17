@@ -6,40 +6,47 @@
 <title>Kỳ tuyển sinh — Admin Thông Tin Trường Hàn</title>
 <link rel="stylesheet" href="admin.css">
 <style>
-.semester-card { max-width: 600px; margin: 0 auto; }
-.semester-form { padding: 24px; }
-.semester-preview {
-  margin-top: 20px;
-  padding: 16px 20px;
-  background: var(--gray-50);
-  border-radius: 8px;
-  border: 1px solid var(--gray-200);
-}
-.semester-preview h4 {
-  font-size: 12px;
-  color: var(--gray-500);
-  text-transform: uppercase;
-  letter-spacing: .5px;
-  margin-bottom: 8px;
-}
-.semester-preview .preview-title {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--gray-900);
-}
-.semester-preview .preview-sub {
-  font-size: 13px;
-  color: var(--gray-500);
-  margin-top: 4px;
-}
-.form-row-semester {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-@media (max-width: 600px) {
-  .form-row-semester { grid-template-columns: 1fr; }
-}
+.sem-layout { display:flex; gap:24px; align-items:flex-start; }
+.sem-list-panel { flex:1; min-width:0; }
+.sem-detail-panel { width:480px; flex-shrink:0; position:sticky; top:16px; }
+@media (max-width:900px) { .sem-layout { flex-direction:column; } .sem-detail-panel { width:100%; position:static; } }
+
+.sem-table { width:100%; border-collapse:collapse; font-size:14px; }
+.sem-table th { text-align:left; padding:10px 12px; background:var(--gray-50); border-bottom:2px solid var(--gray-200); font-size:12px; color:var(--gray-500); text-transform:uppercase; letter-spacing:.5px; }
+.sem-table td { padding:10px 12px; border-bottom:1px solid var(--gray-100); vertical-align:middle; }
+.sem-table tr:hover td { background:#f8fafc; }
+.sem-table .sem-name { font-weight:600; color:var(--gray-800); }
+.sem-table .sem-name small { font-weight:400; color:var(--gray-400); font-size:12px; display:block; }
+
+.badge-active { display:inline-block; padding:2px 8px; border-radius:99px; background:#dbeafe; color:#1d4ed8; font-size:11px; font-weight:600; }
+.badge-inactive { display:inline-block; padding:2px 8px; border-radius:99px; background:#f1f5f9; color:#64748b; font-size:11px; font-weight:600; }
+
+.sem-actions { display:flex; gap:4px; }
+.sem-actions button { padding:4px 10px; font-size:12px; }
+
+.school-check-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:6px; max-height:400px; overflow-y:auto; padding:4px 0; }
+.school-check-item { display:flex; align-items:center; gap:8px; padding:6px 8px; border-radius:6px; cursor:pointer; font-size:13px; transition:background .15s; }
+.school-check-item:hover { background:#f1f5f9; }
+.school-check-item input[type="checkbox"] { width:16px; height:16px; cursor:pointer; accent-color:#2563eb; }
+.school-check-item .sch-name { color:var(--gray-700); }
+.school-check-item .sch-slug { font-size:11px; color:var(--gray-400); }
+
+.detail-actions { display:flex; gap:8px; margin-top:16px; padding-top:16px; border-top:1px solid var(--gray-200); }
+.selected-count { font-size:12px; color:var(--gray-500); margin-top:8px; }
+
+.new-sem-btn { width:100%; padding:10px; border:2px dashed var(--gray-300); border-radius:8px; background:transparent; cursor:pointer; font-size:14px; color:var(--gray-500); transition:all .2s; margin-bottom:12px; }
+.new-sem-btn:hover { border-color:var(--primary); color:var(--primary); background:#eef6ff; }
+
+.form-inline { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.form-inline .form-group { margin:0; }
+.form-inline .full-width { grid-column:1/-1; }
+.form-inline-actions { grid-column:1/-1; display:flex; gap:8px; margin-top:4px; }
+
+.empty-state { text-align:center; padding:40px 20px; color:var(--gray-400); }
+.empty-state p { margin:0 0 8px; font-size:14px; }
+.empty-state small { font-size:12px; }
+
+.loading-state { text-align:center; padding:40px; color:var(--gray-400); }
 </style>
 </head>
 <body>
@@ -47,7 +54,6 @@
 <script>checkAuth();</script>
 
 <div class="admin-layout">
-  <!-- Sidebar -->
   <aside class="sidebar">
     <div class="sidebar-header">
       <h2>🏫 Trường Hàn</h2>
@@ -80,7 +86,6 @@
     </div>
   </aside>
 
-  <!-- Main -->
   <main class="main-content">
     <div class="top-bar">
       <h1>Kỳ tuyển sinh</h1>
@@ -91,44 +96,28 @@
     </div>
 
     <div class="content-area">
-      <div class="card semester-card">
-        <div class="card-header">
-          <h3>📅 Cấu hình kỳ tuyển sinh</h3>
+      <div class="sem-layout">
+        <!-- Left: Semester list -->
+        <div class="sem-list-panel">
+          <div class="card">
+            <div class="card-header">
+              <h3>📅 Danh sách kỳ tuyển sinh</h3>
+            </div>
+            <div class="card-body">
+              <div id="sem-list-container"></div>
+            </div>
+          </div>
         </div>
-        <div class="semester-form">
-          <div class="form-row-semester">
-            <div class="form-group">
-              <label for="sem-ky">Kỳ</label>
-              <select id="sem-ky">
-                <option value="3">Tháng 3</option>
-                <option value="9">Tháng 9</option>
-              </select>
-              <div class="help-text">Kỳ tuyển sinh (3 hoặc 9)</div>
-            </div>
-            <div class="form-group">
-              <label for="sem-nam">Năm</label>
-              <input type="number" id="sem-nam" min="2024" max="2035" placeholder="2027">
-              <div class="help-text">Năm tuyển sinh</div>
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="sem-title">Tiêu đề tuỳ chỉnh (không bắt buộc)</label>
-            <input type="text" id="sem-title" placeholder="VD: DANH SÁCH TRƯỜNG HÀN QUỐC - KỲ THÁNG 3/2027">
-            <div class="help-text">Để trống sẽ tự động tạo theo kỳ/năm</div>
-          </div>
 
-          <!-- Preview -->
-          <div class="semester-preview">
-            <h4>Xem trước</h4>
-            <div class="preview-title" id="preview-title">Kỳ tháng 3/2027</div>
-            <div class="preview-sub" id="preview-sub">Hiển thị trên tiêu đề website</div>
-          </div>
-
-          <!-- Actions -->
-          <div style="display:flex;gap:12px;margin-top:20px;">
-            <button class="btn btn-primary" id="save-btn" onclick="saveSemester()">💾 Lưu thay đổi</button>
-            <div style="flex:1"></div>
-            <span id="save-status" style="color:var(--gray-400);font-size:13px;align-self:center;"></span>
+        <!-- Right: Detail / School assignment -->
+        <div class="sem-detail-panel" id="sem-detail-panel">
+          <div class="card">
+            <div class="card-header">
+              <h3 id="detail-title">Thông tin kỳ</h3>
+            </div>
+            <div class="card-body" id="detail-body">
+              <p style="color:var(--gray-400);text-align:center;padding:20px 0;font-size:13px;">Chọn một kỳ để xem chi tiết</p>
+            </div>
           </div>
         </div>
       </div>
@@ -136,8 +125,23 @@
   </main>
 </div>
 
+<!-- Delete modal -->
+<div class="modal-overlay" id="delete-modal">
+  <div class="modal-box modal-small">
+    <h3>Xoá kỳ tuyển sinh</h3>
+    <p id="delete-modal-text">Bạn có chắc muốn xoá kỳ <strong id="delete-name"></strong>?</p>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('delete-modal')">Huỷ</button>
+      <button class="btn btn-danger" id="delete-confirm-btn">Xoá</button>
+    </div>
+  </div>
+</div>
+
 <script>
-let currentData = null;
+let semesters = [];
+let schools = [];
+let selectedSemesterId = null;
+let deleteTargetId = null;
 
 // User
 const user = getUser();
@@ -146,79 +150,317 @@ if (user) {
   document.getElementById('sidebar-user').textContent = user.email;
 }
 
-// Live preview
-function updatePreview() {
-  const ky = document.getElementById('sem-ky').value;
-  const nam = document.getElementById('sem-nam').value.trim() || '2027';
-  const customTitle = document.getElementById('sem-title').value.trim();
-
-  const defaultTitle = 'DANH SÁCH TRƯỜNG HÀN QUỐC - KỲ THÁNG ' + ky + '/' + nam;
-  const displayTitle = 'Kỳ tháng ' + ky + '/' + nam;
-
-  document.getElementById('preview-title').textContent = displayTitle;
-  document.getElementById('preview-sub').textContent = customTitle || defaultTitle;
-}
-
-document.getElementById('sem-ky').addEventListener('change', updatePreview);
-document.getElementById('sem-nam').addEventListener('input', updatePreview);
-document.getElementById('sem-title').addEventListener('input', updatePreview);
-
-// Load
-async function loadSemester() {
+// ─── Load ───
+async function loadAll() {
   try {
-    const res = await api('GET', '/admin/semester');
-    currentData = res.data;
-    if (res.data) {
-      document.getElementById('sem-ky').value = res.data.ky || '3';
-      document.getElementById('sem-nam').value = res.data.nam || '2027';
-      document.getElementById('sem-title').value = res.data.title || '';
-      updatePreview();
+    const [semRes, schoolRes] = await Promise.all([
+      api('GET', '/admin/semesters'),
+      api('GET', '/schools?full=false'),
+    ]);
+    semesters = semRes.data || [];
+    schools = schoolRes.data || [];
+    renderList();
+    if (selectedSemesterId) {
+      const stillExists = semesters.find(s => s.id === selectedSemesterId);
+      if (stillExists) {
+        showDetail(selectedSemesterId);
+      } else {
+        selectedSemesterId = null;
+        resetDetail();
+      }
     }
   } catch (err) {
-    toast('Lỗi tải dữ liệu: ' + err.message, 'error');
+    document.getElementById('sem-list-container').innerHTML =
+      '<div class="error"><p>Lỗi: ' + escapeHtml(err.message) + '</p></div>';
   }
 }
 
-// Save
-async function saveSemester() {
-  const btn = document.getElementById('save-btn');
-  const status = document.getElementById('save-status');
+// ─── Render list ───
+function renderList() {
+  const container = document.getElementById('sem-list-container');
+
+  if (semesters.length === 0) {
+    container.innerHTML = `
+      <button class="new-sem-btn" onclick="showCreateForm()">+ Tạo kỳ tuyển sinh mới</button>
+      <div class="empty-state"><p>Chưa có kỳ tuyển sinh nào</p><small>Tạo kỳ đầu tiên để bắt đầu quản lý trường theo kỳ.</small></div>
+    `;
+    return;
+  }
+
+  const rows = semesters.map(s => `
+    <tr class="${selectedSemesterId === s.id ? 'active-row' : ''}" onclick="showDetail('${s.id}')" style="cursor:pointer;">
+      <td>
+        <div class="sem-name">${escapeHtml(s.title || 'Kỳ tháng ' + s.ky + '/' + s.nam)}
+          <small>Tháng ${escapeHtml(s.ky)} / ${escapeHtml(s.nam)}</small>
+        </div>
+      </td>
+      <td><span class="${s.is_active ? 'badge-active' : 'badge-inactive'}">${s.is_active ? 'Đang áp dụng' : 'Ẩn'}</span></td>
+      <td>
+        <div class="sem-actions">
+          ${s.is_active ? '' : '<button class="btn btn-outline btn-sm" onclick="event.stopPropagation();setActive(\'' + s.id + '\')">Kích hoạt</button>'}
+          <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();showDeleteModal('${s.id}', '${escapeHtml(s.title || 'Kỳ tháng ' + s.ky + '/' + s.nam)}')">Xoá</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+
+  container.innerHTML = `
+    <button class="new-sem-btn" onclick="showCreateForm()">+ Tạo kỳ tuyển sinh mới</button>
+    <div class="table-wrap">
+      <table class="sem-table">
+        <thead><tr>
+          <th>Kỳ tuyển sinh</th>
+          <th>Trạng thái</th>
+          <th></th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+// ─── Detail panel ───
+async function showDetail(semesterId) {
+  selectedSemesterId = semesterId;
+  renderList(); // Update active row highlight
+
+  const sem = semesters.find(s => s.id === semesterId);
+  if (!sem) return;
+
+  // Lấy danh sách school_ids đã gán cho kỳ này
+  let assignedIds = [];
+  try {
+    const ssRes = await api('GET', '/admin/semester-schools?semester_id=' + encodeURIComponent(semesterId));
+    assignedIds = (ssRes.data || []).map(r => r.school_id);
+  } catch (e) {
+    // ignore
+  }
+
+  const detail = document.getElementById('detail-body');
+  document.getElementById('detail-title').textContent = '📋 ' + (sem.title || 'Kỳ tháng ' + sem.ky + '/' + sem.nam);
+
+  const schoolChecks = (schools || []).map(sch => {
+    const checked = assignedIds.includes(sch.id);
+    return `
+      <label class="school-check-item">
+        <input type="checkbox" value="${sch.id}" ${checked ? 'checked' : ''} onchange="onSchoolToggle('${semesterId}', '${sch.id}', this.checked)">
+        <span>
+          <span class="sch-name">${escapeHtml(sch.name)}</span>
+          <span class="sch-slug">${escapeHtml(sch.slug)}</span>
+        </span>
+      </label>
+    `;
+  }).join('');
+
+  const defaultTitle = 'DANH SÁCH TRƯỜNG HÀN QUỐC - KỲ THÁNG ' + sem.ky + '/' + sem.nam;
+  const displayTitle = 'Kỳ tháng ' + sem.ky + '/' + sem.nam;
+
+  detail.innerHTML = `
+    <div class="form-inline">
+      <div class="form-group">
+        <label>Kỳ</label>
+        <select id="edit-ky">
+          <option value="3" ${sem.ky === '3' ? 'selected' : ''}>Tháng 3</option>
+          <option value="9" ${sem.ky === '9' ? 'selected' : ''}>Tháng 9</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Năm</label>
+        <input type="number" id="edit-nam" value="${sem.nam}" min="2024" max="2035">
+      </div>
+      <div class="form-group full-width">
+        <label>Tiêu đề</label>
+        <input type="text" id="edit-title" value="${escapeHtml(sem.title || '')}" placeholder="${escapeHtml(defaultTitle)}">
+        <div class="help-text">Để trống sẽ tự động tạo theo kỳ/năm</div>
+      </div>
+      <div class="form-inline-actions">
+        <button class="btn btn-primary btn-sm" onclick="saveSemester('${semesterId}')">💾 Lưu thay đổi</button>
+        <button class="btn btn-outline btn-sm ${sem.is_active ? 'disabled' : ''}" onclick="${sem.is_active ? '' : "setActive('" + semesterId + "')"}">${sem.is_active ? '✅ Đang áp dụng' : '⭐ Đặt làm kỳ hiện tại'}</button>
+        <span id="edit-status" style="color:var(--gray-400);font-size:12px;align-self:center;"></span>
+      </div>
+    </div>
+
+    <hr style="margin:16px 0;border:none;border-top:1px solid var(--gray-200);">
+
+    <h4 style="margin:0 0 8px;font-size:13px;color:var(--gray-600);">Trường trong kỳ này</h4>
+    <div class="school-check-grid">${schoolChecks}</div>
+    <div class="selected-count">Đã chọn: <strong id="selected-count-num">${assignedIds.length}</strong> / ${schools.length} trường</div>
+  `;
+}
+
+function resetDetail() {
+  document.getElementById('detail-title').textContent = 'Thông tin kỳ';
+  document.getElementById('detail-body').innerHTML =
+    '<p style="color:var(--gray-400);text-align:center;padding:20px 0;font-size:13px;">Chọn một kỳ để xem chi tiết</p>';
+}
+
+// ─── Create form ───
+function showCreateForm() {
+  selectedSemesterId = null;
+  renderList();
+
+  document.getElementById('detail-title').textContent = '➕ Tạo kỳ mới';
+  document.getElementById('detail-body').innerHTML = `
+    <div class="form-inline">
+      <div class="form-group">
+        <label>Kỳ</label>
+        <select id="new-ky">
+          <option value="3">Tháng 3</option>
+          <option value="9">Tháng 9</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Năm</label>
+        <input type="number" id="new-nam" value="2027" min="2024" max="2035">
+      </div>
+      <div class="form-group full-width">
+        <label>Tiêu đề (không bắt buộc)</label>
+        <input type="text" id="new-title" placeholder="VD: DANH SÁCH TRƯỜNG HÀN QUỐC - KỲ THÁNG 3/2027">
+      </div>
+      <div class="form-group full-width" style="display:flex;align-items:center;gap:8px;">
+        <label style="margin:0;font-weight:400;">
+          <input type="checkbox" id="new-isActive" checked> Đặt làm kỳ hiện tại ngay
+        </label>
+      </div>
+      <div class="form-inline-actions">
+        <button class="btn btn-primary btn-sm" onclick="createSemester()">➕ Tạo kỳ</button>
+        <span id="create-status" style="color:var(--gray-400);font-size:12px;align-self:center;"></span>
+      </div>
+    </div>
+  `;
+}
+
+// ─── Create ───
+async function createSemester() {
+  const ky = document.getElementById('new-ky').value;
+  const nam = document.getElementById('new-nam').value.trim();
+  const title = document.getElementById('new-title').value.trim();
+  const isActive = document.getElementById('new-isActive').checked;
+  const status = document.getElementById('create-status');
+
+  if (!nam) { toast('Vui lòng nhập năm', 'error'); return; }
 
   try {
-    const ky = document.getElementById('sem-ky').value;
-    const nam = document.getElementById('sem-nam').value.trim();
-    const title = document.getElementById('sem-title').value.trim();
-
-    if (!nam) {
-      toast('Vui lòng nhập năm tuyển sinh', 'error');
-      return;
-    }
-
-    const autoTitle = 'DANH SÁCH TRƯỜNG HÀN QUỐC - KỲ THÁNG ' + ky + '/' + nam;
-
-    btn.disabled = true;
-    status.textContent = 'Đang lưu...';
-
-    await api('PUT', '/admin/semester', {
-      ky: ky,
-      nam: nam,
+    status.textContent = 'Đang tạo...';
+    const autoTitle = 'Kỳ tháng ' + ky + '/' + nam;
+    await api('POST', '/admin/semesters', {
+      ky, nam,
       title: title || autoTitle,
+      isActive,
+      sortOrder: semesters.length,
     });
-
-    toast('Đã cập nhật kỳ tuyển sinh!', 'success');
-    status.textContent = '✅ Đã lưu';
-    loadSemester();
+    toast('Đã tạo kỳ mới!', 'success');
+    status.textContent = '✅ Đã tạo';
+    await loadAll();
   } catch (err) {
     toast('Lỗi: ' + err.message, 'error');
-    status.textContent = '❌ Lỗi: ' + err.message;
-  } finally {
-    btn.disabled = false;
-    setTimeout(() => { status.textContent = ''; }, 3000);
+    status.textContent = '❌ ' + err.message;
   }
 }
 
-// Init
-loadSemester();
+// ─── Save ───
+async function saveSemester(id) {
+  const ky = document.getElementById('edit-ky').value;
+  const nam = document.getElementById('edit-nam').value.trim();
+  const title = document.getElementById('edit-title').value.trim();
+  const status = document.getElementById('edit-status');
+
+  if (!nam) { toast('Vui lòng nhập năm', 'error'); return; }
+
+  try {
+    status.textContent = 'Đang lưu...';
+    const sem = semesters.find(s => s.id === id);
+    const autoTitle = 'Kỳ tháng ' + ky + '/' + nam;
+    await api('PUT', '/admin/semesters?id=' + encodeURIComponent(id), {
+      ky, nam,
+      title: title || autoTitle,
+      sortOrder: sem ? sem.sort_order : 0,
+    });
+    toast('Đã cập nhật!', 'success');
+    status.textContent = '✅ Đã lưu';
+    await loadAll();
+  } catch (err) {
+    toast('Lỗi: ' + err.message, 'error');
+    status.textContent = '❌ ' + err.message;
+  }
+}
+
+// ─── Toggle school assignment ───
+let toggleQueue = Promise.resolve();
+
+async function onSchoolToggle(semesterId, schoolId, checked) {
+  // Queue sequential để tránh race condition
+  toggleQueue = toggleQueue.then(async () => {
+    try {
+      if (checked) {
+        await api('POST', '/admin/semester-schools', {
+          semester_id: semesterId,
+          school_ids: [schoolId],
+        });
+      } else {
+        await api('DELETE', '/admin/semester-schools?semester_id=' + encodeURIComponent(semesterId) + '&school_id=' + encodeURIComponent(schoolId));
+      }
+      // Update count
+      const checks = document.querySelectorAll('.school-check-item input:checked');
+      const count = document.getElementById('selected-count-num');
+      if (count) count.textContent = String(checks.length);
+    } catch (err) {
+      toast('Lỗi: ' + err.message, 'error');
+      // Re-toggle checkbox
+      const cb = document.querySelector('.school-check-item input[value="' + schoolId + '"]');
+      if (cb) cb.checked = !checked;
+    }
+  });
+  await toggleQueue;
+}
+
+// ─── Set active ───
+async function setActive(id) {
+  try {
+    await api('PUT', '/admin/semesters?id=' + encodeURIComponent(id), { isActive: true });
+    toast('Đã đặt làm kỳ hiện tại!', 'success');
+    await loadAll();
+  } catch (err) {
+    toast('Lỗi: ' + err.message, 'error');
+  }
+}
+
+// ─── Delete modal ───
+function showDeleteModal(id, name) {
+  deleteTargetId = id;
+  document.getElementById('delete-name').textContent = name;
+  document.getElementById('delete-modal').classList.add('show');
+}
+
+document.getElementById('delete-confirm-btn').addEventListener('click', async function() {
+  if (!deleteTargetId) return;
+  try {
+    await api('DELETE', '/admin/semesters?id=' + encodeURIComponent(deleteTargetId));
+    toast('Đã xoá kỳ!', 'success');
+    closeModal('delete-modal');
+    if (selectedSemesterId === deleteTargetId) {
+      selectedSemesterId = null;
+      resetDetail();
+    }
+    await loadAll();
+  } catch (err) {
+    toast('Lỗi: ' + err.message, 'error');
+    closeModal('delete-modal');
+  }
+});
+
+// ─── Modal helpers ───
+function closeModal(id) {
+  document.getElementById(id).classList.remove('show');
+}
+document.querySelectorAll('.modal-overlay').forEach(function(el) {
+  el.addEventListener('click', function(e) {
+    if (e.target === e.currentTarget) closeModal(this.id);
+  });
+});
+
+// ─── Init ───
+loadAll();
 </script>
 </body>
 </html>

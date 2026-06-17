@@ -357,14 +357,24 @@ async function main() {
     process.exit(1);
   }
 
-  // Fetch semester info
+  // Fetch semester info + semesters
   const { data: semInfo } = await supabase
     .from('semester_info')
     .select('*')
     .limit(1)
     .maybeSingle();
 
-  console.log(`📊 Found ${schools.length} schools, semester: ${semInfo?.ky || '?'}/${semInfo?.nam || '?'}`);
+  const { data: semesters } = await supabase
+    .from('semesters')
+    .select('*')
+    .order('sort_order')
+    .order('nam', { ascending: false })
+    .order('ky', { ascending: false });
+
+  const activeSemester = (semesters || []).find(s => s.is_active) || (semesters || [])[0] || null;
+  const activeSemInfo = activeSemester || semInfo;
+
+  console.log(`📊 Found ${schools.length} schools, active semester: ${activeSemInfo?.ky || '?'}/${activeSemInfo?.nam || '?'}`);
 
   // Transform schools (giống api/schools/index.js)
   const transformed = schools.map((school) => ({
@@ -383,7 +393,28 @@ async function main() {
     partners: school.school_partners || [],
   }));
 
-  // ─── Fetch thêm advisor profiles + extras cho inline data ───
+  // ─── Fetch semester-schools map ───
+  const { data: semesterSchoolsRaw } = await supabase
+    .from('semester_schools')
+    .select('semester_id, school_id');
+
+  // Build { school_id -> [semester_id, ...] }
+  const semesterSchoolsMap = {};
+  for (const ss of semesterSchoolsRaw || []) {
+    if (!semesterSchoolsMap[ss.school_id]) {
+      semesterSchoolsMap[ss.school_id] = [];
+    }
+    semesterSchoolsMap[ss.school_id].push(ss.semester_id);
+  }
+
+  // Build { slug -> [semester_id, ...] } (vì SCHOOLS_DATA key là slug)
+  const slugToSemesterIds = {};
+  for (const school of schools) {
+    const sids = semesterSchoolsMap[school.id] || [];
+    if (sids.length > 0) {
+      slugToSemesterIds[school.slug] = sids;
+    }
+  }
   const { data: advisorProfilesRaw } = await supabase
     .from('school_advisor_profiles')
     .select('*');
@@ -428,6 +459,10 @@ async function main() {
     note: r.note || '',
   }));
 
+  function buildSemesterInfoPayload() {
+    return { ky: activeSemInfo?.ky || '3', nam: activeSemInfo?.nam || '2027', title: activeSemInfo?.title || '' };
+  }
+
   // Build the complete prerendered data payload
   const prerenderedDataPayload = {
     schoolsData: transformed.map((s) => {
@@ -470,7 +505,17 @@ async function main() {
       };
     }),
     advisorProfilesData: advisorProfilesMap,
-    semesterInfo: { ky: semInfo?.ky || '3', nam: semInfo?.nam || '2027', title: semInfo?.title || '' },
+    semesterInfo: buildSemesterInfoPayload(),
+    semestersList: (semesters || []).map(s => ({
+      id: s.id,
+      ky: s.ky,
+      nam: s.nam,
+      title: s.title || `Kỳ tháng ${s.ky}/${s.nam}`,
+      isActive: s.is_active,
+      sortOrder: s.sort_order,
+    })),
+    activeSemesterId: activeSemester?.id || null,
+    semesterSchoolsMap: slugToSemesterIds,
     extrasChecklist: extrasChecklist,
   };
 
@@ -489,7 +534,7 @@ async function main() {
       fs.mkdirSync(schoolDir, { recursive: true });
     }
 
-    const html = buildSchoolHtml(school, semInfo, prerenderedDataPayload);
+    const html = buildSchoolHtml(school, activeSemInfo, prerenderedDataPayload);
     fs.writeFileSync(path.join(schoolDir, 'index.html'), html, 'utf-8');
     count++;
 
@@ -501,7 +546,7 @@ async function main() {
   console.log(`  ✅ Generated ${count}/${schools.length} school pages`);
 
   // ─── Generate sitemap ───
-  const sitemap = buildSitemap(transformed, semInfo);
+  const sitemap = buildSitemap(transformed, activeSemInfo);
   fs.writeFileSync(path.join(OUTPUT_DIR, 'sitemap.xml'), sitemap, 'utf-8');
   console.log('  ✅ sitemap.xml updated');
 

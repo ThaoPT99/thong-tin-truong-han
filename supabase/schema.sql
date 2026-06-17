@@ -106,7 +106,36 @@ CREATE TABLE IF NOT EXISTS school_advisor_profiles (
   updated_at          TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 5. Semester info (1 dòng: kỳ tuyển sinh hiện tại)
+-- 5. Semesters — danh sách kỳ tuyển sinh
+CREATE TABLE IF NOT EXISTS semesters (
+  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  ky            VARCHAR(10) NOT NULL,
+  nam           VARCHAR(10) NOT NULL,
+  title         TEXT,
+  is_active     BOOLEAN DEFAULT false,
+  sort_order    INTEGER DEFAULT 0,
+  created_at    TIMESTAMPTZ DEFAULT NOW(),
+  updated_at    TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(ky, nam)
+);
+
+-- 5b. Semester-schools — trường nào thuộc kỳ nào
+CREATE TABLE IF NOT EXISTS semester_schools (
+  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  semester_id   UUID NOT NULL REFERENCES semesters(id) ON DELETE CASCADE,
+  school_id     UUID NOT NULL REFERENCES schools(id) ON DELETE CASCADE,
+  created_at    TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(semester_id, school_id)
+);
+
+-- Migrate: copy dữ liệu từ semester_info cũ sang semesters
+INSERT INTO semesters (ky, nam, title, is_active, sort_order)
+SELECT COALESCE(ky, '3'), COALESCE(nam, '2027'), COALESCE(title, ''), true, 0
+FROM semester_info
+WHERE EXISTS (SELECT 1 FROM semester_info)
+ON CONFLICT (ky, nam) DO NOTHING;
+
+-- 5c. Semester info (giữ lại để không break API cũ, sẽ xoá sau)
 CREATE TABLE IF NOT EXISTS semester_info (
   id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   ky            VARCHAR(10),
@@ -175,6 +204,8 @@ ALTER TABLE school_partners ENABLE ROW LEVEL SECURITY;
 ALTER TABLE school_advisor_profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE extra_visa_checklist ENABLE ROW LEVEL SECURITY;
 ALTER TABLE extra_interviews ENABLE ROW LEVEL SECURITY;
+ALTER TABLE semesters ENABLE ROW LEVEL SECURITY;
+ALTER TABLE semester_schools ENABLE ROW LEVEL SECURITY;
 ALTER TABLE semester_info ENABLE ROW LEVEL SECURITY;
 
 -- Public read policies
@@ -188,4 +219,11 @@ CREATE POLICY "public_read_partners" ON school_partners FOR SELECT USING (true);
 CREATE POLICY "public_read_advisor" ON school_advisor_profiles FOR SELECT USING (true);
 CREATE POLICY "public_read_checklist" ON extra_visa_checklist FOR SELECT USING (true);
 CREATE POLICY "public_read_interviews" ON extra_interviews FOR SELECT USING (true);
+CREATE POLICY "public_read_semesters" ON semesters FOR SELECT USING (true);
+CREATE POLICY "public_read_semester_schools" ON semester_schools FOR SELECT USING (true);
 CREATE POLICY "public_read_semester" ON semester_info FOR SELECT USING (true);
+
+-- Indexes cho semesters
+CREATE INDEX IF NOT EXISTS idx_semester_schools_semester ON semester_schools(semester_id);
+CREATE INDEX IF NOT EXISTS idx_semester_schools_school ON semester_schools(school_id);
+CREATE INDEX IF NOT EXISTS idx_semesters_active ON semesters(is_active);

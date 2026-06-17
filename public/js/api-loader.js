@@ -108,6 +108,9 @@ window.REGION_LABELS = {
       window.SCHOOLS_DATA = SCHOOLS_DATA;
       window.ADVISOR_PROFILES = preData.advisorProfilesData || {};
       window.SEMESTER_INFO = preData.semesterInfo || { ky: '3', nam: '2027', title: '' };
+      window.SEMESTERS_LIST = preData.semestersList || [];
+      window.ACTIVE_SEMESTER_ID = preData.activeSemesterId || null;
+      window.SEMESTER_SCHOOLS_MAP = preData.semesterSchoolsMap || {};
 
       // Build checklist
       window.EXTRA_SHEETS = { visaChecklist: { items: preData.extrasChecklist || [] } };
@@ -235,11 +238,29 @@ window.REGION_LABELS = {
       });
       window.ADVISOR_PROFILES = ADVISOR_PROFILES;
 
-      // === Semester info ===
-      var semInfo = extrasJson.data && extrasJson.data.semesterInfo;
-      window.SEMESTER_INFO = semInfo
-        ? { ky: semInfo.ky || '3', nam: semInfo.nam || '2027', title: semInfo.title || '' }
+      // === Semesters (danh sách kỳ) + active semester ===
+      var semestersData = (extrasJson.data && extrasJson.data.semesters) || [];
+      window.SEMESTERS_LIST = semestersData;
+
+      var activeSemId = extrasJson.data && extrasJson.data.activeSemesterId;
+      var activeSem = semestersData.find(function(s) { return s.id === activeSemId; }) || semestersData[0] || null;
+      window.ACTIVE_SEMESTER_ID = activeSem ? activeSem.id : null;
+
+      window.SEMESTER_INFO = activeSem
+        ? { ky: activeSem.ky || '3', nam: activeSem.nam || '2027', title: activeSem.title || '' }
         : { ky: '3', nam: '2027', title: 'DANH SÁCH TRƯỜNG HÀN QUỐC - KỲ THÁNG 3/2027' };
+
+      // === Semester-schools map (school_id UUID -> [semester_id, ...]) from API ===
+      var rawMap = schoolsJson.semesterSchools || {};
+      // Convert sang slug -> [semester_id] vì SCHOOLS_DATA key là slug
+      var slugMap = {};
+      rawSchools.forEach(function(sch) {
+        var sids = rawMap[sch.id];
+        if (sids && sids.length > 0 && sch.slug) {
+          slugMap[sch.slug] = sids;
+        }
+      });
+      window.SEMESTER_SCHOOLS_MAP = slugMap;
 
       // === Extra sheets (visa checklist) ===
       var visaList = (extrasJson.data && extrasJson.data.visaChecklist) || [];
@@ -271,6 +292,9 @@ window.REGION_LABELS = {
       window.SCHOOLS_DATA = {};
       window.ADVISOR_PROFILES = {};
       window.SEMESTER_INFO = { ky: '3', nam: '2027', title: '' };
+      window.SEMESTERS_LIST = [];
+      window.ACTIVE_SEMESTER_ID = null;
+      window.SEMESTER_SCHOOLS_MAP = {};
       window.EXTRA_SHEETS = {};
       window.CHECKLIST_GROUPED = [];
       window.__DATA_READY__ = true;

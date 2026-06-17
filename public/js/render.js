@@ -33,8 +33,22 @@ function listToInline(items, limit = 3) {
   return items.slice(0, limit).map(item => String(item).replace(/\s+/g, " ").trim()).join("; ");
 }
 
+// ─── Semester state ───
+var currentSemesterId = null;
+
+function getSemesterSchools() {
+  var all = Object.values(SCHOOLS_DATA || {});
+  if (!currentSemesterId) return all;
+  var map = window.SEMESTER_SCHOOLS_MAP || {};
+  // map keys là slug (đã convert từ UUID trong api-loader.js), SCHOOLS_DATA key cũng là slug
+  return all.filter(function(s) {
+    var sids = map[s.id] || [];
+    return sids.indexOf(currentSemesterId) !== -1;
+  });
+}
+
 function getSchools() {
-  return Object.values(SCHOOLS_DATA || {});
+  return getSemesterSchools();
 }
 
 function getSchoolById(schoolId) {
@@ -261,8 +275,26 @@ function renderSchool(schoolId) {
   `;
 }
 
+function renderSemesterSelector() {
+  var list = window.SEMESTERS_LIST || [];
+  if (list.length <= 1) return '';
+
+  var activeId = currentSemesterId || window.ACTIVE_SEMESTER_ID;
+  var options = list.map(function(s) {
+    var selected = (s.id === activeId) ? ' selected' : '';
+    return '<option value="' + s.id + '"' + selected + '>' + escapeHtml(s.title || 'Kỳ tháng ' + s.ky + '/' + s.nam) + '</option>';
+  }).join('');
+
+  return '<div class="semester-selector"><label>Kỳ tuyển sinh:</label><select id="semester-select" onchange="switchSemester(this.value)">' + options + '</select></div>';
+}
+
+window.switchSemester = function(semesterId) {
+  currentSemesterId = semesterId;
+  showSchool('schools');
+};
+
 function renderSchoolsDirectory() {
-  const schools = getSchools();
+  const schools = getSemesterSchools();
   // Collect unique regions from canonical data or advisor fallback
   const regionSet = new Set();
   schools.forEach(s => {
@@ -283,6 +315,7 @@ function renderSchoolsDirectory() {
 
   return `
     <section class="directory-view">
+      ${renderSemesterSelector()}
       <div class="directory-head">
         <div>
           <p class="advisor-kicker">Danh sách trường</p>
@@ -889,6 +922,11 @@ function init() {
     // API loader chưa hoàn thành, hẹn init lại
     document.addEventListener('app-data-ready', init, { once: true });
     return;
+  }
+
+  // Set current semester từ active semester
+  if (!currentSemesterId && window.ACTIVE_SEMESTER_ID) {
+    currentSemesterId = window.ACTIVE_SEMESTER_ID;
   }
 
   // Ẩn skeleton loading

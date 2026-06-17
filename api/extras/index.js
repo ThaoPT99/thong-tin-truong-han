@@ -1,4 +1,5 @@
 // GET /api/extras — dữ liệu phụ trợ (Supabase client)
+// Trả về: semesterInfo, semesters (danh sách kỳ), visaChecklist, interviews
 const { supabase } = require('../../lib/supabase');
 
 module.exports = async (req, res) => {
@@ -15,18 +16,34 @@ module.exports = async (req, res) => {
   try {
     const [
       { data: semesterInfo },
+      { data: semesters },
       { data: visaChecklist },
       { data: interviews },
     ] = await Promise.all([
       supabase.from('semester_info').select('*').limit(1).maybeSingle(),
+      supabase.from('semesters').select('*').order('sort_order').order('nam', { ascending: false }).order('ky', { ascending: false }),
       supabase.from('extra_visa_checklist').select('*').order('sort_order'),
       supabase.from('extra_interviews').select('*').order('sort_order'),
     ]);
 
+    // Tìm kỳ active
+    const activeSemester = (semesters || []).find(s => s.is_active) || (semesters || [])[0] || null;
+
     return res.json({
       success: true,
       data: {
-        semesterInfo: semesterInfo || null,
+        // Giữ semesterInfo cũ cho backward compat
+        semesterInfo: activeSemester || semesterInfo || null,
+        // Danh sách kỳ (cho frontend selector)
+        semesters: (semesters || []).map((s) => ({
+          id: s.id,
+          ky: s.ky,
+          nam: s.nam,
+          title: s.title || `Kỳ tháng ${s.ky}/${s.nam}`,
+          isActive: s.is_active,
+          sortOrder: s.sort_order,
+        })),
+        activeSemesterId: activeSemester?.id || null,
         visaChecklist: (visaChecklist || []).map((r) => ({
           stt: r.stt,
           content: r.content,

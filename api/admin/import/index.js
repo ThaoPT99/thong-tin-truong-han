@@ -142,19 +142,33 @@ module.exports = requireAdmin(async (req, res) => {
       }
     }
 
-    // ─── Import semester info ───
+    // ─── Import semester info (tạo mới hoặc upsert vào semesters) ───
     if (semesterInfo && (semesterInfo.ky || semesterInfo.nam)) {
-      const { data: existingSem } = await supabase
-        .from('semester_info').select('id').limit(1).maybeSingle();
+      const semKy = semesterInfo.ky || '3';
+      const semNam = semesterInfo.nam || '2027';
+      const semTitle = semesterInfo.title || `Kỳ tháng ${semKy}/${semNam}`;
 
-      const semData = {
-        ky: semesterInfo.ky || '3',
-        nam: semesterInfo.nam || '2027',
-        title: semesterInfo.title || '',
-      };
+      // Check if semester already exists in semesters table
+      const { data: existingSem } = await supabase
+        .from('semesters')
+        .select('id')
+        .eq('ky', semKy)
+        .eq('nam', semNam)
+        .maybeSingle();
 
       if (existingSem) {
-        await supabase.from('semester_info').update(semData).eq('id', existingSem.id);
+        await supabase.from('semesters').update({ title: semTitle }).eq('id', existingSem.id);
+      } else {
+        const maxOrder = await supabase.from('semesters').select('sort_order').order('sort_order', { ascending: false }).limit(1).maybeSingle();
+        const nextOrder = (maxOrder.data?.sort_order ?? -1) + 1;
+        await supabase.from('semesters').insert({ ky: semKy, nam: semNam, title: semTitle, is_active: false, sort_order: nextOrder });
+      }
+
+      // Also keep old semester_info for backward compat
+      const { data: oldSem } = await supabase.from('semester_info').select('id').limit(1).maybeSingle();
+      const semData = { ky: semKy, nam: semNam, title: semTitle };
+      if (oldSem) {
+        await supabase.from('semester_info').update(semData).eq('id', oldSem.id);
       } else {
         await supabase.from('semester_info').insert(semData);
       }
