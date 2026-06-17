@@ -162,7 +162,7 @@ CREATE TABLE IF NOT EXISTS users (
   updated_at      TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 9. Indexes
+-- 8. Indexes
 CREATE INDEX IF NOT EXISTS idx_conditions_school ON school_conditions(school_id);
 CREATE INDEX IF NOT EXISTS idx_majors_school ON school_majors(school_id);
 CREATE INDEX IF NOT EXISTS idx_advantages_school ON school_advantages(school_id);
