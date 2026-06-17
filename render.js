@@ -891,6 +891,10 @@ function init() {
     return;
   }
 
+  // Ẩn skeleton loading
+  var skeleton = document.getElementById('skeleton-loader');
+  if (skeleton) skeleton.style.display = 'none';
+
   const content = document.getElementById("advisor-content");
   if (typeof SCHOOLS_DATA === "undefined" || Object.keys(SCHOOLS_DATA).length === 0) {
     content.innerHTML = `<p class="empty" style="padding:2rem;color:#dc2626;">

@@ -325,25 +325,44 @@ body {
     background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
 }
 
+.skeleton-loader {
+    padding: 2rem 1.5rem;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.skeleton-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+}
+
 .skeleton-card {
-    min-height: 180px;
+    min-height: 64px;
     padding: 1rem;
+    display: flex;
+    align-items: center;
 }
 
 .skeleton-line {
     height: 14px;
-    margin-bottom: 8px;
     width: 80%;
 }
 
-.skeleton-line:last-child {
-    width: 55%;
-}
-
 .skeleton-heading {
-    height: 24px;
+    height: 26px;
     width: 60%;
     margin-bottom: 12px;
+}
+
+.skeleton-loader .skeleton-line {
+    margin-bottom: 10px;
+}
+
+@media (max-width: 640px) {
+    .skeleton-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 }
 
 /* Tab transition */
