@@ -1,11 +1,5 @@
 const PLACEHOLDER = "images/placeholder.svg";
-
-function escapeHtml(str) {
-  if (typeof str !== "string") return "";
-  const d = document.createElement("div");
-  d.textContent = str;
-  return d.innerHTML;
-}
+// escapeHtml đã được định nghĩa global trong api-loader.js
 
 function applyHighlights(html) {
   if (!html || typeof html !== "string") return html;
@@ -75,16 +69,13 @@ function getAdvisorRules(schoolId, school) {
 }
 
 function getRegionLabel(region) {
-  const labels = {
-    any: "Không ưu tiên",
-    seoul: "Seoul",
-    "near-seoul": "Gần Seoul",
-    busan: "Busan",
-    gwangju: "Gwangju",
-    province: "Tỉnh/thành khác"
-  };
   if (!region) return "Đang cập nhật";
-  if (labels[region]) return labels[region];
+  // Dùng global REGION_LABELS từ api-loader.js
+  if (window.REGION_LABELS && window.REGION_LABELS[region]) {
+    // Viết hoa chữ cái đầu cho hiển thị
+    var label = window.REGION_LABELS[region];
+    return label.charAt(0).toUpperCase() + label.slice(1);
+  }
   // Fallback: humanize unknown region keys (e.g. "my-region" -> "My Region")
   try {
     return String(region).replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase());

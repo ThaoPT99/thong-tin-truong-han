@@ -1,4 +1,36 @@
 // api-loader.js - Load dữ liệu từ API Vercel thay vì data.js
+
+// ─── Global helpers (dùng chung cho advisor.js, render.js) ───
+
+window.escapeHtml = function(str) {
+  var d = document.createElement("div");
+  d.textContent = String(str ?? "");
+  return d.innerHTML;
+};
+
+window.REGION_LABELS = {
+  any: "không ưu tiên khu vực",
+  seoul: "Seoul",
+  "near-seoul": "gần Seoul",
+  busan: "Busan",
+  gwangju: "Gwangju",
+  province: "tỉnh/thành khác",
+  incheon: "Incheon",
+  gyeonggi: "Gyeonggi",
+  chungcheongbuk: "Chungcheongbuk",
+  chungcheongnam: "Chungcheongnam",
+  jeollanam: "Jeollanam",
+  jeollabuk: "Jeollabuk",
+  gyeongsangnam: "Gyeongsangnam",
+  gyeongsangbuk: "Gyeongsangbuk",
+  gangwon: "Gangwon",
+  daegu: "Daegu",
+  daejeon: "Daejeon",
+  ulsan: "Ulsan",
+  sejong: "Sejong",
+  jeju: "Jeju"
+};
+
 (function loadAppData() {
   // Helper: build grouped checklist from flat API data
   function buildChecklistGroups(flatItems) {

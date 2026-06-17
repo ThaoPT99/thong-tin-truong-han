@@ -7,39 +7,8 @@ const PRIORITY_LABELS = {
   "low-study": "học ít"
 };
 
-const REGION_LABELS = {
-  any: "không ưu tiên khu vực",
+// REGION_LABELS đã được định nghĩa global trong api-loader.js
 
-  // Nhóm cũ (giữ để tương thích)
-  seoul: "Seoul",
-  "near-seoul": "gần Seoul",
-  busan: "Busan",
-  gwangju: "Gwangju",
-  province: "tỉnh/thành khác",
-
-  // Key region chi tiết theo data.js
-  incheon: "Incheon",
-  gyeonggi: "Gyeonggi",
-  chungcheongbuk: "Chungcheongbuk",
-  jeollanam: "Jeollanam",
-  jeollabuk: "Jeollabuk",
-  gyeongsangnam: "Gyeongsangnam",
-  gyeongsangbuk: "Gyeongsangbuk",
-  gangwon: "Gangwon",
-  chungcheongnam: "Chungcheongnam",
-  daegu: "Daegu",
-  daejeon: "Daejeon",
-  ulsan: "Ulsan",
-  sejong: "Sejong",
-  jeju: "Jeju"
-};
-
-
-function advisorEscapeHtml(str) {
-  const d = document.createElement("div");
-  d.textContent = String(str ?? "");
-  return d.innerHTML;
-}
 
 function renderAdvisorApp(container) {
   if (!container.dataset.ready) {
@@ -390,7 +359,7 @@ function renderAdvisorResults(target, profile, results) {
       <div>
         <p class="advisor-kicker">Kết quả phân tích</p>
         <h3>Top 3 trường phù hợp nhất</h3>
-        <p>Ưu tiên: ${advisorEscapeHtml(priorities)}. Khu vực: ${advisorEscapeHtml(REGION_LABELS[profile.region])}.</p>
+        <p>Ưu tiên: ${escapeHtml(priorities)}. Khu vực: ${escapeHtml(REGION_LABELS[profile.region])}.</p>
       </div>
       <div class="advisor-score-pill">${top[0]?.score || 0}% phù hợp nhất</div>
     </div>
@@ -460,25 +429,25 @@ function renderAdvisorCard(item) {
       <div class="advisor-card-top">
         <div>
           <span class="advisor-rank">#${item.rank}</span>
-          <h4>${advisorEscapeHtml(item.school.name)}</h4>
-          <p>${advisorEscapeHtml(item.school.nameKr || item.school.nameEn || "")}</p>
+          <h4>${escapeHtml(item.school.name)}</h4>
+          <p>${escapeHtml(item.school.nameKr || item.school.nameEn || "")}</p>
         </div>
         <div class="advisor-percent">${item.score}%</div>
       </div>
       <div class="advisor-meter"><span style="width:${item.score}%"></span></div>
       <div class="advisor-badges">
         <span>${item.level}</span>
-        <span>${advisorEscapeHtml(REGION_LABELS[item.rules.region])}</span>
+        <span>${escapeHtml(REGION_LABELS[item.rules.region])}</span>
         <span>Chi phí mức ${item.rules.costLevel}/5</span>
       </div>
       <div class="advisor-columns">
         <div>
           <strong>Lý do nên cân nhắc</strong>
-          <ul>${item.reasons.map((reason) => `<li>${advisorEscapeHtml(reason)}</li>`).join("")}</ul>
+          <ul>${item.reasons.map((reason) => `<li>${escapeHtml(reason)}</li>`).join("")}</ul>
         </div>
         <div>
           <strong>Rủi ro cần kiểm tra</strong>
-          <ul>${risks.map((risk) => `<li>${advisorEscapeHtml(risk)}</li>`).join("")}</ul>
+          <ul>${risks.map((risk) => `<li>${escapeHtml(risk)}</li>`).join("")}</ul>
         </div>
       </div>
       <button type="button" class="advisor-open-school" data-open-school="${item.id}">Xem chi tiết trường</button>
