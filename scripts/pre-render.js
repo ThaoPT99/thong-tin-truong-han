@@ -270,11 +270,15 @@ function buildSchoolHtml(school, semesterInfo, prerenderedData) {
   <!-- Pre-rendered data: inline, api-loader.js sẽ xử lý và skip fetch -->
   <script>
   window.__PRERENDERED_DATA__ = ${JSON.stringify(prerenderedData)};
-  // Listener phải đặt TRƯỚC api-loader.js (vì event dispatch synchronous)
+  // Listener đặt TRƯỚC api-loader.js. Poll showSchool vì render.js chưa load.
   document.addEventListener('app-data-ready', function() {
-    if (typeof showSchool === 'function') {
-      showSchool('${school.slug}');
-    }
+    var sid = '${school.slug}';
+    var check = setInterval(function() {
+      if (typeof showSchool === 'function') {
+        clearInterval(check);
+        showSchool(sid);
+      }
+    }, 10);
   }, { once: true });
   </script>
 
