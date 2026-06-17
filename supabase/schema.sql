@@ -110,12 +110,15 @@ CREATE TABLE IF NOT EXISTS school_advisor_profiles (
 CREATE TABLE IF NOT EXISTS extra_visa_checklist (
   id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   stt           VARCHAR(10),
+  group_name    TEXT,
   content       TEXT NOT NULL,
   note          TEXT,
+  level         TEXT DEFAULT 'Bắt buộc',
   link_url      VARCHAR(500),
   link_text     VARCHAR(200),
   sort_order    INTEGER DEFAULT 0,
-  created_at    TIMESTAMPTZ DEFAULT NOW()
+  created_at    TIMESTAMPTZ DEFAULT NOW(),
+  updated_at    TIMESTAMPTZ DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS extra_interviews (
