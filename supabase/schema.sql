@@ -106,7 +106,16 @@ CREATE TABLE IF NOT EXISTS school_advisor_profiles (
   updated_at          TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 5. Extra sheets
+-- 5. Semester info (1 dòng: kỳ tuyển sinh hiện tại)
+CREATE TABLE IF NOT EXISTS semester_info (
+  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  ky            VARCHAR(10),
+  nam           VARCHAR(10),
+  title         TEXT,
+  created_at    TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 6. Extra sheets
 CREATE TABLE IF NOT EXISTS extra_visa_checklist (
   id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   stt           VARCHAR(10),
@@ -140,7 +149,7 @@ CREATE TABLE IF NOT EXISTS extra_applications (
   created_at    TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 6. Users (admin)
+-- 7. Users (admin)
 CREATE TABLE IF NOT EXISTS users (
   id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   email           VARCHAR(255) UNIQUE NOT NULL,
@@ -153,7 +162,7 @@ CREATE TABLE IF NOT EXISTS users (
   updated_at      TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 7. Change logs
+-- 8. Change logs
 CREATE TABLE IF NOT EXISTS change_logs (
   id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id       UUID REFERENCES users(id),
@@ -165,7 +174,7 @@ CREATE TABLE IF NOT EXISTS change_logs (
   created_at    TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 8. Indexes
+-- 9. Indexes
 CREATE INDEX IF NOT EXISTS idx_conditions_school ON school_conditions(school_id);
 CREATE INDEX IF NOT EXISTS idx_majors_school ON school_majors(school_id);
 CREATE INDEX IF NOT EXISTS idx_advantages_school ON school_advantages(school_id);
@@ -176,7 +185,7 @@ CREATE INDEX IF NOT EXISTS idx_advisor_school ON school_advisor_profiles(school_
 CREATE INDEX IF NOT EXISTS idx_schools_region ON schools(region);
 CREATE INDEX IF NOT EXISTS idx_schools_system ON schools(system);
 
--- 9. Row Level Security
+-- 10. Row Level Security
 ALTER TABLE schools ENABLE ROW LEVEL SECURITY;
 ALTER TABLE school_conditions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE school_majors ENABLE ROW LEVEL SECURITY;
@@ -188,6 +197,7 @@ ALTER TABLE school_advisor_profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE extra_visa_checklist ENABLE ROW LEVEL SECURITY;
 ALTER TABLE extra_interviews ENABLE ROW LEVEL SECURITY;
 ALTER TABLE extra_applications ENABLE ROW LEVEL SECURITY;
+ALTER TABLE semester_info ENABLE ROW LEVEL SECURITY;
 
 -- Public read policies
 CREATE POLICY "public_read_schools" ON schools FOR SELECT USING (true);
@@ -201,3 +211,4 @@ CREATE POLICY "public_read_advisor" ON school_advisor_profiles FOR SELECT USING 
 CREATE POLICY "public_read_checklist" ON extra_visa_checklist FOR SELECT USING (true);
 CREATE POLICY "public_read_interviews" ON extra_interviews FOR SELECT USING (true);
 CREATE POLICY "public_read_apps" ON extra_applications FOR SELECT USING (true);
+CREATE POLICY "public_read_semester" ON semester_info FOR SELECT USING (true);
