@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kỳ tuyển sinh — Admin Thông Tin Trường Hàn</title>
+<link rel="stylesheet" href="admin.css">
+<style>
+.semester-card { max-width: 600px; margin: 0 auto; }
+.semester-form { padding: 24px; }
+.semester-preview {
+  margin-top: 20px;
+  padding: 16px 20px;
+  background: var(--gray-50);
+  border-radius: 8px;
+  border: 1px solid var(--gray-200);
+}
+.semester-preview h4 {
+  font-size: 12px;
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-bottom: 8px;
+}
+.semester-preview .preview-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--gray-900);
+}
+.semester-preview .preview-sub {
+  font-size: 13px;
+  color: var(--gray-500);
+  margin-top: 4px;
+}
+.form-row-semester {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+@media (max-width: 600px) {
+  .form-row-semester { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<script src="admin.js"></script>
+<script>checkAuth();</script>
+
+<div class="admin-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h2>🏫 Trường Hàn</h2>
+      <div class="sub">Quản lý dữ liệu</div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+        Dashboard
+      </a>
+      <a href="editor.html?mode=new">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Thêm trường
+      </a>
+      <a href="checklist.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        Checklist Visa
+      </a>
+      <a href="semester.html" class="active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Kỳ tuyển sinh
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div id="sidebar-user"></div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main-content">
+    <div class="top-bar">
+      <h1>Kỳ tuyển sinh</h1>
+      <div class="user-info">
+        <span id="user-display"></span>
+        <button class="btn btn-outline btn-sm" onclick="logout()">Đăng xuất</button>
+      </div>
+    </div>
+
+    <div class="content-area">
+      <div class="card semester-card">
+        <div class="card-header">
+          <h3>📅 Cấu hình kỳ tuyển sinh</h3>
+        </div>
+        <div class="semester-form">
+          <div class="form-row-semester">
+            <div class="form-group">
+              <label for="sem-ky">Kỳ</label>
+              <select id="sem-ky">
+                <option value="3">Tháng 3</option>
+                <option value="9">Tháng 9</option>
+              </select>
+              <div class="help-text">Kỳ tuyển sinh (3 hoặc 9)</div>
+            </div>
+            <div class="form-group">
+              <label for="sem-nam">Năm</label>
+              <input type="number" id="sem-nam" min="2024" max="2035" placeholder="2027">
+              <div class="help-text">Năm tuyển sinh</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="sem-title">Tiêu đề tuỳ chỉnh (không bắt buộc)</label>
+            <input type="text" id="sem-title" placeholder="VD: DANH SÁCH TRƯỜNG HÀN QUỐC - KỲ THÁNG 3/2027">
+            <div class="help-text">Để trống sẽ tự động tạo theo kỳ/năm</div>
+          </div>
+
+          <!-- Preview -->
+          <div class="semester-preview">
+            <h4>Xem trước</h4>
+            <div class="preview-title" id="preview-title">Kỳ tháng 3/2027</div>
+            <div class="preview-sub" id="preview-sub">Hiển thị trên tiêu đề website</div>
+          </div>
+
+          <!-- Actions -->
+          <div style="display:flex;gap:12px;margin-top:20px;">
+            <button class="btn btn-primary" id="save-btn" onclick="saveSemester()">💾 Lưu thay đổi</button>
+            <div style="flex:1"></div>
+            <span id="save-status" style="color:var(--gray-400);font-size:13px;align-self:center;"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+let currentData = null;
+
+// User
+const user = getUser();
+if (user) {
+  document.getElementById('user-display').textContent = user.displayName || user.email;
+  document.getElementById('sidebar-user').textContent = user.email;
+}
+
+// Live preview
+function updatePreview() {
+  const ky = document.getElementById('sem-ky').value;
+  const nam = document.getElementById('sem-nam').value.trim() || '2027';
+  const customTitle = document.getElementById('sem-title').value.trim();
+
+  const defaultTitle = 'DANH SÁCH TRƯỜNG HÀN QUỐC - KỲ THÁNG ' + ky + '/' + nam;
+  const displayTitle = 'Kỳ tháng ' + ky + '/' + nam;
+
+  document.getElementById('preview-title').textContent = displayTitle;
+  document.getElementById('preview-sub').textContent = customTitle || defaultTitle;
+}
+
+document.getElementById('sem-ky').addEventListener('change', updatePreview);
+document.getElementById('sem-nam').addEventListener('input', updatePreview);
+document.getElementById('sem-title').addEventListener('input', updatePreview);
+
+// Load
+async function loadSemester() {
+  try {
+    const res = await api('GET', '/admin/semester');
+    currentData = res.data;
+    if (res.data) {
+      document.getElementById('sem-ky').value = res.data.ky || '3';
+      document.getElementById('sem-nam').value = res.data.nam || '2027';
+      document.getElementById('sem-title').value = res.data.title || '';
+      updatePreview();
+    }
+  } catch (err) {
+    toast('Lỗi tải dữ liệu: ' + err.message, 'error');
+  }
+}
+
+// Save
+async function saveSemester() {
+  const btn = document.getElementById('save-btn');
+  const status = document.getElementById('save-status');
+
+  try {
+    const ky = document.getElementById('sem-ky').value;
+    const nam = document.getElementById('sem-nam').value.trim();
+    const title = document.getElementById('sem-title').value.trim();
+
+    if (!nam) {
+      toast('Vui lòng nhập năm tuyển sinh', 'error');
+      return;
+    }
+
+    const autoTitle = 'DANH SÁCH TRƯỜNG HÀN QUỐC - KỲ THÁNG ' + ky + '/' + nam;
+
+    btn.disabled = true;
+    status.textContent = 'Đang lưu...';
+
+    await api('PUT', '/admin/semester', {
+      ky: ky,
+      nam: nam,
+      title: title || autoTitle,
+    });
+
+    toast('Đã cập nhật kỳ tuyển sinh!', 'success');
+    status.textContent = '✅ Đã lưu';
+    loadSemester();
+  } catch (err) {
+    toast('Lỗi: ' + err.message, 'error');
+    status.textContent = '❌ Lỗi: ' + err.message;
+  } finally {
+    btn.disabled = false;
+    setTimeout(() => { status.textContent = ''; }, 3000);
+  }
+}
+
+// Init
+loadSemester();
+</script>
+</body>
+</html>
