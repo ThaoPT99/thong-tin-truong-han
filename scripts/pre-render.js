@@ -270,21 +270,18 @@ function buildSchoolHtml(school, semesterInfo, prerenderedData) {
   <!-- Pre-rendered data: inline, api-loader.js sẽ xử lý và skip fetch -->
   <script>
   window.__PRERENDERED_DATA__ = ${JSON.stringify(prerenderedData)};
+  // Listener phải đặt TRƯỚC api-loader.js (vì event dispatch synchronous)
+  document.addEventListener('app-data-ready', function() {
+    if (typeof showSchool === 'function') {
+      showSchool('${school.slug}');
+    }
+  }, { once: true });
   </script>
 
   <script src="/api-loader.js"></script>
   <script src="/advisor.js"></script>
   <script src="/render.js"></script>
   <script src="/zalo-popup.js"></script>
-
-  <script>
-  // Sau khi data ready, mở trường này
-  window.addEventListener('app-data-ready', function() {
-    if (typeof showSchool === 'function') {
-      showSchool('${school.slug}');
-    }
-  }, { once: true });
-  </script>
 
   <script>
   if ('serviceWorker' in navigator) {
