@@ -18,9 +18,12 @@
 
     <meta name="twitter:card" content="summary_large_image" />
 
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -267,6 +270,10 @@
         <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M12 2C6.48 2 2 5.58 2 10c0 2.54 1.19 4.81 3.05 6.27L4 22l5.86-2.34C10.53 19.89 11.25 20 12 20c5.52 0 10-3.58 10-8s-4.48-8-10-8z"/></svg>
         Zalo
     </button>
+
+    <!-- Prefetch API endpoints — trình duyệt tải trước khi JS chạy -->
+    <link rel="prefetch" href="/api/schools">
+    <link rel="prefetch" href="/api/extras">
 
     <script src="./api-loader.js"></script>
     <script src="./advisor.js"></script>
