@@ -5,14 +5,14 @@ var CACHE_NAME = 'd26-cache-v1';
 
 // Static assets cần pre-cache ngay khi cài đặt
 var PRECACHE_URLS = [
-  './',
-  './styles.css',
-  './api-loader.js',
-  './advisor.js',
-  './render.js',
-  './zalo-popup.js',
-  './images/logo-d26-sidebar.svg',
-  './images/logo-d26-horizontal.svg'
+  '/',
+  '/styles.css',
+  '/js/api-loader.js',
+  '/js/advisor.js',
+  '/js/render.js',
+  '/js/zalo-popup.js',
+  '/images/logo-d26-sidebar.svg',
+  '/images/logo-d26-horizontal.svg'
 ];
 
 // Install: pre-cache static assets

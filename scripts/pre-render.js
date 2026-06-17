@@ -12,7 +12,7 @@ const path = require('path');
 
 // ─── Config ───
 const SITE_URL = 'https://thongtintruonghan.vercel.app';
-const OUTPUT_DIR = path.join(__dirname, '..');
+const OUTPUT_DIR = path.join(__dirname, '..', 'public');
 
 // REGION_LABELS (giống api-loader.js)
 const REGION_LABELS = {
@@ -282,10 +282,10 @@ function buildSchoolHtml(school, semesterInfo, prerenderedData) {
   }, { once: true });
   </script>
 
-  <script src="/api-loader.js"></script>
-  <script src="/advisor.js"></script>
-  <script src="/render.js"></script>
-  <script src="/zalo-popup.js"></script>
+  <script src="/js/api-loader.js"></script>
+  <script src="/js/advisor.js"></script>
+  <script src="/js/render.js"></script>
+  <script src="/js/zalo-popup.js"></script>
 
   <script>
   if ('serviceWorker' in navigator) {
