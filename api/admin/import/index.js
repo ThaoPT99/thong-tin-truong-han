@@ -160,7 +160,7 @@ module.exports = requireAdmin(async (req, res) => {
     // ─── Import extra sheets ───
     if (extraSheets) {
       if (extraSheets.visaChecklist && Array.isArray(extraSheets.visaChecklist)) {
-        await supabase.from('extra_visa_checklist').delete().gte('id', '00000000-0000-0000-0000-000000000000');
+        await supabase.from('extra_visa_checklist').delete().not('id', 'is', null);
         if (extraSheets.visaChecklist.length > 0) {
           const rows = extraSheets.visaChecklist.map((item, i) => ({
             stt: item.stt || '',
@@ -178,7 +178,7 @@ module.exports = requireAdmin(async (req, res) => {
       }
 
       if (extraSheets.interviews && Array.isArray(extraSheets.interviews)) {
-        await supabase.from('extra_interviews').delete().gte('id', '00000000-0000-0000-0000-000000000000');
+        await supabase.from('extra_interviews').delete().not('id', 'is', null);
         if (extraSheets.interviews.length > 0) {
           const rows = extraSheets.interviews.map((item, i) => ({
             stt: item.stt || '',

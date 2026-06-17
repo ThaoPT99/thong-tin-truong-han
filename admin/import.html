@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Import Excel — Admin Thông Tin Trường Hàn</title>
 <link rel="stylesheet" href="admin.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" defer></script>
 <style>
   .import-page .upload-zone {
     border: 2px dashed var(--gray-300);
@@ -535,7 +535,12 @@ function sheetToObjects(ws) {
       var cell = ws[addr];
       var letter = String.fromCharCode(65 + c);
       if (cell) {
-        row[letter] = cell.v !== undefined ? cell.v : '';
+        // Ưu tiên hyperlink target, fallback về value
+        if (cell.l && cell.l.Target) {
+          row[letter] = cell.l.Target;
+        } else {
+          row[letter] = cell.v !== undefined ? cell.v : '';
+        }
       } else {
         row[letter] = '';
       }
@@ -665,6 +670,15 @@ async function startImport() {
 
   var btn = document.getElementById('import-btn');
   var status = document.getElementById('import-status');
+  var newCount = parsedData.schools.filter(function(s) { return existingSlugs.indexOf(s.slug) === -1; }).length;
+  var updateCount = parsedData.schools.length - newCount;
+  if (!confirm('Import ' + parsedData.schools.length + ' trường (thêm mới: ' + newCount + ', cập nhật: ' + updateCount + ')?\n' +
+    (parsedData.extraSheets.visaChecklist ? '• Visa checklist: ' + parsedData.extraSheets.visaChecklist.length + ' mục\n' : '') +
+    (parsedData.semesterInfo.ky ? '• Kỳ ' + parsedData.semesterInfo.ky + '/' + parsedData.semesterInfo.nam : ''))) {
+    btn.disabled = false;
+    return;
+  }
+
   btn.disabled = true;
   status.innerHTML = '<span class="loading-spinner"></span> Đang import...';
 
