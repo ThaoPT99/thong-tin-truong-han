@@ -123,7 +123,7 @@ if (user) {
 // Load schools
 async function loadSchools() {
   try {
-    const res = await api('GET', '/schools');
+    const res = await api('GET', '/schools?full=false');
     schools = res.data;
     renderStats();
     renderTable();

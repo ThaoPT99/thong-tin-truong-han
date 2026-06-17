@@ -76,7 +76,7 @@ self.addEventListener('fetch', function(event) {
     return;
   }
 
-  // === Static assets: cache-first, fallback network ===
+  // === Static assets: stale-while-revalidate (giống API) ===
   if (
     path.endsWith('.js') ||
     path.endsWith('.css') ||
@@ -87,12 +87,17 @@ self.addEventListener('fetch', function(event) {
     path === ''
   ) {
     event.respondWith(
-      caches.match(event.request).then(function(cached) {
-        return cached || fetch(event.request).then(function(response) {
-          return caches.open(CACHE_NAME).then(function(cache) {
-            cache.put(event.request, response.clone());
+      caches.open(CACHE_NAME).then(function(cache) {
+        return cache.match(event.request).then(function(cached) {
+          var fetchPromise = fetch(event.request).then(function(response) {
+            if (response && response.status === 200) {
+              cache.put(event.request, response.clone());
+            }
             return response;
+          }).catch(function() {
+            return cached;
           });
+          return cached || fetchPromise;
         });
       })
     );

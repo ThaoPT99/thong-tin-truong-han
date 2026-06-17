@@ -14,7 +14,7 @@ async function run() {
     port: 5432,
     database: 'postgres',
     user: 'postgres',
-    password: 'Hoangtumua@123',
+    password: process.env.DATABASE_PASSWORD,
     ssl: { rejectUnauthorized: false },
   });
 
