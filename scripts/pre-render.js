@@ -106,7 +106,7 @@ function buildJsonLd(school) {
   };
 }
 
-function buildSchoolHtml(school, semesterInfo, prerenderedData) {
+function buildSchoolHtml(school, semesterInfo) {
   const ky = semesterInfo?.ky || '3';
   const nam = semesterInfo?.nam || '2027';
   const semTitle = semesterInfo?.title || `Kỳ tháng ${ky}/${nam}`;
@@ -391,132 +391,6 @@ async function main() {
     partners: school.school_partners || [],
   }));
 
-  // ─── Fetch semester-schools map ───
-  const { data: semesterSchoolsRaw } = await supabase
-    .from('semester_schools')
-    .select('semester_id, school_id');
-
-  // Build { school_id -> [semester_id, ...] }
-  const semesterSchoolsMap = {};
-  for (const ss of semesterSchoolsRaw || []) {
-    if (!semesterSchoolsMap[ss.school_id]) {
-      semesterSchoolsMap[ss.school_id] = [];
-    }
-    semesterSchoolsMap[ss.school_id].push(ss.semester_id);
-  }
-
-  // Build { slug -> [semester_id, ...] } (vì SCHOOLS_DATA key là slug)
-  const slugToSemesterIds = {};
-  for (const school of schools) {
-    const sids = semesterSchoolsMap[school.id] || [];
-    if (sids.length > 0) {
-      slugToSemesterIds[school.slug] = sids;
-    }
-  }
-  const { data: advisorProfilesRaw } = await supabase
-    .from('school_advisor_profiles')
-    .select('*');
-
-  const { data: visaChecklistRaw } = await supabase
-    .from('extra_visa_checklist')
-    .select('*')
-    .order('sort_order');
-
-  // Build schools lookup by slug
-  const schoolsBySlug = {};
-  for (const s of schools) {
-    schoolsBySlug[s.id] = s.slug;
-  }
-
-  // Build advisor profiles map: { slug: { gender, minGpa, ... } }
-  const advisorProfilesMap = {};
-  for (const ap of advisorProfilesRaw || []) {
-    const slug = schoolsBySlug[ap.school_id];
-    if (!slug) continue;
-    const firstProfile = schools.find(s => s.id === ap.school_id)?.school_advisor_profiles?.[0];
-    advisorProfilesMap[slug] = {
-      gender: ap.gender || 'all',
-      min_gpa: ap.min_gpa || 5.0,
-      max_absences: ap.max_absences || 30,
-      region: ap.region || '',
-      cost_level: ap.cost_level || 3,
-      visa_chance: ap.visa_chance || 3,
-      job_opportunity: ap.job_opportunity || 3,
-      e7_opportunity: ap.e7_opportunity || 3,
-      study_load: ap.study_load || 3,
-      interview_difficulty: ap.interview_difficulty || 2,
-      tags: ap.tags || [],
-    };
-  }
-
-  // Build extras data (checklist groups)
-  const extrasChecklist = (visaChecklistRaw || []).map((r) => ({
-    groupName: r.group_name || 'Khác',
-    content: r.content || '',
-    level: r.level || 'Bắt buộc',
-    note: r.note || '',
-  }));
-
-  function buildSemesterInfoPayload() {
-    return { ky: activeSemInfo?.ky || '3', nam: activeSemInfo?.nam || '2027', title: activeSemInfo?.title || '' };
-  }
-
-  // Build the complete prerendered data payload
-  const prerenderedDataPayload = {
-    schoolsData: transformed.map((s) => {
-      const slug = s.slug;
-      const schoolForPayload = schools.find(sch => sch.id === s.id);
-      return {
-        id: slug,
-        slug: slug,
-        name: s.name,
-        name_kr: s.name_kr,
-        name_en: s.name_en,
-        system: s.system,
-        quota: s.quota,
-        region: s.region,
-        location: s.location,
-        intro: s.intro,
-        tuition: s.tuition,
-        insurance: s.insurance,
-        ktx: s.ktx,
-        schedule: s.schedule,
-        documents_note: s.documents_note,
-        mou: s.mou,
-        website: s.website,
-        catalog_url: s.catalog_url,
-        invoice_url: s.invoice_url,
-        video_url: s.video_url,
-        video_youtube_id: s.video_youtube_id,
-        video_title: s.video_title,
-        image_main: s.image_main,
-        image_catalog: s.image_catalog,
-        image_location: s.image_location,
-        image_invoice: s.image_invoice,
-        conditions: s.conditions.map(c => ({ text: c.text || c })),
-        majors: s.majors.map(m => ({ text: m.text || m })),
-        advantages: s.advantages.map(a => ({ text: a.text || a })),
-        conversion: s.conversion.map(c => ({ text: c.text || c })),
-        documents: s.documents.map(d => ({ text: d.text || d })),
-        partners: s.partners || [],
-        advisorProfile: advisorProfilesMap[slug] || null,
-      };
-    }),
-    advisorProfilesData: advisorProfilesMap,
-    semesterInfo: buildSemesterInfoPayload(),
-    semestersList: (semesters || []).map(s => ({
-      id: s.id,
-      ky: s.ky,
-      nam: s.nam,
-      title: s.title || `Kỳ tháng ${s.ky}/${s.nam}`,
-      isActive: s.is_active,
-      sortOrder: s.sort_order,
-    })),
-    activeSemesterId: activeSemester?.id || null,
-    semesterSchoolsMap: slugToSemesterIds,
-    extrasChecklist: extrasChecklist,
-  };
-
   // ─── Generate school pages ───
   const truongDir = path.join(OUTPUT_DIR, 'truong');
   if (!fs.existsSync(truongDir)) {
@@ -532,7 +406,7 @@ async function main() {
       fs.mkdirSync(schoolDir, { recursive: true });
     }
 
-    const html = buildSchoolHtml(school, activeSemInfo, prerenderedDataPayload);
+    const html = buildSchoolHtml(school, activeSemInfo);
     fs.writeFileSync(path.join(schoolDir, 'index.html'), html, 'utf-8');
     count++;
 
