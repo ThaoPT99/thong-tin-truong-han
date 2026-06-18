@@ -323,8 +323,11 @@ function renderSchoolsDirectory() {
           <p>Chọn tên trường để xem thông tin chi tiết về điều kiện, học phí, hồ sơ, ký túc xá và tài liệu liên quan.</p>
         </div>
         <div class="directory-tools">
-          <input id="school-search" type="search" placeholder="Tìm trường, khu vực, hệ học..." autocomplete="off" role="combobox" aria-expanded="false" aria-controls="search-suggestions">
-          <div id="search-suggestions" class="search-suggestions" role="listbox" hidden></div>
+          <div style="position:relative;">
+            <input id="school-search" type="search" placeholder="Tìm trường, khu vực, hệ học..." autocomplete="off" role="combobox" aria-expanded="false" aria-controls="search-suggestions">
+            <div id="search-suggestions" class="search-suggestions" role="listbox" hidden></div>
+            <div id="smart-chips" class="smart-chips"></div>
+          </div>
           <select id="school-region-filter">` + regionOptions + `</select>
           <select id="school-system-filter">` + systemOptions + `</select>
         </div>
@@ -373,25 +376,107 @@ function bindSchoolsDirectory(container) {
   const empty = container.querySelector("#school-empty-state");
   let quickFilter = "all";
 
+  // ─── Smart Search: hiểu ý định từ khoá ───
+  var INTENT_MAP = {
+    region: [
+      { patterns: [/seoul|서울/], value: 'seoul', label: 'Seoul' },
+      { patterns: [/gần.*seoul|near.*seoul|경기/], value: 'near-seoul', label: 'Gần Seoul' },
+      { patterns: [/busan|pusan|부산/], value: 'busan', label: 'Busan' },
+      { patterns: [/daegu|대구/], value: 'daegu', label: 'Daegu' },
+      { patterns: [/daejeon|대전/], value: 'daejeon', label: 'Daejeon' },
+      { patterns: [/gwangju|광주/], value: 'gwangju', label: 'Gwangju' },
+    ],
+    tag: [
+      { patterns: [/nữ|nữ sinh|nữsinh|female|여/], value: 'female', label: 'Chỉ nữ' },
+      { patterns: [/chi phí thấp|rẻ|thấp|low.?cost|비용|저렴/], value: 'low-cost', label: 'Chi phí thấp' },
+      { patterns: [/e7|việc làm|vieclam|job|취업/], value: 'e7', label: 'Dễ E7' },
+    ]
+  };
+
+  var chipsContainer = container.querySelector('#smart-chips');
+  var currentIntents = {};
+
+  function parseSearchIntent(query) {
+    var q = (query || '').toLowerCase().trim();
+    var intents = { region: null, tags: [] };
+
+    if (q.length < 2) return intents;
+
+    INTENT_MAP.region.forEach(function(rule) {
+      rule.patterns.forEach(function(p) {
+        if (p.test(q)) intents.region = rule.value;
+      });
+    });
+
+    INTENT_MAP.tag.forEach(function(rule) {
+      rule.patterns.forEach(function(p) {
+        if (p.test(q)) {
+          if (intents.tags.indexOf(rule.value) === -1) intents.tags.push(rule.value);
+        }
+      });
+    });
+
+    return intents;
+  }
+
+  function updateSmartFilterChips(intents) {
+    if (!chipsContainer) return;
+    var chips = [];
+    if (intents.region) {
+      var label = 'Seoul';
+      INTENT_MAP.region.some(function(r) { if (r.value === intents.region) { label = r.label; return true; } });
+      chips.push('<span class="smart-chip smart-chip-region"><span class="smart-chip-label">KV </span>' + escapeHtml(label) + '</span>');
+    }
+    intents.tags.forEach(function(t) {
+      var label = t;
+      INTENT_MAP.tag.some(function(r) { if (r.value === t) { label = r.label; return true; } });
+      chips.push('<span class="smart-chip smart-chip-tag"><span class="smart-chip-label">⚡ </span>' + escapeHtml(label) + '</span>');
+    });
+    chipsContainer.innerHTML = chips.join('');
+  }
+
   const applyFilters = () => {
     const q = (search.value || "").trim().toLowerCase();
+    const intents = parseSearchIntent(q);
+    currentIntents = intents;
+    updateSmartFilterChips(intents);
+
     const selectedRegion = region.value;
     const selectedSystem = systemFilter ? systemFilter.value : "all";
+
+    // Effective filters: intents override dropdown for region, tags combine with quick-filter
+    const effectiveRegion = intents.region || selectedRegion;
+    var effectiveTagList = (intents.tags || []).slice();
+    if (quickFilter !== 'all' && effectiveTagList.indexOf(quickFilter) === -1) {
+      effectiveTagList.push(quickFilter);
+    }
+
     let visible = 0;
     cards.forEach(card => {
-      const matchSearch = !q || card.dataset.search.includes(q);
-      const matchRegion = selectedRegion === "all" || card.dataset.region === selectedRegion;
+      // Text search: split query into words, match all (looser than exact substring)
+      var matchSearch = true;
+      if (q) {
+        var words = q.split(/\s+/).filter(Boolean);
+        // Remove words that were already used as intents
+        var intentWords = [];
+        if (intents.region) intentWords.push(intents.region);
+        var searchWords = words.filter(function(w) { return intentWords.indexOf(w) === -1; });
+        matchSearch = searchWords.length === 0 || searchWords.every(function(w) { return card.dataset.search.indexOf(w) !== -1; });
+      }
+
+      const matchRegion = effectiveRegion === "all" || card.dataset.region === effectiveRegion;
       const matchSystem = selectedSystem === "all" || (card.dataset.system || "").includes(selectedSystem);
-      const matchQuick = quickFilter === "all"
-        || card.dataset.region === quickFilter
-        || (card.dataset.tags || "").split(" ").includes(quickFilter);
-      const isVisible = matchSearch && matchRegion && matchSystem && matchQuick;
+      const matchTags = effectiveTagList.length === 0 || effectiveTagList.some(function(t) { return (card.dataset.tags || "").split(" ").indexOf(t) !== -1; });
+
+      const isVisible = matchSearch && matchRegion && matchSystem && matchTags;
       card.classList.toggle("hidden", !isVisible);
       if (isVisible) visible += 1;
     });
     if (count) count.textContent = String(visible);
     empty?.classList.toggle("hidden", visible !== 0);
   };
+
+
 
   // Guard null suggestions (search autocomplete)
   const safeSuggestions = suggestions;
@@ -588,7 +673,7 @@ function getInitialView() {
   const schoolId = params.get("school");
   if (schoolId && getSchoolById(schoolId)) return schoolId;
   const view = params.get("view");
-  if (["advisor", "compare", "map", "extra", "ebook", "schools"].includes(view)) return view;
+  if (["advisor", "compare", "map", "extra", "ebook", "schools", "cost"].includes(view)) return view;
   return "schools";
 }
 
@@ -681,6 +766,227 @@ function getCompareRisk(school) {
   return risks.join("; ") || "Chưa có rủi ro nổi bật";
 }
 
+// ─── Cost Calculator ───
+const DEFAULT_EXCHANGE_RATE = 20; // 1 KRW = 20 VND
+const MONTHLY_LIVING_COST = 1000000; // 1,000,000 KRW
+const VISA_FEE = 500000; // 500,000 KRW (ước lượng)
+const FLIGHT_TICKET = 5000000; // 5,000,000 KRW (khứ hồi ước lượng)
+const INSURANCE_COST = 500000; // 500,000 KRW/năm
+
+function extractTuitionValue(text) {
+  // Try to extract a number from tuition text (look for KRW amounts)
+  if (!text) return null;
+  var str = String(text);
+  var m = str.match(/([\d,]+)\s*(?:KRW|원|won)/i);
+  if (m) return parseInt(m[1].replace(/,/g, ''), 10);
+  // Look for any large number (likely KRW)
+  var big = str.match(/(\d{4,})(?:\s*KRW|\s*원|\s*)/i);
+  if (big) return parseInt(big[1].replace(/,/g, ''), 10);
+  return null;
+}
+
+function extractKtxValue(text) {
+  if (!text) return null;
+  var str = String(text);
+  var m = str.match(/([\d,]+)\s*(?:KRW|원|won)/i);
+  if (m) return parseInt(m[1].replace(/,/g, ''), 10);
+  return null;
+}
+
+function formatKRW(amount) {
+  if (!amount || isNaN(amount)) return '—';
+  return amount.toLocaleString('ko-KR') + ' KRW';
+}
+
+function formatVND(amount) {
+  if (!amount || isNaN(amount)) return '—';
+  return amount.toLocaleString('vi-VN') + ' ₫';
+}
+
+function renderCostCalculator() {
+  var schools = getSchools();
+  var options = schools.map(function(s) {
+    return '<option value="' + escapeHtml(s.id) + '">' + escapeHtml(s.name) + '</option>';
+  }).join('');
+  return `
+    <section class="cost-calc">
+      <div class="cost-calc-head">
+        <div>
+          <p class="advisor-kicker">Dự toán chi phí</p>
+          <h2>Máy tính chi phí du học 1 năm</h2>
+          <p>Chọn trường và điều chỉnh các khoản phí để ước tính tổng chi phí học tập tại Hàn Quốc.</p>
+        </div>
+      </div>
+      <div class="cost-calc-body">
+        <div class="cost-calc-form">
+          <h3>📋 Thông tin đầu vào</h3>
+          <div class="cost-calc-field">
+            <label for="cost-school">Trường</label>
+            <select id="cost-school">${options}</select>
+          </div>
+          <div class="cost-calc-field">
+            <label for="cost-tuition">Học phí <span class="auto-filled">(tự động từ dữ liệu trường)</span></label>
+            <input id="cost-tuition" type="text" inputmode="numeric" placeholder="KRW">
+          </div>
+          <div class="cost-calc-field">
+            <label for="cost-ktx">Ký túc xá <span class="auto-filled">(tự động từ dữ liệu trường)</span></label>
+            <input id="cost-ktx" type="text" inputmode="numeric" placeholder="KRW">
+          </div>
+          <div class="cost-calc-field">
+            <label for="cost-insurance">Bảo hiểm (1 năm)</label>
+            <input id="cost-insurance" type="text" inputmode="numeric" value="${INSURANCE_COST.toLocaleString('ko-KR')}" placeholder="KRW">
+          </div>
+          <div class="cost-calc-field">
+            <label for="cost-living">Sinh hoạt phí hàng tháng</label>
+            <input id="cost-living" type="text" inputmode="numeric" value="${MONTHLY_LIVING_COST.toLocaleString('ko-KR')}" placeholder="KRW/tháng">
+          </div>
+          <div class="cost-calc-field">
+            <label for="cost-months">Số tháng học</label>
+            <input id="cost-months" type="number" value="12" min="6" max="24" step="1">
+          </div>
+          <div class="cost-calc-field">
+            <label for="cost-visa-fee">Phí visa + thủ tục</label>
+            <input id="cost-visa-fee" type="text" inputmode="numeric" value="${VISA_FEE.toLocaleString('ko-KR')}" placeholder="KRW">
+          </div>
+          <div class="cost-calc-field">
+            <label for="cost-flight">Vé máy bay (khứ hồi)</label>
+            <input id="cost-flight" type="text" inputmode="numeric" value="${FLIGHT_TICKET.toLocaleString('ko-KR')}" placeholder="KRW">
+          </div>
+          <div class="cost-calc-field">
+            <label for="cost-rate">Tỷ giá KRW → VND</label>
+            <input id="cost-rate" type="number" value="${DEFAULT_EXCHANGE_RATE}" min="1" max="100" step="1">
+          </div>
+        </div>
+        <div class="cost-calc-result">
+          <h3>💰 Dự toán chi phí</h3>
+          <table class="cost-table">
+            <thead>
+              <tr>
+                <th>Khoản mục</th>
+                <th>KRW</th>
+                <th>VND</th>
+              </tr>
+            </thead>
+            <tbody id="cost-result-body">
+              <tr>
+                <td>Học phí</td>
+                <td>—</td>
+                <td>—</td>
+              </tr>
+              <tr>
+                <td>Ký túc xá</td>
+                <td>—</td>
+                <td>—</td>
+              </tr>
+              <tr>
+                <td>Bảo hiểm</td>
+                <td>—</td>
+                <td>—</td>
+              </tr>
+              <tr>
+                <td>Sinh hoạt phí</td>
+                <td>—</td>
+                <td>—</td>
+              </tr>
+              <tr>
+                <td>Phí visa + thủ tục</td>
+                <td>—</td>
+                <td>—</td>
+              </tr>
+              <tr>
+                <td>Vé máy bay</td>
+                <td>—</td>
+                <td>—</td>
+              </tr>
+              <tr class="total">
+                <td>Tổng cộng</td>
+                <td>—</td>
+                <td>—</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="cost-note">
+            ⚠️ Đây là ước tính tham khảo dựa trên dữ liệu trường và các khoản phí thông thường. 
+            Chi phí thực tế có thể thay đổi theo từng trường, kỳ tuyển sinh và nhu cầu cá nhân.
+          </div>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+function parseKRWInput(value) {
+  if (!value) return 0;
+  return parseInt(String(value).replace(/[,.]/g, ''), 10) || 0;
+}
+
+function updateCostResult(container) {
+  var schoolSelect = container.querySelector('#cost-school');
+  var schoolId = schoolSelect.value;
+  var school = getSchoolById(schoolId);
+
+  var getVal = function(id) { return parseKRWInput(container.querySelector(id).value); };
+
+  var tuition = getVal('#cost-tuition');
+  var ktx = getVal('#cost-ktx');
+  var insurance = getVal('#cost-insurance');
+  var livingMonthly = getVal('#cost-living');
+  var months = parseInt(container.querySelector('#cost-months').value, 10) || 12;
+  var visaFee = getVal('#cost-visa-fee');
+  var flight = getVal('#cost-flight');
+  var rate = parseFloat(container.querySelector('#cost-rate').value) || DEFAULT_EXCHANGE_RATE;
+
+  var livingTotal = livingMonthly * months;
+
+  var items = [
+    { label: 'Học phí', krw: tuition },
+    { label: 'Ký túc xá', krw: ktx },
+    { label: 'Bảo hiểm', krw: insurance },
+    { label: 'Sinh hoạt phí (' + months + ' tháng)', krw: livingTotal },
+    { label: 'Phí visa + thủ tục', krw: visaFee },
+    { label: 'Vé máy bay', krw: flight },
+  ];
+
+  var totalKRW = items.reduce(function(sum, item) { return sum + item.krw; }, 0);
+  var totalVND = totalKRW * rate;
+
+  var tbody = container.querySelector('#cost-result-body');
+  if (!tbody) return;
+
+  tbody.innerHTML = items.map(function(item) {
+    var vnd = item.krw * rate;
+    return '<tr><td>' + escapeHtml(item.label) + '</td><td>' + formatKRW(item.krw) + '</td><td>' + formatVND(vnd) + '</td></tr>';
+  }).join('') +
+  '<tr class="total"><td>Tổng cộng</td><td>' + formatKRW(totalKRW) + '</td><td>' + formatVND(totalVND) + '</td></tr>';
+}
+
+function bindCostCalculator(container) {
+  if (!container || container.dataset.costBound === 'true') return;
+  container.dataset.costBound = 'true';
+
+  var schoolSelect = container.querySelector('#cost-school');
+  var tuitionInput = container.querySelector('#cost-tuition');
+  var ktxInput = container.querySelector('#cost-ktx');
+
+  function fillSchoolData() {
+    var schoolId = schoolSelect.value;
+    var school = getSchoolById(schoolId);
+    if (!school) return;
+
+    var tuitionVal = extractTuitionValue(school.tuition);
+    var ktxVal = extractKtxValue(school.ktx);
+
+    tuitionInput.value = tuitionVal ? tuitionVal.toLocaleString('ko-KR') : '';
+    ktxInput.value = ktxVal ? ktxVal.toLocaleString('ko-KR') : '';
+
+    updateCostResult(container);
+  }
+
+  fillSchoolData();
+  schoolSelect.addEventListener('change', fillSchoolData);
+  container.addEventListener('input', function() { updateCostResult(container); });
+}
+
 // ─── Radar Chart ───
 const RADAR_LABELS = ['Chi phí', 'Visa', 'Việc làm', 'E7', 'Học lực'];
 const RADAR_COLORS = ['#2563eb', '#0f766e', '#d97706'];
@@ -696,13 +1002,151 @@ function getRadarMetrics(school) {
   };
 }
 
+function easeOutCubic(t) {
+  return 1 - Math.pow(1 - t, 3);
+}
+
+function drawRadarGrid(ctx, cx, cy, maxR, angles, isDark) {
+  const gridColor = isDark ? '#334155' : '#e2e8f0';
+  const axisColor = isDark ? '#475569' : '#cbd5e1';
+  const textColor = isDark ? '#94a3b8' : '#64748b';
+
+  for (let level = 1; level <= 5; level++) {
+    const r = (level / 5) * maxR;
+    ctx.beginPath();
+    for (let i = 0; i < 5; i++) {
+      const x = cx + r * Math.cos(angles[i]);
+      const y = cy + r * Math.sin(angles[i]);
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.strokeStyle = gridColor;
+    ctx.lineWidth = level === 5 ? 1.5 : 0.5;
+    ctx.stroke();
+  }
+
+  for (let i = 0; i < 5; i++) {
+    const x = cx + maxR * Math.cos(angles[i]);
+    const y = cy + maxR * Math.sin(angles[i]);
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(x, y);
+    ctx.strokeStyle = axisColor;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    const lx = cx + (maxR + 26) * Math.cos(angles[i]);
+    const ly = cy + (maxR + 26) * Math.sin(angles[i]);
+    ctx.fillStyle = textColor;
+    ctx.font = '600 12px "Be Vietnam Pro", -apple-system, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(RADAR_LABELS[i], lx, ly);
+  }
+}
+
+function drawRadarPolygons(ctx, cx, cy, maxR, angles, activeSchools, scale, isDark, hoveredIndex) {
+  const dotBorder = isDark ? '#0f172a' : '#ffffff';
+
+  activeSchools.forEach((school, idx) => {
+    const isHovered = hoveredIndex === undefined || hoveredIndex === -1 || hoveredIndex === idx;
+    const alpha = isHovered ? 1 : 0.15;
+
+    const metrics = getRadarMetrics(school);
+    const values = [metrics.cost, metrics.visa, metrics.job, metrics.e7, metrics.study];
+    const color = RADAR_COLORS[idx] || '#888';
+
+    // Fill polygon
+    ctx.beginPath();
+    for (let i = 0; i < 5; i++) {
+      const r = ((values[i] / 5) * maxR) * scale;
+      const x = cx + r * Math.cos(angles[i]);
+      const y = cy + r * Math.sin(angles[i]);
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.fillStyle = color + (isHovered ? '1A' : '08');  // more transparent when dimmed
+    ctx.fill();
+    ctx.strokeStyle = color;
+    ctx.globalAlpha = alpha;
+    ctx.lineWidth = isHovered ? 2.5 : 1;
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+
+    // Data points + value labels
+    for (let i = 0; i < 5; i++) {
+      const r = ((values[i] / 5) * maxR) * scale;
+      const x = cx + r * Math.cos(angles[i]);
+      const y = cy + r * Math.sin(angles[i]);
+
+      ctx.beginPath();
+      ctx.arc(x, y, isHovered ? 4 : 2.5, 0, Math.PI * 2);
+      ctx.fillStyle = color;
+      ctx.globalAlpha = alpha;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.strokeStyle = dotBorder;
+      ctx.lineWidth = isHovered ? 2 : 1;
+      ctx.stroke();
+
+      // Value label (chỉ hiện khi scale > 0.1 để tránh chồng text)
+      if (scale > 0.1) {
+        const vx = cx + ((values[i] / 5) * maxR * scale + 14) * Math.cos(angles[i]);
+        const vy = cy + ((values[i] / 5) * maxR * scale + 14) * Math.sin(angles[i]);
+        ctx.fillStyle = color;
+        ctx.globalAlpha = alpha;
+        ctx.font = '700 10px "Be Vietnam Pro", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(String(values[i]), vx, vy);
+        ctx.globalAlpha = 1;
+      }
+    }
+  });
+}
+
+function drawRadarLegend(ctx, cx, h, activeSchools, isDark, hoveredIndex) {
+  const textColor = isDark ? '#94a3b8' : '#64748b';
+  if (activeSchools.length <= 1) return;
+
+  const legendY = h - 6;
+  let totalWidth = 0;
+  activeSchools.forEach(function(s, i) {
+    ctx.font = '12px "Be Vietnam Pro", sans-serif';
+    totalWidth += ctx.measureText(s.name || '').width + 34;
+  });
+  let lx = cx - totalWidth / 2;
+
+  activeSchools.forEach(function(school, idx) {
+    const isHovered = hoveredIndex !== undefined && hoveredIndex !== -1 && hoveredIndex === idx;
+    const color = RADAR_COLORS[idx] || '#888';
+
+    // Background highlight khi hover
+    if (isHovered) {
+      const tw = ctx.measureText(school.name || '').width + 34;
+      ctx.fillStyle = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)';
+      ctx.beginPath();
+      ctx.rect(lx - 4, legendY - 10, tw + 8, 24);
+      ctx.fill();
+    }
+
+    ctx.fillStyle = color;
+    ctx.fillRect(lx, legendY - 5, 12, 12);
+    ctx.fillStyle = isHovered ? color : textColor;
+    ctx.font = (isHovered ? '700 ' : '') + '12px "Be Vietnam Pro", sans-serif';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(school.name || '', lx + 18, legendY);
+    lx += ctx.measureText(school.name || '').width + 34;
+  });
+}
+
 function renderRadarChart(canvas, schools) {
   if (!canvas || !schools || !schools.length) return;
 
   const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
   const dpr = window.devicePixelRatio || 1;
 
-  // Clear and size canvas
   const parent = canvas.parentElement;
   const w = parent?.clientWidth || 460;
   const h = Math.min(w, 400);
@@ -718,124 +1162,104 @@ function renderRadarChart(canvas, schools) {
   const cy = h / 2 - 8;
   const maxR = Math.min(cx, cy) - 52;
 
-  // Compute angles for 5 axes (start from top)
   const angles = [];
   for (let i = 0; i < 5; i++) {
     angles.push((i / 5) * Math.PI * 2 - Math.PI / 2);
   }
 
-  const gridColor = isDark ? '#334155' : '#e2e8f0';
-  const axisColor = isDark ? '#475569' : '#cbd5e1';
-  const textColor = isDark ? '#94a3b8' : '#64748b';
-  const dotBorder = isDark ? '#0f172a' : '#ffffff';
-
-  ctx.clearRect(0, 0, w, h);
-
-  // ─── Grid circles (5 levels) ───
-  for (let level = 1; level <= 5; level++) {
-    const r = (level / 5) * maxR;
-    ctx.beginPath();
-    for (let i = 0; i < 5; i++) {
-      const x = cx + r * Math.cos(angles[i]);
-      const y = cy + r * Math.sin(angles[i]);
-      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-    }
-    ctx.closePath();
-    ctx.strokeStyle = gridColor;
-    ctx.lineWidth = level === 5 ? 1.5 : 0.5;
-    ctx.stroke();
-  }
-
-  // ─── Axis lines ───
-  for (let i = 0; i < 5; i++) {
-    const x = cx + maxR * Math.cos(angles[i]);
-    const y = cy + maxR * Math.sin(angles[i]);
-    ctx.beginPath();
-    ctx.moveTo(cx, cy);
-    ctx.lineTo(x, y);
-    ctx.strokeStyle = axisColor;
-    ctx.lineWidth = 1;
-    ctx.stroke();
-
-    // Label
-    const lx = cx + (maxR + 26) * Math.cos(angles[i]);
-    const ly = cy + (maxR + 26) * Math.sin(angles[i]);
-    ctx.fillStyle = textColor;
-    ctx.font = '600 12px "Be Vietnam Pro", -apple-system, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(RADAR_LABELS[i], lx, ly);
-  }
-
-  // ─── School polygons ───
   const activeSchools = schools.filter(Boolean);
+  const duration = 700; // ms
+  const delayPerPolygon = 150; // delay between each school polygon
 
-  activeSchools.forEach((school, idx) => {
-    const metrics = getRadarMetrics(school);
-    const values = [metrics.cost, metrics.visa, metrics.job, metrics.e7, metrics.study];
-    const color = RADAR_COLORS[idx] || '#888';
+  let startTime = null;
 
-    // Fill polygon
-    ctx.beginPath();
-    for (let i = 0; i < 5; i++) {
-      const r = (values[i] / 5) * maxR;
-      const x = cx + r * Math.cos(angles[i]);
-      const y = cy + r * Math.sin(angles[i]);
-      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-    }
-    ctx.closePath();
-    ctx.fillStyle = color + '1A';
-    ctx.fill();
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 2.5;
-    ctx.stroke();
+  function drawFrame(timestamp) {
+    if (!startTime) startTime = timestamp;
+    const elapsed = timestamp - startTime;
 
-    // Data points
-    for (let i = 0; i < 5; i++) {
-      const r = (values[i] / 5) * maxR;
-      const x = cx + r * Math.cos(angles[i]);
-      const y = cy + r * Math.sin(angles[i]);
+    ctx.clearRect(0, 0, w, h);
 
-      ctx.beginPath();
-      ctx.arc(x, y, 4, 0, Math.PI * 2);
-      ctx.fillStyle = color;
-      ctx.fill();
-      ctx.strokeStyle = dotBorder;
-      ctx.lineWidth = 2;
-      ctx.stroke();
+    // Draw grid + axis (static, always visible)
+    drawRadarGrid(ctx, cx, cy, maxR, angles, isDark);
 
-      // Value label beside point
-      const vx = cx + (r + 14) * Math.cos(angles[i]);
-      const vy = cy + (r + 14) * Math.sin(angles[i]);
-      ctx.fillStyle = color;
-      ctx.font = '700 10px "Be Vietnam Pro", sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(String(values[i]), vx, vy);
-    }
-  });
-
-  // ─── Legend ───
-  if (activeSchools.length > 1) {
-    const legendY = h - 6;
-    const totalWidth = activeSchools.reduce(function(sum, s, i) {
-      ctx.font = '12px "Be Vietnam Pro", sans-serif';
-      return sum + ctx.measureText(s.name || '').width + 34;
-    }, 0);
-    let lx = cx - totalWidth / 2;
-
+    // Draw each school polygon with staggered animation
     activeSchools.forEach(function(school, idx) {
-      const color = RADAR_COLORS[idx] || '#888';
-      ctx.fillStyle = color;
-      ctx.fillRect(lx, legendY - 5, 12, 12);
-      ctx.fillStyle = textColor;
-      ctx.font = '12px "Be Vietnam Pro", sans-serif';
-      ctx.textAlign = 'left';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(school.name || '', lx + 18, legendY);
-      lx += ctx.measureText(school.name || '').width + 34;
+      const schoolElapsed = Math.max(0, elapsed - delayPerPolygon * idx);
+      const t = Math.min(1, schoolElapsed / duration);
+      const scale = easeOutCubic(t);
+
+      drawRadarPolygons(ctx, cx, cy, maxR, angles, [school], scale, isDark);
+    });
+
+    // Draw legend (appears after first polygon is mostly done)
+    if (elapsed > delayPerPolygon + 200) {
+      drawRadarLegend(ctx, cx, h, activeSchools, isDark);
+    }
+
+    if (elapsed < duration + delayPerPolygon * (activeSchools.length - 1)) {
+      requestAnimationFrame(drawFrame);
+    } else {
+      // Animation done — add hover listeners
+      setupHoverListeners();
+    }
+  }
+
+  // ─── Hover: highlight polygon khi di chuột vào legend ───
+  function getLegendHitIndex(mouseX, mouseY) {
+    const legendY = h - 6;
+    if (Math.abs(mouseY - legendY) > 14) return -1;
+
+    ctx.font = '12px "Be Vietnam Pro", sans-serif';
+    let totalWidth = 0;
+    const widths = activeSchools.map(function(s) {
+      const tw = ctx.measureText(s.name || '').width + 34;
+      return tw;
+    });
+    const total = widths.reduce(function(a, b) { return a + b; }, 0);
+    let lx = cx - total / 2;
+
+    for (let i = 0; i < activeSchools.length; i++) {
+      if (mouseX >= lx - 4 && mouseX <= lx + widths[i] + 4) {
+        return i;
+      }
+      lx += widths[i];
+    }
+    return -1;
+  }
+
+  function redrawComplete(hoverIdx) {
+    ctx.clearRect(0, 0, w, h);
+    drawRadarGrid(ctx, cx, cy, maxR, angles, isDark);
+    // Draw all polygons at full scale
+    activeSchools.forEach(function(school) {
+      drawRadarPolygons(ctx, cx, cy, maxR, angles, [school], 1, isDark, hoverIdx);
+    });
+    drawRadarLegend(ctx, cx, h, activeSchools, isDark, hoverIdx);
+  }
+
+  var currentHover = -1;
+
+  function setupHoverListeners() {
+    canvas.addEventListener('mousemove', function(e) {
+      var rect = canvas.getBoundingClientRect();
+      var mx = e.clientX - rect.left;
+      var my = e.clientY - rect.top;
+      var idx = getLegendHitIndex(mx, my);
+      if (idx !== currentHover) {
+        currentHover = idx;
+        redrawComplete(idx);
+      }
+    });
+
+    canvas.addEventListener('mouseleave', function() {
+      if (currentHover !== -1) {
+        currentHover = -1;
+        redrawComplete(-1);
+      }
     });
   }
+
+  requestAnimationFrame(drawFrame);
 }
 
 function getChecklistData() {
@@ -1021,6 +1445,7 @@ function showSchool(viewId) {
   const map = document.getElementById("map-content");
   const ebook = document.getElementById("ebook-content");
   const advisor = document.getElementById("advisor-content");
+  const costEl = document.getElementById("cost-content");
 
   document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
   document.querySelector(`[data-school="${viewId}"]`)?.classList.add("active");
@@ -1029,7 +1454,7 @@ function showSchool(viewId) {
   updatePageMeta(viewId, getSchoolById(viewId));
 
   const hideAll = () => {
-    [content, schools, compare, extra, map, ebook, advisor].forEach(el => el?.classList.add("hidden"));
+    [content, schools, compare, extra, map, ebook, advisor, costEl].forEach(el => el?.classList.add("hidden"));
   };
 
   if (viewId === "advisor") {
@@ -1071,6 +1496,14 @@ function showSchool(viewId) {
       e.preventDefault();
       showSchool("ebook");
     });
+    return;
+  }
+
+  if (viewId === "cost") {
+    hideAll();
+    costEl.classList.remove("hidden");
+    costEl.innerHTML = renderCostCalculator();
+    bindCostCalculator(costEl);
     return;
   }
 

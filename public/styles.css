@@ -2071,6 +2071,190 @@ body.zalo-popup-open {
   color: #e2e8f0;
 }
 
+/* Cost Calculator */
+.cost-calc {
+  animation: fadeIn 0.35s ease-out;
+}
+.cost-calc-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid #dbe3ee;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #12355b 0%, #0f766e 100%);
+  color: #fff;
+  box-shadow: 0 10px 26px rgba(20, 32, 51, 0.08);
+}
+.cost-calc-head h2 {
+  margin: 0;
+  font-size: 1.35rem;
+}
+.cost-calc-head p {
+  margin-top: 0.25rem;
+  color: rgba(255,255,255,0.82);
+  font-size: 0.88rem;
+}
+.cost-calc-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+.cost-calc-form {
+  padding: 1.25rem;
+  border: 1px solid #dbe3ee;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 10px 26px rgba(20, 32, 51, 0.08);
+}
+.cost-calc-form h3 {
+  margin: 0 0 1rem;
+  color: #142033;
+  font-size: 1.05rem;
+}
+.cost-calc-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-bottom: 0.85rem;
+}
+.cost-calc-field label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #334155;
+}
+.cost-calc-field input,
+.cost-calc-field select {
+  width: 100%;
+  min-height: 2.55rem;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid #dbe3ee;
+  border-radius: 8px;
+  background: #f8fafc;
+  color: #142033;
+  font: inherit;
+  font-size: 0.9rem;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
+}
+.cost-calc-field input:focus,
+.cost-calc-field select:focus {
+  outline: 2px solid #bfdbfe;
+  border-color: #2563eb;
+}
+.cost-calc-field input[readonly] {
+  background: #f1f5f9;
+  color: #64748b;
+  cursor: default;
+}
+.cost-calc-result {
+  padding: 1.25rem;
+  border: 1px solid #dbe3ee;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 10px 26px rgba(20, 32, 51, 0.08);
+}
+.cost-calc-result h3 {
+  margin: 0 0 1rem;
+  color: #142033;
+  font-size: 1.05rem;
+}
+.cost-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+.cost-table th,
+.cost-table td {
+  padding: 0.65rem 0.75rem;
+  border-bottom: 1px solid #e6edf5;
+  text-align: left;
+}
+.cost-table th {
+  background: #f8fafc;
+  color: #475569;
+  font-weight: 700;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+}
+.cost-table td:first-child {
+  font-weight: 600;
+  color: #142033;
+}
+.cost-table td:nth-child(2),
+.cost-table td:nth-child(3) {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.cost-table tr.total td {
+  border-top: 2px solid #142033;
+  font-weight: 800;
+  color: #0f766e;
+  font-size: 1rem;
+}
+.cost-table .auto-filled {
+  color: #64748b;
+  font-size: 0.75rem;
+  font-weight: 400;
+}
+.cost-note {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  border-left: 4px solid #f59e0b;
+  border-radius: 8px;
+  background: #fffbeb;
+  color: #78350f;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+[data-theme="dark"] .cost-calc-head {
+  background: linear-gradient(135deg, #0a1628 0%, #1a365d 100%);
+}
+[data-theme="dark"] .cost-calc-form,
+[data-theme="dark"] .cost-calc-result {
+  background: #1e293b;
+  border-color: #334155;
+}
+[data-theme="dark"] .cost-calc-form h3,
+[data-theme="dark"] .cost-calc-result h3 {
+  color: #e2e8f0;
+}
+[data-theme="dark"] .cost-calc-field label {
+  color: #94a3b8;
+}
+[data-theme="dark"] .cost-calc-field input,
+[data-theme="dark"] .cost-calc-field select {
+  background: #0f172a;
+  border-color: #334155;
+  color: #e2e8f0;
+}
+[data-theme="dark"] .cost-calc-field input[readonly] {
+  background: #0f172a;
+  color: #94a3b8;
+}
+[data-theme="dark"] .cost-table th {
+  background: #0f172a;
+  color: #94a3b8;
+}
+[data-theme="dark"] .cost-table td {
+  border-color: #334155;
+}
+[data-theme="dark"] .cost-table td:first-child {
+  color: #e2e8f0;
+}
+[data-theme="dark"] .cost-table tr.total td {
+  border-top-color: #475569;
+  color: #2dd4bf;
+}
+
+@media (max-width: 760px) {
+  .cost-calc-body {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Dashboard concept override */
 body {
     background:
@@ -2482,6 +2666,49 @@ html {
         grid-column: 2;
         justify-self: start;
     }
+}
+
+/* Smart filter chips */
+.smart-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0.35rem 0 0;
+  min-height: 0;
+  transition: min-height 0.2s, opacity 0.2s;
+}
+.smart-chips:empty {
+  min-height: 0;
+}
+.smart-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.55rem 0.2rem 0.4rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  animation: fadeIn 0.2s ease-out;
+}
+.smart-chip-region {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+.smart-chip-tag {
+  background: #e7f7f3;
+  color: #0f766e;
+}
+.smart-chip-label {
+  font-weight: 400;
+  opacity: 0.7;
+}
+[data-theme="dark"] .smart-chip-region {
+  background: #1e3a5f;
+  color: #93c5fd;
+}
+[data-theme="dark"] .smart-chip-tag {
+  background: #0f2940;
+  color: #5eead4;
 }
 
 /* Search autocomplete */
