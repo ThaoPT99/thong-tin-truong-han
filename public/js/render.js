@@ -616,6 +616,16 @@ function getSchoolZaloText(school) {
 }
 
 function getSchoolShareText(school) {
+  return [
+    `Thông tin trường: ${school.name}`,
+    school.nameEn ? `Tên tiếng Anh: ${school.nameEn}` : "",
+    school.system ? `Hệ học: ${school.system}` : "",
+    school.location ? `Vị trí: ${school.location}` : "",
+    school.tuition ? `Học phí: ${String(school.tuition).replace(/\n+/g, " ")}` : "",
+    school.ktx ? `KTX: ${String(school.ktx).replace(/\n+/g, " ")}` : "",
+    `Link: ${location.origin}${location.pathname}?school=${encodeURIComponent(school.id)}`
+  ].filter(Boolean).join("\n");
+}
 
 function showCopyToast(container, message) {
   const toast = container.querySelector(".copy-toast");
