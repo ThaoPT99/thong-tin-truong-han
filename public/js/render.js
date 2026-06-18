@@ -614,7 +614,20 @@ function renderCompareResult(container) {
   const ids = Array.from(container.querySelectorAll(".compare-select")).map(select => select.value);
   const uniqueIds = [...new Set(ids)];
   const schools = uniqueIds.map(id => getSchoolById(id)).filter(Boolean);
+
   target.innerHTML = `
+    ${schools.length > 0 ? `
+    <div class="compare-radar-wrap">
+      <div class="compare-radar-head">
+        <p class="advisor-kicker">Biểu đồ so sánh</p>
+        <h3>5 chỉ số đánh giá trường</h3>
+        <p style="color:var(--text-muted);font-size:0.85rem;margin-top:0.15rem;">Chi phí thấp, dễ đỗ visa, cơ hội việc làm, chuyển đổi E7 và khối lượng học</p>
+      </div>
+      <div class="compare-radar-canvas-wrap">
+        <canvas id="compare-radar-canvas"></canvas>
+      </div>
+    </div>
+    ` : ''}
     <div class="compare-table-wrap">
       <table class="compare-table">
         <thead>
@@ -634,6 +647,14 @@ function renderCompareResult(container) {
       </table>
     </div>
   `;
+
+  // Render radar chart (đợi DOM layout)
+  if (schools.length > 0) {
+    const canvas = target.querySelector("#compare-radar-canvas");
+    if (canvas) {
+      requestAnimationFrame(function() { renderRadarChart(canvas, schools); });
+    }
+  }
 }
 
 function renderCompareRow(label, schools, getValue) {
@@ -658,6 +679,163 @@ function getCompareRisk(school) {
   if (rules.costLevel >= 4) risks.push("Chi phí thuộc nhóm cao");
   if (rules.gender === "female") risks.push("Chỉ phù hợp nữ sinh");
   return risks.join("; ") || "Chưa có rủi ro nổi bật";
+}
+
+// ─── Radar Chart ───
+const RADAR_LABELS = ['Chi phí', 'Visa', 'Việc làm', 'E7', 'Học lực'];
+const RADAR_COLORS = ['#2563eb', '#0f766e', '#d97706'];
+
+function getRadarMetrics(school) {
+  const rules = getAdvisorRules(school.id, school);
+  return {
+    cost: 6 - (rules.costLevel || 3),   // invert: lower cost = better score
+    visa: rules.visaChance || 3,
+    job: rules.jobOpportunity || 3,
+    e7: rules.e7Opportunity || 3,
+    study: 6 - (rules.studyLoad || 3),  // invert: lower load = better score
+  };
+}
+
+function renderRadarChart(canvas, schools) {
+  if (!canvas || !schools || !schools.length) return;
+
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const dpr = window.devicePixelRatio || 1;
+
+  // Clear and size canvas
+  const parent = canvas.parentElement;
+  const w = parent?.clientWidth || 460;
+  const h = Math.min(w, 400);
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+
+  const cx = w / 2;
+  const cy = h / 2 - 8;
+  const maxR = Math.min(cx, cy) - 52;
+
+  // Compute angles for 5 axes (start from top)
+  const angles = [];
+  for (let i = 0; i < 5; i++) {
+    angles.push((i / 5) * Math.PI * 2 - Math.PI / 2);
+  }
+
+  const gridColor = isDark ? '#334155' : '#e2e8f0';
+  const axisColor = isDark ? '#475569' : '#cbd5e1';
+  const textColor = isDark ? '#94a3b8' : '#64748b';
+  const dotBorder = isDark ? '#0f172a' : '#ffffff';
+
+  ctx.clearRect(0, 0, w, h);
+
+  // ─── Grid circles (5 levels) ───
+  for (let level = 1; level <= 5; level++) {
+    const r = (level / 5) * maxR;
+    ctx.beginPath();
+    for (let i = 0; i < 5; i++) {
+      const x = cx + r * Math.cos(angles[i]);
+      const y = cy + r * Math.sin(angles[i]);
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.strokeStyle = gridColor;
+    ctx.lineWidth = level === 5 ? 1.5 : 0.5;
+    ctx.stroke();
+  }
+
+  // ─── Axis lines ───
+  for (let i = 0; i < 5; i++) {
+    const x = cx + maxR * Math.cos(angles[i]);
+    const y = cy + maxR * Math.sin(angles[i]);
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(x, y);
+    ctx.strokeStyle = axisColor;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Label
+    const lx = cx + (maxR + 26) * Math.cos(angles[i]);
+    const ly = cy + (maxR + 26) * Math.sin(angles[i]);
+    ctx.fillStyle = textColor;
+    ctx.font = '600 12px "Be Vietnam Pro", -apple-system, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(RADAR_LABELS[i], lx, ly);
+  }
+
+  // ─── School polygons ───
+  const activeSchools = schools.filter(Boolean);
+
+  activeSchools.forEach((school, idx) => {
+    const metrics = getRadarMetrics(school);
+    const values = [metrics.cost, metrics.visa, metrics.job, metrics.e7, metrics.study];
+    const color = RADAR_COLORS[idx] || '#888';
+
+    // Fill polygon
+    ctx.beginPath();
+    for (let i = 0; i < 5; i++) {
+      const r = (values[i] / 5) * maxR;
+      const x = cx + r * Math.cos(angles[i]);
+      const y = cy + r * Math.sin(angles[i]);
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.fillStyle = color + '1A';
+    ctx.fill();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+
+    // Data points
+    for (let i = 0; i < 5; i++) {
+      const r = (values[i] / 5) * maxR;
+      const x = cx + r * Math.cos(angles[i]);
+      const y = cy + r * Math.sin(angles[i]);
+
+      ctx.beginPath();
+      ctx.arc(x, y, 4, 0, Math.PI * 2);
+      ctx.fillStyle = color;
+      ctx.fill();
+      ctx.strokeStyle = dotBorder;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Value label beside point
+      const vx = cx + (r + 14) * Math.cos(angles[i]);
+      const vy = cy + (r + 14) * Math.sin(angles[i]);
+      ctx.fillStyle = color;
+      ctx.font = '700 10px "Be Vietnam Pro", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(String(values[i]), vx, vy);
+    }
+  });
+
+  // ─── Legend ───
+  if (activeSchools.length > 1) {
+    const legendY = h - 6;
+    const totalWidth = activeSchools.reduce(function(sum, s, i) {
+      ctx.font = '12px "Be Vietnam Pro", sans-serif';
+      return sum + ctx.measureText(s.name || '').width + 34;
+    }, 0);
+    let lx = cx - totalWidth / 2;
+
+    activeSchools.forEach(function(school, idx) {
+      const color = RADAR_COLORS[idx] || '#888';
+      ctx.fillStyle = color;
+      ctx.fillRect(lx, legendY - 5, 12, 12);
+      ctx.fillStyle = textColor;
+      ctx.font = '12px "Be Vietnam Pro", sans-serif';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(school.name || '', lx + 18, legendY);
+      lx += ctx.measureText(school.name || '').width + 34;
+    });
+  }
 }
 
 function getChecklistData() {

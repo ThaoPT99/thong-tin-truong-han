@@ -1,5 +1,15 @@
 /**
- * Import dữ liệu từ data.js lên Supabase (batch insert)
+ * [LEGACY] Import dữ liệu từ Excel lên Supabase (batch insert)
+ *
+ * Cách dùng MỚI:
+ *   1. Chạy: python scripts/import-excel.py
+ *      (cần cài openpyxl: pip install openpyxl)
+ *   2. Vào Admin UI → Import Excel → upload file .xlsx
+ *      (dùng API endpoint POST /api/admin/import)
+ *
+ * Script này được giữ lại để tham khảo, không còn dùng trực tiếp.
+ * data.js đã được xoá — dữ liệu được load qua API (/api/schools, /api/extras).
+ *
  * Chạy: node scripts/import-supabase.js
  */
 const { Client } = require('pg');
@@ -16,8 +26,22 @@ const DB_CONFIG = {
 };
 
 async function importData() {
-  console.log('🔄 Reading data.js...');
   const dataJsPath = path.join(__dirname, '..', 'data.js');
+
+  if (!fs.existsSync(dataJsPath)) {
+    console.log('══════════════════════════════════════════════════');
+    console.log('  data.js không còn tồn tại.');
+    console.log('  Dữ liệu giờ được quản lý qua Supabase + Admin API.');
+    console.log('');
+    console.log('  Cách import dữ liệu mới:');
+    console.log('  1. python scripts/import-excel.py');
+    console.log('  2. Vào Admin UI → Import Excel');
+    console.log('     (https://thongtintruonghan.vercel.app/admin/import.html)');
+    console.log('══════════════════════════════════════════════════');
+    process.exit(0);
+  }
+
+  console.log('🔄 Reading data.js...');
   const code = fs.readFileSync(dataJsPath, 'utf8');
 
   // Use eval to extract data

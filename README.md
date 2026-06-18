@@ -2,39 +2,97 @@
 
 Website tra cứu thông tin du học Visa D2-6: danh sách 18 trường Hàn Quốc, điều kiện tuyển sinh, học phí, hồ sơ và công cụ tư vấn chọn trường.
 
-**Nguồn dữ liệu:** File Excel `Thong_tin_truong_Han_ky_thang_3_2027.xlsx` / 
-[Google Sheet](https://docs.google.com/spreadsheets/d/1H5tFffhJeLETHrNeRLV2l_gpg-KDQITD/edit?usp=sharing&ouid=112929137164133989656&rtpof=true&sd=true)
+**URL:** https://thongtintruonghan.vercel.app  
+**Nguồn dữ liệu:** File Excel `Thong_tin_truong_Han_ky_thang_3_2027.xlsx` / [Google Sheet](https://docs.google.com/spreadsheets/d/1H5tFffhJeLETHrNeRLV2l_gpg-KDQITD/edit?usp=sharing&ouid=112929137164133989656&rtpof=true&sd=true)
 
 ---
 
-## Chạy website
+## Kiến trúc tổng quan
 
-Mở `index.html` bằng trình duyệt.
+```
+┌─────────────┐     ┌──────────────────┐     ┌──────────────────┐
+│  Frontend   │ ──→ │  Vercel API      │ ──→ │  Supabase        │
+│  (SPA thuần)│     │  (Serverless)    │     │  (PostgreSQL)    │
+│  index.html │ ←── │  /api/*          │ ←── │  + Storage       │
+│  render.js  │     │  + Admin /api/*  │     │                  │
+│  advisor.js │     └──────────────────┘     └──────────────────┘
+│  api-loader │
+└──────┬──────┘
+       │
+       ▼
+┌──────────────────┐
+│  Admin UI         │
+│  (static HTML)    │
+│  dashboard.html   │
+│  editor.html      │
+│  import.html      │
+│  semester.html    │
+│  checklist.html   │
+└──────────────────┘
+```
 
 ## Deploy lên Vercel
 
-Dự án là **static site thuần**, deploy trực tiếp lên Vercel:
+Dự án gồm **static site + Vercel Serverless Functions + Build step**:
 
 1. Push code lên GitHub
 2. Vào [vercel.com](https://vercel.com) → Import repo
-3. Framework: **Other** (không cần build command)
-4. Output directory: để trống
+3. Framework: **Other**
+4. Root directory: để trống
+5. `vercel.json` đã config sẵn build command (`npm run build` chạy `scripts/pre-render.js` sinh SEO pages + sitemap) + output directory (`public`)
 
-Hoặc dùng Vercel CLI:
+**Biến môi trường cần set trên Vercel (Project Settings → Environment Variables):**
+
+| Variable | Mô tả |
+|---|---|
+| `SUPABASE_URL` | Supabase project URL |
+| `SUPABASE_KEY` | Supabase anon/public key |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service_role key (admin operations) |
+| `JWT_SECRET` | Secret key cho admin JWT |
+
+## ## Chạy local
+
 ```bash
-vercel --prod
+# Dùng Vercel Dev để chạy full-stack local (API + static)
+npx vercel dev
 ```
 
----
+Sau đó mở http://localhost:3000. Dữ liệu load từ API (Supabase).
+
+> **Lưu ý:** Các file HTML mở trực tiếp bằng file:// không hoạt động vì API cần server.
 
 ## Cập nhật dữ liệu từ Excel
 
-Chạy script Python để import dữ liệu từ file Excel vào `data.js`:
+### Cách 1: Dùng Admin UI (khuyến nghị)
+
+1. Đăng nhập vào `/admin/login.html`
+2. Vào Import Excel → upload file `.xlsx` → xem trước → Import
+
+### Cách 2: Dùng script Python + Admin Import
+
+Chạy script Python để parse Excel, sau đó import qua Admin API:
+
 ```bash
 pip install openpyxl
-python excel_to_data.py
+python scripts/import-excel.py
 ```
-(Lưu file Excel `Thong_tin_truong_Han_ky_thang_3_2027.xlsx` vào thư mục gốc hoặc Downloads)
+
+(Lưu file Excel vào thư mục gốc: `Thong_tin_truong_Han_ky_thang_3_2027.xlsx`)
+
+Sau đó vào Admin UI → Import → upload file JSON đã parse.
+
+### Setup database từ đầu
+
+```bash
+# 1. Init schema
+node scripts/init-db.js
+
+# 2. Seed admin user
+node scripts/seed-admin.js
+
+# 3. Seed visa checklist
+node scripts/seed-checklist.js
+```
 
 ---
 
@@ -67,23 +125,122 @@ python excel_to_data.py
 
 ```
 thong-tin-truong-han/
-├── index.html              # SPA chính (6 tab)
-├── data.js                 # Dữ liệu 18 trường + advisor profiles
-├── render.js               # Render engine (directory, detail, compare, checklist...)
-├── advisor.js              # Công cụ tư vấn chọn trường
-├── styles.css              # Stylesheet (light/dark, responsive, print)
-├── zalo-popup.js           # Popup Zalo + theme toggle
-├── excel_to_data.py        # Script import Excel → data.js
-├── images/
-│   ├── placeholder.svg
-│   ├── logo-d26-horizontal.svg
-│   ├── logo-d26-sidebar.svg
-│   ├── maphanquoc-optimized.webp
-│   └── ...
-├── robots.txt
-├── sitemap.xml
+├── public/                    # Static website (deploy lên Vercel)
+│   ├── index.html             # SPA chính (6 tab)
+│   ├── styles.css             # Stylesheet (light/dark, responsive, print)
+│   ├── sw.js                  # Service Worker (cache static assets)
+│   ├── sitemap.xml            # Tự động sinh bởi pre-render.js
+│   ├── robots.txt
+│   ├── truong/                # Pre-render SEO pages (tự động sinh)
+│   │   └── [slug]/index.html
+│   ├── js/
+│   │   ├── api-loader.js      # Load dữ liệu từ API, transform, dispatch event
+│   │   ├── render.js          # Render engine (directory, detail, compare, checklist...)
+│   │   ├── advisor.js         # Công cụ tư vấn chọn trường (scoring algorithm)
+│   │   └── zalo-popup.js      # Popup Zalo + theme toggle
+│   ├── admin/                 # Admin UI (static HTML + vanilla JS)
+│   │   ├── admin.js           # Shared helpers (auth, API, toast)
+│   │   ├── admin.css
+│   │   ├── login.html         # Đăng nhập (JWT)
+│   │   ├── dashboard.html     # Dashboard + danh sách trường
+│   │   ├── editor.html        # CRUD trường (7 sections)
+│   │   ├── import.html        # Import Excel (client-side parse + preview)
+│   │   ├── semester.html      # Quản lý kỳ tuyển sinh + gán trường
+│   │   └── checklist.html     # Quản lý visa checklist
+│   └── images/
+│       ├── placeholder.svg
+│       ├── logo-d26-horizontal.svg
+│       ├── logo-d26-sidebar.svg
+│       ├── maphanquoc-optimized.webp
+│       └── ...
+├── api/                       # Vercel Serverless Functions
+│   ├── schools/
+│   │   ├── index.js           # GET /api/schools — danh sách trường
+│   │   └── [slug].js          # GET /api/schools/:slug — chi tiết 1 trường
+│   ├── extras/
+│   │   └── index.js           # GET /api/extras — semesters, checklist, interviews
+│   ├── auth/
+│   │   └── [action].js        # POST /api/auth/login, GET /api/auth/verify
+│   └── admin/
+│       ├── schools/
+│       │   ├── index.js       # POST (create)
+│       │   └── [id].js        # PUT/DELETE (update/delete)
+│       ├── semesters/
+│       │   └── index.js       # CRUD semesters + school assignment
+│       ├── checklist/
+│       │   ├── index.js       # GET/POST
+│       │   └── [id].js        # PUT/DELETE
+│       ├── import/
+│       │   └── index.js       # POST — batch import từ Excel JSON
+│       └── export.js          # GET — export toàn bộ dữ liệu
+├── lib/                       # Shared server-side helpers
+│   ├── supabase.js            # Supabase client
+│   ├── auth.js                # JWT sign/verify + requireAdmin middleware
+│   └── helpers.js             # replaceChildTable, replacePartners, upsertAdvisorProfile
+├── supabase/
+│   └── schema.sql             # Database schema (full)
+├── scripts/                   # Scripts chạy local hoặc deploy
+│   ├── import-excel.py        # Parse Excel → JSON (Python + openpyxl)
+│   ├── import-supabase.js     # [LEGACY] Import JSON lên Supabase (dùng Admin API thay thế)
+│   ├── init-db.js             # Chạy schema.sql
+│   ├── seed-admin.js          # Tạo admin user
+│   ├── seed-checklist.js      # Seed 39 checklist items
+│   ├── migrate-semesters.js   # Migration semester_info → semesters
+│   ├── pre-render.js          # Sinh SEO pages + sitemap
+│   └── upload-videos.js       # Upload video lên Supabase Storage
+├── vercel.json                # Vercel config (rewrites, build)
+├── package.json
 └── Thong_tin_truong_Han_ky_thang_3_2027.xlsx  # File Excel nguồn
 ```
+
+---
+
+## API Endpoints
+
+### Public API (không cần auth)
+
+| Endpoint | Method | Mô tả |
+|---|---|---|
+| `/api/schools` | GET | Danh sách trường. Hỗ trợ `?full=false` (lightweight), `?semester=id` (lọc kỳ) |
+| `/api/schools/:slug` | GET | Chi tiết 1 trường (kèm child tables: conditions, majors, advantages, ...) |
+| `/api/extras` | GET | Semester info, danh sách kỳ, visa checklist, interviews |
+
+### Admin API (cần JWT Bearer token)
+
+| Endpoint | Method | Mô tả |
+|---|---|---|
+| `/api/auth/login` | POST | Đăng nhập → nhận JWT token |
+| `/api/auth/verify` | GET | Verify token còn hạn không |
+| `/api/admin/schools` | POST | Tạo trường mới |
+| `/api/admin/schools/:id` | PUT/DELETE | Sửa/xoá trường |
+| `/api/admin/import` | POST | Import batch (JSON array schools + extraSheets + semesterInfo) |
+| `/api/admin/export` | GET | Export toàn bộ dữ liệu (schools, checklist, interviews, semesters) |
+| `/api/admin/checklist` | GET/POST | Danh sách / thêm mới visa checklist item |
+| `/api/admin/checklist/:id` | PUT/DELETE | Sửa/xoá checklist item |
+| `/api/admin/semesters` | GET/POST/PUT/DELETE | CRUD kỳ tuyển sinh + gán trường (`?action=schools`) |
+
+---
+
+## Database (Supabase PostgreSQL)
+
+### Core tables
+
+- **`schools`** — Thông tin chính (slug, name, region, tuition, images, video...)
+- **`school_conditions`** — Điều kiện tuyển sinh (1-nhiều)
+- **`school_majors`** — Chuyên ngành (1-nhiều)
+- **`school_advantages`** — Ưu điểm (1-nhiều)
+- **`school_conversions`** — Lộ trình chuyển đổi (1-nhiều)
+- **`school_documents`** — Hồ sơ cần lưu ý (1-nhiều)
+- **`school_partners`** — Đối tác VN (1-nhiều, có UNIQUE school_id + code)
+- **`school_advisor_profiles`** — Advisor profile (1-1 với schools)
+
+### Supporting tables
+
+- **`semesters`** — Kỳ tuyển sinh (unique: ky + nam, có is_active flag)
+- **`semester_schools`** — N-N mapping (trường thuộc kỳ nào)
+- **`extra_visa_checklist`** — Checklist hồ sơ visa (39 items, 5 nhóm)
+- **`extra_interviews`** — Tài liệu ôn phỏng vấn
+- **`users`** — Admin users (bcrypt password, JWT auth)
 
 ---
 
@@ -100,48 +257,43 @@ thong-tin-truong-han/
 
 ---
 
-## Cấu trúc mỗi trường trong data.js
+## Cấu trúc mỗi trường (API response)
 
 ```javascript
-"id-truong": {
-  id: "id-truong",
-  name: "Tên hiển thị",
-  nameKr: "한국어",
-  nameEn: "English name",
-  system: "D2-6 > D2-1",
+{
+  id: "uuid",
+  slug: "dh-osan",
+  name: "Osan",
+  name_kr: "오산대학교",
+  name_en: "Osan University",
+  system: "D2-6 > D2-1 (Cao đẳng)",
   quota: 60,
-  region: "seoul",
-  images: {
-    main: "images/truong/truong-chinh.jpg",
-    catalog: "images/truong/catalog-cover.jpg",
-    locationMap: "images/truong/ban-do.jpg",
-    invoice: "images/truong/invoice-mau.jpg",
-    gallery: []
-  },
-  links: {
-    website: "http://...",
-    catalog: "documents/truong-catalog.pdf",
-    invoice: "https://drive.google.com/..."
-  },
-  video: {
-    url: "https://www.youtube.com/watch?v=...",
-    youtubeId: "ABC123",
-    title: "Tên video"
-  },
+  region: "gyeonggi",
   location: "...",
   intro: "...",
-  conditions: ["Điều kiện 1", "..."],
-  majors: ["Chuyên ngành 1", "..."],
-  conversion: ["..."],
+  image_main: "images/placeholder.svg",
+  image_catalog: "",
+  image_location: "",
+  image_invoice: "",
+  website: "http://...",
+  catalog_url: "documents/...",
+  invoice_url: "https://...",
+  video_url: "https://www.youtube.com/watch?v=...",
+  video_youtube_id: "ABC123",
+  video_title: "...",
   tuition: "...",
   insurance: "...",
   ktx: "...",
   schedule: "...",
-  advantages: ["..."],
-  documents: ["..."],
-  documentsNote: "...",
-  partners: [{ code: "XXX", name: "...", nameKr: "..." }],
-  mou: "..."
+  documents_note: "...",
+  mou: "...",
+  conditions: [{ text: "...", sort_order: 0 }],
+  majors: [{ text: "...", sort_order: 0 }],
+  advantages: [{ text: "...", sort_order: 0 }],
+  conversion: [{ text: "...", sort_order: 0 }],
+  documents: [{ text: "...", sort_order: 0 }],
+  partners: [{ code: "XXX", name: "...", name_kr: "..." }],
+  advisorProfile: { gender: "all", minGpa: 5.0, ... }
 }
 ```
 
@@ -149,11 +301,9 @@ thong-tin-truong-han/
 
 ## Hình ảnh
 
-- Đặt ảnh vào `images/[tên-trường]/` (vd: `images/nubusan/`)
+- Đặt ảnh vào `public/images/[tên-trường]/` (vd: `public/images/nubusan/`)
 - Tên file: `truong-chinh.jpg`, `catalog-cover.jpg`, `ban-do.jpg`, `invoice-mau.jpg`
-- Gallery: thêm đường dẫn vào mảng `images.gallery`
-
-> **Lưu ý:** Hiện tại chưa có ảnh thật cho các trường. Cần tạo thư mục `images/[tên-trường]/` và thêm ảnh tương ứng.
+- Để thêm ảnh vào database, dùng Admin UI → Editor → nhập đường dẫn
 
 ## Video YouTube
 
@@ -162,7 +312,7 @@ Lấy **Video ID** từ link (phần sau `v=`):
 Link: https://www.youtube.com/watch?v=dQw4w9WgXcQ
 Video ID: dQw4w9WgXcQ
 ```
-Điền vào `video.youtubeId` trong data.js.
+Nhập vào Admin UI → Editor → Video Youtube ID.
 
 ---
 
