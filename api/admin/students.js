@@ -11,29 +11,30 @@ module.exports = requireAdmin(async (req, res) => {
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   const { id } = req.query;
+  const isDirector = req.user?.role === 'director';
+  const userId = req.user?.id;
 
   try {
     // ─── GET ───
     if (req.method === 'GET') {
       // Nếu có id → lấy chi tiết 1 student + logs
       if (id) {
-        const { data: existing, error: findErr } = await supabase
+        let query = supabase
           .from('students')
-          .select('*, schools(name), semesters(ky, nam, title)')
-          .eq('id', id)
-          .maybeSingle();
+          .select('*, schools(name), semesters(ky, nam, title), student_logs(*)')
+          .eq('id', id);
+
+        // Sale chỉ xem học sinh của mình
+        if (!isDirector) {
+          query = query.eq('owner_id', userId);
+        }
+
+        const { data: existing, error: findErr } = await query.maybeSingle();
 
         if (findErr) throw new Error(findErr.message);
         if (!existing) return res.status(404).json({ error: 'Student not found' });
 
-        // Also get logs
-        const { data: logs } = await supabase
-          .from('student_logs')
-          .select('*')
-          .eq('student_id', id)
-          .order('created_at', { ascending: false });
-
-        return res.json({ success: true, data: { ...existing, logs: logs || [] } });
+        return res.json({ success: true, data: existing });
       }
 
       // Không có id → danh sách (có filter)
@@ -42,25 +43,36 @@ module.exports = requireAdmin(async (req, res) => {
         .select('*, schools(name), semesters(ky, nam, title)')
         .order('created_at', { ascending: false });
 
-      const { status, search, school_id, semester_id } = req.query;
+      // Sale chỉ thấy học sinh của mình
+      if (!isDirector) {
+        query = query.eq('owner_id', userId);
+      }
+
+      const { status, search, school_id, semester_id, owner_id } = req.query;
       if (status) query = query.eq('status', status);
       if (school_id) query = query.eq('school_id', school_id);
       if (semester_id) query = query.eq('semester_id', semester_id);
+      // Director có thể filter theo owner_id
+      if (isDirector && owner_id) query = query.eq('owner_id', owner_id);
       if (search) {
         query = query.or(`name.ilike.%${search}%,phone.ilike.%${search}%,email.ilike.%${search}%`);
       }
 
       const { data, error } = await query;
-      if (error) throw new Error(error.message);
+      if (error) throw error;
       return res.json({ success: true, data: data || [] });
     }
 
     // ─── POST: tạo học sinh mới ───
     if (req.method === 'POST') {
       const body = req.body || {};
+
       if (!body.name) {
         return res.status(400).json({ error: 'name is required' });
       }
+
+      // Director có thể gán owner_id cho sale khác, Sale tự gán cho mình
+      const ownerId = isDirector && body.ownerId ? body.ownerId : userId;
 
       const { data, error } = await supabase
         .from('students')
@@ -74,6 +86,7 @@ module.exports = requireAdmin(async (req, res) => {
           korean_level: body.koreanLevel || '',
           school_id: body.schoolId || null,
           semester_id: body.semesterId || null,
+          owner_id: ownerId,
           status: body.status || 'new',
           note: body.note || '',
           next_action: body.nextAction || '',
@@ -99,13 +112,20 @@ module.exports = requireAdmin(async (req, res) => {
     if (req.method === 'PUT') {
       if (!id) return res.status(400).json({ error: 'Student ID is required' });
 
-      const { data: existing } = await supabase
+      // Kiểm tra quyền sở hữu
+      const { data: existing, error: findErr } = await supabase
         .from('students')
-        .select('id')
+        .select('id, owner_id')
         .eq('id', id)
         .maybeSingle();
 
+      if (findErr) throw new Error(findErr.message);
       if (!existing) return res.status(404).json({ error: 'Student not found' });
+
+      // Sale chỉ được update học sinh của mình
+      if (!isDirector && existing.owner_id !== userId) {
+        return res.status(403).json({ error: 'Forbidden: not your student' });
+      }
 
       const body = req.body || {};
       const updateData = {};
@@ -122,6 +142,8 @@ module.exports = requireAdmin(async (req, res) => {
       if (body.note !== undefined) updateData.note = body.note;
       if (body.nextAction !== undefined) updateData.next_action = body.nextAction;
       if (body.nextActionDate !== undefined) updateData.next_action_date = body.nextActionDate;
+      // Director có thể đổi owner_id
+      if (isDirector && body.ownerId !== undefined) updateData.owner_id = body.ownerId;
       updateData.updated_at = new Date().toISOString();
 
       if (Object.keys(updateData).length <= 1) {
@@ -153,13 +175,20 @@ module.exports = requireAdmin(async (req, res) => {
     if (req.method === 'DELETE') {
       if (!id) return res.status(400).json({ error: 'Student ID is required' });
 
-      const { data: existing } = await supabase
+      // Kiểm tra quyền sở hữu
+      const { data: existing, error: findErr } = await supabase
         .from('students')
-        .select('id')
+        .select('id, owner_id')
         .eq('id', id)
         .maybeSingle();
 
+      if (findErr) throw new Error(findErr.message);
       if (!existing) return res.status(404).json({ error: 'Student not found' });
+
+      // Sale chỉ được xóa học sinh của mình
+      if (!isDirector && existing.owner_id !== userId) {
+        return res.status(403).json({ error: 'Forbidden: not your student' });
+      }
 
       const { error: delErr } = await supabase.from('students').delete().eq('id', id);
       if (delErr) throw new Error(delErr.message);

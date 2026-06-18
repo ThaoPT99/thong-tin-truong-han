@@ -212,6 +212,7 @@ CREATE TABLE IF NOT EXISTS students (
   korean_level    VARCHAR(20),
   school_id       UUID REFERENCES schools(id) ON DELETE SET NULL,
   semester_id     UUID REFERENCES semesters(id) ON DELETE SET NULL,
+  owner_id        UUID REFERENCES users(id) ON DELETE SET NULL,
   status          VARCHAR(30) DEFAULT 'new', -- new, consulting, applied, waiting_visa, visa_approved, visa_rejected, enrolled
   note            TEXT,
   next_action     TEXT,
@@ -230,11 +231,12 @@ CREATE TABLE IF NOT EXISTS student_logs (
   created_at      TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 10. Row Level Security
-ALTER TABLE schools ENABLE ROW LEVEL SECURITY;
-ALTER TABLE school_conditions ENABLE ROW LEVEL SECURITY;
-ALTER TABLE school_majors ENABLE ROW LEVEL SECURITY;
-ALTER TABLE school_advantages ENABLE ROW LEVEL SECURITY;
+-- Indexes
+CREATE INDEX IF NOT EXISTS idx_students_status ON students(status);
+CREATE INDEX IF NOT EXISTS idx_students_school ON students(school_id);
+CREATE INDEX IF NOT EXISTS idx_students_semester ON students(semester_id);
+CREATE INDEX IF NOT EXISTS idx_students_owner ON students(owner_id);
+CREATE INDEX IF NOT EXISTS idx_student_logs_student ON student_logs(student_id);
 ALTER TABLE school_conversions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE school_documents ENABLE ROW LEVEL SECURITY;
 ALTER TABLE school_partners ENABLE ROW LEVEL SECURITY;

@@ -49,6 +49,39 @@ function logout() {
   window.location.href = '/admin/login.html';
 }
 
+// ─── Role-based UI ───
+
+function getUserRole() {
+  const user = getUser();
+  return user?.role || 'sale';
+}
+
+function setupSidebarByRole() {
+  const role = getUserRole();
+  // Các tab chỉ director mới được thấy (dựa trên class role-director)
+  const directorTabs = document.querySelectorAll('.sidebar-nav a.role-director');
+  const studentsTab = document.querySelector('.sidebar-nav a[href="students.html"]');
+  
+  if (role === 'sale') {
+    // Ẩn các tab director
+    directorTabs.forEach(el => el.style.display = 'none');
+    
+    // Redirect nếu đang ở trang không cho phép
+    const currentPage = window.location.pathname.split('/').pop();
+    const allowedPages = ['students.html', 'login.html'];
+    if (!allowedPages.includes(currentPage)) {
+      window.location.href = '/admin/students.html';
+    }
+  } else if (role === 'director') {
+    // Director thấy tất cả
+    directorTabs.forEach(el => el.style.display = '');
+    if (studentsTab) studentsTab.style.display = '';
+  }
+}
+
+// Gọi setup role khi DOM ready
+document.addEventListener('DOMContentLoaded', setupSidebarByRole);
+
 // ─── API Helper ───
 
 async function api(method, path, body) {
