@@ -1,5 +1,4 @@
-// api-loader.js - Load dữ liệu từ API Vercel thay vì data.js
-// Luôn ưu tiên dữ liệu mới từ API. Pre-rendered data dùng cho first paint/SEO.
+// api-loader.js - Load dữ liệu từ API Vercel. Luôn lấy dữ liệu mới từ API.
 
 // ─── Global helpers (dùng chung cho advisor.js, render.js) ───
 
@@ -184,44 +183,7 @@ window.REGION_LABELS = {
     }
   }
 
-  // ─── Bước 1: Nếu có prerendered data, dùng ngay cho first paint ───
-  if (window.__PRERENDERED_DATA__) {
-    try {
-      var preData = window.__PRERENDERED_DATA__;
-
-      var SCHOOLS_DATA = {};
-      (preData.schoolsData || []).forEach(function(school) {
-        var slug = school.slug;
-        if (!slug) return;
-        SCHOOLS_DATA[slug] = transformSchool(school);
-      });
-
-      window.SCHOOLS_DATA = SCHOOLS_DATA;
-      window.ADVISOR_PROFILES = preData.advisorProfilesData || {};
-      window.SEMESTER_INFO = preData.semesterInfo || { ky: '3', nam: '2027', title: '' };
-      window.SEMESTERS_LIST = preData.semestersList || [];
-      window.ACTIVE_SEMESTER_ID = preData.activeSemesterId || null;
-      window.SEMESTER_SCHOOLS_MAP = preData.semesterSchoolsMap || {};
-      window.EXTRA_SHEETS = { visaChecklist: { items: preData.extrasChecklist || [] } };
-      window.CHECKLIST_GROUPED = buildChecklistGroups(preData.extrasChecklist || []);
-
-      // Update page title
-      var si = window.SEMESTER_INFO;
-      if (si && si.ky && si.nam) {
-        var semesterTitle = 'Kỳ tháng ' + si.ky + '/' + si.nam;
-        var sub = document.querySelector('.subtitle');
-        if (sub) sub.textContent = semesterTitle;
-      }
-
-      window.__DATA_READY__ = true;
-      document.dispatchEvent(new CustomEvent('app-data-ready'));
-    } catch (e) {
-      console.error('Prerender data error:', e);
-      // Fall through to API
-    }
-  }
-
-  // ─── Bước 2: Luôn fetch API để có dữ liệu mới nhất ───
+  // ─── Luôn fetch API để có dữ liệu mới nhất ───
   (async function() {
     try {
       const API_BASE = '/api';
@@ -246,30 +208,22 @@ window.REGION_LABELS = {
 
       setDataFromApi(rawSchools, extrasJson, schoolsJson);
 
-      if (!window.__PRERENDERED_DATA__) {
-        // Không có prerender → first load từ API
-        window.__DATA_READY__ = true;
-        document.dispatchEvent(new CustomEvent('app-data-ready'));
-      } else {
-        // Có prerender → dữ liệu đã được refresh, thông báo để re-render
-        document.dispatchEvent(new CustomEvent('data-refreshed'));
-      }
+      window.__DATA_READY__ = true;
+      document.dispatchEvent(new CustomEvent('app-data-ready'));
 
     } catch (err) {
       console.error('API Loader error:', err);
-      if (!window.__DATA_READY__) {
-        // Không có prerender + API fail → fallback empty
-        window.SCHOOLS_DATA = window.SCHOOLS_DATA || {};
-        window.ADVISOR_PROFILES = window.ADVISOR_PROFILES || {};
-        window.SEMESTER_INFO = window.SEMESTER_INFO || { ky: '3', nam: '2027', title: '' };
-        window.SEMESTERS_LIST = window.SEMESTERS_LIST || [];
-        window.ACTIVE_SEMESTER_ID = window.ACTIVE_SEMESTER_ID || null;
-        window.SEMESTER_SCHOOLS_MAP = window.SEMESTER_SCHOOLS_MAP || {};
-        window.EXTRA_SHEETS = window.EXTRA_SHEETS || {};
-        window.CHECKLIST_GROUPED = window.CHECKLIST_GROUPED || [];
-        window.__DATA_READY__ = true;
-        document.dispatchEvent(new CustomEvent('app-data-ready'));
-      }
+      // API fail → fallback empty
+      window.SCHOOLS_DATA = window.SCHOOLS_DATA || {};
+      window.ADVISOR_PROFILES = window.ADVISOR_PROFILES || {};
+      window.SEMESTER_INFO = window.SEMESTER_INFO || { ky: '3', nam: '2027', title: '' };
+      window.SEMESTERS_LIST = window.SEMESTERS_LIST || [];
+      window.ACTIVE_SEMESTER_ID = window.ACTIVE_SEMESTER_ID || null;
+      window.SEMESTER_SCHOOLS_MAP = window.SEMESTER_SCHOOLS_MAP || {};
+      window.EXTRA_SHEETS = window.EXTRA_SHEETS || {};
+      window.CHECKLIST_GROUPED = window.CHECKLIST_GROUPED || [];
+      window.__DATA_READY__ = true;
+      document.dispatchEvent(new CustomEvent('app-data-ready'));
     }
   })();
 })();

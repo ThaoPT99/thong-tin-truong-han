@@ -267,10 +267,8 @@ function buildSchoolHtml(school, semesterInfo, prerenderedData) {
   <link rel="prefetch" href="/api/schools">
   <link rel="prefetch" href="/api/extras">
 
-  <!-- Pre-rendered data: inline, api-loader.js sẽ xử lý và skip fetch -->
+  <!-- Script: đợi dữ liệu API load xong rồi hiển thị trường -->
   <script>
-  window.__PRERENDERED_DATA__ = ${JSON.stringify(prerenderedData)};
-  // Listener đặt TRƯỚC api-loader.js. Poll showSchool vì render.js chưa load.
   document.addEventListener('app-data-ready', function() {
     var sid = '${school.slug}';
     var check = setInterval(function() {
