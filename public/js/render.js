@@ -797,8 +797,8 @@ function getCompareRisk(school) {
 // ─── Cost Calculator ───
 const DEFAULT_EXCHANGE_RATE = 20; // 1 KRW = 20 VND
 const MONTHLY_LIVING_COST = 1000000; // 1,000,000 KRW
-const VISA_FEE = 500000; // 500,000 KRW (ước lượng)
-const FLIGHT_TICKET = 5000000; // 5,000,000 KRW (khứ hồi ước lượng)
+const VISA_FEE = 5000000; // 5,000,000 KRW (ước lượng)
+const FLIGHT_TICKET = 1000000; // 1,000,000 KRW 
 const INSURANCE_COST = 500000; // 500,000 KRW/năm
 
 function flattenRichText(val) {
@@ -882,7 +882,7 @@ function renderCostCalculator() {
             <input id="cost-visa-fee" type="text" inputmode="numeric" value="${VISA_FEE.toLocaleString('ko-KR')}" placeholder="KRW">
           </div>
           <div class="cost-calc-field">
-            <label for="cost-flight">Vé máy bay (khứ hồi)</label>
+            <label for="cost-flight">Vé máy bay</label>
             <input id="cost-flight" type="text" inputmode="numeric" value="${FLIGHT_TICKET.toLocaleString('ko-KR')}" placeholder="KRW">
           </div>
           <div class="cost-calc-field">
