@@ -1,7 +1,7 @@
 // sw.js — Service Worker: cache API responses & static assets
 // Giúp tải trang nhanh hơn ở lần truy cập sau
 
-var CACHE_NAME = 'd26-cache-v1';
+var CACHE_NAME = 'd26-cache-v2';
 
 // Static assets cần pre-cache ngay khi cài đặt
 var PRECACHE_URLS = [
