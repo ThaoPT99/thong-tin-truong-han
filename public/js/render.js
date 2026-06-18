@@ -964,6 +964,33 @@ function init() {
   }
 }
 
+// ─── Refresh: khi API trả về dữ liệu mới hơn prerendered ───
+var REFRESH_PENDING = false;
+
+document.addEventListener('data-refreshed', function() {
+  if (REFRESH_PENDING) return;
+  REFRESH_PENDING = true;
+
+  // Cập nhật school count trên topbar
+  var schoolCount = document.getElementById("topbar-school-count");
+  if (schoolCount) schoolCount.textContent = String(getSchools().length);
+
+  // Re-render view hiện tại nếu đang xem trang có dữ liệu
+  var currentView = getInitialView();
+  if (currentView === "schools") {
+    showSchool("schools");
+  } else if (currentView === "compare") {
+    showSchool("compare");
+  } else if (currentView === "extra") {
+    showSchool("extra");
+  } else if (getSchoolById(currentView)) {
+    // Đang xem chi tiết trường → refresh
+    showSchool(currentView);
+  }
+
+  REFRESH_PENDING = false;
+});
+
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", init);
 } else {
