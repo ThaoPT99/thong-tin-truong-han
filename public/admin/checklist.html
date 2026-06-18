@@ -282,8 +282,8 @@ async function saveModalItem() {
 
   try {
     if (editingId) {
-      // Update existing
-      await api('PUT', '/admin/checklist/' + editingId, { groupName: group, content: content, note: note, level: level });
+      // Update existing - use query param ?id=
+      await api('PUT', '/admin/checklist?id=' + encodeURIComponent(editingId), { groupName: group, content: content, note: note, level: level });
       toast('Đã cập nhật!', 'success');
     } else {
       // Create new
@@ -318,7 +318,7 @@ async function saveAllChanges() {
     if (!content) continue;
 
     try {
-      await api('PUT', '/admin/checklist/' + id, { content: content, note: note, level: level });
+      await api('PUT', '/admin/checklist?id=' + encodeURIComponent(id), { content: content, note: note, level: level });
       success++;
       row.classList.remove('is-dirty');
     } catch (err) {
@@ -350,7 +350,7 @@ function showDeleteItem(id, name) {
 document.getElementById('delete-confirm-btn').addEventListener('click', async function() {
   if (!deleteTarget) return;
   try {
-    await api('DELETE', '/admin/checklist/' + deleteTarget);
+    await api('DELETE', '/admin/checklist?id=' + encodeURIComponent(deleteTarget));
     toast('Đã xoá mục!', 'success');
     closeModal('delete-modal');
     loadItems();
