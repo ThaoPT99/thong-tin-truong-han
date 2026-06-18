@@ -387,7 +387,7 @@ async function showEditModal(id) {
 
   // Load full detail for logs
   try {
-    const detail = await api('GET', '/admin/students/' + id);
+    const detail = await      api('GET', '/admin/students?id=' + encodeURIComponent(id));
     const logs = detail.data.logs || [];
     const logHtml = logs.length
       ? '<div class="student-detail-logs"><h4>📋 Lịch sử</h4>' +
@@ -433,7 +433,7 @@ async function saveStudent() {
 
   try {
     if (editingId) {
-      await api('PUT', '/admin/students/' + editingId, data);
+      await api('PUT', '/admin/students?id=' + encodeURIComponent(editingId), data);
       toast('Đã cập nhật!', 'success');
     } else {
       await api('POST', '/admin/students', data);
@@ -448,8 +448,7 @@ async function saveStudent() {
 
 document.getElementById('delete-confirm-btn').addEventListener('click', async function() {
   if (!deleteTargetId) return;
-  try {
-    await api('DELETE', '/admin/students/' + deleteTargetId);
+  try {      await api('DELETE', '/admin/students?id=' + encodeURIComponent(deleteTargetId));
     toast('Đã xoá!', 'success');
     closeModal('delete-modal');
     await loadAll();
