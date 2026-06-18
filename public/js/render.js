@@ -773,25 +773,30 @@ const VISA_FEE = 500000; // 500,000 KRW (ước lượng)
 const FLIGHT_TICKET = 5000000; // 5,000,000 KRW (khứ hồi ước lượng)
 const INSURANCE_COST = 500000; // 500,000 KRW/năm
 
-function extractTuitionValue(text) {
-  // Try to extract a number from tuition text (look for KRW amounts)
-  if (!text) return null;
-  var str = String(text);
-  var m = str.match(/([\d,]+)\s*(?:KRW|원|won)/i);
+function flattenRichText(val) {
+  // Handle rich text segments array from Excel: [{t: "6,000,000", c: "#FF0000"}, {t: " KRW", c: null}]
+  if (!val) return '';
+  if (typeof val === 'string') return val;
+  if (Array.isArray(val)) return val.map(function(s) { return s.t || ''; }).join('');
+  return String(val);
+}
+
+function extractKRWValue(text) {
+  var str = flattenRichText(text);
+  if (!str) return null;
+  // Normalize: replace dots (Vietnamese format) with nothing, keep commas as thousand separators
+  var normal = str.replace(/\./g, '');
+  // Pattern 1: number with KRW/원/won suffix
+  var m = normal.match(/([\d,]+)\s*(?:KRW|원|won)/i);
   if (m) return parseInt(m[1].replace(/,/g, ''), 10);
-  // Look for any large number (likely KRW)
-  var big = str.match(/(\d{4,})(?:\s*KRW|\s*원|\s*)/i);
+  // Pattern 2: any large number (likely KRW)
+  var big = normal.match(/(\d{4,})/);
   if (big) return parseInt(big[1].replace(/,/g, ''), 10);
   return null;
 }
 
-function extractKtxValue(text) {
-  if (!text) return null;
-  var str = String(text);
-  var m = str.match(/([\d,]+)\s*(?:KRW|원|won)/i);
-  if (m) return parseInt(m[1].replace(/,/g, ''), 10);
-  return null;
-}
+var extractTuitionValue = extractKRWValue;
+var extractKtxValue = extractKRWValue;
 
 function formatKRW(amount) {
   if (!amount || isNaN(amount)) return '—';
@@ -960,6 +965,30 @@ function updateCostResult(container) {
   '<tr class="total"><td>Tổng cộng</td><td>' + formatKRW(totalKRW) + '</td><td>' + formatVND(totalVND) + '</td></tr>';
 }
 
+function fetchExchangeRate(callback) {
+  // Fetch KRW→VND exchange rate from free API (no key required)
+  var rateInput = document.getElementById('cost-rate');
+  if (!rateInput) return;
+  rateInput.disabled = true;
+  rateInput.style.opacity = '0.6';
+  fetch('https://open.er-api.com/v6/latest/KRW')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data && data.rates && data.rates.VND) {
+        var rate = Math.round(data.rates.VND);
+        rateInput.value = rate;
+        if (callback) callback();
+      }
+    })
+    .catch(function() {
+      // Silent fail - keep existing rate
+    })
+    .finally(function() {
+      rateInput.disabled = false;
+      rateInput.style.opacity = '1';
+    });
+}
+
 function bindCostCalculator(container) {
   if (!container || container.dataset.costBound === 'true') return;
   container.dataset.costBound = 'true';
@@ -985,6 +1014,9 @@ function bindCostCalculator(container) {
   fillSchoolData();
   schoolSelect.addEventListener('change', fillSchoolData);
   container.addEventListener('input', function() { updateCostResult(container); });
+
+  // Fetch live exchange rate on load
+  fetchExchangeRate(function() { updateCostResult(container); });
 }
 
 // ─── Radar Chart ───
@@ -1045,16 +1077,17 @@ function drawRadarGrid(ctx, cx, cy, maxR, angles, isDark) {
   }
 }
 
-function drawRadarPolygons(ctx, cx, cy, maxR, angles, activeSchools, scale, isDark, hoveredIndex) {
+function drawRadarPolygons(ctx, cx, cy, maxR, angles, activeSchools, scale, isDark, hoveredIndex, colorIndex) {
   const dotBorder = isDark ? '#0f172a' : '#ffffff';
 
   activeSchools.forEach((school, idx) => {
-    const isHovered = hoveredIndex === undefined || hoveredIndex === -1 || hoveredIndex === idx;
+    const actualIdx = colorIndex !== undefined ? colorIndex : idx;
+    const isHovered = hoveredIndex === undefined || hoveredIndex === -1 || hoveredIndex === actualIdx;
     const alpha = isHovered ? 1 : 0.15;
 
     const metrics = getRadarMetrics(school);
     const values = [metrics.cost, metrics.visa, metrics.job, metrics.e7, metrics.study];
-    const color = RADAR_COLORS[idx] || '#888';
+    const color = RADAR_COLORS[actualIdx] || '#888';
 
     // Fill polygon
     ctx.beginPath();
@@ -1188,7 +1221,7 @@ function renderRadarChart(canvas, schools) {
       const t = Math.min(1, schoolElapsed / duration);
       const scale = easeOutCubic(t);
 
-      drawRadarPolygons(ctx, cx, cy, maxR, angles, [school], scale, isDark);
+      drawRadarPolygons(ctx, cx, cy, maxR, angles, [school], scale, isDark, undefined, idx);
     });
 
     // Draw legend (appears after first polygon is mostly done)
@@ -1232,7 +1265,7 @@ function renderRadarChart(canvas, schools) {
     drawRadarGrid(ctx, cx, cy, maxR, angles, isDark);
     // Draw all polygons at full scale
     activeSchools.forEach(function(school) {
-      drawRadarPolygons(ctx, cx, cy, maxR, angles, [school], 1, isDark, hoverIdx);
+      drawRadarPolygons(ctx, cx, cy, maxR, angles, [school], 1, isDark, hoverIdx, idx);
     });
     drawRadarLegend(ctx, cx, h, activeSchools, isDark, hoverIdx);
   }
