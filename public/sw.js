@@ -55,22 +55,11 @@ self.addEventListener('fetch', function(event) {
 
   var path = url.pathname;
 
-  // === API endpoints: stale-while-revalidate ===
+  // === API endpoints: network-first (không cache, luôn lấy dữ liệu mới) ===
   if (path.startsWith('/api/')) {
     event.respondWith(
-      caches.open(CACHE_NAME).then(function(cache) {
-        return cache.match(event.request).then(function(cached) {
-          var fetchPromise = fetch(event.request).then(function(response) {
-            if (response && response.status === 200) {
-              cache.put(event.request, response.clone());
-            }
-            return response;
-          }).catch(function() {
-            return cached;
-          });
-          // Trả về cache ngay nếu có, không thì chờ network
-          return cached || fetchPromise;
-        });
+      fetch(event.request).catch(function() {
+        return caches.match(event.request);
       })
     );
     return;

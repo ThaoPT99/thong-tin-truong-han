@@ -191,9 +191,10 @@ window.REGION_LABELS = {
       const controller = new AbortController();
       const timeout = setTimeout(function() { controller.abort(); }, 15000);
 
+      var ts = Date.now();
       const [schoolsRes, extrasRes] = await Promise.all([
-        fetch(API_BASE + '/schools', { signal: controller.signal }),
-        fetch(API_BASE + '/extras', { signal: controller.signal })
+        fetch(API_BASE + '/schools?_=' + ts, { signal: controller.signal }),
+        fetch(API_BASE + '/extras?_=' + ts, { signal: controller.signal })
       ]);
 
       clearTimeout(timeout);
