@@ -15,12 +15,10 @@ module.exports = async (req, res) => {
 
   try {
     const [
-      { data: semesterInfo },
       { data: semesters },
       { data: visaChecklist },
       { data: interviews },
     ] = await Promise.all([
-      supabase.from('semester_info').select('*').limit(1).maybeSingle(),
       supabase.from('semesters').select('*').order('sort_order').order('nam', { ascending: false }).order('ky', { ascending: false }),
       supabase.from('extra_visa_checklist').select('*').order('sort_order'),
       supabase.from('extra_interviews').select('*').order('sort_order'),
@@ -32,8 +30,10 @@ module.exports = async (req, res) => {
     return res.json({
       success: true,
       data: {
-        // Giữ semesterInfo cũ cho backward compat
-        semesterInfo: activeSemester || semesterInfo || null,
+        // Giữ semesterInfo để không break frontend cũ
+        semesterInfo: activeSemester
+          ? { ky: activeSemester.ky, nam: activeSemester.nam, title: activeSemester.title }
+          : null,
         // Danh sách kỳ (cho frontend selector)
         semesters: (semesters || []).map((s) => ({
           id: s.id,

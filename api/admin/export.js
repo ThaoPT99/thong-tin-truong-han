@@ -13,17 +13,20 @@ module.exports = requireAdmin(async (req, res) => {
   }
 
   try {
-    const [schoolsResult, checklistResult, interviewsResult, semesterResult] = await Promise.all([
+    const [schoolsResult, checklistResult, interviewsResult, semestersResult, semesterSchoolsResult] = await Promise.all([
       supabase.from('schools').select('*').order('slug'),
       supabase.from('extra_visa_checklist').select('*').order('sort_order'),
       supabase.from('extra_interviews').select('*').order('sort_order'),
-      supabase.from('semester_info').select('*').limit(1).maybeSingle(),
+      supabase.from('semesters').select('*').order('sort_order'),
+      supabase.from('semester_schools').select('*'),
     ]);
 
     const { data: schools } = schoolsResult;
     const { data: visaChecklist } = checklistResult;
     const { data: interviews } = interviewsResult;
-    const semesterInfo = semesterResult.data;
+    const semestersList = semestersResult.data || [];
+    const semesterSchoolsList = semesterSchoolsResult.data || [];
+    const semesterInfo = semestersList.find(s => s.is_active) || semestersList[0] || null;
 
     // Load all child records
     const [
@@ -101,6 +104,8 @@ module.exports = requireAdmin(async (req, res) => {
     const exportData = {
       exportedAt: new Date().toISOString(),
       semesterInfo: semesterInfo || {},
+      semesters: semestersList,
+      semesterSchools: semesterSchoolsList,
       schools: exportSchools,
       extraSheets: {
         visaChecklist: {
