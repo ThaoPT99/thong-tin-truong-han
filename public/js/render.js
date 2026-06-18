@@ -9,13 +9,43 @@ function applyHighlights(html) {
     .replace(/(học bổng|topik|sejong(?: 2b)?)/gi, "<span class='hl-keyword'>$1</span>");
 }
 
+function extractText(val) {
+  if (!val) return '';
+  if (typeof val === 'string') {
+    var trimmed = val.trim();
+    if (trimmed.charAt(0) === '[' || trimmed.charAt(0) === '{') {
+      try {
+        var parsed = JSON.parse(trimmed);
+        // Array of segments: [{"t":"text","c":"color"}]
+        if (Array.isArray(parsed)) {
+          return parsed.map(function(seg) { return (seg && seg.t) || ''; }).join('');
+        }
+        // Single segment: {"t":"text","c":"color"}
+        if (parsed && parsed.t) return String(parsed.t);
+        // Double-encoded: {"{...}": ""} → extract key and parse it
+        var keys = Object.keys(parsed);
+        if (keys.length > 0 && typeof keys[0] === 'string') {
+          try {
+            var inner = JSON.parse(keys[0]);
+            if (inner && inner.t) return String(inner.t);
+          } catch (e2) {}
+        }
+      } catch (e) {
+        // JSON parse failed → try regex for corrupted data: {"{"t":"value",...}"}
+        var m = trimmed.match(/"t"\s*:\s*"([^"]+)/);
+        if (m && m[1]) return m[1];
+      }
+    }
+    return val;
+  }
+  if (Array.isArray(val)) {
+    return val.map(function(seg) { return (seg && (seg.t || seg.text)) || ''; }).join('');
+  }
+  return String(val);
+}
+
 function renderText(val) {
-  if (val === undefined || val === null || val === "") return "";
-  let raw = "";
-  if (typeof val === "string") raw = val;
-  else if (Array.isArray(val)) raw = val.map(seg => seg.t || "").join("");
-  else raw = String(val);
-  return applyHighlights(escapeHtml(raw).replace(/\n/g, "<br>"));
+  return applyHighlights(escapeHtml(extractText(val)).replace(/\n/g, "<br>"));
 }
 
 function renderValue(val) {
