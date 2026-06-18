@@ -87,6 +87,9 @@ CREATE TABLE IF NOT EXISTS school_partners (
   UNIQUE(school_id, code)
 );
 
+-- 3b. Ghi chú nội bộ (chỉ admin xem)
+ALTER TABLE schools ADD COLUMN IF NOT EXISTS internal_note TEXT DEFAULT '';
+
 -- 4. Advisor profiles (1-1 với schools)
 CREATE TABLE IF NOT EXISTS school_advisor_profiles (
   id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -192,6 +195,40 @@ CREATE INDEX IF NOT EXISTS idx_partners_school ON school_partners(school_id);
 CREATE INDEX IF NOT EXISTS idx_advisor_school ON school_advisor_profiles(school_id);
 CREATE INDEX IF NOT EXISTS idx_schools_region ON schools(region);
 CREATE INDEX IF NOT EXISTS idx_schools_system ON schools(system);
+CREATE INDEX IF NOT EXISTS idx_students_status ON students(status);
+CREATE INDEX IF NOT EXISTS idx_students_school ON students(school_id);
+CREATE INDEX IF NOT EXISTS idx_students_semester ON students(semester_id);
+CREATE INDEX IF NOT EXISTS idx_student_logs_student ON student_logs(student_id);
+
+-- 9. Students — CRM mini
+CREATE TABLE IF NOT EXISTS students (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name            VARCHAR(200) NOT NULL,
+  phone           VARCHAR(20),
+  email           VARCHAR(200),
+  gender          VARCHAR(10),
+  age             INTEGER DEFAULT 0,
+  gpa             DECIMAL(3,1),
+  korean_level    VARCHAR(20),
+  school_id       UUID REFERENCES schools(id) ON DELETE SET NULL,
+  semester_id     UUID REFERENCES semesters(id) ON DELETE SET NULL,
+  status          VARCHAR(30) DEFAULT 'new', -- new, consulting, applied, waiting_visa, visa_approved, visa_rejected, enrolled
+  note            TEXT,
+  next_action     TEXT,
+  next_action_date DATE,
+  created_at      TIMESTAMPTZ DEFAULT NOW(),
+  updated_at      TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- History log cho mỗi student
+CREATE TABLE IF NOT EXISTS student_logs (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  student_id      UUID NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+  action          VARCHAR(100) NOT NULL,
+  description     TEXT,
+  created_by      VARCHAR(200),
+  created_at      TIMESTAMPTZ DEFAULT NOW()
+);
 
 -- 10. Row Level Security
 ALTER TABLE schools ENABLE ROW LEVEL SECURITY;

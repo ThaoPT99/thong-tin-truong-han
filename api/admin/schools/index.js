@@ -48,6 +48,7 @@ module.exports = requireAdmin(async (req, res) => {
         ktx: body.ktx || '',
         schedule: body.schedule || '',
         documents_note: body.documentsNote || '',
+        internal_note: body.internalNote || '',
         mou: body.mou || '',
         website: body.website || '',
         catalog_url: body.catalogUrl || '',

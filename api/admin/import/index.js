@@ -60,6 +60,7 @@ module.exports = requireAdmin(async (req, res) => {
           ktx: school.ktx || '',
           schedule: school.schedule || '',
           documents_note: school.documentsNote || '',
+          internal_note: school.internalNote || '',
           mou: school.mou || '',
           website: school.website || '',
           catalog_url: school.catalogUrl || '',

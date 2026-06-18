@@ -3198,3 +3198,12 @@ html {
     }
 
 }
+
+/* Quick profile input for advisor */
+.advisor-quick-input {
+  animation: fadeIn 0.2s ease-out;
+}
+.advisor-quick-input input:focus {
+  outline: 2px solid #bfdbfe;
+  border-color: #2563eb !important;
+}

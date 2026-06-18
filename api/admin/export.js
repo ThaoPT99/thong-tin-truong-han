@@ -82,6 +82,7 @@ module.exports = requireAdmin(async (req, res) => {
       tuition: s.tuition,
       insurance: s.insurance,
       ktx: s.ktx,
+      internalNote: s.internal_note || '',
       schedule: s.schedule,
       documentsNote: s.documents_note,
       mou: s.mou,

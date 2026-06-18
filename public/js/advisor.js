@@ -1,4 +1,56 @@
 const PRIORITY_LABELS = {
+
+/** Parse nhanh ho so tu text: "nu, 20t, GPA 6.0, topik 2" */
+/* parseQuickProfile defined below */;
+
+  if (!q) return profile;
+
+  // Gender
+  if (q.indexOf('nu') !== -1 || q.indexOf('nữ') !== -1 || q.indexOf('female') !== -1) profile.gender = 'female';
+  else if (q.indexOf('nam') !== -1 || q.indexOf('male') !== -1) profile.gender = 'male';
+
+  // Age
+  var ageMatch = q.match(/(\d+)\s*(t|tuoi|tuổi|age)/);
+  if (ageMatch) profile.age = parseInt(ageMatch[1], 10);
+
+  // GPA
+  var gpaMatch = q.match(/gpa\s*[:.]?\s*([\d.]+)/);
+  if (gpaMatch) profile.gpa = parseFloat(gpaMatch[1]);
+
+  // Absences
+  var absMatch = q.match(/(?:nghi|vang|absences?)\s*[:.]?\s*(\d+)/);
+  if (absMatch) profile.absences = parseInt(absMatch[1], 10);
+
+  // Korean level
+  if (q.indexOf('topik 3') !== -1 || q.indexOf('topik3') !== -1) profile.korean = 'topik3';
+  else if (q.indexOf('topik 2') !== -1 || q.indexOf('topik2') !== -1) profile.korean = 'topik2';
+  else if (q.indexOf('sejong') !== -1) profile.korean = 'sejong2b';
+
+  // Visa fail
+  if (q.indexOf('truot visa') !== -1 || q.indexOf('truot') !== -1 || q.indexOf('fail') !== -1) profile.visaFail = 'yes';
+
+  // Region
+  if (q.indexOf('seoul') !== -1) profile.region = 'seoul';
+  else if (q.indexOf('busan') !== -1) profile.region = 'busan';
+  else if (q.indexOf('gwangju') !== -1) profile.region = 'gwangju';
+  else if (q.indexOf('incheon') !== -1) profile.region = 'incheon';
+
+  // Budget
+  if (q.indexOf('tiet kiem') !== -1 || q.indexOf('re') !== -1 || q.indexOf('thap') !== -1) profile.budget = 'low';
+  else if (q.indexOf('cao') !== -1 || q.indexOf('khong ngan') !== -1) profile.budget = 'high';
+
+  // Priorities
+  var prios = [];
+  if (q.indexOf('visa') !== -1) prios.push('visa');
+  if (q.indexOf('viec lam') !== -1 || q.indexOf('job') !== -1) prios.push('job');
+  if (q.indexOf('chi phi') !== -1 || q.indexOf('cost') !== -1) prios.push('cost');
+  if (q.indexOf('e7') !== -1) prios.push('e7');
+  if (q.indexOf('hoc it') !== -1) prios.push('low-study');
+  if (q.indexOf('uy tin') !== -1) prios.push('prestige');
+  if (prios.length > 0) profile.priorities = prios;
+
+  return profile;
+}
   visa: "dễ đỗ visa",
   cost: "chi phí thấp",
   job: "việc làm thêm",
@@ -6,6 +58,61 @@ const PRIORITY_LABELS = {
   prestige: "trường uy tín",
   "low-study": "học ít"
 };
+
+
+/** Parse nhanh ho so tu text: "nu, 20t, GPA 6.0, topik 2" */
+function parseQuickProfile(text) {
+  var q = (text || '').toLowerCase().trim();
+  var profile = { gender: '', age: 0, gpa: 0, absences: 10, korean: 'none', visaFail: 'no', region: 'any', budget: 'medium', priorities: ['visa', 'job'] };
+
+  if (!q) return profile;
+
+  // Gender
+  if (q.indexOf('nu') !== -1 || q.indexOf('nữ') !== -1 || q.indexOf('female') !== -1) profile.gender = 'female';
+  else if (q.indexOf('nam') !== -1 || q.indexOf('male') !== -1) profile.gender = 'male';
+
+  // Age
+  var ageMatch = q.match(/(\d+)\s*(t|tuoi|tuổi|age)/);
+  if (ageMatch) profile.age = parseInt(ageMatch[1], 10);
+
+  // GPA
+  var gpaMatch = q.match(/gpa\s*[:.]?\s*([\d.]+)/);
+  if (gpaMatch) profile.gpa = parseFloat(gpaMatch[1]);
+
+  // Absences
+  var absMatch = q.match(/(?:nghi|vang|absences?)\s*[:.]?\s*(\d+)/);
+  if (absMatch) profile.absences = parseInt(absMatch[1], 10);
+
+  // Korean level
+  if (q.indexOf('topik 3') !== -1 || q.indexOf('topik3') !== -1) profile.korean = 'topik3';
+  else if (q.indexOf('topik 2') !== -1 || q.indexOf('topik2') !== -1) profile.korean = 'topik2';
+  else if (q.indexOf('sejong') !== -1) profile.korean = 'sejong2b';
+
+  // Visa fail
+  if (q.indexOf('truot visa') !== -1 || q.indexOf('truot') !== -1 || q.indexOf('fail') !== -1) profile.visaFail = 'yes';
+
+  // Region
+  if (q.indexOf('seoul') !== -1) profile.region = 'seoul';
+  else if (q.indexOf('busan') !== -1) profile.region = 'busan';
+  else if (q.indexOf('gwangju') !== -1) profile.region = 'gwangju';
+  else if (q.indexOf('incheon') !== -1) profile.region = 'incheon';
+
+  // Budget
+  if (q.indexOf('tiet kiem') !== -1 || q.indexOf('re') !== -1 || q.indexOf('thap') !== -1) profile.budget = 'low';
+  else if (q.indexOf('cao') !== -1 || q.indexOf('khong ngan') !== -1) profile.budget = 'high';
+
+  // Priorities
+  var prios = [];
+  if (q.indexOf('visa') !== -1) prios.push('visa');
+  if (q.indexOf('viec lam') !== -1 || q.indexOf('job') !== -1) prios.push('job');
+  if (q.indexOf('chi phi') !== -1 || q.indexOf('cost') !== -1) prios.push('cost');
+  if (q.indexOf('e7') !== -1) prios.push('e7');
+  if (q.indexOf('hoc it') !== -1) prios.push('low-study');
+  if (q.indexOf('uy tin') !== -1) prios.push('prestige');
+  if (prios.length > 0) profile.priorities = prios;
+
+  return profile;
+}
 
 // REGION_LABELS đã được định nghĩa global trong api-loader.js
 
@@ -114,6 +221,33 @@ function getAdvisorTemplate() {
 function bindAdvisorEvents(container) {
   const form = container.querySelector("#advisor-form");
   const reset = container.querySelector(".advisor-reset");
+  const quickInput = container.querySelector("#advisor-quick-input");
+  const quickBtn = container.querySelector("#advisor-quick-btn");
+
+  if (quickInput && quickBtn) {
+    quickBtn.addEventListener("click", function() {
+      var profile = parseQuickProfile(quickInput.value);
+      if (profile.gender) form.querySelector('[name="gender"]').value = profile.gender;
+      if (profile.age > 0) form.querySelector('[name="age"]').value = profile.age;
+      if (profile.gpa > 0) form.querySelector('[name="gpa"]').value = profile.gpa;
+      if (profile.absences !== 10) form.querySelector('[name="absences"]').value = profile.absences;
+      if (profile.korean !== 'none') form.querySelector('[name="korean"]').value = profile.korean;
+      if (profile.visaFail) form.querySelector('[name="visaFail"]').value = profile.visaFail;
+      if (profile.region && profile.region !== 'any') form.querySelector('[name="region"]').value = profile.region;
+      if (profile.budget) form.querySelector('[name="budget"]').value = profile.budget;
+      // Check priorities
+      form.querySelectorAll('[name="priorities"]').forEach(function(cb) {
+        cb.checked = profile.priorities.indexOf(cb.value) !== -1;
+      });
+      // Auto-submit
+      form.dispatchEvent(new Event('submit'));
+    });
+
+    // Also submit on Enter
+    quickInput.addEventListener("keydown", function(e) {
+      if (e.key === "Enter") { e.preventDefault(); quickBtn.click(); }
+    });
+  }
 
   const regionSelect = container.querySelector("#advisor-region-select");
   if (regionSelect && !regionSelect.dataset.populated) {

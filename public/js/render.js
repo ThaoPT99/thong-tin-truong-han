@@ -197,6 +197,7 @@ function renderSchool(schoolId) {
         </div>
         <div class="detail-actions">
           <button type="button" class="copy-school-info" data-school-id="${escapeHtml(schoolId)}">Copy thông tin</button>
+          <button type="button" class="copy-school-zalo" data-school-id="${escapeHtml(schoolId)}">📱 Copy Zalo</button>
           <button type="button" class="copy-school-link" data-school-id="${escapeHtml(schoolId)}">Copy link</button>
           <button type="button" class="open-zalo-detail">Tư vấn Zalo</button>
         </div>
@@ -595,17 +596,26 @@ function bindCompare(container) {
   renderCompareResult(container);
 }
 
-function getSchoolShareText(school) {
+function getSchoolZaloText(school) {
+  var rules = getAdvisorRules(school.id, school);
+  var regionName = rules && rules.region ? (window.REGION_LABELS && window.REGION_LABELS[rules.region] ? window.REGION_LABELS[rules.region].charAt(0).toUpperCase() + window.REGION_LABELS[rules.region].slice(1) : rules.region) : '';
+  var line = String.prototype.padEnd ? ''.padEnd(30, '\u2500') : '──────────────────────────────';
   return [
-    `Thông tin trường: ${school.name}`,
-    school.nameEn ? `Tên tiếng Anh: ${school.nameEn}` : "",
-    school.system ? `Hệ học: ${school.system}` : "",
-    school.location ? `Vị trí: ${school.location}` : "",
-    school.tuition ? `Học phí: ${String(school.tuition).replace(/\n+/g, " ")}` : "",
-    school.ktx ? `KTX: ${String(school.ktx).replace(/\n+/g, " ")}` : "",
-    `Link: ${location.origin}${location.pathname}?school=${encodeURIComponent(school.id)}`
+    '📋 TU VAN DU HOC HAN QUOC',
+    line,
+    '• Truong: ' + (school.name || '') + (school.nameKr ? ' (' + school.nameKr + ')' : ''),
+    school.nameEn ? '• Ten tieng Anh: ' + school.nameEn : '',
+    school.system ? '• He dao tao: ' + school.system : '',
+    regionName ? '• Khu vuc: ' + regionName : '',
+    school.tuition ? '• Hoc phi: ' + String(school.tuition).replace(/\n+/g, ' ').substring(0, 200) : '',
+    school.ktx ? '• Ky tuc xa: ' + String(school.ktx).replace(/\n+/g, ' ').substring(0, 200) : '',
+    '',
+    '📞 Can tu van? LH Zalo',
+    '🌐 ' + location.origin + location.pathname + '?school=' + encodeURIComponent(school.id)
   ].filter(Boolean).join("\n");
 }
+
+function getSchoolShareText(school) {
 
 function showCopyToast(container, message) {
   const toast = container.querySelector(".copy-toast");
@@ -644,6 +654,14 @@ function bindSchoolDetail(container, schoolId) {
     try {
       await navigator.clipboard.writeText(getSchoolShareText(school));
       showCopyToast(container, "Đã copy thông tin trường");
+    } catch (e) {
+      showCopyToast(container, "Trình duyệt chưa cho phép copy tự động");
+    }
+  });
+  container.querySelector(".copy-school-zalo")?.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(getSchoolZaloText(school));
+      showCopyToast(container, "Đã copy nội dung tư vấn Zalo");
     } catch (e) {
       showCopyToast(container, "Trình duyệt chưa cho phép copy tự động");
     }
