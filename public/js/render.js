@@ -458,11 +458,22 @@ function bindSchoolsDirectory(container) {
     const selectedRegion = region.value;
     const selectedSystem = systemFilter ? systemFilter.value : "all";
 
-    // Effective filters: intents override dropdown for region, tags combine with quick-filter
-    const effectiveRegion = intents.region || selectedRegion;
+    // Quick filter values that are regions (not tags)
+    var regionQuickFilters = ['seoul', 'near-seoul', 'busan', 'daegu', 'daejeon', 'gwangju'];
+    
+    // Effective region: intent > quick filter (if region) > dropdown
+    var effectiveRegion = intents.region;
+    if (!effectiveRegion && quickFilter !== 'all' && regionQuickFilters.indexOf(quickFilter) !== -1) {
+      effectiveRegion = quickFilter;
+    }
+    if (!effectiveRegion) effectiveRegion = selectedRegion;
+
+    // Effective tags: intent tags + quick filter (if tag)
     var effectiveTagList = (intents.tags || []).slice();
-    if (quickFilter !== 'all' && effectiveTagList.indexOf(quickFilter) === -1) {
-      effectiveTagList.push(quickFilter);
+    if (quickFilter !== 'all' && regionQuickFilters.indexOf(quickFilter) === -1) {
+      if (effectiveTagList.indexOf(quickFilter) === -1) {
+        effectiveTagList.push(quickFilter);
+      }
     }
 
     let visible = 0;
@@ -565,6 +576,13 @@ function bindSchoolsDirectory(container) {
     button.addEventListener("click", () => {
       quickFilter = button.dataset.quickFilter;
       quickButtons.forEach(btn => btn.classList.toggle("active", btn === button));
+      // Sync region dropdown when region quick filter is clicked
+      var regionQuickFilters = ['seoul', 'near-seoul', 'busan', 'daegu', 'daejeon', 'gwangju'];
+      if (regionQuickFilters.indexOf(quickFilter) !== -1) {
+        region.value = quickFilter;
+      } else if (quickFilter === 'all') {
+        region.value = 'all';
+      }
       applyFilters();
     });
   });
