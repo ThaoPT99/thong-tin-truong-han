@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quản lý tài khoản — Admin Thông Tin Trường Hàn</title>
+<link rel="stylesheet" href="admin.css">
+<style>
+  .users-page .toolbar { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  .users-page .search-box { flex:1; min-width:200px; }
+  .users-page .user-table { width:100%; border-collapse:collapse; font-size:14px; }
+  .users-page .user-table th { text-align:left; padding:10px 12px; background:var(--gray-50); border-bottom:2px solid var(--gray-200); font-size:12px; color:var(--gray-500); text-transform:uppercase; letter-spacing:.5px; }
+  .users-page .user-table td { padding:10px 12px; border-bottom:1px solid var(--gray-100); vertical-align:middle; }
+  .users-page .user-table tr:hover td { background:#f8fafc; }
+  .users-page .user-email { font-weight:600; color:var(--gray-800); }
+  .users-page .user-role { display:inline-block; padding:2px 8px; border-radius:99px; font-size:11px; font-weight:600; }
+  .role-director { background:#dbeafe; color:#1d4ed8; }
+  .role-sale { background:#fef3c7; color:#92400e; }
+  .role-admin { background:#e0e7ff; color:#3730a3; }
+  .users-page .user-status { display:inline-block; padding:2px 8px; border-radius:99px; font-size:11px; font-weight:600; }
+  .status-active { background:#d1fae5; color:#065f46; }
+  .status-inactive { background:#f1f5f9; color:#64748b; }
+  .users-page .action-btns { display:flex; gap:4px; }
+  .users-page .action-btns button { padding:4px 8px; font-size:12px; }
+  .users-page .modal-form { display:grid; gap:12px; }
+  .users-page .modal-form .form-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .users-page .modal-form .form-group { display:flex; flex-direction:column; gap:3px; }
+  .users-page .modal-form .form-group label { font-size:.82rem; font-weight:600; color:var(--gray-600); }
+  .users-page .modal-form input, .users-page .modal-form select { min-height:2.4rem; padding:0.45rem 0.7rem; border:1px solid var(--gray-300); border-radius:8px; font:inherit; font-size:.88rem; }
+  .users-page .modal-form .full-width { grid-column:1/-1; }
+  .users-page .password-hint { font-size:.75rem; color:var(--gray-500); margin-top:2px; }
+  .empty-state { text-align:center; padding:40px 20px; color:var(--gray-400); }
+</style>
+</head>
+<body>
+<script src="admin.js"></script>
+<script>checkAuth();</script>
+
+<div class="admin-layout users-page">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h2>🏫 Trường Hàn</h2>
+      <div class="sub">Quản lý dữ liệu</div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" class="role-director">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+        Dashboard
+      </a>
+      <a href="editor.html?mode=new" class="role-director">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Thêm trường
+      </a>
+      <a href="students.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        Học sinh
+      </a>
+      <a href="checklist.html" class="role-director">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        Checklist Visa
+      </a>
+      <a href="semester.html" class="role-director">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Kỳ tuyển sinh
+      </a>
+      <a href="import.html" class="role-director">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Import Excel
+      </a>
+      <a href="users.html" class="active role-director">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        Tài khoản
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div id="sidebar-user"></div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main-content">
+    <div class="top-bar">
+      <h1>👥 Quản lý tài khoản</h1>
+      <div class="user-info">
+        <span id="user-display"></span>
+        <button class="btn btn-outline btn-sm" onclick="logout()">Đăng xuất</button>
+      </div>
+    </div>
+
+    <div class="content-area">
+      <div class="card">
+        <div class="card-header">
+          <h3>Danh sách tài khoản</h3>
+          <div class="toolbar">
+            <input type="text" id="search-input" class="search-box" placeholder="Tìm email, tên..." oninput="filterUsers()">
+            <button class="btn btn-primary" onclick="openUserModal()">+ Thêm tài khoản</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="table-wrap">
+            <table class="user-table" id="user-table">
+              <thead>
+                <tr>
+                  <th>Email</th>
+                  <th>Tên hiển thị</th>
+                  <th>Vai trò</th>
+                  <th>Trạng thái</th>
+                  <th>Đăng nhập gần nhất</th>
+                  <th>Ngày tạo</th>
+                  <th>Hành động</th>
+                </tr>
+              </thead>
+              <tbody id="user-tbody">
+                <tr><td colspan="7" class="loading-state"><div class="spinner"></div> Đang tải...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Modal Thêm/Sửa User -->
+<div class="modal-overlay" id="user-modal" role="dialog" aria-modal="true" aria-labelledby="user-modal-title">
+  <div class="modal-backdrop" onclick="closeUserModal()"></div>
+  <div class="modal-box" style="max-width:500px;">
+    <div class="modal-header">
+      <h3 id="user-modal-title">Thêm tài khoản</h3>
+      <button class="modal-close" onclick="closeUserModal()" aria-label="Đóng">&times;</button>
+    </div>
+    <form class="modal-form" id="user-form" onsubmit="saveUser(event)">
+      <input type="hidden" id="user-id" name="id">
+      <div class="form-group full-width">
+        <label for="user-email">Email <span style="color:red">*</span></label>
+        <input type="email" id="user-email" name="email" required autocomplete="email">
+      </div>
+      <div class="form-group full-width">
+        <label for="user-password">Mật khẩu <span id="password-required" style="color:red"> *</span></label>
+        <input type="password" id="user-password" name="password" minlength="6" autocomplete="new-password">
+        <span class="password-hint" id="password-hint">Tối thiểu 6 ký tự. Để trống nếu không đổi mật khẩu.</span>
+      </div>
+      <div class="form-group">
+        <label for="user-display-name">Tên hiển thị</label>
+        <input type="text" id="user-display-name" name="display_name" placeholder="Ví dụ: Sale Nguyễn">
+      </div>
+      <div class="form-group">
+        <label for="user-role">Vai trò <span style="color:red">*</span></label>
+        <select id="user-role" name="role" required>
+          <option value="sale">Sale (chỉ xem học sinh của mình)</option>
+          <option value="admin">Admin (quản lý trường, checklist, kỳ, import)</option>
+          <option value="director">Giám đốc (toàn quyền)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="user-is-active">Trạng thái</label>
+        <select id="user-is-active" name="is_active">
+          <option value="true">Đang hoạt động</option>
+          <option value="false">Khóa</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" onclick="closeUserModal()">Hủy</button>
+        <button type="submit" class="btn btn-primary">Lưu</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+const API = '/api/admin/users';
+let allUsers = [];
+
+// DOM Ready
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadUsers();
+  renderSidebarUser();
+});
+
+// Load users
+async function loadUsers() {
+  try {
+    const res = await api('GET', API);
+    allUsers = res.data || [];
+    renderUsers(allUsers);
+  } catch (err) {
+    toast('Lỗi tải danh sách: ' + err.message, 'error');
+    document.getElementById('user-tbody').innerHTML = '<tr><td colspan="7" class="empty-state">Lỗi tải dữ liệu</td></tr>';
+  }
+}
+
+function renderUsers(users) {
+  const tbody = document.getElementById('user-tbody');
+  if (!users.length) {
+    tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Chưa có tài khoản nào</td></tr>';
+    return;
+  }
+  tbody.innerHTML = users.map(u => `
+    <tr data-email="${escapeHtml(u.email)}">
+      <td class="user-email">${escapeHtml(u.email)}</td>
+      <td>${escapeHtml(u.display_name || '—')}</td>
+      <td><span class="user-role role-${u.role}">${roleLabel(u.role)}</span></td>
+      <td><span class="user-status status-${u.is_active ? 'active' : 'inactive'}">${u.is_active ? 'Hoạt động' : 'Khóa'}</span></td>
+      <td>${u.last_login ? formatDateTime(u.last_login) : 'Chưa từng'}</td>
+      <td>${formatDate(u.created_at)}</td>
+      <td>
+        <div class="action-btns">
+          <button class="btn btn-outline btn-sm" onclick="openUserModal('${escapeHtml(u.id)}')">Sửa</button>
+          ${u.id !== currentUserId() ? `<button class="btn btn-danger btn-sm" onclick="deleteUser('${escapeHtml(u.id)}', '${escapeHtml(u.email)}')">Xóa</button>` : ''}
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function filterUsers() {
+  const q = document.getElementById('search-input').value.toLowerCase().trim();
+  const filtered = allUsers.filter(u =>
+    u.email.toLowerCase().includes(q) ||
+    (u.display_name || '').toLowerCase().includes(q)
+  );
+  renderUsers(filtered);
+}
+
+function roleLabel(role) {
+  const map = { director: 'Giám đốc', sale: 'Sale', admin: 'Admin' };
+  return map[role] || role;
+}
+
+function formatDate(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  return d.toLocaleDateString('vi-VN');
+}
+
+function formatDateTime(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  return d.toLocaleString('vi-VN');
+}
+
+function currentUserId() {
+  const user = getUser();
+  return user?.id || '';
+}
+
+// Modal
+function openUserModal(id = null) {
+  const modal = document.getElementById('user-modal');
+  const form = document.getElementById('user-form');
+  const title = document.getElementById('user-modal-title');
+  const passwordInput = document.getElementById('user-password');
+  const passwordHint = document.getElementById('password-hint');
+  const passwordRequired = document.getElementById('password-required');
+
+  form.reset();
+  document.getElementById('user-id').value = '';
+
+  if (id) {
+    // Edit mode
+    const user = allUsers.find(u => u.id === id);
+    if (!user) return toast('Không tìm thấy user', 'error');
+    title.textContent = 'Sửa tài khoản';
+    document.getElementById('user-id').value = user.id;
+    document.getElementById('user-email').value = user.email;
+    document.getElementById('user-email').disabled = true; // Không cho đổi email
+    document.getElementById('user-display-name').value = user.display_name || '';
+    document.getElementById('user-role').value = user.role;
+    document.getElementById('user-is-active').value = user.is_active ? 'true' : 'false';
+    passwordInput.required = false;
+    passwordInput.placeholder = 'Để trống nếu không đổi';
+    passwordHint.style.display = 'inline';
+    passwordRequired.style.display = 'none';
+  } else {
+    // Create mode
+    title.textContent = 'Thêm tài khoản';
+    document.getElementById('user-email').disabled = false;
+    passwordInput.required = true;
+    passwordInput.placeholder = 'Tối thiểu 6 ký tự';
+    passwordHint.style.display = 'inline';
+    passwordRequired.style.display = 'inline';
+  }
+  modal.classList.add('active');
+}
+
+function closeUserModal() {
+  document.getElementById('user-modal').classList.remove('active');
+}
+
+async function saveUser(e) {
+  e.preventDefault();
+  const form = e.target;
+  const id = document.getElementById('user-id').value;
+  const body = {
+    email: document.getElementById('user-email').value.trim(),
+    display_name: document.getElementById('user-display-name').value.trim(),
+    role: document.getElementById('user-role').value,
+    is_active: document.getElementById('user-is-active').value === 'true'
+  };
+  const pwd = document.getElementById('user-password').value;
+  if (pwd) body.password = pwd;
+
+  try {
+    if (id) {
+      await api('PUT', `${API}?id=${encodeURIComponent(id)}`, body);
+      toast('Đã cập nhật tài khoản');
+    } else {
+      await api('POST', API, body);
+      toast('Đã tạo tài khoản mới');
+    }
+    closeUserModal();
+    await loadUsers();
+  } catch (err) {
+    toast('Lỗi: ' + err.message, 'error');
+  }
+}
+
+async function deleteUser(id, email) {
+  if (!confirm(`Xóa tài khoản ${email}? Hành động không thể hoàn tác.`)) return;
+  try {
+    await api('DELETE', `${API}?id=${encodeURIComponent(id)}`);
+    toast('Đã xóa tài khoản');
+    await loadUsers();
+  } catch (err) {
+    toast('Lỗi xóa: ' + err.message, 'error');
+  }
+}
+</script>
+</body>
+</html>

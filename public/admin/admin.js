@@ -149,4 +149,34 @@ document.addEventListener('DOMContentLoaded', () => {
   tc.id = 'toast-container';
   tc.className = 'toast-container';
   document.body.appendChild(tc);
+
+  // Render sidebar user info
+  renderSidebarUser();
 });
+
+// Render sidebar user info
+function renderSidebarUser() {
+  const user = getUser();
+  const container = document.getElementById('sidebar-user');
+  const topbarDisplay = document.getElementById('user-display');
+  if (!user) return;
+  
+  const roleLabels = { director: 'Giám đốc', sale: 'Sale', admin: 'Admin' };
+  const roleBadgeClass = { director: 'role-director', sale: 'role-sale', admin: 'role-admin' };
+  
+  const html = `
+    <div style="padding:8px 0; border-top:1px solid var(--gray-200);">
+      <div style="font-weight:600; color:var(--gray-800); font-size:.85rem;">${escapeHtml(user.displayName || user.email)}</div>
+      <span class="user-role ${roleBadgeClass[user.role] || ''}" style="font-size:.7rem; padding:2px 6px; border-radius:99px; display:inline-block; margin-top:4px;">${roleLabels[user.role] || user.role}</span>
+    </div>
+  `;
+  
+  if (container) container.innerHTML = html;
+  if (topbarDisplay) topbarDisplay.textContent = user.displayName || user.email;
+}
+
+// Role label helper
+function roleLabel(role) {
+  const map = { director: 'Giám đốc', sale: 'Sale', admin: 'Admin' };
+  return map[role] || role;
+}
