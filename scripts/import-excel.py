@@ -279,6 +279,8 @@ def parse_school_sheet(ws, sheet_name):
         rv = str(region_val).lower()
         if "seoul" in rv:
             data["region"] = "seoul"
+        elif "gyeonggi" in rv or "incheon" in rv or "near seoul" in rv or "gần seoul" in rv:
+            data["region"] = "near-seoul"
         elif "busan" in rv:
             data["region"] = "busan"
         elif "gwangju" in rv:

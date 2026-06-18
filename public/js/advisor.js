@@ -41,9 +41,9 @@ function parseQuickProfile(text) {
 
   // Region
   if (q.indexOf('seoul') !== -1) profile.region = 'seoul';
+  else if (q.indexOf('gyeonggi') !== -1 || q.indexOf('incheon') !== -1 || q.indexOf('gần seoul') !== -1) profile.region = 'near-seoul';
   else if (q.indexOf('busan') !== -1) profile.region = 'busan';
   else if (q.indexOf('gwangju') !== -1) profile.region = 'gwangju';
-  else if (q.indexOf('incheon') !== -1) profile.region = 'incheon';
 
   // Budget
   if (q.indexOf('tiet kiem') !== -1 || q.indexOf('re') !== -1 || q.indexOf('thap') !== -1) profile.budget = 'low';
@@ -328,12 +328,21 @@ function scoreSchool(schoolId, school, profile) {
   }
 
   if (profile.region !== "any") {
-    if (profile.region === rules.region) {
+    // Normalize school region for comparison (gyeonggi/incheon → near-seoul)
+    var schoolRegionNorm = rules.region;
+    if (schoolRegionNorm === 'gyeonggi' || schoolRegionNorm === 'incheon') {
+      schoolRegionNorm = 'near-seoul';
+    }
+
+    if (profile.region === schoolRegionNorm) {
       score += 10;
-      reasons.push(`Khu vực trường khớp mong muốn: ${REGION_LABELS[rules.region]}.`);
-    } else if (profile.region === "seoul" && rules.region === "near-seoul") {
+      reasons.push(`Khu vực trường khớp mong muốn: ${REGION_LABELS[schoolRegionNorm]}.`);
+    } else if (profile.region === "seoul" && schoolRegionNorm === "near-seoul") {
       score += 5;
       reasons.push("Trường gần Seoul, vẫn phù hợp nếu học sinh muốn tiếp cận khu vực thủ đô.");
+    } else if (profile.region === "near-seoul" && schoolRegionNorm === "seoul") {
+      score += 5;
+      reasons.push("Trường ở Seoul, phù hợp nếu học sinh muốn khu vực gần thủ đô.");
     } else {
       score -= 5;
       risks.push(`Khu vực trường là ${REGION_LABELS[rules.region]}, chưa khớp mong muốn ban đầu.`);
@@ -388,7 +397,7 @@ function buildFallbackAdvisorProfile(school) {
     gender: text.includes("nữ") || text.includes("여자") ? "female" : "all",
     minGpa: 5.5,
     maxAbsences: 25,
-    region: text.includes("seoul") ? "seoul" : text.includes("busan") ? "busan" : text.includes("gwangju") ? "gwangju" : "province",
+    region: text.includes("seoul") ? "seoul" : text.includes("gyeonggi") || text.includes("incheon") ? "near-seoul" : text.includes("busan") ? "busan" : text.includes("gwangju") ? "gwangju" : "province",
     costLevel: text.includes("chi phí thấp") || text.includes("học phí rẻ") ? 2 : 3,
     visaChance: text.includes("tỷ lệ đỗ") || text.includes("visa tốt") ? 4 : 3,
     jobOpportunity: text.includes("việc làm nhiều") || text.includes("làm thêm") ? 4 : 3,

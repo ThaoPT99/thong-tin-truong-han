@@ -377,6 +377,19 @@ function bindSchoolsDirectory(container) {
   const empty = container.querySelector("#school-empty-state");
   let quickFilter = "all";
 
+// ─── Region normalization: map DB regions to filter values ───
+  // Only normalizes when filter is 'near-seoul' (quick filter or smart search).
+  // Dropdown selections like 'gyeonggi'/'incheon' do exact match.
+  function normalizeRegionForFilter(cardRegion, filterRegion) {
+    if (!cardRegion) return '';
+    var r = String(cardRegion).toLowerCase().trim();
+    // When filter is 'near-seoul', also match gyeonggi & incheon
+    if (filterRegion === 'near-seoul') {
+      if (r === 'gyeonggi' || r === 'incheon' || r === 'near-seoul') return 'near-seoul';
+    }
+    return r;
+  }
+
   // ─── Smart Search: hiểu ý định từ khoá ───
   var INTENT_MAP = {
     region: [
@@ -465,7 +478,7 @@ function bindSchoolsDirectory(container) {
         matchSearch = searchWords.length === 0 || searchWords.every(function(w) { return card.dataset.search.indexOf(w) !== -1; });
       }
 
-      const matchRegion = effectiveRegion === "all" || card.dataset.region === effectiveRegion;
+      const matchRegion = effectiveRegion === "all" || normalizeRegionForFilter(card.dataset.region, effectiveRegion) === effectiveRegion;
       const matchSystem = selectedSystem === "all" || (card.dataset.system || "").includes(selectedSystem);
       const matchTags = effectiveTagList.length === 0 || effectiveTagList.some(function(t) { return (card.dataset.tags || "").split(" ").indexOf(t) !== -1; });
 

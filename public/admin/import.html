@@ -430,9 +430,9 @@ function parseSchoolSheet(ws, sheetName) {
   if (regionVal) {
     var rv = regionVal.toLowerCase();
     if (rv.indexOf('seoul') !== -1) school.region = 'seoul';
+    else if (rv.indexOf('gyeonggi') !== -1 || rv.indexOf('incheon') !== -1 || rv.indexOf('near seoul') !== -1 || rv.indexOf('gần seoul') !== -1) school.region = 'near-seoul';
     else if (rv.indexOf('busan') !== -1) school.region = 'busan';
     else if (rv.indexOf('gwangju') !== -1) school.region = 'gwangju';
-    else if (rv.indexOf('incheon') !== -1) school.region = 'incheon';
     else if (rv.indexOf('tỉnh') !== -1 || rv.indexOf('province') !== -1) school.region = 'province';
     else school.region = regionVal.replace(/ /g, '-').toLowerCase() || '';
   }
