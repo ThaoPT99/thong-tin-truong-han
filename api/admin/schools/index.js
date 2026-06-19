@@ -176,7 +176,6 @@ module.exports = requireAdmin(async (req, res) => {
       if (body.internalNote !== undefined) {
         updateData.internal_note = body.internalNote;
       }
-      };
 
       const { error: updErr } = await supabase
         .from('schools').update(updateData).eq('id', schoolId);
