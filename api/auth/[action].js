@@ -1,5 +1,4 @@
 // /api/auth/[action].js — handles login (POST) and verify (GET)
-// Routes: POST /api/auth/login, GET /api/auth/verify
 const bcrypt = require('bcryptjs');
 const { supabase } = require('../../lib/supabase');
 const { signToken, requireAdmin } = require('../../lib/auth');
@@ -54,10 +53,56 @@ function clearRateLimit(ip) {
   loginAttempts.delete(ip);
 }
 
+function getClientIp(req) {
+  return req.headers['x-forwarded-for']?.split(',')[0]?.trim()
+    || req.socket?.remoteAddress
+    || 'unknown';
+}
+
+function checkRateLimit(ip) {
+  const now = Date.now();
+  const record = loginAttempts.get(ip) || { count: 0, lockedUntil: 0 };
+
+  // Nếu đang bị lock
+  if (now < record.lockedUntil) {
+    const remainingMin = Math.ceil((record.lockedUntil - now) / 60000);
+    return {
+      allowed: false,
+      message: `Quá nhiều lần đăng nhập sai. Vui lòng thử lại sau ${remainingMin} phút.`,
+    };
+  }
+
+  // Reset nếu đã hết thời gian lock
+  if (record.lockedUntil > 0 && now >= record.lockedUntil) {
+    loginAttempts.delete(ip);
+  }
+
+  return { allowed: true };
+}
+
+function recordFailedAttempt(ip) {
+  const now = Date.now();
+  const record = loginAttempts.get(ip) || { count: 0, lockedUntil: 0 };
+  record.count++;
+
+  if (record.count >= MAX_ATTEMPTS) {
+    record.lockedUntil = now + LOCKOUT_MINUTES * 60 * 1000;
+    record.count = 0;
+    console.warn(`🔒 Rate limit: IP ${ip} locked for ${LOCKOUT_MINUTES} minutes`);
+  }
+
+  loginAttempts.set(ip, record);
+}
+
+function clearRateLimit(ip) {
+  loginAttempts.delete(ip);
+}
+
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
 
   if (req.method === 'OPTIONS') return res.status(200).end();
 
@@ -89,7 +134,7 @@ async function handleLogin(req, res) {
   }
 
   try {
-    const { email, password } = req.body || {};
+    const { email, password, remember } = req.body || {};
 
     if (!email || !password) {
       return res.status(400).json({ error: 'Email and password are required' });
@@ -127,6 +172,18 @@ async function handleLogin(req, res) {
       .eq('id', user.id);
 
     const token = signToken(user);
+
+    // Set HttpOnly cookie for middleware to read
+    const cookieOptions = [
+      `admin_token=${token}`,
+      'HttpOnly',
+      'Secure',
+      'SameSite=Lax',
+      'Path=/',
+      `Max-Age=${remember ? 60 * 60 * 24 * 30 : 60 * 60 * 24}`, // 30 days if remember, else 1 day
+    ].join('; ');
+
+    res.setHeader('Set-Cookie', cookieOptions);
 
     return res.json({
       token,
