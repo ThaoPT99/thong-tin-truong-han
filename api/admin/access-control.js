@@ -1,4 +1,5 @@
 // GET/PUT/POST/DELETE /api/admin/access-control — quản lý cài đặt chặn truy cập (BLOCKLIST)
+// GET /api/admin/access-logs — lấy nhật ký truy cập (paginated)
 const { requireAdmin } = require('../../lib/auth');
 const { supabase } = require('../../lib/supabase');
 const bcrypt = require('bcryptjs');
@@ -14,10 +15,45 @@ module.exports = requireAdmin(async (req, res) => {
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   const { id } = req.query;
+  // Check if this is access-logs endpoint
+  const isAccessLogs = req.url?.includes('/access-logs');
 
   try {
-    // ─── GET: Lấy danh sách cài đặt chặn truy cập ───
+    // ─── GET: Lấy danh sách cài đặt chặn truy cập HOẶC access logs ───
     if (req.method === 'GET') {
+      if (isAccessLogs) {
+        // ─── GET: Access Logs (paginated) ───
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 20;
+        const offset = (page - 1) * limit;
+
+        // Get total count
+        const { count, error: countError } = await supabase
+          .from('access_logs')
+          .select('*', { count: 'exact', head: true });
+
+        if (countError) throw countError;
+
+        // Get paginated logs
+        const { data, error } = await supabase
+          .from('access_logs')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .range(offset, offset + limit - 1);
+
+        if (error) throw error;
+
+        return res.json({
+          success: true,
+          data: data || [],
+          total: count || 0,
+          page,
+          limit,
+          totalPages: Math.ceil((count || 0) / limit)
+        });
+      }
+
+      // ─── GET: Access Control Rules ───
       let query = supabase
         .from('access_control')
         .select('*')
