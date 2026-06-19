@@ -160,10 +160,83 @@ document.addEventListener('DOMContentLoaded', () => {
   tc.className = 'toast-container';
   document.body.appendChild(tc);
 
+  // Add mobile menu functionality
+  initMobileMenu();
+
   // Render sidebar user info
   renderSidebarUser();
+  setupSidebarByRole();
 });
 
+function initMobileMenu() {
+  // Create mobile menu button
+  const mobileMenuBtn = document.createElement('button');
+  mobileMenuBtn.className = 'mobile-menu-btn';
+  mobileMenuBtn.setAttribute('aria-label', 'Mở menu');
+  mobileMenuBtn.innerHTML = `
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="3" y1="6" x2="21" y2="6"/>
+      <line x1="3" y1="12" x2="21" y2="12"/>
+      <line x1="3" y1="18" x2="21" y2="18"/>
+    </svg>
+  `;
+
+  // Create sidebar overlay
+  const sidebarOverlay = document.createElement('div');
+  sidebarOverlay.className = 'sidebar-overlay';
+  sidebarOverlay.setAttribute('aria-hidden', 'true');
+
+  // Find elements
+  const topBar = document.querySelector('.top-bar');
+  const sidebar = document.querySelector('.sidebar');
+
+  if (topBar) {
+    // Insert mobile menu button at start of top-bar
+    const userInfo = topBar.querySelector('.user-info');
+    if (userInfo) {
+      topBar.insertBefore(mobileMenuBtn, userInfo);
+    } else {
+      topBar.appendChild(mobileMenuBtn);
+    }
+  }
+
+  if (sidebar) {
+    sidebar.parentNode.insertBefore(sidebarOverlay, sidebar);
+    sidebarOverlay.addEventListener('click', () => closeSidebar());
+  }
+
+  mobileMenuBtn.addEventListener('click', toggleSidebar);
+
+  // Close sidebar on escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeSidebar();
+  });
+
+  // Close sidebar on window resize if > 768px
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 768) {
+      closeSidebar();
+    }
+  });
+}
+
+function toggleSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  const overlay = document.querySelector('.sidebar-overlay');
+  if (sidebar && overlay) {
+    const isOpen = sidebar.classList.toggle('open');
+    overlay.classList.toggle('visible', isOpen);
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+  }
+}
+
+function closeSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  const overlay = document.querySelector('.sidebar-overlay');
+  if (sidebar) sidebar.classList.remove('open');
+  if (overlay) overlay.classList.remove('visible');
+  document.body.style.overflow = '';
+}
 // Render sidebar user info
 function renderSidebarUser() {
   const user = getUser();
