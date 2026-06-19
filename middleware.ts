@@ -82,7 +82,7 @@ export async function middleware(request) {
   }
 
   // Skip static files
-  if (pathname.match(/\.(ico|png|jpg|jpeg|gif|svg|css|js|woff2?)$/)) {
+  if (pathname.match(/\.(?:ico|png|jpg|jpeg|gif|svg|css|js|woff2?)$/)) {
     return NextResponse.next();
   }
 
