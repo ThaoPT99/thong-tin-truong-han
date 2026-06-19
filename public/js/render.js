@@ -962,12 +962,6 @@ function renderCompareResult(container) {
           ${renderCompareRow("Khu vực", schools, s => escapeHtml(getRegionLabel(getAdvisorRules(s.id, s).region)))}
           ${renderCompareRowWithDiff("Học phí", schools, s => renderValue(s.tuition), "tuition", true)}
           ${renderCompareRowWithDiff("KTX", schools, s => renderValue(s.ktx), "ktx", true)}
-          ${renderCompareRowWithDiff("Chi phí (Advisor)", schools, s => getAdvisorRules(s.id, s).costLevel + "/5", "costLevel", true)}
-          ${renderCompareRowWithDiff("Dễ đỗ Visa", schools, s => getAdvisorRules(s.id, s).visaChance + "/5", "visaChance", false)}
-          ${renderCompareRowWithDiff("Cơ hội việc làm", schools, s => getAdvisorRules(s.id, s).jobOpportunity + "/5", "jobOpportunity", false)}
-          ${renderCompareRowWithDiff("Dễ chuyển E7", schools, s => getAdvisorRules(s.id, s).e7Opportunity + "/5", "e7Opportunity", false)}
-          ${renderCompareRowWithDiff("Khối lượng học", schools, s => getAdvisorRules(s.id, s).studyLoad + "/5", "studyLoad", true)}
-          ${renderCompareRowWithDiff("Độ khó phỏng vấn", schools, s => getAdvisorRules(s.id, s).interviewDifficulty + "/5", "interviewDifficulty", true)}
           ${renderCompareRow("Ưu điểm chính", schools, s => renderText(listToInline(s.advantages, 3)))}
           ${renderCompareRow("Rủi ro cần lưu ý", schools, s => renderText(getCompareRisk(s)))}
         </tbody>
