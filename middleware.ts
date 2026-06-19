@@ -240,7 +240,7 @@ export default async function middleware(request: Request): Promise<Response | v
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%);
+      background: linear-gradient(135deg, #a5a5a5 0%, #ffffff 100%);
       min-height: 100vh;
       display: flex;
       align-items: center;
