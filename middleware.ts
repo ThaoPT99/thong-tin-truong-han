@@ -1,24 +1,30 @@
-// Access Control Middleware — Enforce access rules from DB
-// Chạy tại Edge (Vercel) để hiệu năng tốt nhất
+// Access Control Middleware — Vercel Edge Runtime (Web APIs chuẩn)
+// Chạy tại Edge (Vercel) mà không phụ thuộc Next.js
 
-import { createClient } from '@supabase/supabase-js';
-import { NextResponse } from 'next/server';
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY;
-const supabase = createClient(supabaseUrl, supabaseKey);
-
-// Cache rules để tránh query DB mỗi request
+// In-memory cache
 let rulesCache = null;
 let cacheTimestamp = 0;
 const CACHE_TTL = 60000; // 1 phút
 
+// Supabase client (init lazy để tránh lỗi build)
+let supabase = null;
+
+function getSupabase() {
+  if (supabase) return supabase;
+  const { createClient } = require('@supabase/supabase-js');
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY;
+  supabase = require('@supabase/supabase-js').createClient(supabaseUrl, supabaseKey);
+  return supabase;
+}
+
 async function getRules() {
   const now = Date.now();
-  if (rulesCache && (now - cacheTimestamp) < CACHE_TTL) {
+  if (rulesCache && (now - cacheTimestamp) < 60000) {
     return rulesCache;
   }
 
+  const supabase = getSupabase();
   const { data, error } = await supabase
     .from('access_control')
     .select('type, value, is_active')
@@ -40,13 +46,12 @@ async function getRules() {
   }
 
   rulesCache = { passwords, ips, emails };
-  cacheTimestamp = now;
+  cacheTimestamp = Date.now();
   return rulesCache;
 }
 
 function ipMatchesCIDR(ip, cidr) {
   if (!cidr.includes('/')) return ip === cidr;
-  // Simple CIDR check - production nên dùng library ip-cidr
   const [rangeIp, bits] = cidr.split('/');
   const mask = parseInt(bits, 10);
   if (isNaN(mask)) return ip === cidr;
@@ -62,14 +67,15 @@ function ipMatchesCIDR(ip, cidr) {
   return (ipNum & maskNum) === (rangeNum & maskNum);
 }
 
-export async function middleware(request) {
+export default async function middleware(request) {
   const url = new URL(request.url);
   const pathname = url.pathname;
   
-  // Bỏ qua các path không cần check
+  // Skip paths
   const skipPaths = [
     '/api/auth',
     '/api/admin/access-control',
+    '/api/admin/access-logs',
     '/_next',
     '/_vercel',
     '/favicon.ico',
@@ -78,32 +84,39 @@ export async function middleware(request) {
   ];
   
   if (skipPaths.some(p => pathname.startsWith(p))) {
-    return NextResponse.next();
+    return;
   }
 
-  // Skip static files
+  // Skip static files (non-capturing group)
   if (pathname.match(/\.(?:ico|png|jpg|jpeg|gif|svg|css|js|woff2?)$/)) {
-    return NextResponse.next();
+    return;
   }
 
   try {
     const { passwords, ips, emails } = await getRules();
     
-    // Nếu không có rule nào active -> cho qua
+    // No active rules -> allow
     if (!passwords.length && !ips.length && !emails.length) {
-      return NextResponse.next();
+      return;
     }
 
     const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || '';
     const ua = request.headers.get('user-agent') || '';
     const referer = request.headers.get('referer') || '';
     
-    // Kiểm tra cookies/session
-    const cookies = request.headers.get('cookie') || '';
-    const accessCookie = cookies.split('; ').find(c => c.startsWith('site_access='));
-    const hasValidCookie = accessCookie && passwords.some(p => accessCookie.includes(p));
+    // Parse cookies
+    const cookieHeader = request.headers.get('cookie') || '';
+    const cookies = cookieHeader.split('; ').reduce((acc, c) => {
+      const [k, v] = c.split('=');
+      acc[k] = v;
+      return acc;
+    }, {});
+
+    // Check password cookie
+    const passwordCookie = cookies.site_access;
+    const passwordValid = passwords.length > 0 && passwords.some(p => p === cookies.site_access);
     
-    // Kiểm tra IP allowlist
+    // Check IP allowlist
     let ipAllowed = false;
     for (const allowedIp of ips) {
       if (ipMatchesCIDR(ip, allowedIp)) {
@@ -112,42 +125,38 @@ export async function middleware(request) {
       }
     }
     
-    // Kiểm tra email allowlist (trong cookie hoặc query)
-    const url = new URL(request.url);
-    const emailParam = url.searchParams.get('email');
-    const emailCookie = cookies.split('; ').find(c => c.startsWith('user_email='));
-    const email = (emailParam || emailCookie?.split('=')[1] || '').toLowerCase();
+    // Check email allowlist
+    const emailCookie = cookies.user_email;
+    const emailParam = new URL(request.url).searchParams.get('email');
+    const email = (emailParam || emailCookie || '').toLowerCase();
     const emailAllowed = emails.length > 0 && emails.includes(email);
     
-    // Kiểm tra password cookie
-    const passwordCookie = cookies.split('; ').find(c => c.startsWith('site_access='));
-    const passwordValid = passwordCookie && passwords.some(p => passwordCookie.includes(p));
+    // Check password cookie
+    const passwordCookie = cookies.site_access;
+    const passwordValid = passwords.length > 0 && passwords.some(p => p === cookies.site_access);
     
-    // Quyết định cho phép
+    // Decision
     let allowed = false;
     let reason = '';
     
-    if (hasValidCookie || passwordValid) {
-      allowed = true;
-      reason = 'valid_password_cookie';
+    if (passwordValid) {
+      allowed = true; reason = 'password';
     } else if (ipAllowed) {
-      allowed = true;
-      reason = 'ip_allowlist';
+      allowed = true; reason = 'ip_allowlist';
     } else if (emailAllowed) {
-      allowed = true;
-      reason = 'email_allowlist';
+      allowed = true; reason = 'email_allowlist';
     }
     
     // Log access
     const status = allowed ? 200 : 403;
     const blocked = !allowed;
-    const reasonText = allowed ? `allowed:${reason}` : `blocked:no_valid_auth`;
+    const reasonText = allowed ? `allowed:${reason}` : 'blocked:no_valid_auth';
     
     // Async log (fire and forget)
     logAccess({
       ip,
-      user_agent: ua,
-      path: pathname,
+      user_agent: request.headers.get('user-agent') || '',
+      path: new URL(request.url).pathname,
       method: request.method,
       status,
       blocked,
@@ -155,31 +164,31 @@ export async function middleware(request) {
     }).catch(() => {});
     
     if (!allowed) {
-      // Nếu là API request -> trả JSON
-      if (pathname.startsWith('/api/')) {
-        return NextResponse.json({ 
+      // Return 403 Response
+      return new Response(
+        JSON.stringify({ 
           error: 'Truy cập bị từ chối. Sản phẩm riêng tư - cần xác thực.', 
           code: 'ACCESS_DENIED' 
-        }, { status: 403 });
-      }
-      
-      // HTML page -> hiển thị trang nhập password
-      const loginUrl = new URL('/admin/login', request.url);
-      loginUrl.searchParams.set('redirect', pathname + url.search);
-      return NextResponse.redirect(loginUrl);
+        }), 
+        { 
+          status: 403, 
+          headers: { 'Content-Type': 'application/json' }
+        });
     }
     
-    return NextResponse.next();
+    return;
   } catch (err) {
     console.error('Access control middleware error:', err);
-    // Fail open - nếu middleware lỗi thì cho qua để không block user thật
-    return NextResponse.next();
+    return;
   }
 }
 
-// Async log function (fire and forget)
 async function logAccess(data) {
   try {
+    const supabase = require('@supabase/supabase-js').createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY
+    );
     await supabase.from('access_logs').insert({
       ...data,
       created_at: new Date().toISOString(),
@@ -191,6 +200,6 @@ async function logAccess(data) {
 
 export const config = {
   matcher: [
-    '/((?!api/auth|_next|_vercel|favicon.ico|.*\\.(ico|png|jpg|jpeg|gif|svg|css|js|woff2?)$).*)',
+    '/((?!api/auth|api/admin/access-control|api/admin/access-logs|_next|_vercel|favicon.ico|.*\\.(?:ico|png|jpg|jpeg|gif|svg|css|js|woff2?)$).*)',
   ],
 }
