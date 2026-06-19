@@ -80,6 +80,10 @@ document.getElementById('admin-login-form').addEventListener('submit', async (e)
     const data = await res.json();
 
     if (res.ok) {
+      // Lưu token và user vào localStorage
+      if (data.token) localStorage.setItem('admin_token', data.token);
+      if (data.user) localStorage.setItem('admin_user', JSON.stringify(data.user));
+      
       window.location.href = '/admin/dashboard.html';
     } else {
       throw new Error(data.error || 'Đăng nhập thất bại');
