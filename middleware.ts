@@ -10,6 +10,35 @@ const CACHE_TTL = 60000; // 1 phút
 // Supabase config
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY;
+const JWT_SECRET = process.env.JWT_SECRET || process.env.NEXT_PUBLIC_JWT_SECRET || 'default-secret-change-me';
+
+// Simple JWT decode (no verification, just payload extraction)
+function decodeJWT(token: string): { role?: string; exp?: number } | null {
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 3) return null;
+    const payload = parts[1];
+    const decoded = atob(payload.replace(/-/g, '+').replace(/_/g, '/'));
+    return JSON.parse(decoded);
+  } catch {
+    return null;
+  }
+}
+
+// Check if user is director from cookies
+function isDirectorFromCookies(cookies: Record<string, string>): boolean {
+  // Check for admin token cookie (set by login API)
+  const adminToken = cookies.admin_token || cookies.auth_token || cookies.token;
+  if (!adminToken) return false;
+  
+  const payload = decodeJWT(adminToken);
+  if (!payload) return false;
+  
+  // Check expiration
+  if (payload.exp && payload.exp * 1000 < Date.now()) return false;
+  
+  return payload.role === 'director';
+}
 
 async function getRules(): Promise<{ blockPasswords: string[]; blockIps: string[]; blockEmails: string[] }> {
   const now = Date.now();
@@ -94,6 +123,19 @@ export default async function middleware(request: Request): Promise<Response | v
   try {
     const { blockPasswords, blockIps, blockEmails } = await getRules();
     
+    // Parse cookies first (needed for director check)
+    const cookieHeader = request.headers.get('cookie') || '';
+    const cookies = cookieHeader.split('; ').reduce((acc: Record<string, string>, c) => {
+      const [k, v] = c.split('=');
+      acc[k] = v;
+      return acc;
+    }, {});
+
+    // Check if user is director - if so, bypass IP blocking
+    const isDirector = isDirectorFromCookies(cookies);
+    
+    const { blockPasswords, blockIps, blockEmails } = await getRules();
+    
     // No active block rules -> ALLOW ALL
     if (!blockPasswords.length && !blockIps.length && !blockEmails.length) {
       return;
@@ -103,14 +145,6 @@ export default async function middleware(request: Request): Promise<Response | v
     const ua = request.headers.get('user-agent') || '';
     const referer = request.headers.get('referer') || '';
     
-    // Parse cookies
-    const cookieHeader = request.headers.get('cookie') || '';
-    const cookies = cookieHeader.split('; ').reduce((acc: Record<string, string>, c) => {
-      const [k, v] = c.split('=');
-      acc[k] = v;
-      return acc;
-    }, {});
-
     // Check block rules
     let blocked = false;
     let reason = '';
@@ -121,12 +155,14 @@ export default async function middleware(request: Request): Promise<Response | v
       blocked = true; reason = 'blocked_password';
     }
     
-    // Check IP blocklist
+    // Check IP blocklist (skip if director)
     let ipBlocked = false;
-    for (const blockedIp of blockIps) {
-      if (ipMatchesCIDR(clientIp, blockedIp)) {
-        ipBlocked = true;
-        break;
+    if (!isDirector) {
+      for (const blockedIp of blockIps) {
+        if (ipMatchesCIDR(clientIp, blockedIp)) {
+          ipBlocked = true;
+          break;
+        }
       }
     }
     if (ipBlocked) {
@@ -135,8 +171,7 @@ export default async function middleware(request: Request): Promise<Response | v
     
     // Check email blocklist
     const emailParam = new URL(request.url).searchParams.get('email');
-    const emailCookie = cookies?.user_email;
-    const email = (emailParam || emailCookie || '').toLowerCase();
+    const email = (emailParam || cookies?.user_email || '').toLowerCase();
     if (blockEmails.length > 0 && email && blockEmails.includes(email)) {
       blocked = true; reason = 'blocked_email';
     }
