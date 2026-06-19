@@ -281,11 +281,11 @@ function openUserModal(id = null) {
     passwordHint.style.display = 'inline';
     passwordRequired.style.display = 'inline';
   }
-  modal.classList.add('active');
+  modal.classList.add('show');
 }
 
 function closeUserModal() {
-  document.getElementById('user-modal').classList.remove('active');
+  document.getElementById('user-modal').classList.remove('show');
 }
 
 async function saveUser(e) {
