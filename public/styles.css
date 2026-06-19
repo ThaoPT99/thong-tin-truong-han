@@ -344,6 +344,20 @@ body {
     align-items: center;
 }
 
+/* Skeleton for school name grid */
+.school-name-grid.skeleton-loading .skeleton-card {
+    min-height: 48px;
+    padding: 0;
+    background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 8px;
+}
+
+[data-theme="dark"] .school-name-grid.skeleton-loading .skeleton-card {
+    background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
+}
+
 .skeleton-line {
     height: 14px;
     width: 80%;

@@ -314,6 +314,9 @@ function renderSchoolsDirectory() {
   const systems = Array.from(systemSet).filter(Boolean);
   const systemOptions = [`<option value="all">Tất cả hệ học</option>`, ...systems.map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`)].join("\n");
 
+  // Skeleton cards (6 items)
+  const skeletonCards = Array(6).fill('<div class="skeleton-card"></div>').join("");
+
   return `
     <section class="directory-view">
       ${renderSemesterSelector()}
@@ -344,8 +347,8 @@ function renderSchoolsDirectory() {
       </div>
       ${renderRecentSchools()}
       <div class="directory-count"><span id="school-result-count">${schools.length}</span> trường đang hiển thị</div>
-      <div id="school-card-grid" class="school-name-grid">
-        ${schools.map(renderSchoolCard).join("")}
+      <div id="school-card-grid" class="school-name-grid skeleton-loading">
+        ${schools.length > 0 ? schools.map(renderSchoolCard).join("") : skeletonCards}
       </div>
       <p id="school-empty-state" class="muted-empty directory-empty hidden">Không tìm thấy trường phù hợp với bộ lọc hiện tại.</p>
     </section>
@@ -593,6 +596,26 @@ function bindSchoolsDirectory(container) {
       return showSchool(button.dataset.openSchool);
     });
   });
+
+  // Swap skeleton with real cards when data is ready
+  if (container.querySelector(".skeleton-loading")) {
+    document.addEventListener("app-data-ready", () => {
+      const grid = container.querySelector("#school-card-grid");
+      if (grid && grid.classList.contains("skeleton-loading")) {
+        const schools = getSemesterSchools();
+        grid.classList.remove("skeleton-loading");
+        grid.innerHTML = schools.map(renderSchoolCard).join("");
+        // Re-bind click events for new cards
+        grid.querySelectorAll("[data-open-school]").forEach(button => {
+          button.addEventListener("click", () => {
+            suggestions.hidden = true;
+            if (window && typeof window.showSchool === "function") return window.showSchool(button.dataset.openSchool);
+            return showSchool(button.dataset.openSchool);
+          });
+        });
+      }
+    }, { once: true });
+  }
 }
 
 function renderCompare() {
