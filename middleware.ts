@@ -26,19 +26,36 @@ function decodeJWT(token: string): { role?: string; exp?: number } | null {
   }
 }
 
-// Check if user is director from cookies
-function isDirectorFromCookies(cookies: Record<string, string>): boolean {
-  // Check for admin token cookie (set by login API)
-  const adminToken = cookies.admin_token || cookies.auth_token || cookies.token;
-  if (!adminToken) return false;
+// Check if user is director from cookies OR Authorization header
+function isDirectorFromRequest(request: Request): boolean {
+  // First check cookies
+  const cookieHeader = request.headers.get('cookie') || '';
+  const cookies = cookieHeader.split('; ').reduce((acc: Record<string, string>, c) => {
+    const [k, v] = c.split('=');
+    acc[k] = v;
+    return acc;
+  }, {});
   
-  const payload = decodeJWT(adminToken);
-  if (!payload) return false;
+  // Check cookies first
+  const adminTokenFromCookie = cookies.admin_token || cookies.auth_token || cookies.token;
+  if (adminTokenFromCookie) {
+    const payload = decodeJWT(adminTokenFromCookie);
+    if (payload && (!payload.exp || payload.exp * 1000 >= Date.now()) && payload.role === 'director') {
+      return true;
+    }
+  }
   
-  // Check expiration
-  if (payload.exp && payload.exp * 1000 < Date.now()) return false;
+  // Fallback: check Authorization header (Bearer token)
+  const authHeader = request.headers.get('authorization');
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.substring(7);
+    const payload = decodeJWT(token);
+    if (payload && (!payload.exp || payload.exp * 1000 >= Date.now()) && payload.role === 'director') {
+      return true;
+    }
+  }
   
-  return payload.role === 'director';
+  return false;
 }
 
 async function getRules(): Promise<{ blockPasswords: string[]; blockIps: string[]; blockEmails: string[] }> {
@@ -135,7 +152,7 @@ export default async function middleware(request: Request): Promise<Response | v
     }, {});
 
     // Check if user is director - if so, bypass IP blocking
-    const isDirector = isDirectorFromCookies(cookies);
+    const isDirector = isDirectorFromRequest(request);
     
     const { blockPasswords, blockIps, blockEmails } = await getRules();
     
