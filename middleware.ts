@@ -228,14 +228,14 @@ export default async function middleware(request: Request): Promise<Response | v
           });
       }
       
-      // HTML page -> trả trang "Nội dung bị giới hạn" (KHÔNG redirect login)
+      // HTML page -> trả trang "404 not found" (KHÔNG redirect login)
       const blockedHtml = `
 <!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Truy cập bị giới hạn</title>
+  <title>404 Not Found</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -310,8 +310,8 @@ export default async function middleware(request: Request): Promise<Response | v
         <line x1="12" y1="16" x2="12.01" y2="16"/>
       </svg>
     </div>
-    <h1>Nội dung bị giới hạn</h1>
-    <p>Trang này đang được giới hạn truy cập bởi quản trị viên.</p>
+    <h1>404 Not Found</h1>
+    <p>Trang bạn tìm kiếm không tồn tại hoặc đã bị gỡ bỏ.</p>
     
     <div class="reason-box">
       <div class="reason-label">Lý do:</div>
