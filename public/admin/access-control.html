@@ -236,7 +236,7 @@
 </div>
 
 <script>
-const API = '/api/admin/access-control';
+const API = '/admin/access-control';
 let currentPage = 1;
 const PAGE_SIZE = 20;
 let allRules = [];
@@ -380,7 +380,7 @@ async function deleteRule(id) {
 let logsPage = 1;
 async function loadLogs(page = 1) {
   try {
-    const res = await api('GET', `/api/admin/access-logs?page=${page}&limit=20`);
+    const res = await api('GET', `/admin/access-logs?page=${page}&limit=20`);
     renderLogs(res.data || []);
     renderPagination(res.total || 0, page);
   } catch (err) {
