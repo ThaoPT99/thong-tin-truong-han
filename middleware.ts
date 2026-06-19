@@ -1,22 +1,14 @@
 // Access Control Middleware — Vercel Edge Runtime (Web APIs chuẩn)
-// Chạy tại Edge (Vercel) mà không phụ thuộc Next.js
+// Chạy tại Edge (Vercel) - dùng fetch trực tiếp đến Supabase REST API
 
 // In-memory cache
 let rulesCache = null;
 let cacheTimestamp = 0;
 const CACHE_TTL = 60000; // 1 phút
 
-// Supabase client (init lazy để tránh lỗi build)
-let supabase = null;
-
-function getSupabase() {
-  if (supabase) return supabase;
-  const { createClient } = require('@supabase/supabase-js');
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
-  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY;
-  supabase = require('@supabase/supabase-js').createClient(supabaseUrl, supabaseKey);
-  return supabase;
-}
+// Supabase config
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY;
 
 async function getRules() {
   const now = Date.now();
@@ -24,17 +16,23 @@ async function getRules() {
     return rulesCache;
   }
 
-  const supabase = getSupabase();
-  const { data, error } = await supabase
-    .from('access_control')
-    .select('type, value, is_active')
-    .eq('is_active', true);
+  const res = await fetch(
+    `${SUPABASE_URL}/rest/v1/access_control?type=in.(password,ip_allowlist,email_allowlist)&is_active=eq.true&select=type,value`,
+    {
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Accept': 'application/json',
+      },
+    }
+  );
 
-  if (error) {
-    console.error('Access control fetch error:', error);
-    return rulesCache || { passwords: [], ips: [], emails: [] };
+  if (!res.ok) {
+    console.error('Access control fetch error:', await res.text());
+    return { passwords: [], ips: [], emails: [] };
   }
 
+  const data = await res.json();
   const passwords = [];
   const ips = [];
   const emails = [];
@@ -45,9 +43,7 @@ async function getRules() {
     else if (rule.type === 'email_allowlist') emails.push(rule.value.toLowerCase());
   }
 
-  rulesCache = { passwords, ips, emails };
-  cacheTimestamp = Date.now();
-  return rulesCache;
+  return { passwords, ips, emails };
 }
 
 function ipMatchesCIDR(ip, cidr) {
@@ -131,10 +127,6 @@ export default async function middleware(request) {
     const email = (emailParam || emailCookie || '').toLowerCase();
     const emailAllowed = emails.length > 0 && emails.includes(email);
     
-    // Check password cookie
-    const passwordCookie = cookies.site_access;
-    const passwordValid = passwords.length > 0 && passwords.some(p => p === cookies.site_access);
-    
     // Decision
     let allowed = false;
     let reason = '';
@@ -147,55 +139,82 @@ export default async function middleware(request) {
       allowed = true; reason = 'email_allowlist';
     }
     
-    // Log access
-    const status = allowed ? 200 : 403;
-    const blocked = !allowed;
-    const reasonText = allowed ? `allowed:${reason}` : 'blocked:no_valid_auth';
-    
-    // Async log (fire and forget)
+    // Log access (fire and forget)
     logAccess({
       ip,
       user_agent: request.headers.get('user-agent') || '',
       path: new URL(request.url).pathname,
       method: request.method,
-      status,
-      blocked,
-      reason: reasonText,
+      status: allowed ? 200 : 403,
+      blocked: !allowed,
+      reason: allowed ? `allowed:${reason}` : 'blocked:no_valid_auth',
     }).catch(() => {});
     
     if (!allowed) {
-      // Return 403 Response
-      return new Response(
-        JSON.stringify({ 
-          error: 'Truy cập bị từ chối. Sản phẩm riêng tư - cần xác thực.', 
-          code: 'ACCESS_DENIED' 
-        }), 
-        { 
-          status: 403, 
-          headers: { 'Content-Type': 'application/json' }
-        });
+      // Nếu là API request -> trả JSON
+      if (pathname.startsWith('/api/')) {
+        return new Response(
+          JSON.stringify({ 
+            error: 'Truy cập bị từ chối. Sản phẩm riêng tư - cần xác thực.', 
+            code: 'ACCESS_DENIED' 
+          }), 
+          { 
+            status: 403, 
+            headers: { 'Content-Type': 'application/json' }
+          });
+      }
+      
+      // HTML page -> redirect to login
+      const loginUrl = new URL('/admin/login', request.url);
+      loginUrl.searchParams.set('redirect', pathname + url.search);
+      return Response.redirect(loginUrl, 302);
     }
     
     return;
   } catch (err) {
     console.error('Access control middleware error:', err);
+    // Fail open - nếu middleware lỗi thì cho qua
     return;
   }
 }
 
 async function logAccess(data) {
   try {
-    const supabase = require('@supabase/supabase-js').createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL,
-      process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY
-    );
-    await supabase.from('access_logs').insert({
-      ...data,
-      created_at: new Date().toISOString(),
-    });
+    await fetch(
+      `${process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL}/rest/v1/access_logs`,
+      {
+        method: 'POST',
+        headers: {
+          'apikey': process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY,
+          'Authorization': `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal',
+        },
+        body: JSON.stringify({
+          ...data,
+          created_at: new Date().toISOString(),
+        }),
+      });
   } catch (e) {
     console.error('Log access error:', e);
   }
+}
+
+function ipMatchesCIDR(ip, cidr) {
+  if (!cidr.includes('/')) return ip === cidr;
+  const [rangeIp, bits] = cidr.split('/');
+  const mask = parseInt(bits, 10);
+  if (isNaN(mask)) return ip === cidr;
+  
+  const ipParts = ip.split('.').map(Number);
+  const rangeParts = rangeIp.split('.').map(Number);
+  if (ipParts.length !== 4 || rangeParts.length !== 4) return false;
+  
+  const maskNum = ~((1 << (32 - mask)) - 1);
+  const ipNum = (ipParts[0] << 24) | (ipParts[1] << 16) | (ipParts[2] << 8) | ipParts[3];
+  const rangeNum = (rangeParts[0] << 24) | (rangeParts[1] << 16) | (rangeParts[2] << 8) | rangeParts[3];
+  
+  return (ipNum & maskNum) === (rangeNum & maskNum);
 }
 
 export const config = {
