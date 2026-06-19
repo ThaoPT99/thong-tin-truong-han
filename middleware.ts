@@ -228,12 +228,113 @@ export default async function middleware(request: Request): Promise<Response | v
           });
       }
       
-      // HTML page -> redirect to login/blocked page
-      const loginUrl = new URL('/admin/login', request.url);
-      loginUrl.searchParams.set('blocked', 'true');
-      loginUrl.searchParams.set('reason', reason);
-      loginUrl.searchParams.set('redirect', new URL(request.url).pathname + url.search);
-      return Response.redirect(loginUrl, 302);
+      // HTML page -> trả trang "Nội dung bị giới hạn" (KHÔNG redirect login)
+      const blockedHtml = `
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Truy cập bị giới hạn</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    .container {
+      background: white;
+      border-radius: 16px;
+      padding: 48px 40px;
+      max-width: 420px;
+      width: 90%;
+      box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+      text-align: center;
+    }
+    .icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+      color: white;
+      font-size: 36px;
+    }
+    h1 { color: #1e3a5f; font-size: 28px; font-weight: 700; margin-bottom: 12px; }
+    p { color: #6b7280; font-size: 16px; line-height: 1.6; margin-bottom: 24px; }
+    .reason-box {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 24px 0;
+      color: #991b1b;
+      font-size: 14px;
+      text-align: left;
+    }
+    .reason-label { font-weight: 600; color: #991b1b; margin-bottom: 8px; font-size: 13px; }
+    .reason-value { font-family: monospace; font-size: 13px; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 15px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .btn:hover { background: #1d4ed8; }
+    .footer { margin-top: 32px; color: #9ca3af; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="icon">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+    </div>
+    <h1>Nội dung bị giới hạn</h1>
+    <p>Trang này đang được giới hạn truy cập bởi quản trị viên.</p>
+    
+    <div class="reason-box">
+      <div class="reason-label">Lý do:</div>
+      <div class="reason-value" id="reason-text"></div>
+    </div>
+    
+    <a href="/" class="btn">← Về trang chủ</a>
+    
+    <div class="footer">Thông Tin Trường Hàn - Private Product</div>
+  </div>
+  <script>
+    // Lấy lý do từ URL
+    const params = new URLSearchParams(window.location.search);
+    const reason = params.get('reason') || 'không xác định';
+    document.getElementById('reason-text').textContent = reason;
+  </script>
+</body>
+</html>
+      `;
+      return new Response(blockedHtml, {
+        status: 200, // Vẫn trả 200 để không trigger error monitoring
+        headers: { 'Content-Type': 'text/html; charset=utf-8' }
+      });
     }
     
     return;
