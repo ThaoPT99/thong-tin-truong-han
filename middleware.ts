@@ -63,12 +63,15 @@ async function getRules(): Promise<{ blockPasswords: string[]; blockIps: string[
     return { blockPasswords: [], blockIps: [], blockEmails: [] };
   }
 
-  const data: Array<{ type: string; value: string }> = await res.json();
+  // Fix: use unknown type then cast properly
+  const rawData = await res.json() as unknown;
+  const data = Array.isArray(rawData) ? rawData as Array<{ type: string; value: string }> : [];
+  
   const blockPasswords: string[] = [];
   const blockIps: string[] = [];
   const blockEmails: string[] = [];
 
-  for (const rule of data || []) {
+  for (const rule of data) {
     if (rule.type === 'block_password') blockPasswords.push(rule.value);
     else if (rule.type === 'block_ip') blockIps.push(rule.value);
     else if (rule.type === 'block_email') blockEmails.push(rule.value.toLowerCase());
