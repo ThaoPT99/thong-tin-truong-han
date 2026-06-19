@@ -15,3 +15,6 @@ data.js
 _archive/
 public/truong/
 .env*
+dist/
+coverage/
+*.tsbuildinfo
