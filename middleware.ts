@@ -1,6 +1,7 @@
 // Access Control Middleware — Vercel Edge Runtime (Web APIs chuẩn)
 // Chạy tại Edge (Vercel) - dùng fetch trực tiếp đến Supabase REST API
 // Logic: ALLOW BY DEFAULT, chỉ chặn khi có rule BLOCK khớp
+// Director bypass IP blocking
 
 // In-memory cache
 let rulesCache: { blockPasswords: string[]; blockIps: string[]; blockEmails: string[] } | null = null;
@@ -121,8 +122,6 @@ export default async function middleware(request: Request): Promise<Response | v
   }
 
   try {
-    const { blockPasswords, blockIps, blockEmails } = await getRules();
-    
     // Parse cookies first (needed for director check)
     const cookieHeader = request.headers.get('cookie') || '';
     const cookies = cookieHeader.split('; ').reduce((acc: Record<string, string>, c) => {
