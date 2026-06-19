@@ -237,6 +237,37 @@ CREATE INDEX IF NOT EXISTS idx_students_school ON students(school_id);
 CREATE INDEX IF NOT EXISTS idx_students_semester ON students(semester_id);
 CREATE INDEX IF NOT EXISTS idx_students_owner ON students(owner_id);
 CREATE INDEX IF NOT EXISTS idx_student_logs_student ON student_logs(student_id);
+
+-- 10. Access Control — Quản lý truy cập web riêng
+CREATE TABLE IF NOT EXISTS access_control (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  type            VARCHAR(20) NOT NULL, -- 'password', 'ip_allowlist', 'email_allowlist'
+  value           TEXT NOT NULL, -- password hash, IP, email
+  description     TEXT,
+  is_active       BOOLEAN DEFAULT true,
+  created_by      UUID REFERENCES users(id) ON DELETE SET NULL,
+  created_at      TIMESTAMPTZ DEFAULT NOW(),
+  updated_at      TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Access log để audit
+CREATE TABLE IF NOT EXISTS access_logs (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  ip              VARCHAR(45),
+  user_agent      TEXT,
+  path            TEXT,
+  method          VARCHAR(10),
+  status          INTEGER,
+  user_id         UUID REFERENCES users(id) ON DELETE SET NULL,
+  blocked         BOOLEAN DEFAULT false,
+  reason          TEXT,
+  created_at      TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_access_logs_created ON access_logs(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_access_logs_ip ON access_logs(ip);
+CREATE INDEX IF NOT EXISTS idx_access_control_type ON access_control(type);
+CREATE INDEX IF NOT EXISTS idx_student_logs_student ON student_logs(student_id);
 ALTER TABLE school_conversions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE school_documents ENABLE ROW LEVEL SECURITY;
 ALTER TABLE school_partners ENABLE ROW LEVEL SECURITY;

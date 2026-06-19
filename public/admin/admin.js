@@ -21,7 +21,10 @@ function clearUser() { localStorage.removeItem('admin_user'); }
 function checkAuth() {
   const token = getToken();
   if (!token) {
-    window.location.href = '/admin/login.html';
+    // Don't redirect from login page
+    if (!window.location.pathname.includes('/admin/login')) {
+      window.location.href = '/admin/login';
+    }
     return false;
   }
   return true;
@@ -38,7 +41,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!r.ok) {
       clearToken();
       clearUser();
-      window.location.href = '/admin/login.html';
+      if (!window.location.pathname.includes('/admin/login')) {
+        window.location.href = '/admin/login';
+      }
     }
   } catch {}
 });
@@ -46,7 +51,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 function logout() {
   clearToken();
   clearUser();
-  window.location.href = '/admin/login.html';
+  window.location.href = '/admin/login';
 }
 
 // ─── Role-based UI ───
@@ -118,19 +123,24 @@ function toast(message, type = 'info') {
 
 function escapeHtml(str) {
   // DOM-based approach (giống api-loader.js)
-  const d = document.createElement('div');
+  var d = document.createElement('div');
   d.textContent = String(str ?? '');
   return d.innerHTML;
+}
+
+function roleLabel(role) {
+  const map = { director: 'Giám đốc', sale: 'Sale', admin: 'Admin' };
+  return map[role] || role;
 }
 
 function regionLabel(r) {
   if (!r) return r || '';
   if (typeof window.REGION_LABELS !== 'undefined' && window.REGION_LABELS[r]) {
-    const label = window.REGION_LABELS[r];
+    var label = window.REGION_LABELS[r];
     return label.charAt(0).toUpperCase() + label.slice(1);
   }
   // Fallback map (giống global REGION_LABELS)
-  const map = {
+  var map = {
     seoul: 'Seoul', busan: 'Busan', gyeonggi: 'Gyeonggi', incheon: 'Incheon',
     gwangju: 'Gwangju', daegu: 'Daegu', daejeon: 'Daejeon', ulsan: 'Ulsan',
     chungcheongbuk: 'Chungcheongbuk', chungcheongnam: 'Chungcheongnam',
@@ -173,10 +183,4 @@ function renderSidebarUser() {
   
   if (container) container.innerHTML = html;
   if (topbarDisplay) topbarDisplay.textContent = user.displayName || user.email;
-}
-
-// Role label helper
-function roleLabel(role) {
-  const map = { director: 'Giám đốc', sale: 'Sale', admin: 'Admin' };
-  return map[role] || role;
 }
