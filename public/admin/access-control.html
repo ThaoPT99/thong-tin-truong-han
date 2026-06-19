@@ -381,10 +381,12 @@ let logsPage = 1;
 async function loadLogs(page = 1) {
   try {
     const res = await api('GET', `/admin/access-logs?page=${page}&limit=20`);
+    console.log('loadLogs response:', res);
     renderLogs(res.data || []);
     renderPagination(res.total || 0, page);
   } catch (err) {
-    console.error(err);
+    console.error('loadLogs error:', err);
+    toast('Lỗi tải log: ' + err.message, 'error');
   }
 }
 
