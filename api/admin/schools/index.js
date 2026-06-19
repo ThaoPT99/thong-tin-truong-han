@@ -155,7 +155,6 @@ module.exports = requireAdmin(async (req, res) => {
         ktx: body.ktx || '',
         schedule: body.schedule || '',
         documents_note: body.documentsNote || '',
-        internal_note: body.internalNote || '',
         mou: body.mou || '',
         website: body.website || '',
         catalog_url: body.catalogUrl || '',
@@ -169,6 +168,11 @@ module.exports = requireAdmin(async (req, res) => {
         image_invoice: body.imageInvoice || '',
         updated_at: new Date().toISOString(),
       };
+
+      // Chỉ update internal_note nếu có gửi lên (tránh lỗi schema cache)
+      if (body.internalNote !== undefined) {
+        updateData.internal_note = body.internalNote;
+      }
 
       const { error: updErr } = await supabase
         .from('schools').update(updateData).eq('id', schoolId);

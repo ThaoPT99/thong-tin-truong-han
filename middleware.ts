@@ -326,23 +326,6 @@ async function logAccess(data: Record<string, unknown>): Promise<void> {
   }
 }
 
-function ipMatchesCIDR(ip: string, cidr: string): boolean {
-  if (!cidr.includes('/')) return ip === cidr;
-  const [rangeIp, bits] = cidr.split('/');
-  const mask = parseInt(bits, 10);
-  if (isNaN(mask)) return ip === cidr;
-  
-  const ipParts = ip.split('.').map(Number);
-  const rangeParts = rangeIp.split('.').map(Number);
-  if (ipParts.length !== 4 || rangeParts.length !== 4) return false;
-  
-  const maskNum = ~((1 << (32 - mask)) - 1);
-  const ipNum = (ipParts[0] << 24) | (ipParts[1] << 16) | (ipParts[2] << 8) | ipParts[3];
-  const rangeNum = (rangeParts[0] << 24) | (rangeParts[1] << 16) | (rangeParts[2] << 8) | rangeParts[3];
-  
-  return (ipNum & maskNum) === (rangeNum & maskNum);
-}
-
 export const config = {
   matcher: [
     '/((?!api/auth|api/admin/access-control|api/admin/access-logs|_next|_vercel|favicon.ico|.*\\.(?:ico|png|jpg|jpeg|gif|svg|css|js|woff2?)$).*)',
