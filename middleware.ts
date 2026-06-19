@@ -108,6 +108,7 @@ export default async function middleware(request: Request): Promise<Response | v
     '/api/auth',
     '/api/admin/access-control',
     '/api/admin/access-logs',
+    '/admin/login',
     '/_next',
     '/_vercel',
     '/favicon.ico',
