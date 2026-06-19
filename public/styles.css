@@ -1515,7 +1515,85 @@ body {
     font-weight: 700;
 }
 
-/* Popup Zalo D2-6 */
+/* Compare table enhancements */
+.compare-table th .winner-badge {
+    display: inline-block;
+    margin-left: 4px;
+    font-size: 0.75rem;
+    vertical-align: middle;
+}
+
+.compare-table td.better {
+    background: #d1fae5 !important;
+    font-weight: 600;
+}
+
+.compare-table td.worse {
+    background: #fee2e2 !important;
+}
+
+.compare-table th .winner-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #fbbf24;
+    color: #1e3a5f;
+    font-size: 0.65rem;
+    margin-left: 4px;
+    font-weight: 700;
+}
+
+/* Compare actions */
+.compare-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+}
+
+.compare-actions .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Radar chart responsive */
+.compare-radar-canvas-wrap {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    aspect-ratio: 1;
+}
+
+.compare-radar-canvas-wrap canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* Dark mode support */
+[data-theme="dark"] .compare-table td.better {
+    background: #064e3b !important;
+    color: #d1fae5;
+}
+
+[data-theme="dark"] .compare-table td.worse {
+    background: #7f1d1d !important;
+    color: #fee2e2;
+}
+
+[data-theme="dark"] .compare-table td:first-child {
+    background: #1e293b;
+    color: #f1f5f9;
+}
+
+[data-theme="dark"] .compare-table th {
+    background: #1e3a5f;
+}
 body.zalo-popup-open {
     overflow: hidden;
 }

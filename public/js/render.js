@@ -621,6 +621,13 @@ function bindSchoolsDirectory(container) {
 function renderCompare() {
   const schools = getSchools();
   const options = schools.map(s => `<option value="${escapeHtml(s.id)}">${escapeHtml(s.name)}</option>`).join("");
+  // Parse URL for pre-selected schools
+  const urlParams = new URLSearchParams(window.location.search);
+  const compareParam = urlParams.get("compare");
+  let preselected = [];
+  if (compareParam) {
+    preselected = compareParam.split(",").map(s => decodeURIComponent(s.trim())).filter(Boolean);
+  }
   return `
     <section class="compare-view">
       <div class="directory-head">
@@ -631,9 +638,13 @@ function renderCompare() {
         </div>
       </div>
       <div class="compare-picker">
-        <select class="compare-select">${options}</select>
-        <select class="compare-select">${options}</select>
-        <select class="compare-select">${options}</select>
+        <select class="compare-select" data-index="0">${options}</select>
+        <select class="compare-select" data-index="1">${options}</select>
+        <select class="compare-select" data-index="2">${options}</select>
+      </div>
+      <div class="compare-actions">
+        <button type="button" class="btn btn-primary" id="compare-copy-link">🔗 Copy link so sánh</button>
+        <button type="button" class="btn btn-outline" id="compare-export">📄 Xuất PDF</button>
       </div>
       <div id="compare-result"></div>
     </section>
@@ -642,12 +653,110 @@ function renderCompare() {
 
 function bindCompare(container) {
   const selects = Array.from(container.querySelectorAll(".compare-select"));
-  const defaults = getSchools().slice(0, 3).map(s => s.id);
+  const urlParams = new URLSearchParams(window.location.search);
+  const compareParam = urlParams.get("compare");
+  let defaults = getSchools().slice(0, 3).map(s => s.id);
+  
+  if (compareParam) {
+    const preselected = compareParam.split(",").map(s => decodeURIComponent(s.trim())).filter(Boolean);
+    preselected.forEach((slug, index) => {
+      const school = getSchools().find(s => s.slug === slug);
+      if (school) defaults[index] = school.id;
+    });
+  }
+  
   selects.forEach((select, index) => {
     if (defaults[index]) select.value = defaults[index];
-    select.addEventListener("change", () => renderCompareResult(container));
+    select.addEventListener("change", () => {
+      renderCompareResult(container);
+      updateCompareUrl(container);
+    });
   });
+  
+  // Copy link button
+  const copyBtn = container.querySelector("#compare-copy-link");
+  if (copyBtn) {
+    copyBtn.addEventListener("click", () => copyCompareLink(container));
+  }
+  
+  // Export button
+  const exportBtn = container.querySelector("#compare-export");
+  if (exportBtn) {
+    exportBtn.addEventListener("click", () => exportComparePDF(container));
+  }
+  
   renderCompareResult(container);
+}
+
+function updateCompareUrl(container) {
+  const selects = Array.from(container.querySelectorAll(".compare-select"));
+  const slugs = selects.map(s => {
+    const school = getSchoolById(s.value);
+    return school ? school.slug : "";
+  }).filter(Boolean);
+  
+  const url = new URL(window.location.href);
+  if (slugs.length > 0) {
+    url.searchParams.set("compare", slugs.join(","));
+  } else {
+    url.searchParams.delete("compare");
+  }
+  window.history.replaceState({}, "", url);
+}
+
+function copyCompareLink(container) {
+  const slugs = Array.from(container.querySelectorAll(".compare-select"))
+    .map(s => {
+      const school = getSchoolById(s.value);
+      return school ? school.slug : "";
+    })
+    .filter(Boolean);
+  
+  if (slugs.length === 0) {
+    toast("Chưa chọn trường để so sánh");
+    return;
+  }
+  
+  const url = `${location.origin}${location.pathname}?compare=${slugs.join(",")}`;
+  navigator.clipboard.writeText(url).then(() => {
+    toast("Đã copy link so sánh!");
+  });
+}
+
+function exportComparePDF(container) {
+  const resultEl = container.querySelector("#compare-result");
+  if (!resultEl) return;
+  
+  const printWindow = window.open("", "_blank");
+  const html = `
+    <!DOCTYPE html>
+    <html lang="vi">
+    <head>
+      <meta charset="UTF-8">
+      <title>So sánh trường - ${document.title}</title>
+      <link rel="stylesheet" href="${location.origin}/styles.css">
+      <style>
+        body { padding: 2rem; font-family: 'Be Vietnam Pro', sans-serif; }
+        .compare-table { width: 100%; border-collapse: collapse; margin-bottom: 2rem; }
+        .compare-table th, .compare-table td { border: 1px solid #e2e8f0; padding: 8px 12px; text-align: left; }
+        .compare-table th { background: #1e3a5f; color: white; }
+        .winner { background: #fef3c7 !important; font-weight: 600; }
+        .better { background: #d1fae5; }
+        .worse { background: #fee2e2; }
+        .compare-radar-wrap { page-break-inside: avoid; }
+        @media print { .compare-actions { display: none; } }
+      </style>
+    </head>
+    <body>
+      <h1>So sánh trường Hàn Quốc</h1>
+      <p>Ngày xuất: ${new Date().toLocaleString("vi-VN")}</p>
+      ${resultEl.innerHTML}
+    </body>
+    </html>
+  `;
+  printWindow.document.write(html);
+  printWindow.document.close();
+  printWindow.onload = () => printWindow.print();
 }
 
 function getSchoolZaloText(school) {
@@ -782,6 +891,51 @@ function renderCompareResult(container) {
   const uniqueIds = [...new Set(ids)];
   const schools = uniqueIds.map(id => getSchoolById(id)).filter(Boolean);
 
+  // Parse values for comparison
+  const parsed = schools.map(s => {
+    const rules = getAdvisorRules(s.id, s);
+    const tuition = extractKRWValue(s.tuition);
+    const ktx = extractKRWValue(s.ktx);
+    return {
+      school: s,
+      rules: rules,
+      tuition: tuition,
+      ktx: ktx,
+      costLevel: rules.costLevel || 3,
+      visaChance: rules.visaChance || 3,
+      jobOpportunity: rules.jobOpportunity || 3,
+      e7Opportunity: rules.e7Opportunity || 3,
+      studyLoad: rules.studyLoad || 3,
+      interviewDifficulty: rules.interviewDifficulty || 2
+    };
+  });
+
+  // Find winners for numeric criteria (lower is better for cost/tuition/ktx/studyLoad/interviewDifficulty; higher is better for visa/job/e7)
+  const criteria = {
+    tuition: { lowerBetter: true, values: parsed.map(p => p.tuition).filter(v => v !== null) },
+    ktx: { lowerBetter: true, values: parsed.map(p => p.ktx).filter(v => v !== null) },
+    costLevel: { lowerBetter: true, values: parsed.map(p => p.costLevel) },
+    visaChance: { lowerBetter: false, values: parsed.map(p => p.visaChance) },
+    jobOpportunity: { lowerBetter: false, values: parsed.map(p => p.jobOpportunity) },
+    e7Opportunity: { lowerBetter: false, values: parsed.map(p => p.e7Opportunity) },
+    studyLoad: { lowerBetter: true, values: parsed.map(p => p.studyLoad) },
+    interviewDifficulty: { lowerBetter: true, values: parsed.map(p => p.interviewDifficulty) }
+  };
+
+  const winners = {};
+  Object.keys(criteria).forEach(key => {
+    const { lowerBetter, values } = criteria[key];
+    if (values.length === 0) return;
+    const target = lowerBetter ? Math.min(...values) : Math.max(...values);
+    parsed.forEach(p => {
+      const val = p[key];
+      if (val !== null && val === target) {
+        if (!winners[p.school.id]) winners[p.school.id] = [];
+        winners[p.school.id].push(key);
+      }
+    });
+  });
+
   target.innerHTML = `
     ${schools.length > 0 ? `
     <div class="compare-radar-wrap">
@@ -800,14 +954,20 @@ function renderCompareResult(container) {
         <thead>
           <tr>
             <th>Tiêu chí</th>
-            ${schools.map(s => `<th>${escapeHtml(s.name)}</th>`).join("")}
+            ${schools.map(s => `<th>${escapeHtml(s.name)} ${winners[s.id] ? `<span class="winner-badge" title="Thắng ${winners[s.id].join(', ')}">🏆</span>` : ''}</th>`).join("")}
           </tr>
         </thead>
         <tbody>
           ${renderCompareRow("Hệ học", schools, s => renderValue(s.system))}
           ${renderCompareRow("Khu vực", schools, s => escapeHtml(getRegionLabel(getAdvisorRules(s.id, s).region)))}
-          ${renderCompareRow("Học phí", schools, s => renderValue(s.tuition))}
-          ${renderCompareRow("KTX", schools, s => renderValue(s.ktx))}
+          ${renderCompareRowWithDiff("Học phí", schools, s => renderValue(s.tuition), "tuition", true)}
+          ${renderCompareRowWithDiff("KTX", schools, s => renderValue(s.ktx), "ktx", true)}
+          ${renderCompareRowWithDiff("Chi phí (Advisor)", schools, s => getAdvisorRules(s.id, s).costLevel + "/5", "costLevel", true)}
+          ${renderCompareRowWithDiff("Dễ đỗ Visa", schools, s => getAdvisorRules(s.id, s).visaChance + "/5", "visaChance", false)}
+          ${renderCompareRowWithDiff("Cơ hội việc làm", schools, s => getAdvisorRules(s.id, s).jobOpportunity + "/5", "jobOpportunity", false)}
+          ${renderCompareRowWithDiff("Dễ chuyển E7", schools, s => getAdvisorRules(s.id, s).e7Opportunity + "/5", "e7Opportunity", false)}
+          ${renderCompareRowWithDiff("Khối lượng học", schools, s => getAdvisorRules(s.id, s).studyLoad + "/5", "studyLoad", true)}
+          ${renderCompareRowWithDiff("Độ khó phỏng vấn", schools, s => getAdvisorRules(s.id, s).interviewDifficulty + "/5", "interviewDifficulty", true)}
           ${renderCompareRow("Ưu điểm chính", schools, s => renderText(listToInline(s.advantages, 3)))}
           ${renderCompareRow("Rủi ro cần lưu ý", schools, s => renderText(getCompareRisk(s)))}
         </tbody>
@@ -815,13 +975,39 @@ function renderCompareResult(container) {
     </div>
   `;
 
-  // Render radar chart (đợi DOM layout)
+  // Render radar chart
   if (schools.length > 0) {
     const canvas = target.querySelector("#compare-radar-canvas");
     if (canvas) {
       requestAnimationFrame(function() { renderRadarChart(canvas, schools); });
     }
   }
+}
+
+function renderCompareRowWithDiff(label, schools, getValue, criterionKey, lowerBetter) {
+  // Find best value for this criterion
+  const values = schools.map(s => getValue(s));
+  const numericValues = values.map(v => {
+    const num = parseFloat(v.replace(/[^0-9.]/g, ''));
+    return isNaN(num) ? null : num;
+  }).filter(v => v !== null);
+  
+  let bestVal = null;
+  if (numericValues.length > 0) {
+    bestVal = lowerBetter ? Math.min(...numericValues) : Math.max(...numericValues);
+  }
+
+  return `<tr><td>${label}</td>${schools.map((s, i) => {
+    const val = getValue(s);
+    const num = parseFloat(val.replace(/[^0-9.]/g, ''));
+    let cls = "";
+    if (num !== null && bestVal !== null && num === bestVal) {
+      cls = lowerBetter ? " better" : " better";
+    } else if (num !== null && bestVal !== null) {
+      cls = lowerBetter ? " worse" : " worse";
+    }
+    return `<td class="${cls}">${val || "Đang cập nhật"}</td>`;
+  }).join("")}</tr>`;
 }
 
 function renderCompareRow(label, schools, getValue) {
