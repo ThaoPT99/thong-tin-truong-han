@@ -313,7 +313,7 @@ function renderList(data) {
   container.innerHTML = list.map(s => {
     const schoolName = s.schools ? s.schools.name : '';
     const semInfo = s.semesters ? (s.title || 'Kỳ ' + s.ky + '/' + s.nam) : '';
-    return '<div class="student-card" onclick="showEditModal(\'' + s.id + '\')">' +
+    return '<div class="student-card" onclick="showEditModal(\\'' + s.id + '\\')">' +
       '<div>' +
         '<div class="s-name">' + escapeHtml(s.name) + '</div>' +
         '<div class="s-meta">' +
@@ -325,8 +325,9 @@ function renderList(data) {
         (schoolName ? '<div class="s-school">🏫 ' + escapeHtml(schoolName) + '</div>' : '') +
         (s.next_action ? '<div class="s-next">📌 ' + escapeHtml(s.next_action) + '</div>' : '') +
       '</div>' +
-      '<div style="text-align:right">' +
+      '<div style="text-align:right; display:flex; flex-direction:column; align-items:flex-end; gap:4px;">' +
         '<span class="s-status ' + getStatusClass(s.status) + '">' + escapeHtml(STATUS_LABELS[s.status] || s.status) + '</span>' +
+        '<button class="btn btn-danger btn-sm" onclick="event.stopPropagation(); showDeleteModal(\\'' + s.id + '\\', \\'' + escapeHtml(s.name) + '\\')\" title="Xoá học sinh">🗑️</button>' +
       '</div>' +
     '</div>';
   }).join('');
@@ -415,7 +416,17 @@ function closeModal(id) {
   document.getElementById(id || 'student-modal').classList.remove('show');
 }
 
-async function saveStudent() {
+function showDeleteModal(id, name) {
+  deleteTargetId = id;
+  document.getElementById('delete-name').textContent = name;
+  document.getElementById('delete-modal').classList.add('show');
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('show');
+}
+
+async function saveStudent(e) {
   const name = document.getElementById('s-name').value.trim();
   if (!name) { toast('Vui lòng nhập tên học sinh', 'error'); return; }
 
