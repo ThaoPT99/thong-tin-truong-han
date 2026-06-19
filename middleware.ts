@@ -3,7 +3,7 @@
 // Logic: ALLOW BY DEFAULT, chỉ chặn khi có rule BLOCK khớp
 
 // In-memory cache
-let rulesCache = null;
+let rulesCache: { blockPasswords: string[]; blockIps: string[]; blockEmails: string[] } | null = null;
 let cacheTimestamp = 0;
 const CACHE_TTL = 60000; // 1 phút
 
@@ -11,7 +11,7 @@ const CACHE_TTL = 60000; // 1 phút
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY;
 
-async function getRules() {
+async function getRules(): Promise<{ blockPasswords: string[]; blockIps: string[]; blockEmails: string[] }> {
   const now = Date.now();
   if (rulesCache && (now - cacheTimestamp) < 60000) {
     return rulesCache;
@@ -33,10 +33,10 @@ async function getRules() {
     return { blockPasswords: [], blockIps: [], blockEmails: [] };
   }
 
-  const data = await res.json();
-  const blockPasswords = [];
-  const blockIps = [];
-  const blockEmails = [];
+  const data: Array<{ type: string; value: string }> = await res.json();
+  const blockPasswords: string[] = [];
+  const blockIps: string[] = [];
+  const blockEmails: string[] = [];
 
   for (const rule of data || []) {
     if (rule.type === 'block_password') blockPasswords.push(rule.value);
@@ -44,10 +44,12 @@ async function getRules() {
     else if (rule.type === 'block_email') blockEmails.push(rule.value.toLowerCase());
   }
 
-  return { blockPasswords, blockIps, blockEmails };
+  rulesCache = { blockPasswords, blockIps, blockEmails };
+  cacheTimestamp = Date.now();
+  return rulesCache;
 }
 
-function ipMatchesCIDR(ip, cidr) {
+function ipMatchesCIDR(ip: string, cidr: string): boolean {
   if (!cidr.includes('/')) return ip === cidr;
   const [rangeIp, bits] = cidr.split('/');
   const mask = parseInt(bits, 10);
@@ -64,7 +66,7 @@ function ipMatchesCIDR(ip, cidr) {
   return (ipNum & maskNum) === (rangeNum & maskNum);
 }
 
-export default async function middleware(request) {
+export default async function middleware(request: Request): Promise<Response | void> {
   const url = new URL(request.url);
   const pathname = url.pathname;
   
@@ -97,13 +99,13 @@ export default async function middleware(request) {
       return;
     }
 
-    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || '';
+    const clientIp = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || '';
     const ua = request.headers.get('user-agent') || '';
     const referer = request.headers.get('referer') || '';
     
     // Parse cookies
     const cookieHeader = request.headers.get('cookie') || '';
-    const cookies = cookieHeader.split('; ').reduce((acc, c) => {
+    const cookies = cookieHeader.split('; ').reduce((acc: Record<string, string>, c) => {
       const [k, v] = c.split('=');
       acc[k] = v;
       return acc;
@@ -121,9 +123,8 @@ export default async function middleware(request) {
     
     // Check IP blocklist
     let ipBlocked = false;
-    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || '';
     for (const blockedIp of blockIps) {
-      if (ipMatchesCIDR(ip, blockedIp)) {
+      if (ipMatchesCIDR(clientIp, blockedIp)) {
         ipBlocked = true;
         break;
       }
@@ -133,9 +134,9 @@ export default async function middleware(request) {
     }
     
     // Check email blocklist
-    const emailCookie = cookies?.user_email;
     const emailParam = new URL(request.url).searchParams.get('email');
-    const email = (emailParam || cookies?.user_email || '').toLowerCase();
+    const emailCookie = cookies?.user_email;
+    const email = (emailParam || emailCookie || '').toLowerCase();
     if (blockEmails.length > 0 && email && blockEmails.includes(email)) {
       blocked = true; reason = 'blocked_email';
     }
@@ -148,7 +149,7 @@ export default async function middleware(request) {
     
     // Log access (fire and forget)
     logAccess({
-      ip,
+      ip: clientIp,
       user_agent: request.headers.get('user-agent') || '',
       path: new URL(request.url).pathname,
       method: request.method,
@@ -188,7 +189,7 @@ export default async function middleware(request) {
   }
 }
 
-async function logAccess(data) {
+async function logAccess(data: Record<string, unknown>): Promise<void> {
   try {
     await fetch(
       `${process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL}/rest/v1/access_logs`,
@@ -210,7 +211,7 @@ async function logAccess(data) {
   }
 }
 
-function ipMatchesCIDR(ip, cidr) {
+function ipMatchesCIDR(ip: string, cidr: string): boolean {
   if (!cidr.includes('/')) return ip === cidr;
   const [rangeIp, bits] = cidr.split('/');
   const mask = parseInt(bits, 10);
