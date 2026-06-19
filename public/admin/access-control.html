@@ -125,14 +125,14 @@
                 <label for="rule-type">Loại rule <span style="color:red">*</span></label>
                 <select id="rule-type" required>
                   <option value="">— Chọn loại —</option>
-                  <option value="password">🔐 Mật khẩu chung</option>
-                  <option value="ip_allowlist">🌐 IP allowlist</option>
-                  <option value="email_allowlist">📧 Email allowlist</option>
+                  <option value="block_password">🚫 Chặn mật khẩu</option>
+                  <option value="block_ip">🚫 Chặn IP</option>
+                  <option value="block_email">🚫 Chặn Email</option>
                 </select>
               </div>
               <div class="form-group">
                 <label for="rule-value">Giá trị <span style="color:red">*</span></label>
-                <input type="text" id="rule-value" placeholder="Mật khẩu / IP / Email" required autocomplete="off">
+                <input type="text" id="rule-value" placeholder="Mật khẩu cần chặn / IP cần chặn / Email cần chặn" required autocomplete="off">
               </div>
             </div>
             <div class="form-group full-width">
@@ -208,9 +208,9 @@
       <div class="form-group full-width">
         <label for="edit-type">Loại rule</label>
         <select id="edit-type" name="type" required disabled>
-          <option value="password">🔐 Mật khẩu chung</option>
-          <option value="ip_allowlist">🌐 IP allowlist</option>
-          <option value="email_allowlist">📧 Email allowlist</option>
+          <option value="block_password">🚫 Chặn mật khẩu</option>
+          <option value="block_ip">🚫 Chặn IP</option>
+          <option value="block_email">🚫 Chặn Email</option>
         </select>
       </div>
       <div class="form-group full-width">
@@ -291,7 +291,7 @@ function renderRules(rules) {
 }
 
 function typeLabel(type) {
-  const map = { password: '🔐 Mật khẩu', ip_allowlist: '🌐 IP allowlist', email_allowlist: '📧 Email allowlist' };
+  const map = { block_password: '🚫 Chặn mật khẩu', block_ip: '🚫 Chặn IP', block_email: '🚫 Chặn Email' };
   return map[type] || type;
 }
 
@@ -303,8 +303,8 @@ function formatDateTime(iso) {
 function updateStats(rules) {
   document.getElementById('stat-total-rules').textContent = rules.length;
   document.getElementById('stat-active-rules').textContent = rules.filter(r => r.is_active).length;
-  document.getElementById('stat-password-rules').textContent = rules.filter(r => r.type === 'password' && r.is_active).length;
-  document.getElementById('stat-ip-rules').textContent = rules.filter(r => r.type === 'ip_allowlist' && r.is_active).length;
+  document.getElementById('stat-password-rules').textContent = rules.filter(r => r.type === 'block_password' && r.is_active).length;
+  document.getElementById('stat-ip-rules').textContent = rules.filter(r => r.type === 'block_ip' && r.is_active).length;
 }
 
 // Create Rule

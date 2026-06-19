@@ -238,10 +238,10 @@ CREATE INDEX IF NOT EXISTS idx_students_semester ON students(semester_id);
 CREATE INDEX IF NOT EXISTS idx_students_owner ON students(owner_id);
 CREATE INDEX IF NOT EXISTS idx_student_logs_student ON student_logs(student_id);
 
--- 10. Access Control — Quản lý truy cập web riêng
+-- 10. Access Control — Quản lý truy cập web riêng (BLOCKLIST: mặc định cho phép, chỉ chặn khi có rule)
 CREATE TABLE IF NOT EXISTS access_control (
   id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  type            VARCHAR(20) NOT NULL, -- 'password', 'ip_allowlist', 'email_allowlist'
+  type            VARCHAR(20) NOT NULL, -- 'block_password', 'block_ip', 'block_email'
   value           TEXT NOT NULL, -- password hash, IP, email
   description     TEXT,
   is_active       BOOLEAN DEFAULT true,

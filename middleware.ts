@@ -1,5 +1,6 @@
 // Access Control Middleware — Vercel Edge Runtime (Web APIs chuẩn)
 // Chạy tại Edge (Vercel) - dùng fetch trực tiếp đến Supabase REST API
+// Logic: ALLOW BY DEFAULT, chỉ chặn khi có rule BLOCK khớp
 
 // In-memory cache
 let rulesCache = null;
@@ -17,7 +18,7 @@ async function getRules() {
   }
 
   const res = await fetch(
-    `${SUPABASE_URL}/rest/v1/access_control?type=in.(password,ip_allowlist,email_allowlist)&is_active=eq.true&select=type,value`,
+    `${SUPABASE_URL}/rest/v1/access_control?type=in.(block_password,block_ip,block_email)&is_active=eq.true&select=type,value`,
     {
       headers: {
         'apikey': SUPABASE_KEY,
@@ -29,21 +30,21 @@ async function getRules() {
 
   if (!res.ok) {
     console.error('Access control fetch error:', await res.text());
-    return { passwords: [], ips: [], emails: [] };
+    return { blockPasswords: [], blockIps: [], blockEmails: [] };
   }
 
   const data = await res.json();
-  const passwords = [];
-  const ips = [];
-  const emails = [];
+  const blockPasswords = [];
+  const blockIps = [];
+  const blockEmails = [];
 
   for (const rule of data || []) {
-    if (rule.type === 'password') passwords.push(rule.value);
-    else if (rule.type === 'ip_allowlist') ips.push(rule.value);
-    else if (rule.type === 'email_allowlist') emails.push(rule.value.toLowerCase());
+    if (rule.type === 'block_password') blockPasswords.push(rule.value);
+    else if (rule.type === 'block_ip') blockIps.push(rule.value);
+    else if (rule.type === 'block_email') blockEmails.push(rule.value.toLowerCase());
   }
 
-  return { passwords, ips, emails };
+  return { blockPasswords, blockIps, blockEmails };
 }
 
 function ipMatchesCIDR(ip, cidr) {
@@ -89,10 +90,10 @@ export default async function middleware(request) {
   }
 
   try {
-    const { passwords, ips, emails } = await getRules();
+    const { blockPasswords, blockIps, blockEmails } = await getRules();
     
-    // No active rules -> allow
-    if (!passwords.length && !ips.length && !emails.length) {
+    // No active block rules -> ALLOW ALL
+    if (!blockPasswords.length && !blockIps.length && !blockEmails.length) {
       return;
     }
 
@@ -108,36 +109,42 @@ export default async function middleware(request) {
       return acc;
     }, {});
 
-    // Check password cookie
-    const passwordCookie = cookies.site_access;
-    const passwordValid = passwords.length > 0 && passwords.some(p => p === cookies.site_access);
+    // Check block rules
+    let blocked = false;
+    let reason = '';
     
-    // Check IP allowlist
-    let ipAllowed = false;
-    for (const allowedIp of ips) {
-      if (ipMatchesCIDR(ip, allowedIp)) {
-        ipAllowed = true;
+    // Check block password
+    const siteAccessCookie = cookies?.site_access;
+    if (blockPasswords.length > 0 && siteAccessCookie && blockPasswords.includes(siteAccessCookie)) {
+      blocked = true; reason = 'blocked_password';
+    }
+    
+    // Check IP blocklist
+    let ipBlocked = false;
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || '';
+    for (const blockedIp of blockIps) {
+      if (ipMatchesCIDR(ip, blockedIp)) {
+        ipBlocked = true;
         break;
       }
     }
+    if (ipBlocked) {
+      blocked = true; reason = 'blocked_ip';
+    }
     
-    // Check email allowlist
-    const emailCookie = cookies.user_email;
+    // Check email blocklist
+    const emailCookie = cookies?.user_email;
     const emailParam = new URL(request.url).searchParams.get('email');
-    const email = (emailParam || emailCookie || '').toLowerCase();
-    const emailAllowed = emails.length > 0 && emails.includes(email);
+    const email = (emailParam || cookies?.user_email || '').toLowerCase();
+    if (blockEmails.length > 0 && email && blockEmails.includes(email)) {
+      blocked = true; reason = 'blocked_email';
+    }
     
     // Decision
-    let allowed = false;
-    let reason = '';
-    
-    if (passwordValid) {
-      allowed = true; reason = 'password';
-    } else if (ipAllowed) {
-      allowed = true; reason = 'ip_allowlist';
-    } else if (emailAllowed) {
-      allowed = true; reason = 'email_allowlist';
-    }
+    const allowed = !blocked;
+    const status = allowed ? 200 : 403;
+    const blockedFlag = !allowed;
+    const reasonText = allowed ? 'allowed:default' : `blocked:${reason || 'unknown'}`;
     
     // Log access (fire and forget)
     logAccess({
@@ -145,9 +152,9 @@ export default async function middleware(request) {
       user_agent: request.headers.get('user-agent') || '',
       path: new URL(request.url).pathname,
       method: request.method,
-      status: allowed ? 200 : 403,
-      blocked: !allowed,
-      reason: allowed ? `allowed:${reason}` : 'blocked:no_valid_auth',
+      status,
+      blocked: blockedFlag,
+      reason: reasonText,
     }).catch(() => {});
     
     if (!allowed) {
@@ -155,8 +162,9 @@ export default async function middleware(request) {
       if (pathname.startsWith('/api/')) {
         return new Response(
           JSON.stringify({ 
-            error: 'Truy cập bị từ chối. Sản phẩm riêng tư - cần xác thực.', 
-            code: 'ACCESS_DENIED' 
+            error: 'Truy cập bị chặn bởi admin.', 
+            code: 'ACCESS_BLOCKED',
+            reason: reason
           }), 
           { 
             status: 403, 
@@ -164,9 +172,11 @@ export default async function middleware(request) {
           });
       }
       
-      // HTML page -> redirect to login
+      // HTML page -> redirect to login/blocked page
       const loginUrl = new URL('/admin/login', request.url);
-      loginUrl.searchParams.set('redirect', pathname + url.search);
+      loginUrl.searchParams.set('blocked', 'true');
+      loginUrl.searchParams.set('reason', reason);
+      loginUrl.searchParams.set('redirect', new URL(request.url).pathname + url.search);
       return Response.redirect(loginUrl, 302);
     }
     

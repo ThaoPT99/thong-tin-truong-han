@@ -1,7 +1,10 @@
-// GET/PUT/POST/DELETE /api/admin/access-control — quản lý cài đặt truy cập
+// GET/PUT/POST/DELETE /api/admin/access-control — quản lý cài đặt chặn truy cập (BLOCKLIST)
 const { requireAdmin } = require('../../lib/auth');
 const { supabase } = require('../../lib/supabase');
 const bcrypt = require('bcryptjs');
+
+// Valid block types
+const BLOCK_TYPES = ['block_password', 'block_ip', 'block_email'];
 
 module.exports = requireAdmin(async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -13,7 +16,7 @@ module.exports = requireAdmin(async (req, res) => {
   const { id } = req.query;
 
   try {
-    // ─── GET: Lấy danh sách cài đặt truy cập ───
+    // ─── GET: Lấy danh sách cài đặt chặn truy cập ───
     if (req.method === 'GET') {
       let query = supabase
         .from('access_control')
@@ -34,7 +37,7 @@ module.exports = requireAdmin(async (req, res) => {
       return res.json({ success: true, data: id ? data : data || [] });
     }
 
-    // ─── POST: Tạo rule mới ───
+    // ─── POST: Tạo rule chặn mới ───
     if (req.method === 'POST') {
       const body = req.body || {};
       const { type, value, description } = body;
@@ -43,12 +46,12 @@ module.exports = requireAdmin(async (req, res) => {
         return res.status(400).json({ error: 'type and value are required' });
       }
 
-      if (!['password', 'ip_allowlist', 'email_allowlist'].includes(type)) {
-        return res.status(400).json({ error: 'Invalid type. Must be: password, ip_allowlist, or email_allowlist' });
+      if (!BLOCK_TYPES.includes(type)) {
+        return res.status(400).json({ error: `Invalid type. Must be one of: ${BLOCK_TYPES.join(', ')}` });
       }
 
       let processedValue = value;
-      if (type === 'password') {
+      if (type === 'block_password') {
         processedValue = await bcrypt.hash(value, 10);
       }
 
@@ -95,15 +98,15 @@ module.exports = requireAdmin(async (req, res) => {
       if (body.description !== undefined) updateData.description = body.description;
       if (body.is_active !== undefined) updateData.is_active = body.is_active;
       if (body.value !== undefined) {
-        updateData.value = body.type === 'password' ? await bcrypt.hash(body.value, 10) : body.value;
+        updateData.value = body.type === 'block_password' ? await bcrypt.hash(body.value, 10) : body.value;
       }
       if (body.type !== undefined) {
-        if (!['password', 'ip_allowlist', 'email_allowlist'].includes(body.type)) {
+        if (!BLOCK_TYPES.includes(body.type)) {
           return res.status(400).json({ error: 'Invalid type' });
         }
         updateData.type = body.type;
-        // Re-hash password if type changed to password
-        if (body.type === 'password' && body.value) {
+        // Re-hash password if type changed to block_password
+        if (body.type === 'block_password' && body.value) {
           updateData.value = await bcrypt.hash(body.value, 10);
         }
       }
