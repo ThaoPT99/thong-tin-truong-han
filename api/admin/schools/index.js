@@ -169,8 +169,13 @@ module.exports = requireAdmin(async (req, res) => {
         image_catalog: val('imageCatalog', existingSchool.image_catalog || ''),
         image_location: val('imageLocation', existingSchool.image_location || ''),
         image_invoice: val('imageInvoice', existingSchool.image_invoice || ''),
-        internal_note: val('internalNote', existingSchool.internal_note || ''),
         updated_at: new Date().toISOString(),
+      };
+
+      // Chỉ update internal_note nếu có gửi lên (tránh lỗi schema cache)
+      if (body.internalNote !== undefined) {
+        updateData.internal_note = body.internalNote;
+      }
       };
 
       const { error: updErr } = await supabase
