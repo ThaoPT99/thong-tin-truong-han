@@ -34,15 +34,15 @@ function listToInline(items, limit = 3) {
 }
 
 // ─── Semester state ───
-var currentSemesterId = null;
+let currentSemesterId = null;
 
 function getSemesterSchools() {
-  var all = Object.values(SCHOOLS_DATA || {});
+  const all = Object.values(SCHOOLS_DATA || {});
   if (!currentSemesterId) return all;
-  var map = window.SEMESTER_SCHOOLS_MAP || {};
+  const map = window.SEMESTER_SCHOOLS_MAP || {};
   // map keys là slug (đã convert từ UUID trong api-loader.js), SCHOOLS_DATA key cũng là slug
   return all.filter(function(s) {
-    var sids = map[s.id] || [];
+    const sids = map[s.id] || [];
     return sids.indexOf(currentSemesterId) !== -1;
   });
 }
@@ -56,7 +56,7 @@ function getSchoolById(schoolId) {
 }
 
 function getAdvisorRules(schoolId, school) {
-  var profiles = window.ADVISOR_PROFILES || {};
+  const profiles = window.ADVISOR_PROFILES || {};
   let rules = null;
   if (profiles[schoolId]) {
     rules = Object.assign({}, profiles[schoolId]);
@@ -87,7 +87,7 @@ function getRegionLabel(region) {
   // Dùng global REGION_LABELS từ api-loader.js
   if (window.REGION_LABELS && window.REGION_LABELS[region]) {
     // Viết hoa chữ cái đầu cho hiển thị
-    var label = window.REGION_LABELS[region];
+    const label = window.REGION_LABELS[region];
     return label.charAt(0).toUpperCase() + label.slice(1);
   }
   // Fallback: humanize unknown region keys (e.g. "my-region" -> "My Region")
@@ -277,12 +277,12 @@ function renderSchool(schoolId) {
 }
 
 function renderSemesterSelector() {
-  var list = window.SEMESTERS_LIST || [];
+  const list = window.SEMESTERS_LIST || [];
   if (list.length <= 1) return '';
 
-  var activeId = currentSemesterId || window.ACTIVE_SEMESTER_ID;
-  var options = list.map(function(s) {
-    var selected = (s.id === activeId) ? ' selected' : '';
+  const activeId = currentSemesterId || window.ACTIVE_SEMESTER_ID;
+  const options = list.map(function(s) {
+    const selected = (s.id === activeId) ? ' selected' : '';
     return '<option value="' + s.id + '"' + selected + '>' + escapeHtml(s.title || 'Kỳ tháng ' + s.ky + '/' + s.nam) + '</option>';
   }).join('');
 
@@ -385,7 +385,7 @@ function bindSchoolsDirectory(container) {
   // Dropdown selections like 'gyeonggi'/'incheon' do exact match.
   function normalizeRegionForFilter(cardRegion, filterRegion) {
     if (!cardRegion) return '';
-    var r = String(cardRegion).toLowerCase().trim();
+    const r = String(cardRegion).toLowerCase().trim();
     // When filter is 'near-seoul', also match gyeonggi & incheon
     if (filterRegion === 'near-seoul') {
       if (r === 'gyeonggi' || r === 'incheon' || r === 'near-seoul') return 'near-seoul';
@@ -394,7 +394,7 @@ function bindSchoolsDirectory(container) {
   }
 
   // ─── Smart Search: hiểu ý định từ khoá ───
-  var INTENT_MAP = {
+  const INTENT_MAP = {
     region: [
       { patterns: [/seoul|서울/], value: 'seoul', label: 'Seoul' },
       { patterns: [/gần.*seoul|near.*seoul|경기/], value: 'near-seoul', label: 'Gần Seoul' },
@@ -410,12 +410,12 @@ function bindSchoolsDirectory(container) {
     ]
   };
 
-  var chipsContainer = container.querySelector('#smart-chips');
-  var currentIntents = {};
+  const chipsContainer = container.querySelector('#smart-chips');
+  let currentIntents = {};
 
   function parseSearchIntent(query) {
-    var q = (query || '').toLowerCase().trim();
-    var intents = { region: null, tags: [] };
+    const q = (query || '').toLowerCase().trim();
+    const intents = { region: null, tags: [] };
 
     if (q.length < 2) return intents;
 
@@ -438,14 +438,14 @@ function bindSchoolsDirectory(container) {
 
   function updateSmartFilterChips(intents) {
     if (!chipsContainer) return;
-    var chips = [];
+    const chips = [];
     if (intents.region) {
-      var label = 'Seoul';
+      let label = 'Seoul';
       INTENT_MAP.region.some(function(r) { if (r.value === intents.region) { label = r.label; return true; } });
       chips.push('<span class="smart-chip smart-chip-region"><span class="smart-chip-label">KV </span>' + escapeHtml(label) + '</span>');
     }
     intents.tags.forEach(function(t) {
-      var label = t;
+      let label = t;
       INTENT_MAP.tag.some(function(r) { if (r.value === t) { label = r.label; return true; } });
       chips.push('<span class="smart-chip smart-chip-tag"><span class="smart-chip-label">⚡ </span>' + escapeHtml(label) + '</span>');
     });
@@ -462,17 +462,17 @@ function bindSchoolsDirectory(container) {
     const selectedSystem = systemFilter ? systemFilter.value : "all";
 
     // Quick filter values that are regions (not tags)
-    var regionQuickFilters = ['seoul', 'near-seoul', 'busan', 'daegu', 'daejeon', 'gwangju'];
+    const regionQuickFilters = ['seoul', 'near-seoul', 'busan', 'daegu', 'daejeon', 'gwangju'];
     
     // Effective region: intent > quick filter (if region) > dropdown
-    var effectiveRegion = intents.region;
+    let effectiveRegion = intents.region;
     if (!effectiveRegion && quickFilter !== 'all' && regionQuickFilters.indexOf(quickFilter) !== -1) {
       effectiveRegion = quickFilter;
     }
     if (!effectiveRegion) effectiveRegion = selectedRegion;
 
     // Effective tags: intent tags + quick filter (if tag)
-    var effectiveTagList = (intents.tags || []).slice();
+    const effectiveTagList = (intents.tags || []).slice();
     if (quickFilter !== 'all' && regionQuickFilters.indexOf(quickFilter) === -1) {
       if (effectiveTagList.indexOf(quickFilter) === -1) {
         effectiveTagList.push(quickFilter);
@@ -482,13 +482,13 @@ function bindSchoolsDirectory(container) {
     let visible = 0;
     cards.forEach(card => {
       // Text search: split query into words, match all (looser than exact substring)
-      var matchSearch = true;
+      let matchSearch = true;
       if (q) {
-        var words = q.split(/\s+/).filter(Boolean);
+        const words = q.split(/\s+/).filter(Boolean);
         // Remove words that were already used as intents
-        var intentWords = [];
+        const intentWords = [];
         if (intents.region) intentWords.push(intents.region);
-        var searchWords = words.filter(function(w) { return intentWords.indexOf(w) === -1; });
+        const searchWords = words.filter(function(w) { return intentWords.indexOf(w) === -1; });
         matchSearch = searchWords.length === 0 || searchWords.every(function(w) { return card.dataset.search.indexOf(w) !== -1; });
       }
 
@@ -580,7 +580,7 @@ function bindSchoolsDirectory(container) {
       quickFilter = button.dataset.quickFilter;
       quickButtons.forEach(btn => btn.classList.toggle("active", btn === button));
       // Sync region dropdown when region quick filter is clicked
-      var regionQuickFilters = ['seoul', 'near-seoul', 'busan', 'daegu', 'daejeon', 'gwangju'];
+      const regionQuickFilters = ['seoul', 'near-seoul', 'busan', 'daegu', 'daejeon', 'gwangju'];
       if (regionQuickFilters.indexOf(quickFilter) !== -1) {
         region.value = quickFilter;
       } else if (quickFilter === 'all') {
@@ -655,7 +655,7 @@ function bindCompare(container) {
   const selects = Array.from(container.querySelectorAll(".compare-select"));
   const urlParams = new URLSearchParams(window.location.search);
   const compareParam = urlParams.get("compare");
-  let defaults = getSchools().slice(0, 3).map(s => s.id);
+  const defaults = getSchools().slice(0, 3).map(s => s.id);
   
   if (compareParam) {
     const preselected = compareParam.split(",").map(s => decodeURIComponent(s.trim())).filter(Boolean);
@@ -760,9 +760,9 @@ function exportComparePDF(container) {
 }
 
 function getSchoolZaloText(school) {
-  var rules = getAdvisorRules(school.id, school);
-  var regionName = rules && rules.region ? (window.REGION_LABELS && window.REGION_LABELS[rules.region] ? window.REGION_LABELS[rules.region].charAt(0).toUpperCase() + window.REGION_LABELS[rules.region].slice(1) : rules.region) : '';
-  var line = String.prototype.padEnd ? ''.padEnd(30, '\u2500') : '──────────────────────────────';
+  const rules = getAdvisorRules(school.id, school);
+  const regionName = rules && rules.region ? (window.REGION_LABELS && window.REGION_LABELS[rules.region] ? window.REGION_LABELS[rules.region].charAt(0).toUpperCase() + window.REGION_LABELS[rules.region].slice(1) : rules.region) : '';
+  const line = String.prototype.padEnd ? ''.padEnd(30, '\u2500') : '──────────────────────────────';
   return [
     '📋 TU VAN DU HOC HAN QUOC',
     line,
@@ -1044,21 +1044,21 @@ function flattenRichText(val) {
 }
 
 function extractKRWValue(text) {
-  var str = flattenRichText(text);
+  const str = flattenRichText(text);
   if (!str) return null;
   // Normalize: replace dots (Vietnamese format) with nothing, keep commas as thousand separators
-  var normal = str.replace(/\./g, '');
+  const normal = str.replace(/\./g, '');
   // Pattern 1: number with KRW/원/won suffix
-  var m = normal.match(/([\d,]+)\s*(?:KRW|원|won)/i);
+  const m = normal.match(/([\d,]+)\s*(?:KRW|원|won)/i);
   if (m) return parseInt(m[1].replace(/,/g, ''), 10);
   // Pattern 2: any large number (likely KRW)
-  var big = normal.match(/(\d{4,})/);
+  const big = normal.match(/(\d{4,})/);
   if (big) return parseInt(big[1].replace(/,/g, ''), 10);
   return null;
 }
 
-var extractTuitionValue = extractKRWValue;
-var extractKtxValue = extractKRWValue;
+const extractTuitionValue = extractKRWValue;
+const extractKtxValue = extractKRWValue;
 
 function formatKRW(amount) {
   if (!amount || isNaN(amount)) return '—';
@@ -1071,8 +1071,8 @@ function formatVND(amount) {
 }
 
 function renderCostCalculator() {
-  var schools = getSchools();
-  var options = schools.map(function(s) {
+  const schools = getSchools();
+  const options = schools.map(function(s) {
     return '<option value="' + escapeHtml(s.id) + '">' + escapeHtml(s.name) + '</option>';
   }).join('');
   return `
@@ -1188,24 +1188,24 @@ function parseKRWInput(value) {
 }
 
 function updateCostResult(container) {
-  var schoolSelect = container.querySelector('#cost-school');
-  var schoolId = schoolSelect.value;
-  var school = getSchoolById(schoolId);
+  const schoolSelect = container.querySelector('#cost-school');
+  const schoolId = schoolSelect.value;
+  const school = getSchoolById(schoolId);
 
-  var getVal = function(id) { return parseKRWInput(container.querySelector(id).value); };
+  const getVal = function(id) { return parseKRWInput(container.querySelector(id).value); };
 
-  var tuition = getVal('#cost-tuition');
-  var ktx = getVal('#cost-ktx');
-  var insurance = getVal('#cost-insurance');
-  var livingMonthly = getVal('#cost-living');
-  var months = parseInt(container.querySelector('#cost-months').value, 10) || 12;
-  var visaFee = getVal('#cost-visa-fee');
-  var flight = getVal('#cost-flight');
-  var rate = parseFloat(container.querySelector('#cost-rate').value) || DEFAULT_EXCHANGE_RATE;
+  const tuition = getVal('#cost-tuition');
+  const ktx = getVal('#cost-ktx');
+  const insurance = getVal('#cost-insurance');
+  const livingMonthly = getVal('#cost-living');
+  const months = parseInt(container.querySelector('#cost-months').value, 10) || 12;
+  const visaFee = getVal('#cost-visa-fee');
+  const flight = getVal('#cost-flight');
+  const rate = parseFloat(container.querySelector('#cost-rate').value) || DEFAULT_EXCHANGE_RATE;
 
-  var livingTotal = livingMonthly * months;
+  const livingTotal = livingMonthly * months;
 
-  var items = [
+  const items = [
     { label: 'Học phí', krw: tuition },
     { label: 'Ký túc xá', krw: ktx },
     { label: 'Bảo hiểm', krw: insurance },
@@ -1214,14 +1214,14 @@ function updateCostResult(container) {
     { label: 'Vé máy bay', krw: flight },
   ];
 
-  var totalKRW = items.reduce(function(sum, item) { return sum + item.krw; }, 0);
-  var totalVND = totalKRW * rate;
+  const totalKRW = items.reduce(function(sum, item) { return sum + item.krw; }, 0);
+  const totalVND = totalKRW * rate;
 
-  var tbody = container.querySelector('#cost-result-body');
+  const tbody = container.querySelector('#cost-result-body');
   if (!tbody) return;
 
   tbody.innerHTML = items.map(function(item) {
-    var vnd = item.krw * rate;
+    const vnd = item.krw * rate;
     return '<tr><td>' + escapeHtml(item.label) + '</td><td>' + formatKRW(item.krw) + '</td><td>' + formatVND(vnd) + '</td></tr>';
   }).join('') +
   '<tr class="total"><td>Tổng cộng</td><td>' + formatKRW(totalKRW) + '</td><td>' + formatVND(totalVND) + '</td></tr>';
@@ -1229,7 +1229,7 @@ function updateCostResult(container) {
 
 function fetchExchangeRate(callback) {
   // Fetch KRW→VND exchange rate from free API (no key required)
-  var rateInput = document.getElementById('cost-rate');
+  const rateInput = document.getElementById('cost-rate');
   if (!rateInput) return;
   rateInput.disabled = true;
   rateInput.style.opacity = '0.6';
@@ -1237,7 +1237,7 @@ function fetchExchangeRate(callback) {
     .then(function(r) { return r.json(); })
     .then(function(data) {
       if (data && data.rates && data.rates.VND) {
-        var rate = Math.round(data.rates.VND);
+        const rate = Math.round(data.rates.VND);
         rateInput.value = rate;
         if (callback) callback();
       }
@@ -1255,17 +1255,17 @@ function bindCostCalculator(container) {
   if (!container || container.dataset.costBound === 'true') return;
   container.dataset.costBound = 'true';
 
-  var schoolSelect = container.querySelector('#cost-school');
-  var tuitionInput = container.querySelector('#cost-tuition');
-  var ktxInput = container.querySelector('#cost-ktx');
+  const schoolSelect = container.querySelector('#cost-school');
+  const tuitionInput = container.querySelector('#cost-tuition');
+  const ktxInput = container.querySelector('#cost-ktx');
 
   function fillSchoolData() {
-    var schoolId = schoolSelect.value;
-    var school = getSchoolById(schoolId);
+    const schoolId = schoolSelect.value;
+    const school = getSchoolById(schoolId);
     if (!school) return;
 
-    var tuitionVal = extractTuitionValue(school.tuition);
-    var ktxVal = extractKtxValue(school.ktx);
+    const tuitionVal = extractTuitionValue(school.tuition);
+    const ktxVal = extractKtxValue(school.ktx);
 
     tuitionInput.value = tuitionVal ? tuitionVal.toLocaleString('ko-KR') : '';
     ktxInput.value = ktxVal ? ktxVal.toLocaleString('ko-KR') : '';
@@ -1505,7 +1505,7 @@ function renderRadarChart(canvas, schools) {
     if (Math.abs(mouseY - legendY) > 14) return -1;
 
     ctx.font = '12px "Be Vietnam Pro", sans-serif';
-    let totalWidth = 0;
+    const totalWidth = 0;
     const widths = activeSchools.map(function(s) {
       const tw = ctx.measureText(s.name || '').width + 34;
       return tw;
@@ -1532,14 +1532,14 @@ function renderRadarChart(canvas, schools) {
     drawRadarLegend(ctx, cx, h, activeSchools, isDark, hoverIdx);
   }
 
-  var currentHover = -1;
+  let currentHover = -1;
 
   function setupHoverListeners() {
     canvas.addEventListener('mousemove', function(e) {
-      var rect = canvas.getBoundingClientRect();
-      var mx = e.clientX - rect.left;
-      var my = e.clientY - rect.top;
-      var idx = getLegendHitIndex(mx, my);
+      const rect = canvas.getBoundingClientRect();
+      const mx = e.clientX - rect.left;
+      const my = e.clientY - rect.top;
+      const idx = getLegendHitIndex(mx, my);
       if (idx !== currentHover) {
         currentHover = idx;
         redrawComplete(idx);
@@ -1836,7 +1836,7 @@ function init() {
   }
 
   // Ẩn skeleton loading
-  var skeleton = document.getElementById('skeleton-loader');
+  const skeleton = document.getElementById('skeleton-loader');
   if (skeleton) skeleton.style.display = 'none';
 
   const content = document.getElementById("advisor-content");

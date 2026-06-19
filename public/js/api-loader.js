@@ -3,7 +3,7 @@
 // ─── Global helpers (dùng chung cho advisor.js, render.js) ───
 
 window.escapeHtml = function(str) {
-  var d = document.createElement("div");
+  const d = document.createElement("div");
   d.textContent = String(str ?? "");
   return d.innerHTML;
 };
@@ -34,10 +34,10 @@ window.REGION_LABELS = {
 (function loadAppData() {
   // Helper: build grouped checklist from flat API data
   function buildChecklistGroups(flatItems) {
-    var groups = {};
-    var order = [];
+    const groups = {};
+    const order = [];
     (flatItems || []).forEach(function(item) {
-      var gName = item.groupName || 'Khác';
+      const gName = item.groupName || 'Khác';
       if (!groups[gName]) {
         groups[gName] = { group: gName, items: [] };
         order.push(gName);
@@ -52,7 +52,7 @@ window.REGION_LABELS = {
   }
 
   function transformSchool(school) {
-    var mapText = function(arr) {
+    const mapText = function(arr) {
       return (arr || []).map(function(item) { return item.text || item || ''; }).filter(Boolean);
     };
     return {
@@ -100,7 +100,7 @@ window.REGION_LABELS = {
   }
 
   function transformAdvisorProfile(school) {
-    var ap = school.advisorProfile;
+    const ap = school.advisorProfile;
     if (!ap || !school.slug) return null;
     return {
       gender: ap.gender || 'all',
@@ -118,14 +118,14 @@ window.REGION_LABELS = {
   }
 
   function setDataFromApi(rawSchools, extrasJson, schoolsJson) {
-    var SCHOOLS_DATA = {};
-    var ADVISOR_PROFILES = {};
+    const SCHOOLS_DATA = {};
+    const ADVISOR_PROFILES = {};
 
     rawSchools.forEach(function(school) {
-      var slug = school.slug;
+      const slug = school.slug;
       if (!slug) return;
       SCHOOLS_DATA[slug] = transformSchool(school);
-      var ap = transformAdvisorProfile(school);
+      const ap = transformAdvisorProfile(school);
       if (ap) ADVISOR_PROFILES[slug] = ap;
     });
 
@@ -133,11 +133,11 @@ window.REGION_LABELS = {
     window.ADVISOR_PROFILES = ADVISOR_PROFILES;
 
     // Semesters
-    var semestersData = (extrasJson.data && extrasJson.data.semesters) || [];
+    const semestersData = (extrasJson.data && extrasJson.data.semesters) || [];
     window.SEMESTERS_LIST = semestersData;
 
-    var activeSemId = extrasJson.data && extrasJson.data.activeSemesterId;
-    var activeSem = semestersData.find(function(s) { return s.id === activeSemId; }) || semestersData[0] || null;
+    const activeSemId = extrasJson.data && extrasJson.data.activeSemesterId;
+    const activeSem = semestersData.find(function(s) { return s.id === activeSemId; }) || semestersData[0] || null;
     window.ACTIVE_SEMESTER_ID = activeSem ? activeSem.id : null;
 
     window.SEMESTER_INFO = activeSem
@@ -145,10 +145,10 @@ window.REGION_LABELS = {
       : { ky: '3', nam: '2027', title: 'DANH SÁCH TRƯỜNG HÀN QUỐC - KỲ THÁNG 3/2027' };
 
     // Semester-schools map
-    var rawMap = schoolsJson.semesterSchools || {};
-    var slugMap = {};
+    const rawMap = schoolsJson.semesterSchools || {};
+    const slugMap = {};
     rawSchools.forEach(function(sch) {
-      var sids = rawMap[sch.id];
+      const sids = rawMap[sch.id];
       if (sids && sids.length > 0 && sch.slug) {
         slugMap[sch.slug] = sids;
       }
@@ -156,7 +156,7 @@ window.REGION_LABELS = {
     window.SEMESTER_SCHOOLS_MAP = slugMap;
 
     // Extra sheets (visa checklist)
-    var visaList = (extrasJson.data && extrasJson.data.visaChecklist) || [];
+    const visaList = (extrasJson.data && extrasJson.data.visaChecklist) || [];
     window.EXTRA_SHEETS = {
       visaChecklist: {
         items: visaList.map(function(item) {
@@ -175,10 +175,10 @@ window.REGION_LABELS = {
     window.CHECKLIST_GROUPED = buildChecklistGroups(visaList);
 
     // Update page title & subtitle
-    var si = window.SEMESTER_INFO;
+    const si = window.SEMESTER_INFO;
     if (si && si.ky && si.nam) {
-      var semesterTitle = 'Kỳ tháng ' + si.ky + '/' + si.nam;
-      var sub = document.querySelector('.subtitle');
+      const semesterTitle = 'Kỳ tháng ' + si.ky + '/' + si.nam;
+      const sub = document.querySelector('.subtitle');
       if (sub) sub.textContent = semesterTitle;
     }
   }
@@ -191,7 +191,7 @@ window.REGION_LABELS = {
       const controller = new AbortController();
       const timeout = setTimeout(function() { controller.abort(); }, 15000);
 
-      var ts = Date.now();
+      const ts = Date.now();
       const [schoolsRes, extrasRes] = await Promise.all([
         fetch(API_BASE + '/schools?_=' + ts, { signal: controller.signal }),
         fetch(API_BASE + '/extras?_=' + ts, { signal: controller.signal })
@@ -205,7 +205,7 @@ window.REGION_LABELS = {
 
       const schoolsJson = await schoolsRes.json();
       const extrasJson = await extrasRes.json();
-      var rawSchools = schoolsJson.data || [];
+      const rawSchools = schoolsJson.data || [];
 
       setDataFromApi(rawSchools, extrasJson, schoolsJson);
 

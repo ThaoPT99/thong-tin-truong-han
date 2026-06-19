@@ -10,8 +10,8 @@ const PRIORITY_LABELS = {
 
 /** Parse nhanh ho so tu text: "nu, 20t, GPA 6.0, topik 2" */
 function parseQuickProfile(text) {
-  var q = (text || '').toLowerCase().trim();
-  var profile = { gender: '', age: 0, gpa: 0, absences: 10, korean: 'none', visaFail: 'no', region: 'any', budget: 'medium', priorities: ['visa', 'job'] };
+  const q = (text || '').toLowerCase().trim();
+  const profile = { gender: '', age: 0, gpa: 0, absences: 10, korean: 'none', visaFail: 'no', region: 'any', budget: 'medium', priorities: ['visa', 'job'] };
 
   if (!q) return profile;
 
@@ -20,15 +20,15 @@ function parseQuickProfile(text) {
   else if (q.indexOf('nam') !== -1 || q.indexOf('male') !== -1) profile.gender = 'male';
 
   // Age
-  var ageMatch = q.match(/(\d+)\s*(t|tuoi|tuổi|age)/);
+  const ageMatch = q.match(/(\d+)\s*(t|tuoi|tuổi|age)/);
   if (ageMatch) profile.age = parseInt(ageMatch[1], 10);
 
   // GPA
-  var gpaMatch = q.match(/gpa\s*[:.]?\s*([\d.]+)/);
+  const gpaMatch = q.match(/gpa\s*[:.]?\s*([\d.]+)/);
   if (gpaMatch) profile.gpa = parseFloat(gpaMatch[1]);
 
   // Absences
-  var absMatch = q.match(/(?:nghi|vang|absences?)\s*[:.]?\s*(\d+)/);
+  const absMatch = q.match(/(?:nghi|vang|absences?)\s*[:.]?\s*(\d+)/);
   if (absMatch) profile.absences = parseInt(absMatch[1], 10);
 
   // Korean level
@@ -50,7 +50,7 @@ function parseQuickProfile(text) {
   else if (q.indexOf('cao') !== -1 || q.indexOf('khong ngan') !== -1) profile.budget = 'high';
 
   // Priorities
-  var prios = [];
+  const prios = [];
   if (q.indexOf('visa') !== -1) prios.push('visa');
   if (q.indexOf('viec lam') !== -1 || q.indexOf('job') !== -1) prios.push('job');
   if (q.indexOf('chi phi') !== -1 || q.indexOf('cost') !== -1) prios.push('cost');
@@ -183,7 +183,7 @@ function bindAdvisorEvents(container) {
 
   if (quickInput && quickBtn) {
     quickBtn.addEventListener("click", function() {
-      var profile = parseQuickProfile(quickInput.value);
+      const profile = parseQuickProfile(quickInput.value);
       if (profile.gender) form.querySelector('[name="gender"]').value = profile.gender;
       if (profile.age > 0) form.querySelector('[name="age"]').value = profile.age;
       if (profile.gpa > 0) form.querySelector('[name="gpa"]').value = profile.gpa;
@@ -260,7 +260,7 @@ function analyzeSchools(profile) {
 
 function scoreSchool(schoolId, school, profile) {
   // Ưu tiên: 1) API advisor profiles > 2) Fallback
-  var profiles = window.ADVISOR_PROFILES || {};
+  const profiles = window.ADVISOR_PROFILES || {};
   let rules = null;
   if (profiles[schoolId]) {
     rules = Object.assign({}, profiles[schoolId]);
@@ -329,7 +329,7 @@ function scoreSchool(schoolId, school, profile) {
 
   if (profile.region !== "any") {
     // Normalize school region for comparison (gyeonggi/incheon → near-seoul)
-    var schoolRegionNorm = rules.region;
+    let schoolRegionNorm = rules.region;
     if (schoolRegionNorm === 'gyeonggi' || schoolRegionNorm === 'incheon') {
       schoolRegionNorm = 'near-seoul';
     }

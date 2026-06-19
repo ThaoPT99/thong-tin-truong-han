@@ -1,10 +1,10 @@
 // sw.js — Service Worker: cache API responses & static assets
 // Giúp tải trang nhanh hơn ở lần truy cập sau
 
-var CACHE_NAME = 'd26-cache-v2';
+const CACHE_NAME = 'd26-cache-v2';
 
 // Static assets cần pre-cache ngay khi cài đặt
-var PRECACHE_URLS = [
+const PRECACHE_URLS = [
   '/',
   '/styles.css',
   '/js/api-loader.js',
@@ -48,12 +48,12 @@ self.addEventListener('fetch', function(event) {
   // Chỉ cache GET requests (POST/PUT/DELETE không được Cache API hỗ trợ)
   if (event.request.method !== 'GET') return;
 
-  var url = new URL(event.request.url);
+  const url = new URL(event.request.url);
 
   // Chỉ xử lý request cùng origin (không proxy CDN, Google Fonts, v.v.)
   if (url.origin !== self.location.origin) return;
 
-  var path = url.pathname;
+  const path = url.pathname;
 
   // === API endpoints: network-first (không cache, luôn lấy dữ liệu mới) ===
   if (path.startsWith('/api/')) {
@@ -78,7 +78,7 @@ self.addEventListener('fetch', function(event) {
     event.respondWith(
       caches.open(CACHE_NAME).then(function(cache) {
         return cache.match(event.request).then(function(cached) {
-          var fetchPromise = fetch(event.request).then(function(response) {
+          const fetchPromise = fetch(event.request).then(function(response) {
             if (response && response.status === 200) {
               cache.put(event.request, response.clone());
             }
