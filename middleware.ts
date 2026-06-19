@@ -285,7 +285,7 @@ export default async function middleware(request: Request): Promise<Response | v
     <h1>404 Not Found</h1>
     <p>Trang bạn tìm kiếm không tồn tại hoặc đã bị gỡ bỏ.</p>
     
-    <div class="footer">Thông Tin Trường Hàn - Private Product</div>
+    <div class="footer"></div>
   </div>
 </body>
 </html>
