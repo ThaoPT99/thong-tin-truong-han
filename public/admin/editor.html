@@ -439,7 +439,7 @@ async function init() {
     document.getElementById('save-btn').textContent = '💾 Cập nhật';
 
     try {
-      const res = await api('GET', '/schools/' + encodeURIComponent(slug));
+      const res = await api('GET', '/schools?slug=' + encodeURIComponent(slug));
       const school = res.data;
       originalData = school;
       populateForm(school);
