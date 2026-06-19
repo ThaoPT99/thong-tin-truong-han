@@ -270,34 +270,6 @@ export default async function middleware(request: Request): Promise<Response | v
     }
     h1 { color: #1e3a5f; font-size: 28px; font-weight: 700; margin-bottom: 12px; }
     p { color: #6b7280; font-size: 16px; line-height: 1.6; margin-bottom: 24px; }
-    .reason-box {
-      background: #fef2f2;
-      border: 1px solid #fecaca;
-      border-radius: 8px;
-      padding: 16px;
-      margin: 24px 0;
-      color: #991b1b;
-      font-size: 14px;
-      text-align: left;
-    }
-    .reason-label { font-weight: 600; color: #991b1b; margin-bottom: 8px; font-size: 13px; }
-    .reason-value { font-family: monospace; font-size: 13px; }
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 12px 24px;
-      background: #2563eb;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 15px;
-      cursor: pointer;
-      text-decoration: none;
-      transition: background 0.2s;
-    }
-    .btn:hover { background: #1d4ed8; }
     .footer { margin-top: 32px; color: #9ca3af; font-size: 13px; }
   </style>
 </head>
@@ -313,21 +285,8 @@ export default async function middleware(request: Request): Promise<Response | v
     <h1>404 Not Found</h1>
     <p>Trang bạn tìm kiếm không tồn tại hoặc đã bị gỡ bỏ.</p>
     
-    <div class="reason-box">
-      <div class="reason-label">Lý do:</div>
-      <div class="reason-value" id="reason-text"></div>
-    </div>
-    
-    <a href="/" class="btn">← Về trang chủ</a>
-    
     <div class="footer">Thông Tin Trường Hàn - Private Product</div>
   </div>
-  <script>
-    // Lấy lý do từ URL
-    const params = new URLSearchParams(window.location.search);
-    const reason = params.get('reason') || 'không xác định';
-    document.getElementById('reason-text').textContent = reason;
-  </script>
 </body>
 </html>
       `;
