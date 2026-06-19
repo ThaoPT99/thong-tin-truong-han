@@ -33,7 +33,25 @@ module.exports = async (req, res) => {
       semesterSchoolsMap[ss.school_id].push(ss.semester_id);
     }
 
-    // ─── GET /api/schools?slug=xxx — Chi tiết 1 trường (full join) ───
+    // Helper: fetch advisor profiles for given school IDs
+    async function fetchAdvisorProfiles(schoolIds) {
+      if (!schoolIds || schoolIds.length === 0) return {};
+      const { data, error } = await supabase
+        .from('school_advisor_profiles')
+        .select('*')
+        .in('school_id', schoolIds);
+      if (error) {
+        console.error('fetchAdvisorProfiles error:', error);
+        return {};
+      }
+      const map = {};
+      for (const ap of data || []) {
+        map[ap.school_id] = ap;
+      }
+      return map;
+    }
+
+    // ─── GET /api/schools?slug=xxx — Chi tiết 1 trường ───
     if (slug) {
       const { data, error } = await supabase
         .from('schools')
@@ -44,8 +62,7 @@ module.exports = async (req, res) => {
           school_advantages(*),
           school_conversions(*),
           school_documents(*),
-          school_partners(*),
-          school_advisor_profiles(*)
+          school_partners(*)
         `)
         .eq('slug', slug)
         .single();
@@ -57,13 +74,16 @@ module.exports = async (req, res) => {
         throw error;
       }
 
+      // Fetch advisor profile separately (bypass RLS join issue)
+      const advisorMap = await fetchAdvisorProfiles([data.id]);
+      const advisorProfiles = advisorMap[data.id] ? [advisorMap[data.id]] : [];
+
       const conditions = data.school_conditions || [];
       const majors = data.school_majors || [];
       const advantages = data.school_advantages || [];
       const conversion = data.school_conversions || [];
       const documents = data.school_documents || [];
       const partners = data.school_partners || [];
-      const advisorProfiles = data.school_advisor_profiles || [];
 
       const result = {
         ...data,
@@ -73,7 +93,6 @@ module.exports = async (req, res) => {
         school_conversions: undefined,
         school_documents: undefined,
         school_partners: undefined,
-        school_advisor_profiles: undefined,
         conditions,
         majors,
         advantages,
@@ -97,8 +116,7 @@ module.exports = async (req, res) => {
         school_advantages(*),
         school_conversions(*),
         school_documents(*),
-        school_partners(*),
-        school_advisor_profiles(*)
+        school_partners(*)
       `) : supabase.from('schools').select('*');
 
     // Semester filter
@@ -120,7 +138,10 @@ module.exports = async (req, res) => {
     if (error) throw error;
 
     if (fullQuery) {
-      // Full response (giống slug detail nhưng list)
+      // Fetch advisor profiles for all schools in batch
+      const schoolIds = (data || []).map(s => s.id);
+      const advisorMap = await fetchAdvisorProfiles(schoolIds);
+
       const result = (data || []).map((school) => ({
         ...school,
         school_conditions: undefined,
@@ -129,14 +150,13 @@ module.exports = async (req, res) => {
         school_conversions: undefined,
         school_documents: undefined,
         school_partners: undefined,
-        school_advisor_profiles: undefined,
         conditions: school.school_conditions || [],
         majors: school.school_majors || [],
         advantages: school.school_advantages || [],
         conversion: school.school_conversions || [],
         documents: school.school_documents || [],
         partners: school.school_partners || [],
-        advisorProfile: (school.school_advisor_profiles || []).length > 0 ? school.school_advisor_profiles[0] : null,
+        advisorProfile: advisorMap[school.id] || null,
         semesterIds: semesterSchoolsMap[school.id] || [],
       }));
 
