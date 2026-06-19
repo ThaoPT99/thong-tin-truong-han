@@ -116,10 +116,10 @@ module.exports = requireAdmin(async (req, res) => {
         return res.status(400).json({ error: 'School ID is required' });
       }
 
-      // Check school exists
+      // Check school exists — lấy full record để làm fallback
       const { data: existingSchool, error: findErr } = await supabase
         .from('schools')
-        .select('id, slug, name')
+        .select('*')
         .eq('id', id)
         .maybeSingle();
 
@@ -140,39 +140,38 @@ module.exports = requireAdmin(async (req, res) => {
       // ─── PUT (update) ───
       const body = (req.body && typeof req.body === 'object') ? req.body : {};
 
-      // Update school row
+      // Helper: dùng giá trị mới nếu được gửi, giữ nguyên nếu không
+      const val = (field, fallback) => body[field] !== undefined ? body[field] : fallback;
+
+      // Update school row — chỉ ghi đè các field được gửi lên
       const updateData = {
-        name: body.name || existingSchool.name,
-        name_kr: body.nameKr || '',
-        name_en: body.nameEn || '',
-        system: body.system || '',
-        quota: body.quota || 0,
-        region: body.region || '',
-        location: body.location || '',
-        intro: body.intro || '',
-        tuition: body.tuition || '',
-        insurance: body.insurance || '',
-        ktx: body.ktx || '',
-        schedule: body.schedule || '',
-        documents_note: body.documentsNote || '',
-        mou: body.mou || '',
-        website: body.website || '',
-        catalog_url: body.catalogUrl || '',
-        invoice_url: body.invoiceUrl || '',
-        video_url: body.videoUrl || '',
-        video_youtube_id: body.videoYoutubeId || '',
-        video_title: body.videoTitle || '',
-        image_main: body.imageMain || 'images/placeholder.svg',
-        image_catalog: body.imageCatalog || '',
-        image_location: body.imageLocation || '',
-        image_invoice: body.imageInvoice || '',
+        name: val('name', existingSchool.name),
+        name_kr: val('nameKr', existingSchool.name_kr || ''),
+        name_en: val('nameEn', existingSchool.name_en || ''),
+        system: val('system', existingSchool.system || ''),
+        quota: val('quota', existingSchool.quota || 0),
+        region: val('region', existingSchool.region || ''),
+        location: val('location', existingSchool.location || ''),
+        intro: val('intro', existingSchool.intro || ''),
+        tuition: val('tuition', existingSchool.tuition || ''),
+        insurance: val('insurance', existingSchool.insurance || ''),
+        ktx: val('ktx', existingSchool.ktx || ''),
+        schedule: val('schedule', existingSchool.schedule || ''),
+        documents_note: val('documentsNote', existingSchool.documents_note || ''),
+        mou: val('mou', existingSchool.mou || ''),
+        website: val('website', existingSchool.website || ''),
+        catalog_url: val('catalogUrl', existingSchool.catalog_url || ''),
+        invoice_url: val('invoiceUrl', existingSchool.invoice_url || ''),
+        video_url: val('videoUrl', existingSchool.video_url || ''),
+        video_youtube_id: val('videoYoutubeId', existingSchool.video_youtube_id || ''),
+        video_title: val('videoTitle', existingSchool.video_title || ''),
+        image_main: val('imageMain', existingSchool.image_main || 'images/placeholder.svg'),
+        image_catalog: val('imageCatalog', existingSchool.image_catalog || ''),
+        image_location: val('imageLocation', existingSchool.image_location || ''),
+        image_invoice: val('imageInvoice', existingSchool.image_invoice || ''),
+        internal_note: val('internalNote', existingSchool.internal_note || ''),
         updated_at: new Date().toISOString(),
       };
-
-      // Chỉ update internal_note nếu có gửi lên (tránh lỗi schema cache)
-      if (body.internalNote !== undefined) {
-        updateData.internal_note = body.internalNote;
-      }
 
       const { error: updErr } = await supabase
         .from('schools').update(updateData).eq('id', schoolId);
