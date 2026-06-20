@@ -45,38 +45,8 @@
     checkAutoShowPopup();
   }
 
-  // Dark mode toggle
-  function initThemeToggle() {
-    const btn = document.getElementById("theme-toggle");
-    const icon = document.getElementById("theme-icon");
-    if (!btn) return;
-
-    try {
-      const saved = localStorage.getItem("d26Theme");
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      if (saved === "dark" || (!saved && prefersDark)) {
-        document.documentElement.setAttribute("data-theme", "dark");
-        if (icon) icon.textContent = "☀️";
-      }
-    } catch (e) {}
-
-    btn.addEventListener("click", () => {
-      const isDark = document.documentElement.getAttribute("data-theme") === "dark";
-      if (isDark) {
-        document.documentElement.removeAttribute("data-theme");
-        try { localStorage.setItem("d26Theme", "light"); } catch (e) {}
-        if (icon) icon.textContent = "🌙";
-      } else {
-        document.documentElement.setAttribute("data-theme", "dark");
-        try { localStorage.setItem("d26Theme", "dark"); } catch (e) {}
-        if (icon) icon.textContent = "☀️";
-      }
-    });
-  }
-
   function initAll() {
     initZaloPopup();
-    initThemeToggle();
   }
 
   if (document.readyState === "loading") {

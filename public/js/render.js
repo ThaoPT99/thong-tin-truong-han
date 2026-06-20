@@ -1439,7 +1439,7 @@ function drawRadarLegend(ctx, cx, h, activeSchools, isDark, hoveredIndex) {
 function renderRadarChart(canvas, schools) {
   if (!canvas || !schools || !schools.length) return;
 
-  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const isDark = false; // dark mode removed
   const dpr = window.devicePixelRatio || 1;
 
   const parent = canvas.parentElement;

@@ -255,7 +255,6 @@ function buildSchoolHtml(school, semesterInfo) {
     </div>
   </div>
 
-  <button type="button" class="theme-toggle" id="theme-toggle" title="Chuyển đổi giao diện" aria-label="Chuyển đổi sáng/tối">
     <span id="theme-icon">🌙</span>
   </button>
 

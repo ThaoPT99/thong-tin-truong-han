@@ -321,9 +321,6 @@ body {
     border-radius: 8px;
 }
 
-[data-theme="dark"] .skeleton {
-    background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
-}
 
 .skeleton-loader {
     padding: 2rem 1.5rem;
@@ -354,9 +351,6 @@ body {
     border-radius: 8px;
 }
 
-[data-theme="dark"] .school-name-grid.skeleton-loading .skeleton-card {
-    background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
-}
 
 .skeleton-line {
     height: 14px;
@@ -1643,24 +1637,10 @@ body {
 }
 
 /* Dark mode support */
-[data-theme="dark"] .compare-table td.better {
-    background: #064e3b !important;
-    color: #d1fae5;
-}
 
-[data-theme="dark"] .compare-table td.worse {
-    background: #7f1d1d !important;
-    color: #fee2e2;
-}
 
-[data-theme="dark"] .compare-table td:first-child {
-    background: #1e293b;
-    color: #f1f5f9;
-}
 
-[data-theme="dark"] .compare-table th {
-    background: #1e3a5f;
-}
+
 body.zalo-popup-open {
     overflow: hidden;
 }
@@ -1867,24 +1847,11 @@ body.zalo-popup-open {
   border-color: #2563eb;
 }
 
-[data-theme="dark"] .semester-selector {
-  background: #1e293b;
-  border-color: #334155;
-}
-[data-theme="dark"] .semester-selector label {
-  color: #94a3b8;
-}
-[data-theme="dark"] .semester-selector select {
-  background: #0f172a;
-  border-color: #334155;
-  color: #e2e8f0;
-}
 
 /* ===== PRINT STYLES ===== */
 @media print {
     .app-sidebar,
     .zalo-fab,
-    .theme-toggle,
     .tab-btn,
     .school-tabs,
     .detail-actions,
@@ -2032,167 +1999,12 @@ body.zalo-popup-open {
 }
 
 /* ===== DARK MODE ===== */
-[data-theme="dark"] {
-  --bg: #0f172a;
-  --table-bg: #1e293b;
-  --header-bg: linear-gradient(135deg, #0a1628 0%, #1a365d 100%);
-  --label-bg: #1e293b;
-  --border: #334155;
-  --text: #e2e8f0;
-  --text-muted: #94a3b8;
-  --accent: #3b82f6;
-  --accent-soft: #1e3a5f;
 
-  background: var(--bg);
-  color: var(--text);
-}
 
-[data-theme="dark"] .app-sidebar {
-  background: #0a1628;
-}
-[data-theme="dark"] .sidebar-zalo {
-  background: #0f2940;
-}
-[data-theme="dark"] .school-tabs {
-  background: #1e293b;
-  border-bottom-color: #334155;
-}
-[data-theme="dark"] .tab-btn {
-  background: #1e293b;
-  color: #94a3b8;
-}
-[data-theme="dark"] .tab-btn.active {
-  background: #3b82f6;
-  color: #fff;
-}
-[data-theme="dark"] .sheet-view,
-[data-theme="dark"] .advisor-view,
-[data-theme="dark"] .d26-checklist,
-[data-theme="dark"] .compare-table-wrap,
-[data-theme="dark"] .school-list-wrap,
-[data-theme="dark"] .school-card,
-[data-theme="dark"] .directory-head,
-[data-theme="dark"] .compare-picker,
-[data-theme="dark"] .docs-panel,
-[data-theme="dark"] .data-health,
-[data-theme="dark"] .app-topbar,
-[data-theme="dark"] .footer {
-  background: #1e293b;
-  border-color: #334155;
-}
-[data-theme="dark"] .app-topbar {
-  background: rgba(30, 41, 59, 0.92);
-}
-[data-theme="dark"] .data-table tbody tr:hover,
-[data-theme="dark"] .school-list-table tbody tr:hover {
-  background: #0f172a;
-}
-[data-theme="dark"] .col-label {
-  background: #1e293b;
-}
-[data-theme="dark"] .col-value {
-  background: #0f172a;
-}
-[data-theme="dark"] .checklist-item:hover {
-  background: #0f2940;
-}
-[data-theme="dark"] .recent-schools {
-  background: #1e293b;
-  border-color: #334155;
-}
-[data-theme="dark"] .zalo-popup-card {
-  background: #1e293b;
-  color: #e2e8f0;
-}
-[data-theme="dark"] .zalo-popup-title {
-  color: #e2e8f0;
-}
 
-[data-theme="dark"] .guide-menu,
-[data-theme="dark"] .guide-content {
-  background: #1e293b;
-  border-color: #334155;
-}
-[data-theme="dark"] .guide-menu button {
-  color: #94a3b8;
-}
-[data-theme="dark"] .guide-menu button.active,
-[data-theme="dark"] .guide-menu button:hover {
-  background: #0f2940;
-  color: #2dd4bf;
-}
-[data-theme="dark"] .school-name-item {
-  background: #1e293b;
-  border-color: #334155;
-  color: #e2e8f0;
-}
-[data-theme="dark"] .school-name-item:hover {
-  background: #0f2940;
-  border-color: #3b82f6;
-  color: #60a5fa;
-}
-[data-theme="dark"] .detail-table {
-  background: #1e293b;
-}
-[data-theme="dark"] .detail-card {
-  background: #1e293b;
-  border-color: #334155;
-}
-[data-theme="dark"] .detail-overview {
-  background: #1e293b;
-  border-color: #334155;
-}
-[data-theme="dark"] .detail-overview div {
-  background: #0f172a;
-}
-[data-theme="dark"] .guide-highlight-grid article,
-[data-theme="dark"] .guide-list-grid article,
-[data-theme="dark"] .guide-doc-groups article {
-  background: #0f172a;
-  border-color: #334155;
-}
-[data-theme="dark"] .data-table th,
-[data-theme="dark"] .data-table td,
-[data-theme="dark"] .compare-table td,
-[data-theme="dark"] .compare-table th {
-  border-color: #334155;
-}
-[data-theme="dark"] .checklist-group {
-  background: #0f172a;
-}
-[data-theme="dark"] .checklist-group h3 {
-  background: #1e293b;
-}
-[data-theme="dark"] .docs-section-head {
-  background: #0f172a;
-}
 
 /* Dark mode toggle button */
-.theme-toggle {
-  position: fixed;
-  right: 1rem;
-  bottom: 5rem;
-  z-index: 9998;
-  width: 2.6rem;
-  height: 2.6rem;
-  border: 1px solid var(--border);
-  border-radius: 50%;
-  background: var(--table-bg);
-  color: var(--text);
-  font-size: 1.2rem;
-  cursor: pointer;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.15);
-  transition: transform 0.2s;
-}
-.theme-toggle:hover {
-  transform: scale(1.1);
-}
 
-[data-theme="dark"] .theme-toggle {
-  border-color: #334155;
-  background: #1e293b;
-  color: #fbbf24;
-}
 
 /* Radar Chart for Compare */
 .compare-radar-wrap {
@@ -2222,13 +2034,6 @@ body.zalo-popup-open {
   border-radius: 8px;
 }
 
-[data-theme="dark"] .compare-radar-wrap {
-  background: #1e293b;
-  border-color: #334155;
-}
-[data-theme="dark"] .compare-radar-head h3 {
-  color: #e2e8f0;
-}
 
 /* Cost Calculator */
 .cost-calc {
@@ -2368,45 +2173,6 @@ body.zalo-popup-open {
   line-height: 1.5;
 }
 
-[data-theme="dark"] .cost-calc-head {
-  background: linear-gradient(135deg, #0a1628 0%, #1a365d 100%);
-}
-[data-theme="dark"] .cost-calc-form,
-[data-theme="dark"] .cost-calc-result {
-  background: #1e293b;
-  border-color: #334155;
-}
-[data-theme="dark"] .cost-calc-form h3,
-[data-theme="dark"] .cost-calc-result h3 {
-  color: #e2e8f0;
-}
-[data-theme="dark"] .cost-calc-field label {
-  color: #94a3b8;
-}
-[data-theme="dark"] .cost-calc-field input,
-[data-theme="dark"] .cost-calc-field select {
-  background: #0f172a;
-  border-color: #334155;
-  color: #e2e8f0;
-}
-[data-theme="dark"] .cost-calc-field input[readonly] {
-  background: #0f172a;
-  color: #94a3b8;
-}
-[data-theme="dark"] .cost-table th {
-  background: #0f172a;
-  color: #94a3b8;
-}
-[data-theme="dark"] .cost-table td {
-  border-color: #334155;
-}
-[data-theme="dark"] .cost-table td:first-child {
-  color: #e2e8f0;
-}
-[data-theme="dark"] .cost-table tr.total td {
-  border-top-color: #475569;
-  color: #2dd4bf;
-}
 
 @media (max-width: 760px) {
   .cost-calc-body {
@@ -2861,14 +2627,7 @@ html {
   font-weight: 400;
   opacity: 0.7;
 }
-[data-theme="dark"] .smart-chip-region {
-  background: #1e3a5f;
-  color: #93c5fd;
-}
-[data-theme="dark"] .smart-chip-tag {
-  background: #0f2940;
-  color: #5eead4;
-}
+
 
 /* Search autocomplete */
 .search-suggestions {
