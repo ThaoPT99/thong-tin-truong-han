@@ -24,8 +24,9 @@
     container.id = 'ai-chat-widget';
     container.innerHTML = `
       <button type="button" id="ai-chat-fab" class="ai-chat-fab" aria-label="Mở chat AI" title="Hỏi AI về trường và visa">
-        <svg class="ai-chat-fab-icon" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        <svg class="ai-chat-fab-icon" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2l.5 9.5L22 12l-9.5.5L12 22l-.5-9.5L2 12l9.5-.5z"/>
+          <path d="M18 4l.5 3.5L22 8l-3.5.5L18 12l-.5-3.5L14 8l3.5-.5z"/>
         </svg>
         <svg class="ai-chat-fab-close" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:none">
           <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>

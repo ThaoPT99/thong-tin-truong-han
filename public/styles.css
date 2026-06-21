@@ -1835,7 +1835,7 @@ body.zalo-popup-open {
     position: fixed;
     right: 5rem;
     bottom: 1.25rem;
-    z-index: 9999;
+    z-index: 9998;
     display: flex;
     align-items: center;
     gap: 0.35rem;
@@ -1861,12 +1861,12 @@ body.zalo-popup-open {
    AI Chat Widget
    ═══════════════════════════════════════════════════ */
 
-/* Floating action button */
+/* Floating action button — rightmost position, highest priority */
 .ai-chat-fab {
     position: fixed;
-    right: 5rem;
+    right: 1.25rem;
     bottom: 1.25rem;
-    z-index: 9998;
+    z-index: 10000;
     display: flex;
     align-items: center;
     justify-content: center;
