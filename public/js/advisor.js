@@ -250,7 +250,7 @@ function bindAdvisorEvents(container) {
       aiResponse.textContent = '⏳ Đang gọi AI phân tích hồ sơ...';
 
       try {
-        const res = await fetch('/api/deepseek/advisor', {
+        const res = await fetch('/api/deepseek?action=advisor', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(profile),

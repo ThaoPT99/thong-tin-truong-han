@@ -447,7 +447,7 @@ function bindSchoolsDirectory(container) {
         intents.tags = cached.tags;
       } else if (!aiSearchInFlight) {
         aiSearchInFlight = true;
-        fetch('/api/deepseek/search-parse', {
+        fetch('/api/deepseek?action=search-parse', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ query: q }),
@@ -883,7 +883,7 @@ function bindSchoolDetail(container, schoolId) {
       this.disabled = true;
       this.textContent = '⏳ Đang soạn...';
       try {
-        const res = await fetch('/api/deepseek/generate-zalo', {
+        const res = await fetch('/api/deepseek?action=generate-zalo', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ slug: school.slug || school.id }),
