@@ -121,10 +121,22 @@ async function handleTrack(req, res) {
       });
       if (viewErr) throw viewErr;
 
-      // Cập nhật IP cache (chỉ lưu 1 dòng/IP, không đầy DB)
+      // Cập nhật IP cache: check cache trước, chỉ resolve IP mới
       try {
-        const location = await resolveIpLocation(clientIp);
-        await updateIpCache(clientIp, userAgent, location);
+        const { data: cached } = await supabase
+          .from('analytics_ip_cache')
+          .select('ip')
+          .eq('ip', clientIp)
+          .maybeSingle();
+
+        if (cached) {
+          // Đã cache → chỉ tăng biến đếm, không resolve lại
+          await updateIpCache(clientIp, userAgent, null);
+        } else {
+          // IP mới → resolve location rồi cache
+          const location = await resolveIpLocation(clientIp);
+          await updateIpCache(clientIp, userAgent, location);
+        }
       } catch { /* silent */ }
 
       break;
@@ -193,10 +205,20 @@ async function handleTrack(req, res) {
           });
         }
 
-        // Cập nhật IP cache (chỉ lưu 1 dòng/IP)
+        // Cập nhật IP cache: check cache trước, chỉ resolve IP mới
         try {
-          const location = await resolveIpLocation(clientIp);
-          await updateIpCache(clientIp, userAgent, location);
+          const { data: cached } = await supabase
+            .from('analytics_ip_cache')
+            .select('ip')
+            .eq('ip', clientIp)
+            .maybeSingle();
+
+          if (cached) {
+            await updateIpCache(clientIp, userAgent, null);
+          } else {
+            const location = await resolveIpLocation(clientIp);
+            await updateIpCache(clientIp, userAgent, location);
+          }
         } catch { /* silent */ }
       }
       break;
