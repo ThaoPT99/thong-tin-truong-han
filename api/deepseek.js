@@ -886,6 +886,101 @@ function escapeHtmlTelegram(str) {
 }
 
 // ═══════════════════════════════════════════════════
+// ─── Action: Chat Web (action=chat-web)
+// Chat AI widget trên website — khách hỏi về trường, visa, điều kiện...
+// ═══════════════════════════════════════════════════
+async function handleChatWeb(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  const apiKey = getDeepSeekKey();
+  if (!apiKey) {
+    return res.json({ success: false, error: 'AI chưa được cấu hình.', answer: 'Xin lỗi, tính năng AI chưa sẵn sàng. Vui lòng quay lại sau!' });
+  }
+
+  const { message } = req.body || {};
+  if (!message || message.trim().length < 2) {
+    return res.json({ success: false, error: 'Vui lòng nhập câu hỏi.', answer: '' });
+  }
+
+  try {
+    const query = message.trim();
+
+    // Lấy dữ liệu trường + visa checklist để AI có context trả lời
+    const [schoolsRes, checklistRes, interviewsRes, semRes] = await Promise.all([
+      supabase.from('schools').select('slug, name, name_kr, system, location, tuition, ktx, quota, region, catalog_url, website, intro, school_conditions(text), school_majors(text), school_advantages(text)').order('slug'),
+      supabase.from('extra_visa_checklist').select('content, level, note').order('sort_order'),
+      supabase.from('extra_interviews').select('content').order('sort_order'),
+      supabase.from('semesters').select('ky, nam, title').eq('is_active', true).maybeSingle(),
+    ]);
+
+    const schools = schoolsRes.data || [];
+    const checklist = checklistRes.data || [];
+    const interviews = interviewsRes.data || [];
+    const activeSem = semRes.data;
+
+    // Build school summary
+    const schoolSummary = schools.map(s => {
+      const conditions = (s.school_conditions || []).map(c => c.text).join('; ') || 'Chưa rõ';
+      const majors = (s.school_majors || []).map(m => m.text).join(', ') || 'Chưa rõ';
+      const advantages = (s.school_advantages || []).map(a => a.text).join('; ') || 'Chưa có';
+      return `• ${s.name}${s.name_kr ? ` (${s.name_kr})` : ''} | Hệ: ${s.system || 'Chưa rõ'} | KV: ${s.region || 'Chưa rõ'} | Học phí: ${s.tuition || 'Chưa rõ'} | KTX: ${s.ktx || 'Chưa rõ'} | Chỉ tiêu: ${s.quota || 'Chưa rõ'} | Điều kiện: ${conditions} | Chuyên ngành: ${majors} | Ưu điểm: ${advantages}`;
+    }).join('\n');
+
+    // Build visa summary
+    const visaRequired = checklist.filter(c => c.level === 'Bắt buộc').map(c => `• ${c.content}${c.note ? ` (${c.note})` : ''}`).join('\n');
+    const visaRecommended = checklist.filter(c => c.level === 'Khuyến khích' || c.level === 'Bổ sung').map(c => `• ${c.content}${c.note ? ` (${c.note})` : ''}`).join('\n');
+    const interviewSummary = interviews.map(i => `• ${i.content}`).join('\n');
+
+    const semesterText = activeSem ? `Kỳ ${activeSem.ky}/${activeSem.nam}` : 'Chưa cập nhật';
+
+    const systemPrompt = `Bạn là trợ lý AI của website Thông Tin Trường Hàn (thongtintruonghan.vercel.app) — chuyên về visa du học Hàn Quốc diện D2-6.
+
+DỮ LIỆU HIỆN TẠI:
+- Kỳ tuyển sinh: ${semesterText}
+- Tổng số trường: ${schools.length}
+
+=== DANH SÁCH TRƯỜNG ===\n${schoolSummary}
+
+=== CHECKLIST VISA D2-6 (BẮT BUỘC) ===\n${visaRequired || 'Không có dữ liệu'}
+
+=== CHECKLIST VISA D2-6 (KHUYẾN KHÍCH) ===\n${visaRecommended || 'Không có dữ liệu'}
+
+=== CÂU HỎI PHỎNG VẤN ===\n${interviewSummary || 'Không có dữ liệu'}
+
+HƯỚNG DẪN TRẢ LỜI:
+1. Trả lời bằng tiếng Việt, thân thiện, ngắn gọn (tối đa 3-4 câu)
+2. CHỈ dùng thông tin có trong dữ liệu trên, KHÔNG bịa thêm
+3. Nếu câu hỏi về trường cụ thể → tra trong danh sách và trả lời chi tiết
+4. Nếu câu hỏi về visa/điều kiện/thủ tục → dùng checklist + phỏng vấn
+5. Nếu không có thông tin → nói "Thông tin này chưa có trong dữ liệu hiện tại"
+6. Kết thúc gợi ý: mời vào web xem chi tiết hoặc tham gia group Zalo
+7. Có thể dùng emoji nhẹ nhàng 😊`;
+
+    const answer = await callDeepSeek(
+      [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: query },
+      ],
+      { temperature: 0.3, maxTokens: 800, timeout: 20000 }
+    );
+
+    return res.json({
+      success: true,
+      answer: answer || 'Xin lỗi, tôi chưa có câu trả lời cho câu hỏi này. Bạn có thể tham gia nhóm Zalo để được tư vấn trực tiếp nhé!',
+    });
+  } catch (err) {
+    console.error('Chat web error:', err);
+    return res.json({
+      success: false,
+      error: err.message || 'Lỗi xử lý',
+      answer: 'Xin lỗi, đã có lỗi xảy ra. Vui lòng thử lại sau!',
+    });
+  }
+}
+
+// ═══════════════════════════════════════════════════
 // ─── Cron: Daily Report (action=telegram-daily-report)
 // Gọi endpoint này mỗi sáng bằng cron-job.org để nhận báo cáo tự động
 // ═══════════════════════════════════════════════════
@@ -1007,6 +1102,7 @@ module.exports = async (req, res) => {
       case 'search-parse': return await handleSearchParse(req, res);
       case 'generate-description': return await handleGenerateDescription(req, res);
       case 'telegram-webhook': return await handleTelegramWebhook(req, res);
+      case 'chat-web': return await handleChatWeb(req, res);
       case 'telegram-daily-report': return await handleTelegramDailyReport(req, res);
       default:
         return res.status(400).json({ error: `Unknown action: ${action}` });
