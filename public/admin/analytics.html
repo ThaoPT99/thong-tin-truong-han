@@ -153,6 +153,7 @@
         <button data-view="events" onclick="switchView('events')">⚡ Sự kiện</button>
         <button data-view="conversion" onclick="switchView('conversion')">🔄 Chuyển đổi</button>
         <button data-view="locations" onclick="switchView('locations')">📍 Vị trí</button>
+        <button data-view="ip-logs" onclick="switchView('ip-logs')">🖥️ IP Logs</button>
       </div>
 
       <!-- Loading -->
@@ -226,11 +227,11 @@
         </div>
       </div>
 
-      <!-- Locations -->
+      <!-- Locations (aggregated by city) -->
       <div id="view-locations" class="content-views">
         <div class="stats-grid" id="location-stats-grid"></div>
         <div class="chart-card">
-          <div class="chart-header"><h3>📍 Top thành phố / địa điểm</h3><span class="chart-meta">Dựa trên IP người truy cập</span></div>
+          <div class="chart-header"><h3>📍 Top thành phố / địa điểm</h3><span class="chart-meta">Từ IP cache (không trùng lặp)</span></div>
           <div class="chart-body" id="top-locations-container"></div>
         </div>
         <div class="dual-metric">
@@ -241,6 +242,20 @@
           <div class="chart-card">
             <div class="chart-header"><h3>Phân bố theo quốc gia</h3></div>
             <div class="chart-body" id="country-breakdown-container"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- IP Logs (chi tiết từng IP) -->
+      <div id="view-ip-logs" class="content-views">
+        <div class="stats-grid" id="ip-logs-stats-grid"></div>
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3>🖥️ Danh sách IP truy cập</h3>
+            <span class="chart-meta">Mỗi IP chỉ 1 dòng — không lo đầy database</span>
+          </div>
+          <div class="chart-body" id="ip-logs-container">
+            <div class="no-data">Đang tải...</div>
           </div>
         </div>
       </div>
@@ -302,13 +317,14 @@ async function loadDashboard(days) {
   document.getElementById('loading-indicator').style.display = 'block';
 
   try {
-    const [overviewRes, schoolsRes, searchesRes, eventsRes, conversionRes, locationsRes] = await Promise.all([
+    const [overviewRes, schoolsRes, searchesRes, eventsRes, conversionRes, locationsRes, ipLogsRes] = await Promise.all([
       api('GET', API + '?view=overview&days=' + currentDays),
       api('GET', API + '?view=schools&days=' + currentDays),
       api('GET', API + '?view=searches&days=' + currentDays),
       api('GET', API + '?view=events&days=' + currentDays),
       api('GET', API + '?view=conversion&days=' + currentDays),
       api('GET', API + '?view=locations&days=' + currentDays),
+      api('GET', API + '?view=ip-logs&days=' + currentDays),
     ]);
 
     renderOverview(overviewRes.data);
@@ -317,6 +333,7 @@ async function loadDashboard(days) {
     renderEvents(eventsRes.data);
     renderConversion(conversionRes.data);
     renderLocations(locationsRes.data);
+    renderIpLogs(ipLogsRes.data);
 
   } catch (err) {
     toast('Lỗi tải dữ liệu: ' + err.message, 'error');
@@ -868,6 +885,91 @@ function renderLocations(data) {
       </table>
     `;
   }
+}
+
+// ─── IP Logs ───
+function renderIpLogs(data) {
+  if (!data) return;
+
+  document.getElementById('ip-logs-stats-grid').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-label">IP đã ghi nhận</div>
+      <div class="stat-value">${data.totalIps || 0}</div>
+      <div class="stat-sub">${currentDays} ngày qua</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Mỗi IP lưu</div>
+      <div class="stat-value" style="font-size:1rem;color:var(--gray-500)">1 dòng duy nhất</div>
+      <div class="stat-sub">Không trùng lặp → không đầy DB</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">IP có vị trí</div>
+      <div class="stat-value">${(data.ips || []).filter(i => i.city).length}</div>
+      <div class="stat-sub">Đã định vị thành công</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Tổng lượt xem</div>
+      <div class="stat-value">${(data.ips || []).reduce((a, b) => a + (b.totalViews || 0), 0).toLocaleString('vi-VN')}</div>
+      <div class="stat-sub">Từ các IP này</div>
+    </div>
+  `;
+
+  const container = document.getElementById('ip-logs-container');
+  const ips = data.ips || [];
+  if (!ips.length) {
+    container.innerHTML = '<div class="no-data">Chưa có dữ liệu IP — cần người dùng thật truy cập</div>';
+    return;
+  }
+
+  container.innerHTML = `
+    <div style="overflow-x:auto;">
+      <table class="top-schools-table" style="font-size:.82rem;">
+        <thead><tr>
+          <th>IP</th>
+          <th>📍 Vị trí</th>
+          <th>ISP/Nhà mạng</th>
+          <th>Lượt xem</th>
+          <th>Lần cuối</th>
+          <th>Lần đầu</th>
+        </tr></thead>
+        <tbody>
+          ${ips.map(ip => {
+            const flag = ip.country_code ? getFlagEmoji(ip.country_code) : '';
+            const location = ip.city
+              ? `${ip.city}${ip.region ? ', ' + ip.region : ''}`
+              : (ip.country ? flag + ' ' + ip.country : '⏳ Đang chờ');
+            return `<tr>
+              <td><code style="background:var(--gray-100);padding:.15rem .4rem;border-radius:4px;font-size:.8rem;">${escapeHtml(ip.ip)}</code></td>
+              <td><strong>${flag} ${escapeHtml(location)}</strong></td>
+              <td style="color:var(--gray-500);font-size:.78rem;">${escapeHtml(ip.isp || '—')}</td>
+              <td><strong>${ip.totalViews}</strong></td>
+              <td style="font-size:.78rem;">${formatTime(ip.lastSeen)}</td>
+              <td style="font-size:.78rem;color:var(--gray-400);">${formatTime(ip.firstSeen)}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+    <div style="padding:.5rem .75rem;font-size:.78rem;color:var(--gray-400);border-top:1px solid var(--gray-100);display:flex;justify-content:space-between;">
+      <span>Hiển thị ${ips.length} IP — dữ liệu từ ip-api.com (45 req/phút)</span>
+      <span>✅ Mỗi IP chỉ 1 dòng, cập nhật last_seen + total_views</span>
+    </div>
+  `;
+}
+
+function formatTime(dateStr) {
+  if (!dateStr) return '—';
+  const d = new Date(dateStr);
+  const now = new Date();
+  const diff = Math.floor((now - d) / 1000);
+  if (diff < 60) return 'Vừa xong';
+  if (diff < 3600) return Math.floor(diff / 60) + ' phút trước';
+  if (diff < 86400) return Math.floor(diff / 3600) + ' giờ trước';
+  const day = String(d.getDate()).padStart(2, '0');
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const hour = String(d.getHours()).padStart(2, '0');
+  const min = String(d.getMinutes()).padStart(2, '0');
+  return day + '/' + month + ' ' + hour + ':' + min;
 }
 
 // ─── Emoji flag from country code ───

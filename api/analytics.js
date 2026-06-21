@@ -48,6 +48,51 @@ function resolveIpLocation(ip) {
   });
 }
 
+// ─── IP Cache — mỗi IP chỉ lưu 1 dòng (upsert) ───
+async function updateIpCache(ip, userAgent, location) {
+  if (!ip || ip.startsWith('10.') || ip.startsWith('172.16.') || ip.startsWith('192.168.') ||
+      ip === '127.0.0.1' || ip === '::1' || ip === 'localhost' || ip === '') return;
+
+  const now = new Date().toISOString();
+
+  // Kiểm tra cache đã có chưa
+  const { data: existing } = await supabase
+    .from('analytics_ip_cache')
+    .select('ip, total_views')
+    .eq('ip', ip)
+    .maybeSingle();
+
+  if (existing) {
+    // Đã có → tăng total_views, cập nhật last_seen
+    await supabase
+      .from('analytics_ip_cache')
+      .update({
+        last_seen: now,
+        total_views: (existing.total_views || 0) + 1,
+        user_agent: userAgent || existing.user_agent,
+      })
+      .eq('ip', ip);
+  } else {
+    // Chưa có → insert mới (dù location có hay không — tránh gọi ip-api lại)
+    await supabase
+      .from('analytics_ip_cache')
+      .insert({
+        ip: ip,
+        city: location?.city || null,
+        region: location?.region || null,
+        country: location?.country || null,
+        country_code: location?.country_code || null,
+        lat: location?.lat || null,
+        lon: location?.lon || null,
+        isp: location?.isp || null,
+        user_agent: userAgent || null,
+        first_seen: now,
+        last_seen: now,
+        total_views: 1,
+      });
+  }
+}
+
 // ─── Public Tracking (POST) ───
 async function handleTrack(req, res) {
   const body = req.body || {};
@@ -65,9 +110,6 @@ async function handleTrack(req, res) {
       const { pageType, schoolSlug, schoolName, referrer, sessionId, userAgent } = data;
       if (!pageType) return res.status(400).json({ error: 'pageType is required' });
 
-      // Resolve IP to location (non-blocking, best-effort)
-      const location = await resolveIpLocation(clientIp);
-
       const { error: viewErr } = await supabase.from('analytics_page_views').insert({
         page_type: pageType,
         school_slug: schoolSlug || null,
@@ -76,15 +118,15 @@ async function handleTrack(req, res) {
         session_id: sessionId || null,
         user_agent: userAgent || null,
         ip: clientIp || null,
-        city: location?.city || null,
-        region: location?.region || null,
-        country: location?.country || null,
-        country_code: location?.country_code || null,
-        lat: location?.lat || null,
-        lon: location?.lon || null,
-        isp: location?.isp || null,
       });
       if (viewErr) throw viewErr;
+
+      // Cập nhật IP cache (chỉ lưu 1 dòng/IP, không đầy DB)
+      try {
+        const location = await resolveIpLocation(clientIp);
+        await updateIpCache(clientIp, userAgent, location);
+      } catch { /* silent */ }
+
       break;
     }
 
@@ -139,8 +181,6 @@ async function handleTrack(req, res) {
             })
             .eq('session_id', sessionId);
         } else {
-          // Resolve IP to location
-          const location = await resolveIpLocation(clientIp);
           await supabase.from('analytics_sessions').insert({
             session_id: sessionId,
             ip: clientIp || null,
@@ -150,15 +190,14 @@ async function handleTrack(req, res) {
             page_views: 1,
             started_at: new Date().toISOString(),
             last_activity: new Date().toISOString(),
-            city: location?.city || null,
-            region: location?.region || null,
-            country: location?.country || null,
-            country_code: location?.country_code || null,
-            lat: location?.lat || null,
-            lon: location?.lon || null,
-            isp: location?.isp || null,
           });
         }
+
+        // Cập nhật IP cache (chỉ lưu 1 dòng/IP)
+        try {
+          const location = await resolveIpLocation(clientIp);
+          await updateIpCache(clientIp, userAgent, location);
+        } catch { /* silent */ }
       }
       break;
     }
@@ -488,91 +527,55 @@ async function handleAdminData(req, res) {
       });
     }
 
-    // ─── LOCATIONS VIEW ───
+    // ─── LOCATIONS VIEW (aggregated from IP cache) ───
     if (view === 'locations') {
-      const [
-        { data: allPageViews },
-        { data: allSessions },
-      ] = await Promise.all([
-        supabase
-          .from('analytics_page_views')
-          .select('city, region, country, country_code, lat, lon')
-          .gte('created_at', since)
-          .not('city', 'is', null),
-        supabase
-          .from('analytics_sessions')
-          .select('city, region, country, country_code, lat, lon, page_views')
-          .gte('started_at', since)
-          .not('city', 'is', null),
-      ]);
+      const { data: ipCache } = await supabase
+        .from('analytics_ip_cache')
+        .select('city, region, country, country_code, lat, lon, total_views')
+        .gte('last_seen', since)
+        .not('city', 'is', null)
+        .order('total_views', { ascending: false });
 
-      // Group page views by city
+      if (!ipCache || ipCache.length === 0) {
+        return res.json({
+          success: true,
+          data: { locations: [], regions: [], countries: [], totalLocatedViews: 0, totalLocatedSessions: 0, uniqueCities: 0 },
+        });
+      }
+
+      // Group by city
       const cityCounts = {};
-      for (const row of allPageViews || []) {
+      for (const row of ipCache) {
         if (!row.city) continue;
         const key = `${row.city}|${row.region || ''}|${row.country || ''}`;
         if (!cityCounts[key]) {
           cityCounts[key] = { city: row.city, region: row.region || '', country: row.country || '', country_code: row.country_code || '', lat: row.lat, lon: row.lon, views: 0 };
         }
-        cityCounts[key].views++;
+        cityCounts[key].views += row.total_views || 1;
       }
 
-      // Group sessions by city
-      const sessionCityCounts = {};
-      for (const row of allSessions || []) {
-        if (!row.city) continue;
-        const key = `${row.city}|${row.region || ''}|${row.country || ''}`;
-        if (!sessionCityCounts[key]) {
-          sessionCityCounts[key] = { city: row.city, region: row.region || '', country: row.country || '', country_code: row.country_code || '', lat: row.lat, lon: row.lon, sessions: 0, pageViews: 0 };
-        }
-        sessionCityCounts[key].sessions++;
-        sessionCityCounts[key].pageViews += row.page_views || 1;
-      }
-
-      // Merge
-      const allCities = new Set([...Object.keys(cityCounts), ...Object.keys(sessionCityCounts)]);
-      const locations = [];
-      for (const key of allCities) {
-        const pv = cityCounts[key];
-        const sess = sessionCityCounts[key];
-        locations.push({
-          city: pv?.city || sess?.city || '',
-          region: pv?.region || sess?.region || '',
-          country: pv?.country || sess?.country || '',
-          country_code: pv?.country_code || sess?.country_code || '',
-          lat: parseFloat(pv?.lat) || parseFloat(sess?.lat) || 0,
-          lon: parseFloat(pv?.lon) || parseFloat(sess?.lon) || 0,
-          pageViews: pv?.views || 0,
-          sessions: sess?.sessions || 0,
-          pageViewsPerSession: sess?.sessions > 0 ? Math.round((sess?.pageViews || 0) / sess?.sessions * 10) / 10 : 0,
-        });
-      }
-
-      // Sort by page views descending
-      locations.sort((a, b) => b.pageViews - a.pageViews);
+      const locations = Object.values(cityCounts).sort((a, b) => b.views - a.views);
 
       // Group by region
       const regionCounts = {};
       for (const loc of locations) {
         const regionKey = loc.region || (loc.city ? `Khu vực khác` : 'Không xác định');
         if (!regionCounts[regionKey]) {
-          regionCounts[regionKey] = { region: regionKey, country: loc.country, pageViews: 0, sessions: 0 };
+          regionCounts[regionKey] = { region: regionKey, country: loc.country, pageViews: 0 };
         }
-        regionCounts[regionKey].pageViews += loc.pageViews;
-        regionCounts[regionKey].sessions += loc.sessions;
+        regionCounts[regionKey].pageViews += loc.views;
       }
 
       const regions = Object.values(regionCounts).sort((a, b) => b.pageViews - a.pageViews);
 
-      // Country totals
+      // Group by country
       const countryCounts = {};
       for (const loc of locations) {
         const c = loc.country || 'Unknown';
         if (!countryCounts[c]) {
-          countryCounts[c] = { country: c, code: loc.country_code, pageViews: 0, sessions: 0 };
+          countryCounts[c] = { country: c, code: loc.country_code, pageViews: 0 };
         }
-        countryCounts[c].pageViews += loc.pageViews;
-        countryCounts[c].sessions += loc.sessions;
+        countryCounts[c].pageViews += loc.views;
       }
 
       const countries = Object.values(countryCounts).sort((a, b) => b.pageViews - a.pageViews);
@@ -580,12 +583,42 @@ async function handleAdminData(req, res) {
       return res.json({
         success: true,
         data: {
-          locations: locations.slice(0, 50), // Top 50 locations
-          regions: regions,
-          countries: countries,
-          totalLocatedViews: locations.reduce((a, b) => a + b.pageViews, 0),
-          totalLocatedSessions: locations.reduce((a, b) => a + b.sessions, 0),
+          locations: locations.slice(0, 50),
+          regions,
+          countries,
+          totalLocatedViews: locations.reduce((a, b) => a + b.views, 0),
           uniqueCities: locations.length,
+        },
+      });
+    }
+
+    // ─── IP LOGS VIEW (chi tiết từng IP → location) ───
+    if (view === 'ip-logs') {
+      const { data: ips } = await supabase
+        .from('analytics_ip_cache')
+        .select('*')
+        .gte('last_seen', since)
+        .order('last_seen', { ascending: false })
+        .limit(200);
+
+      return res.json({
+        success: true,
+        data: {
+          ips: (ips || []).map(ip => ({
+            ip: ip.ip,
+            city: ip.city || '',
+            region: ip.region || '',
+            country: ip.country || '',
+            country_code: ip.country_code || '',
+            lat: ip.lat ? parseFloat(ip.lat) : null,
+            lon: ip.lon ? parseFloat(ip.lon) : null,
+            isp: ip.isp || '',
+            userAgent: (ip.user_agent || '').substring(0, 150),
+            firstSeen: ip.first_seen,
+            lastSeen: ip.last_seen,
+            totalViews: ip.total_views || 0,
+          })),
+          totalIps: ips?.length || 0,
         },
       });
     }
