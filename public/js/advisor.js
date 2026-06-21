@@ -233,6 +233,10 @@ function bindAdvisorEvents(container) {
     const profile = readAdvisorForm(form);
     const results = analyzeSchools(profile);
     renderAdvisorResults(container.querySelector("#advisor-results"), profile, results);
+    // Track advisor analysis
+    if (typeof window.trackAnalytics === 'function') {
+      window.trackAnalytics('event', { eventType: 'advisor_analyze', eventData: { region: profile.region, priorities: profile.priorities } });
+    }
   });
   reset.addEventListener("click", () => {
     form.reset();
@@ -257,6 +261,10 @@ function bindAdvisorEvents(container) {
         });
         const data = await res.json();
 
+        // Track AI advisor usage
+        if (typeof window.trackAnalytics === 'function') {
+          window.trackAnalytics('event', { eventType: 'ai_advisor', eventData: { region: profile.region } });
+        }
         if (data.success && data.advice) {
           // Convert response safely: chỉ allow <br> và <strong>, escape mọi thứ khác
           let safeText = data.advice
@@ -542,6 +550,7 @@ function renderAdvisorResults(target, profile, results) {
     try {
       await navigator.clipboard.writeText(shareText);
       showStatus("Đã copy kết quả");
+      if (typeof window.trackAnalytics === 'function') window.trackAnalytics('event', { eventType: 'advisor_copy' });
     } catch (e) {
       showStatus("Trình duyệt chưa cho phép copy tự động");
     }
@@ -560,11 +569,13 @@ function renderAdvisorResults(target, profile, results) {
           risks: item.risks
         }))
       }));
+      if (typeof window.trackAnalytics === 'function') window.trackAnalytics('event', { eventType: 'advisor_save' });
     } catch (e) {}
     showStatus("Đã lưu trên trình duyệt này");
   });
   target.querySelector("[data-zalo-advisor]")?.addEventListener("click", () => {
     if (typeof openZaloPopup === "function") openZaloPopup();
+    if (typeof window.trackAnalytics === 'function') window.trackAnalytics('event', { eventType: 'zalo_popup', eventData: { source: 'advisor' } });
   });
 }
 

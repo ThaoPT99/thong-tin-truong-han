@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analytics — Admin Thông Tin Trường Hàn</title>
+<link rel="stylesheet" href="admin.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+  .analytics-page .stats-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .analytics-page .stat-card { cursor: pointer; transition: transform .15s, box-shadow .15s; }
+  .analytics-page .stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+  .analytics-page .stat-card .stat-value { font-size: 1.75rem; }
+  .analytics-page .stat-card .stat-sub { font-size: .72rem; color: var(--gray-400); }
+  .analytics-page .chart-card { background:#fff; border-radius:var(--radius); box-shadow:var(--shadow); margin-bottom:1.25rem; }
+  .analytics-page .chart-header { padding:.85rem 1.25rem; border-bottom:1px solid var(--gray-200); display:flex; align-items:center; justify-content:space-between; gap:.75rem; flex-wrap:wrap; }
+  .analytics-page .chart-header h3 { font-size:.95rem; font-weight:700; color:var(--gray-800); margin:0; }
+  .analytics-page .chart-header .chart-meta { font-size:.78rem; color:var(--gray-400); }
+  .analytics-page .chart-body { padding:1rem 1.25rem; position:relative; }
+  .analytics-page .chart-body canvas { max-height:320px; max-width:100%; }
+  .analytics-page .chart-body-sm canvas { max-height:220px; }
+  .analytics-page .views-tabs { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:1rem; }
+  .analytics-page .views-tabs button { padding:.45rem .85rem; border:1px solid var(--gray-300); border-radius:6px; background:#fff; color:var(--gray-700); font:inherit; font-size:.85rem; font-weight:600; cursor:pointer; transition:all .15s; }
+  .analytics-page .views-tabs button.active { background:var(--primary); color:#fff; border-color:var(--primary); }
+  .analytics-page .views-tabs button:hover:not(.active) { border-color:var(--primary); color:var(--primary); }
+  .analytics-page .top-schools-table { width:100%; border-collapse:collapse; font-size:.88rem; }
+  .analytics-page .top-schools-table th { text-align:left; padding:.6rem .75rem; background:var(--gray-50); border-bottom:1px solid var(--gray-200); font-size:.75rem; color:var(--gray-500); text-transform:uppercase; letter-spacing:.3px; }
+  .analytics-page .top-schools-table td { padding:.6rem .75rem; border-bottom:1px solid var(--gray-100); vertical-align:middle; }
+  .analytics-page .top-schools-table tr:hover td { background:#f8fafc; }
+  .analytics-page .top-schools-table .rank { font-weight:700; color:var(--gray-400); width:32px; }
+  .analytics-page .top-schools-table .rank.top1 { color:#f59e0b; }
+  .analytics-page .top-schools-table .rank.top2 { color:#94a3b8; }
+  .analytics-page .top-schools-table .rank.top3 { color:#d97706; }
+  .analytics-page .top-schools-table .bar-bg { background:var(--gray-100); border-radius:99px; height:6px; overflow:hidden; min-width:80px; }
+  .analytics-page .top-schools-table .bar-fill { height:100%; border-radius:inherit; background:linear-gradient(90deg, var(--primary), #60a5fa); transition:width .6s ease; }
+  .analytics-page .funnel-steps { display:flex; align-items:flex-end; gap:.5rem; padding:.5rem 0; }
+  .analytics-page .funnel-step { flex:1; display:flex; flex-direction:column; align-items:center; gap:.35rem; min-width:0; }
+  .analytics-page .funnel-bar { width:100%; min-height:20px; border-radius:6px 6px 0 0; background:linear-gradient(180deg, var(--primary), #60a5fa); transition:height .6s ease; }
+  .analytics-page .funnel-label { font-size:.78rem; font-weight:600; color:var(--gray-600); text-align:center; word-break:break-word; }
+  .analytics-page .funnel-count { font-size:.85rem; font-weight:700; color:var(--gray-800); }
+  .analytics-page .funnel-pct { font-size:.7rem; color:var(--gray-400); }
+  .analytics-page .event-badge { display:inline-flex; align-items:center; gap:4px; padding:.25rem .55rem; border-radius:99px; font-size:.78rem; font-weight:600; }
+  .analytics-page .event-badge.advisor { background:#dbeafe; color:#1d4ed8; }
+  .analytics-page .event-badge.zalo { background:#e0e7ff; color:#3730a3; }
+  .analytics-page .event-badge.copy { background:#d1fae5; color:#065f46; }
+  .analytics-page .event-badge.search { background:#fef3c7; color:#92400e; }
+  .analytics-page .event-badge.compare { background:#f3e8ff; color:#7c3aed; }
+  .analytics-page .event-badge.cost { background:#fff7ed; color:#c2410c; }
+  .analytics-page .time-range { display:flex; gap:6px; align-items:center; }
+  .analytics-page .time-range button { padding:.35rem .65rem; border:1px solid var(--gray-300); border-radius:6px; background:#fff; color:var(--gray-600); font:inherit; font-size:.78rem; font-weight:600; cursor:pointer; }
+  .analytics-page .time-range button.active { background:var(--primary); color:#fff; border-color:var(--primary); }
+  .analytics-page .no-data { text-align:center; padding:2rem; color:var(--gray-400); font-size:.9rem; }
+  .analytics-page .content-views { display:none; }
+  .analytics-page .content-views.active { display:block; }
+  .analytics-page .dual-metric { display:grid; grid-template-columns:1fr 1fr; gap:.75rem; }
+  .analytics-page .metric-mini { padding:.75rem; border:1px solid var(--gray-200); border-radius:8px; text-align:center; background:var(--gray-50); }
+  .analytics-page .metric-mini .num { font-size:1.25rem; font-weight:700; color:var(--primary); }
+  .analytics-page .metric-mini .label { font-size:.72rem; color:var(--gray-500); margin-top:.15rem; }
+  .analytics-page .search-table { width:100%; border-collapse:collapse; font-size:.85rem; }
+  .analytics-page .search-table th, .analytics-page .search-table td { padding:.5rem .65rem; border-bottom:1px solid var(--gray-100); text-align:left; }
+  .analytics-page .search-table th { background:var(--gray-50); font-size:.72rem; color:var(--gray-500); text-transform:uppercase; }
+  .analytics-page .search-table tr:hover td { background:#f8fafc; }
+  .analytics-page .search-term { font-weight:600; color:var(--gray-800); }
+  .analytics-page .loading-dashboard { text-align:center; padding:4rem; color:var(--gray-400); }
+  .analytics-page .loading-dashboard .spinner { margin:0 auto .75rem; }
+  @media (max-width:768px) {
+    .analytics-page .stats-grid { grid-template-columns:repeat(2, minmax(0, 1fr)); }
+    .analytics-page .dual-metric { grid-template-columns:1fr; }
+    .analytics-page .funnel-steps { flex-direction:column; align-items:stretch; }
+    .analytics-page .funnel-step { flex-direction:row; gap:.5rem; }
+    .analytics-page .funnel-bar { width:auto; height:20px; min-width:20px; border-radius:0 6px 6px 0; }
+  }
+</style>
+</head>
+<body>
+<script src="admin.js"></script>
+<script>checkAuth();</script>
+
+<div class="admin-layout analytics-page">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h2>🏫 Trường Hàn</h2>
+      <div class="sub">Quản lý dữ liệu</div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" class="role-director">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+        Dashboard
+      </a>
+      <a href="editor.html?mode=new" class="role-director">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Thêm trường
+      </a>
+      <a href="students.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        Học sinh
+      </a>
+      <a href="checklist.html" class="role-director">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        Checklist Visa
+      </a>
+      <a href="semester.html" class="role-director">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Kỳ tuyển sinh
+      </a>
+      <a href="import.html" class="role-director">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Import Excel
+      </a>
+      <a href="users.html" class="role-director">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a5 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        Tài khoản
+      </a>
+      <a href="access-control.html" class="role-director">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg>
+        Quản lý Truy cập
+      </a>
+      <a href="analytics.html" class="active role-director">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+        Analytics
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div id="sidebar-user"></div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main-content">
+    <div class="top-bar">
+      <h1>📊 Analytics Dashboard</h1>
+      <div class="user-info">
+        <span id="user-display"></span>
+        <button class="btn btn-outline btn-sm" onclick="logout()">Đăng xuất</button>
+      </div>
+    </div>
+
+    <div class="content-area">
+      <!-- Time range selector -->
+      <div class="time-range" style="margin-bottom:1rem;">
+        <button data-days="7" onclick="loadDashboard(7)">7 ngày</button>
+        <button data-days="14" onclick="loadDashboard(14)">14 ngày</button>
+        <button data-days="30" class="active" onclick="loadDashboard(30)">30 ngày</button>
+        <button data-days="90" onclick="loadDashboard(90)">90 ngày</button>
+      </div>
+
+      <!-- View tabs -->
+      <div class="views-tabs">
+        <button class="active" data-view="overview" onclick="switchView('overview')">📈 Tổng quan</button>
+        <button data-view="schools" onclick="switchView('schools')">🏫 Trường</button>
+        <button data-view="searches" onclick="switchView('searches')">🔍 Tìm kiếm</button>
+        <button data-view="events" onclick="switchView('events')">⚡ Sự kiện</button>
+        <button data-view="conversion" onclick="switchView('conversion')">🔄 Chuyển đổi</button>
+      </div>
+
+      <!-- Loading -->
+      <div id="loading-indicator" class="loading-dashboard">
+        <div class="spinner"></div>
+        <p>Đang tải dữ liệu...</p>
+      </div>
+
+      <!-- Overview -->
+      <div id="view-overview" class="content-views active">
+        <div class="stats-grid" id="stats-grid"></div>
+        <div class="chart-card">
+          <div class="chart-header"><h3>Lượt xem theo ngày</h3></div>
+          <div class="chart-body"><canvas id="chart-daily-views"></canvas></div>
+        </div>
+        <div class="dual-metric">
+          <div class="chart-card">
+            <div class="chart-header"><h3>Phân bố trang</h3></div>
+            <div class="chart-body chart-body-sm"><canvas id="chart-page-types"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-header"><h3>Top 10 trường xem nhiều</h3></div>
+            <div class="chart-body" id="top-schools-overview"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Schools -->
+      <div id="view-schools" class="content-views">
+        <div class="stats-grid" id="schools-stats-grid"></div>
+        <div class="chart-card">
+          <div class="chart-header"><h3>Top trường xem nhiều nhất</h3><span class="chart-meta">Lượt xem chi tiết trường</span></div>
+          <div class="chart-body" id="schools-table-container"></div>
+        </div>
+      </div>
+
+      <!-- Searches -->
+      <div id="view-searches" class="content-views">
+        <div class="stats-grid" id="search-stats-grid"></div>
+        <div class="chart-card">
+          <div class="chart-header"><h3>Xu hướng tìm kiếm theo ngày</h3></div>
+          <div class="chart-body chart-body-sm"><canvas id="chart-daily-searches"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-header"><h3>Từ khóa tìm kiếm nhiều nhất</h3></div>
+          <div class="chart-body" id="top-queries-container"></div>
+        </div>
+      </div>
+
+      <!-- Events -->
+      <div id="view-events" class="content-views">
+        <div class="chart-card">
+          <div class="chart-header"><h3>Phân bố sự kiện</h3></div>
+          <div class="chart-body chart-body-sm"><canvas id="chart-events"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-header"><h3>Sự kiện theo ngày</h3></div>
+          <div class="chart-body chart-body-sm"><canvas id="chart-daily-events"></canvas></div>
+        </div>
+      </div>
+
+      <!-- Conversion -->
+      <div id="view-conversion" class="content-views">
+        <div class="chart-card">
+          <div class="chart-header"><h3>Conversion Funnel</h3><span class="chart-meta">Hành trình người dùng</span></div>
+          <div class="chart-body" id="funnel-container"></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-header"><h3>Advisor Funnel</h3><span class="chart-meta">Từ form tư vấn đến lưu kết quả</span></div>
+          <div class="chart-body" id="advisor-funnel-container"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+const API = '/api/analytics';
+let currentDays = 30;
+let currentView = 'overview';
+let chartInstances = {};
+
+// ─── User ───
+const user = getUser();
+if (user) {
+  document.getElementById('user-display').textContent = user.displayName || user.email;
+  document.getElementById('sidebar-user').textContent = user.email;
+}
+
+// ─── Inline REGION_LABELS cho admin pages (không phụ thuộc api-loader.js) ───
+window.REGION_LABELS = window.REGION_LABELS || {
+  seoul: 'Seoul', busan: 'Busan', gwangju: 'Gwangju', incheon: 'Incheon',
+  gyeonggi: 'Gyeonggi', 'near-seoul': 'Gần Seoul', province: 'Tỉnh/thành khác',
+  chungcheongbuk: 'Chungcheongbuk', chungcheongnam: 'Chungcheongnam',
+  jeollanam: 'Jeollanam', jeollabuk: 'Jeollabuk',
+  gyeongsangnam: 'Gyeongsangnam', gyeongsangbuk: 'Gyeongsangbuk',
+  gangwon: 'Gangwon', daegu: 'Daegu', daejeon: 'Daejeon',
+  ulsan: 'Ulsan', sejong: 'Sejong', jeju: 'Jeju'
+};
+
+// ─── Role check ───
+const role = getUserRole();
+if (role !== 'director') {
+  document.body.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--danger);">⚠️ Chỉ Giám đốc mới có quyền xem Analytics.</div><div style="text-align:center;padding:1rem;"><a href="dashboard.html" class="btn btn-outline">← Về Dashboard</a></div>';
+}
+
+// ─── Switch view ───
+function switchView(view) {
+  currentView = view;
+  document.querySelectorAll('.views-tabs button').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.view === view);
+  });
+  document.querySelectorAll('.content-views').forEach(el => {
+    el.classList.toggle('active', el.id === 'view-' + view);
+  });
+  loadDashboard(currentDays);
+}
+
+// ─── Load all dashboard data ───
+async function loadDashboard(days) {
+  currentDays = days || currentDays;
+  
+  // Update time range buttons
+  document.querySelectorAll('.time-range button').forEach(btn => {
+    btn.classList.toggle('active', parseInt(btn.dataset.days) === currentDays);
+  });
+
+  document.getElementById('loading-indicator').style.display = 'block';
+
+  try {
+    const [overviewRes, schoolsRes, searchesRes, eventsRes, conversionRes] = await Promise.all([
+      api('GET', API + '?view=overview&days=' + currentDays),
+      api('GET', API + '?view=schools&days=' + currentDays),
+      api('GET', API + '?view=searches&days=' + currentDays),
+      api('GET', API + '?view=events&days=' + currentDays),
+      api('GET', API + '?view=conversion&days=' + currentDays),
+    ]);
+
+    renderOverview(overviewRes.data);
+    renderSchools(schoolsRes.data);
+    renderSearches(searchesRes.data);
+    renderEvents(eventsRes.data);
+    renderConversion(conversionRes.data);
+
+  } catch (err) {
+    toast('Lỗi tải dữ liệu: ' + err.message, 'error');
+  } finally {
+    document.getElementById('loading-indicator').style.display = 'none';
+  }
+}
+
+// ─── Overview ───
+function renderOverview(data) {
+  if (!data) return;
+  const o = data.overview;
+
+  document.getElementById('stats-grid').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-label">Lượt xem trang</div>
+      <div class="stat-value">${o.totalViews.toLocaleString('vi-VN')}</div>
+      <div class="stat-sub">${currentDays} ngày qua</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Lượt tìm kiếm</div>
+      <div class="stat-value">${o.totalSearches.toLocaleString('vi-VN')}</div>
+      <div class="stat-sub">${currentDays} ngày qua</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Phiên truy cập</div>
+      <div class="stat-value">${o.totalSessions.toLocaleString('vi-VN')}</div>
+      <div class="stat-sub">Trung bình ${o.avgViewsPerSession} trang/phiên</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Sự kiện tương tác</div>
+      <div class="stat-value">${o.totalEvents.toLocaleString('vi-VN')}</div>
+      <div class="stat-sub">Advisor, copy, Zalo...</div>
+    </div>
+  `;
+
+  // Daily views chart
+  renderDailyViewsChart(data.dailyViews || []);
+
+  // Page type breakdown
+  renderPageTypeChart(data.pageTypeBreakdown || []);
+
+  // Top schools
+  renderTopSchoolsSummary(data.topSchools || []);
+}
+
+function renderDailyViewsChart(views) {
+  const ctx = document.getElementById('chart-daily-views')?.getContext('2d');
+  if (!ctx) return;
+
+  destroyChart('dailyViews');
+
+  const grouped = {};
+  for (const v of views) {
+    const d = new Date(v.created_at).toISOString().split('T')[0];
+    grouped[d] = (grouped[d] || 0) + 1;
+  }
+
+  const dates = Object.keys(grouped).sort();
+  const counts = dates.map(d => grouped[d]);
+
+  if (dates.length === 0) {
+    ctx.canvas.parentElement.innerHTML = '<div class="no-data">Chưa có dữ liệu lượt xem</div>';
+    return;
+  }
+
+  chartInstances.dailyViews = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: dates.map(d => {
+        const parts = d.split('-');
+        return parts[2] + '/' + parts[1];
+      }),
+      datasets: [{
+        label: 'Lượt xem',
+        data: counts,
+        backgroundColor: 'rgba(37, 99, 235, 0.7)',
+        borderColor: 'rgba(37, 99, 235, 1)',
+        borderWidth: 1,
+        borderRadius: 4,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        legend: { display: false },
+      },
+      scales: {
+        y: { beginAtZero: true, ticks: { stepSize: 1 } },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+}
+
+function renderPageTypeChart(breakdown) {
+  const ctx = document.getElementById('chart-page-types')?.getContext('2d');
+  if (!ctx) return;
+
+  destroyChart('pageTypes');
+
+  const labels = breakdown.map(b => {
+    const map = {
+      school_detail: 'Chi tiết trường',
+      school_list: 'Danh sách',
+      advisor: 'Tư vấn',
+      compare: 'So sánh',
+      cost: 'Chi phí',
+      ebook: 'Cẩm nang',
+      extra: 'Tài liệu',
+    };
+    return map[b.type] || b.type;
+  });
+  const data = breakdown.map(b => b.count);
+
+  if (labels.length === 0) {
+    ctx.canvas.parentElement.innerHTML = '<div class="no-data">Chưa có dữ liệu</div>';
+    return;
+  }
+
+  // Colors
+  const colors = ['#2563eb', '#0f766e', '#d97706', '#7c3aed', '#dc2626', '#0891b2', '#65a30d'];
+
+  chartInstances.pageTypes = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels,
+      datasets: [{
+        data,
+        backgroundColor: colors.slice(0, labels.length),
+        borderWidth: 2,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 12 } },
+      }
+    }
+  });
+}
+
+function renderTopSchoolsSummary(topSchools) {
+  const container = document.getElementById('top-schools-overview');
+  if (!topSchools.length) {
+    container.innerHTML = '<div class="no-data">Chưa có dữ liệu xem trường</div>';
+    return;
+  }
+
+  const maxCount = topSchools[0]?.count || 1;
+
+  container.innerHTML = `
+    <table class="top-schools-table">
+      <thead><tr>
+        <th>#</th><th>Trường</th><th>Lượt xem</th><th></th>
+      </tr></thead>
+      <tbody>
+        ${topSchools.map((s, i) => {
+          const pct = Math.round((s.count / maxCount) * 100);
+          const rankClass = i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : '';
+          return `<tr>
+            <td class="rank ${rankClass}">${i + 1}</td>
+            <td><strong>${escapeHtml(s.name)}</strong></td>
+            <td><strong>${s.count}</strong></td>
+            <td><div class="bar-bg"><div class="bar-fill" style="width:${pct}%"></div></div></td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+// ─── Schools ───
+function renderSchools(data) {
+  if (!data) return;
+
+  document.getElementById('schools-stats-grid').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-label">Trường được xem</div>
+      <div class="stat-value">${data.totalUnique}</div>
+      <div class="stat-sub">Trường có ít nhất 1 lượt xem</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Tổng lượt xem</div>
+      <div class="stat-value">${data.schools.reduce((a, b) => a + b.count, 0).toLocaleString('vi-VN')}</div>
+      <div class="stat-sub">Chi tiết trường</div>
+    </div>
+  `;
+
+  const container = document.getElementById('schools-table-container');
+  if (!data.schools.length) {
+    container.innerHTML = '<div class="no-data">Chưa có dữ liệu</div>';
+    return;
+  }
+
+  const maxCount = data.schools[0]?.count || 1;
+
+  container.innerHTML = `
+    <table class="top-schools-table">
+      <thead><tr>
+        <th>#</th><th>Trường</th><th>Vùng</th><th>Lượt xem</th><th>%</th><th>Tư vấn</th><th>Zalo</th><th>Copy</th>
+      </tr></thead>
+      <tbody>
+        ${data.schools.map((s, i) => {
+          const pct = Math.round((s.count / maxCount) * 100);
+          const rankClass = i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : '';
+          const regionLabel = s.region ? (window.REGION_LABELS && window.REGION_LABELS[s.region] ? window.REGION_LABELS[s.region] : s.region) : '';
+          return `<tr>
+            <td class="rank ${rankClass}">${i + 1}</td>
+            <td><strong>${escapeHtml(s.name)}</strong>${s.nameKr ? '<br><small style="color:var(--gray-400)">' + escapeHtml(s.nameKr) + '</small>' : ''}</td>
+            <td><span class="badge badge-region">${escapeHtml(regionLabel)}</span></td>
+            <td><strong>${s.count}</strong></td>
+            <td><div class="bar-bg"><div class="bar-fill" style="width:${pct}%"></div></div></td>
+            <td>${s.advisor || 0}</td>
+            <td>${s.zalo || 0}</td>
+            <td>${s.copy || 0}</td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+// ─── Searches ───
+function renderSearches(data) {
+  if (!data) return;
+
+  document.getElementById('search-stats-grid').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-label">Tổng tìm kiếm</div>
+      <div class="stat-value">${(data.totalSearches || 0).toLocaleString('vi-VN')}</div>
+      <div class="stat-sub">${currentDays} ngày qua</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Tỷ lệ có kết quả</div>
+      <div class="stat-value">${data.successRate || 0}%</div>
+      <div class="stat-sub">${data.totalWithResults || 0} có / ${data.totalNoResults || 0} không</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Từ khóa unique</div>
+      <div class="stat-value">${data.topQueries?.length || 0}</div>
+      <div class="stat-sub">Từ khóa khác nhau</div>
+    </div>
+  `;
+
+  // Daily searches chart
+  const ctx = document.getElementById('chart-daily-searches')?.getContext('2d');
+  if (ctx) {
+    destroyChart('dailySearches');
+    const daily = data.dailySearches || [];
+    if (daily.length > 0) {
+      chartInstances.dailySearches = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: daily.map(d => {
+            const parts = d.date.split('-');
+            return parts[2] + '/' + parts[1];
+          }),
+          datasets: [{
+            label: 'Lượt tìm kiếm',
+            data: daily.map(d => d.count),
+            borderColor: '#0f766e',
+            backgroundColor: 'rgba(15, 118, 110, 0.1)',
+            fill: true,
+            tension: 0.3,
+            pointRadius: 3,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { beginAtZero: true, ticks: { stepSize: 1 } },
+            x: { grid: { display: false } }
+          }
+        }
+      });
+    } else {
+      ctx.canvas.parentElement.innerHTML = '<div class="no-data">Chưa có dữ liệu tìm kiếm</div>';
+    }
+  }
+
+  // Top queries
+  const qContainer = document.getElementById('top-queries-container');
+  const queries = data.topQueries || [];
+  if (!queries.length) {
+    qContainer.innerHTML = '<div class="no-data">Chưa có dữ liệu tìm kiếm</div>';
+    return;
+  }
+  const maxQ = queries[0]?.count || 1;
+  qContainer.innerHTML = `
+    <table class="search-table">
+      <thead><tr><th>#</th><th>Từ khóa</th><th>Số lần</th><th></th></tr></thead>
+      <tbody>
+        ${queries.map((q, i) => {
+          const pct = Math.round((q.count / maxQ) * 100);
+          return `<tr>
+            <td>${i + 1}</td>
+            <td class="search-term">${escapeHtml(q.query)}</td>
+            <td><strong>${q.count}</strong></td>
+            <td><div class="bar-bg"><div class="bar-fill" style="width:${pct}%;background:linear-gradient(90deg,#0f766e,#34d399)"></div></div></td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+// ─── Events ───
+function renderEvents(data) {
+  if (!data) return;
+
+  const ctx = document.getElementById('chart-events')?.getContext('2d');
+  if (ctx) {
+    destroyChart('events');
+    const breakdown = data.eventBreakdown || [];
+    if (breakdown.length > 0) {
+      const eventLabels = breakdown.map(b => {
+        const map = {
+          advisor_analyze: 'Phân tích hồ sơ',
+          advisor_save: 'Lưu kết quả',
+          compare_view: 'Xem so sánh',
+          cost_calc: 'Tính chi phí',
+          zalo_popup: 'Mở Zalo popup',
+          ai_advisor: 'AI Tư vấn',
+          ai_zalo: 'Soạn Zalo AI',
+          copy_info: 'Copy thông tin',
+          copy_zalo: 'Copy nội dung Zalo',
+          school_click: 'Click vào trường',
+          visa_checklist: 'Checklist visa',
+        };
+        return map[b.type] || b.type;
+      });
+      const eventColors = ['#2563eb', '#0f766e', '#d97706', '#7c3aed', '#dc2626', '#0891b2', '#65a30d', '#e11d48', '#ca8a04', '#14b8a6'];
+
+      chartInstances.events = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: eventLabels,
+          datasets: [{
+            label: 'Số lần',
+            data: breakdown.map(b => b.count),
+            backgroundColor: eventColors.slice(0, eventLabels.length).map(c => c + 'CC'),
+            borderColor: eventColors.slice(0, eventLabels.length),
+            borderWidth: 1,
+            borderRadius: 4,
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { beginAtZero: true, ticks: { stepSize: 1 } },
+            y: { grid: { display: false } }
+          }
+        }
+      });
+    } else {
+      ctx.canvas.parentElement.innerHTML = '<div class="no-data">Chưa có dữ liệu sự kiện</div>';
+    }
+  }
+
+  // Daily events
+  const deCtx = document.getElementById('chart-daily-events')?.getContext('2d');
+  if (deCtx) {
+    destroyChart('dailyEvents');
+    const daily = data.dailyEvents || [];
+    if (daily.length > 0) {
+      chartInstances.dailyEvents = new Chart(deCtx, {
+        type: 'line',
+        data: {
+          labels: daily.map(d => {
+            const parts = d.date.split('-');
+            return parts[2] + '/' + parts[1];
+          }),
+          datasets: [{
+            label: 'Sự kiện',
+            data: daily.map(d => d.count),
+            borderColor: '#7c3aed',
+            backgroundColor: 'rgba(124, 58, 237, 0.1)',
+            fill: true,
+            tension: 0.3,
+            pointRadius: 3,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { beginAtZero: true, ticks: { stepSize: 1 } },
+            x: { grid: { display: false } }
+          }
+        }
+      });
+    } else {
+      deCtx.canvas.parentElement.innerHTML = '<div class="no-data">Chưa có dữ liệu</div>';
+    }
+  }
+}
+
+// ─── Conversion ───
+function renderConversion(data) {
+  if (!data) return;
+  renderFunnel('funnel-container', data.funnel, 'Hành trình người dùng');
+  renderFunnel('advisor-funnel-container', data.advisorFunnel, 'Advisor Funnel', true);
+}
+
+function renderFunnel(containerId, funnel, title, isCompact) {
+  const container = document.getElementById(containerId);
+  if (!funnel || !funnel.length) {
+    container.innerHTML = '<div class="no-data">Chưa có dữ liệu chuyển đổi</div>';
+    return;
+  }
+
+  const maxCount = funnel[0]?.count || 1;
+
+  container.innerHTML = `
+    <div class="funnel-steps">
+      ${funnel.map((step, i) => {
+        const pct = Math.round((step.count / maxCount) * 100);
+        const dropPct = i > 0 ? Math.round((step.count / (funnel[i - 1]?.count || 1)) * 100) : 100;
+        return `<div class="funnel-step">
+          <div class="funnel-count">${step.count.toLocaleString('vi-VN')}</div>
+          <div class="funnel-bar" style="height:${Math.max(pct * (isCompact ? 1.5 : 2), 20)}px;background:linear-gradient(180deg,${i === 0 ? '#2563eb' : i === funnel.length - 1 ? '#0f766e' : '#60a5fa'},${i === 0 ? '#60a5fa' : i === funnel.length - 1 ? '#34d399' : '#93c5fd'})"></div>
+          <div class="funnel-label">${escapeHtml(step.stage)}</div>
+          ${i > 0 ? `<div class="funnel-pct">${dropPct}%</div>` : ''}
+        </div>`;
+      }).join('')}
+    </div>
+  `;
+}
+
+// ─── Helpers ───
+function destroyChart(name) {
+  if (chartInstances[name]) {
+    chartInstances[name].destroy();
+    delete chartInstances[name];
+  }
+}
+
+// ─── Init ───
+document.addEventListener('DOMContentLoaded', () => {
+  loadDashboard(30);
+});
+</script>
+</body>
+</html>

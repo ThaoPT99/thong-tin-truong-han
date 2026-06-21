@@ -8,6 +8,66 @@ window.escapeHtml = function(str) {
   return d.innerHTML;
 };
 
+// ─── Analytics Tracking Helper ───
+window.trackAnalytics = function(type, data) {
+  try {
+    // Generate session ID once
+    if (!window._analyticsSessionId) {
+      window._analyticsSessionId = 'sess_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    }
+    
+    // Build payload
+    const payload = {
+      type: type,
+      data: Object.assign({}, data, {
+        sessionId: window._analyticsSessionId,
+        userAgent: navigator.userAgent,
+        referrer: document.referrer || '',
+      })
+    };
+
+    // Fire and forget - không block UX
+    var blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon('/api/analytics', blob);
+    } else {
+      fetch('/api/analytics', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: blob,
+        keepalive: true,
+      }).catch(function() {});
+    }
+
+    // Track session start/update (mỗi page view = 1 session page view)
+    if (type === 'page_view') {
+      const sessPayload = {
+        type: 'session',
+        data: {
+          action: 'start',
+          sessionId: window._analyticsSessionId,
+          pageType: data.pageType || '',
+          referrer: document.referrer || '',
+          userAgent: navigator.userAgent,
+        }
+      };
+      var sessBlob = new Blob([JSON.stringify(sessPayload)], { type: 'application/json' });
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon('/api/analytics', sessBlob);
+      } else {
+        fetch('/api/analytics', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: sessBlob,
+          keepalive: true,
+        }).catch(function() {});
+      }
+    }
+  } catch (e) {
+    // Silent fail
+  }
+};
+
 window.REGION_LABELS = {
   any: "không ưu tiên khu vực",
   seoul: "Seoul",
