@@ -6,6 +6,8 @@
 <title>Analytics — Admin Thông Tin Trường Hàn</title>
 <link rel="stylesheet" href="admin.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
   .analytics-page .stats-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .analytics-page .stat-card { cursor: pointer; transition: transform .15s, box-shadow .15s; }
@@ -63,6 +65,13 @@
   .analytics-page .search-term { font-weight:600; color:var(--gray-800); }
   .analytics-page .loading-dashboard { text-align:center; padding:4rem; color:var(--gray-400); }
   .analytics-page .loading-dashboard .spinner { margin:0 auto .75rem; }
+  .analytics-page .new-city-alert { background:#fef3c7; border:1px solid #f59e0b; border-radius:var(--radius); padding:.85rem 1rem; display:flex; align-items:flex-start; gap:.75rem; }
+  .analytics-page .new-city-alert .icon { font-size:1.3rem; flex-shrink:0; line-height:1; }
+  .analytics-page .new-city-alert .content { flex:1; }
+  .analytics-page .new-city-alert .title { font-weight:700; color:#92400e; font-size:.9rem; margin-bottom:.25rem; }
+  .analytics-page .new-city-alert .list { display:flex; flex-wrap:wrap; gap:6px; }
+  .analytics-page .new-city-alert .city-tag { display:inline-flex; align-items:center; gap:4px; background:#fff; border:1px solid #fde68a; border-radius:99px; padding:.2rem .6rem; font-size:.82rem; color:#78350f; font-weight:600; }
+  .analytics-page .new-city-alert .city-tag .badge-new { background:#ef4444; color:#fff; font-size:.65rem; padding:.08rem .35rem; border-radius:99px; margin-left:2px; }
   @media (max-width:768px) {
     .analytics-page .stats-grid { grid-template-columns:repeat(2, minmax(0, 1fr)); }
     .analytics-page .dual-metric { grid-template-columns:1fr; }
@@ -154,6 +163,7 @@
         <button data-view="conversion" onclick="switchView('conversion')">🔄 Chuyển đổi</button>
         <button data-view="locations" onclick="switchView('locations')">📍 Vị trí</button>
         <button data-view="ip-logs" onclick="switchView('ip-logs')">🖥️ IP Logs</button>
+        <button data-view="map" onclick="switchView('map')">🗺️ Bản đồ</button>
       </div>
 
       <!-- Loading -->
@@ -248,6 +258,7 @@
 
       <!-- IP Logs (chi tiết từng IP) -->
       <div id="view-ip-logs" class="content-views">
+        <div id="new-cities-alert" style="display:none;margin-bottom:1rem;"></div>
         <div class="stats-grid" id="ip-logs-stats-grid"></div>
         <div class="chart-card">
           <div class="chart-header">
@@ -256,6 +267,20 @@
           </div>
           <div class="chart-body" id="ip-logs-container">
             <div class="no-data">Đang tải...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Map -->
+      <div id="view-map" class="content-views">
+        <div class="stats-grid" id="map-stats-grid"></div>
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3>🗺️ Bản đồ IP truy cập</h3>
+            <span class="chart-meta">Click vào chấm để xem chi tiết</span>
+          </div>
+          <div class="chart-body" style="padding:0;">
+            <div id="map-container" style="height:500px;border-radius:0 0 var(--radius) var(--radius);"></div>
           </div>
         </div>
       </div>
@@ -317,7 +342,7 @@ async function loadDashboard(days) {
   document.getElementById('loading-indicator').style.display = 'block';
 
   try {
-    const [overviewRes, schoolsRes, searchesRes, eventsRes, conversionRes, locationsRes, ipLogsRes] = await Promise.all([
+    const [overviewRes, schoolsRes, searchesRes, eventsRes, conversionRes, locationsRes, ipLogsRes, mapRes] = await Promise.all([
       api('GET', API + '?view=overview&days=' + currentDays),
       api('GET', API + '?view=schools&days=' + currentDays),
       api('GET', API + '?view=searches&days=' + currentDays),
@@ -325,6 +350,7 @@ async function loadDashboard(days) {
       api('GET', API + '?view=conversion&days=' + currentDays),
       api('GET', API + '?view=locations&days=' + currentDays),
       api('GET', API + '?view=ip-logs&days=' + currentDays),
+      api('GET', API + '?view=map&days=' + currentDays),
     ]);
 
     renderOverview(overviewRes.data);
@@ -334,6 +360,7 @@ async function loadDashboard(days) {
     renderConversion(conversionRes.data);
     renderLocations(locationsRes.data);
     renderIpLogs(ipLogsRes.data);
+    renderMap(mapRes.data);
 
   } catch (err) {
     toast('Lỗi tải dữ liệu: ' + err.message, 'error');
@@ -891,6 +918,26 @@ function renderLocations(data) {
 function renderIpLogs(data) {
   if (!data) return;
 
+  // Hiển thị cảnh báo địa điểm mới
+  const alertEl = document.getElementById('new-cities-alert');
+  if (data.newCitiesCount > 0 && data.newCities?.length > 0) {
+    alertEl.style.display = 'block';
+    alertEl.innerHTML = `
+      <div class="new-city-alert">
+        <div class="icon">🆕</div>
+        <div class="content">
+          <div class="title">📍 ${data.newCitiesCount} địa điểm mới phát hiện!</div>
+          <div class="list">
+            ${data.newCities.map(nc => `<span class="city-tag">${getFlagEmoji('VN')} ${escapeHtml(nc.city)}${nc.region ? ', ' + escapeHtml(nc.region) : ''} <span class="badge-new">MỚI</span></span>`).join('')}
+          </div>
+          <div style="font-size:.78rem;color:#92400e;margin-top:.35rem;">Có thể là đối tác tiềm năng mới! Hãy tiếp cận họ.</div>
+        </div>
+      </div>
+    `;
+  } else {
+    alertEl.style.display = 'none';
+  }
+
   document.getElementById('ip-logs-stats-grid').innerHTML = `
     <div class="stat-card">
       <div class="stat-label">IP đã ghi nhận</div>
@@ -898,9 +945,9 @@ function renderIpLogs(data) {
       <div class="stat-sub">${currentDays} ngày qua</div>
     </div>
     <div class="stat-card">
-      <div class="stat-label">Mỗi IP lưu</div>
-      <div class="stat-value" style="font-size:1rem;color:var(--gray-500)">1 dòng duy nhất</div>
-      <div class="stat-sub">Không trùng lặp → không đầy DB</div>
+      <div class="stat-label">📍 Địa điểm mới</div>
+      <div class="stat-value" style="color:${data.newCitiesCount > 0 ? '#ef4444' : 'var(--gray-500)'}">${data.newCitiesCount || 0}</div>
+      <div class="stat-sub">Xuất hiện lần đầu trong kỳ này</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">IP có vị trí</div>
@@ -938,9 +985,10 @@ function renderIpLogs(data) {
             const location = ip.city
               ? `${ip.city}${ip.region ? ', ' + ip.region : ''}`
               : (ip.country ? flag + ' ' + ip.country : '⏳ Đang chờ');
+            const isNew = ip.isNewCity ? '🆕 ' : '';
             return `<tr>
               <td><code style="background:var(--gray-100);padding:.15rem .4rem;border-radius:4px;font-size:.8rem;">${escapeHtml(ip.ip)}</code></td>
-              <td><strong>${flag} ${escapeHtml(location)}</strong></td>
+              <td><strong>${flag} ${isNew}${escapeHtml(location)}</strong>${ip.isNewCity ? '<br><span style="font-size:.7rem;color:#ef4444;font-weight:600;">📍 MỚI</span>' : ''}</td>
               <td style="color:var(--gray-500);font-size:.78rem;">${escapeHtml(ip.isp || '—')}</td>
               <td><strong>${ip.totalViews}</strong></td>
               <td style="font-size:.78rem;">${formatTime(ip.lastSeen)}</td>
@@ -955,6 +1003,97 @@ function renderIpLogs(data) {
       <span>✅ Mỗi IP chỉ 1 dòng, cập nhật last_seen + total_views</span>
     </div>
   `;
+}
+
+// ─── Map ───
+let mapInstance = null;
+function renderMap(data) {
+  if (!data) return;
+
+  document.getElementById('map-stats-grid').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-label">📍 Chấm trên bản đồ</div>
+      <div class="stat-value">${data.totalMarkers || 0}</div>
+      <div class="stat-sub">IP có tọa độ địa lý</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Quốc gia</div>
+      <div class="stat-value">${new Set((data.markers || []).map(m => m.country)).size}</div>
+      <div class="stat-sub">Phần lớn là Việt Nam</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Tổng IP</div>
+      <div class="stat-value">${data.totalMarkers || 0}</div>
+      <div class="stat-sub">Đã định vị thành công</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Tổng lượt xem</div>
+      <div class="stat-value">${(data.markers || []).reduce((a, b) => a + (b.totalViews || 0), 0).toLocaleString('vi-VN')}</div>
+      <div class="stat-sub">Từ các IP này</div>
+    </div>
+  `;
+
+  // Vẽ bản đồ
+  const container = document.getElementById('map-container');
+  if (!data.markers || !data.markers.length) {
+    container.innerHTML = '<div class="no-data" style="padding:4rem;">Chưa có dữ liệu bản đồ — cần người dùng thật truy cập</div>';
+    return;
+  }
+
+  // Destroy old map if exists
+  if (mapInstance) {
+    mapInstance.remove();
+    mapInstance = null;
+  }
+
+  const map = L.map('map-container', {
+    center: [14.5, 108.0], // Việt Nam center
+    zoom: 6,
+    zoomControl: true,
+  });
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap',
+    maxZoom: 18,
+  }).addTo(map);
+
+  // Add markers
+  const markers = data.markers || [];
+  const maxViews = Math.max(...markers.map(m => m.totalViews), 1);
+
+  markers.forEach(m => {
+    const size = Math.max(8, Math.min(24, 8 + (m.totalViews / maxViews) * 16));
+    const color = m.totalViews >= 10 ? '#ef4444' : m.totalViews >= 5 ? '#f59e0b' : '#2563eb';
+    const flag = m.country_code ? getFlagEmoji(m.country_code) : '';
+
+    const marker = L.circleMarker([m.lat, m.lon], {
+      radius: size,
+      fillColor: color,
+      color: '#fff',
+      weight: 2,
+      opacity: 1,
+      fillOpacity: 0.7,
+    }).addTo(map);
+
+    marker.bindPopup(`
+      <div style="font-size:.85rem;line-height:1.5;">
+        <div style="font-weight:700;margin-bottom:4px;">${flag} ${escapeHtml(m.city)}${m.region ? ', ' + escapeHtml(m.region) : ''}</div>
+        <div style="color:var(--gray-500);font-size:.8rem;">IP: <code>${escapeHtml(m.ip)}</code></div>
+        <div style="color:var(--gray-500);font-size:.8rem;">Lượt xem: <strong>${m.totalViews}</strong></div>
+        <div style="color:var(--gray-500);font-size:.8rem;">Lần cuối: ${formatTime(m.lastSeen)}</div>
+      </div>
+    `);
+  });
+
+  // Fit bounds to show all markers
+  if (markers.length > 1) {
+    const bounds = markers.map(m => [m.lat, m.lon]);
+    map.fitBounds(bounds, { padding: [30, 30] });
+  } else if (markers.length === 1) {
+    map.setView([markers[0].lat, markers[0].lon], 10);
+  }
+
+  mapInstance = map;
 }
 
 function formatTime(dateStr) {

@@ -623,6 +623,31 @@ async function handleAdminData(req, res) {
         .order('last_seen', { ascending: false })
         .limit(200);
 
+      // Tính tổng số city đã biết (để phát hiện city mới)
+      const { data: allCities } = await supabase
+        .from('analytics_ip_cache')
+        .select('city, region, first_seen')
+        .not('city', 'is', null);
+
+      // City đã biết trước khoảng thời gian này
+      const knownCities = new Set();
+      // City xuất hiện lần đầu trong khoảng thời gian
+      const newCities = [];
+      const cityFirstSeen = {};
+      for (const row of allCities || []) {
+        if (!row.city) continue;
+        const key = `${row.city}|${row.region || ''}`;
+        if (!cityFirstSeen[key] || new Date(row.first_seen) < new Date(cityFirstSeen[key])) {
+          cityFirstSeen[key] = row.first_seen;
+        }
+      }
+      for (const [key, firstSeen] of Object.entries(cityFirstSeen)) {
+        if (new Date(firstSeen) >= new Date(since)) {
+          const [city, region] = key.split('|');
+          newCities.push({ city, region: region || '' });
+        }
+      }
+
       return res.json({
         success: true,
         data: {
@@ -639,8 +664,39 @@ async function handleAdminData(req, res) {
             firstSeen: ip.first_seen,
             lastSeen: ip.last_seen,
             totalViews: ip.total_views || 0,
+            isNewCity: newCities.some(nc => nc.city === ip.city),
           })),
           totalIps: ips?.length || 0,
+          newCities: newCities.slice(0, 20),
+          newCitiesCount: newCities.length,
+        },
+      });
+    }
+
+    // ─── MAP VIEW (tọa độ IP để vẽ bản đồ) ───
+    if (view === 'map') {
+      const { data: ips } = await supabase
+        .from('analytics_ip_cache')
+        .select('ip, city, region, country, country_code, lat, lon, total_views, last_seen')
+        .gte('last_seen', since)
+        .not('lat', 'is', null)
+        .not('lon', 'is', null);
+
+      return res.json({
+        success: true,
+        data: {
+          markers: (ips || []).map(ip => ({
+            ip: ip.ip,
+            city: ip.city || '',
+            region: ip.region || '',
+            country: ip.country || '',
+            country_code: ip.country_code || '',
+            lat: parseFloat(ip.lat),
+            lon: parseFloat(ip.lon),
+            totalViews: ip.total_views || 0,
+            lastSeen: ip.last_seen,
+          })),
+          totalMarkers: ips?.length || 0,
         },
       });
     }
