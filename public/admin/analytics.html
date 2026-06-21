@@ -152,6 +152,7 @@
         <button data-view="searches" onclick="switchView('searches')">🔍 Tìm kiếm</button>
         <button data-view="events" onclick="switchView('events')">⚡ Sự kiện</button>
         <button data-view="conversion" onclick="switchView('conversion')">🔄 Chuyển đổi</button>
+        <button data-view="locations" onclick="switchView('locations')">📍 Vị trí</button>
       </div>
 
       <!-- Loading -->
@@ -224,6 +225,25 @@
           <div class="chart-body" id="advisor-funnel-container"></div>
         </div>
       </div>
+
+      <!-- Locations -->
+      <div id="view-locations" class="content-views">
+        <div class="stats-grid" id="location-stats-grid"></div>
+        <div class="chart-card">
+          <div class="chart-header"><h3>📍 Top thành phố / địa điểm</h3><span class="chart-meta">Dựa trên IP người truy cập</span></div>
+          <div class="chart-body" id="top-locations-container"></div>
+        </div>
+        <div class="dual-metric">
+          <div class="chart-card">
+            <div class="chart-header"><h3>Phân bố theo vùng</h3></div>
+            <div class="chart-body" id="region-breakdown-container"></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-header"><h3>Phân bố theo quốc gia</h3></div>
+            <div class="chart-body" id="country-breakdown-container"></div>
+          </div>
+        </div>
+      </div>
     </div>
   </main>
 </div>
@@ -282,12 +302,13 @@ async function loadDashboard(days) {
   document.getElementById('loading-indicator').style.display = 'block';
 
   try {
-    const [overviewRes, schoolsRes, searchesRes, eventsRes, conversionRes] = await Promise.all([
+    const [overviewRes, schoolsRes, searchesRes, eventsRes, conversionRes, locationsRes] = await Promise.all([
       api('GET', API + '?view=overview&days=' + currentDays),
       api('GET', API + '?view=schools&days=' + currentDays),
       api('GET', API + '?view=searches&days=' + currentDays),
       api('GET', API + '?view=events&days=' + currentDays),
       api('GET', API + '?view=conversion&days=' + currentDays),
+      api('GET', API + '?view=locations&days=' + currentDays),
     ]);
 
     renderOverview(overviewRes.data);
@@ -295,6 +316,7 @@ async function loadDashboard(days) {
     renderSearches(searchesRes.data);
     renderEvents(eventsRes.data);
     renderConversion(conversionRes.data);
+    renderLocations(locationsRes.data);
 
   } catch (err) {
     toast('Lỗi tải dữ liệu: ' + err.message, 'error');
@@ -731,6 +753,131 @@ function renderFunnel(containerId, funnel, title, isCompact) {
       }).join('')}
     </div>
   `;
+}
+
+// ─── Locations ───
+function renderLocations(data) {
+  if (!data) return;
+
+  document.getElementById('location-stats-grid').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-label">Địa điểm ghi nhận</div>
+      <div class="stat-value">${data.uniqueCities || 0}</div>
+      <div class="stat-sub">Thành phố/quận/huyện</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Lượt xem đã định vị</div>
+      <div class="stat-value">${(data.totalLocatedViews || 0).toLocaleString('vi-VN')}</div>
+      <div class="stat-sub">${currentDays} ngày qua</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Phiên đã định vị</div>
+      <div class="stat-value">${(data.totalLocatedSessions || 0).toLocaleString('vi-VN')}</div>
+      <div class="stat-sub">${currentDays} ngày qua</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Khu vực</div>
+      <div class="stat-value">${data.regions?.length || 0}</div>
+      <div class="stat-sub">Tỉnh/thành phố khác nhau</div>
+    </div>
+  `;
+
+  // Top locations table
+  const locContainer = document.getElementById('top-locations-container');
+  const locations = data.locations || [];
+  if (!locations.length) {
+    locContainer.innerHTML = '<div class="no-data">Chưa có dữ liệu vị trí — cần có người dùng thật truy cập để ghi nhận</div>';
+  } else {
+    const maxViews = locations[0]?.pageViews || 1;
+    locContainer.innerHTML = `
+      <table class="top-schools-table">
+        <thead><tr>
+          <th>#</th><th>Thành phố</th><th>Vùng</th><th>Quốc gia</th><th>Lượt xem</th><th></th><th>Phiên</th><th>Trang/phiên</th>
+        </tr></thead>
+        <tbody>
+          ${locations.map((loc, i) => {
+            const pct = Math.round((loc.pageViews / maxViews) * 100);
+            const flag = loc.country_code ? getFlagEmoji(loc.country_code) : '';
+            const rankClass = i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : '';
+            return `<tr>
+              <td class="rank ${rankClass}">${i + 1}</td>
+              <td><strong>${escapeHtml(loc.city)}</strong></td>
+              <td>${escapeHtml(loc.region)}</td>
+              <td>${flag} ${escapeHtml(loc.country)}</td>
+              <td><strong>${loc.pageViews}</strong></td>
+              <td><div class="bar-bg"><div class="bar-fill" style="width:${pct}%"></div></div></td>
+              <td>${loc.sessions}</td>
+              <td>${loc.pageViewsPerSession}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+      <div style="padding:.5rem .75rem;font-size:.78rem;color:var(--gray-400);border-top:1px solid var(--gray-100);">
+        Hiển thị ${locations.length} địa điểm — dữ liệu từ ip-api.com
+      </div>
+    `;
+  }
+
+  // Region breakdown
+  const regionContainer = document.getElementById('region-breakdown-container');
+  const regions = data.regions || [];
+  if (!regions.length) {
+    regionContainer.innerHTML = '<div class="no-data">Chưa có dữ liệu</div>';
+  } else {
+    const maxRegion = regions[0]?.pageViews || 1;
+    regionContainer.innerHTML = `
+      <table class="search-table">
+        <thead><tr><th>Vùng</th><th>Lượt xem</th><th></th><th>Phiên</th></tr></thead>
+        <tbody>
+          ${regions.map(r => {
+            const pct = Math.round((r.pageViews / maxRegion) * 100);
+            return `<tr>
+              <td><strong>${escapeHtml(r.region)}</strong></td>
+              <td><strong>${r.pageViews}</strong></td>
+              <td><div class="bar-bg"><div class="bar-fill" style="width:${pct}%;background:linear-gradient(90deg,#7c3aed,#a78bfa)"></div></div></td>
+              <td>${r.sessions}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    `;
+  }
+
+  // Country breakdown
+  const countryContainer = document.getElementById('country-breakdown-container');
+  const countries = data.countries || [];
+  if (!countries.length) {
+    countryContainer.innerHTML = '<div class="no-data">Chưa có dữ liệu</div>';
+  } else {
+    const maxCountry = countries[0]?.pageViews || 1;
+    countryContainer.innerHTML = `
+      <table class="search-table">
+        <thead><tr><th>Quốc gia</th><th>Lượt xem</th><th></th><th>Phiên</th></tr></thead>
+        <tbody>
+          ${countries.map(c => {
+            const pct = Math.round((c.pageViews / maxCountry) * 100);
+            const flag = c.code ? getFlagEmoji(c.code) : '';
+            return `<tr>
+              <td><strong>${flag} ${escapeHtml(c.country)}</strong></td>
+              <td><strong>${c.pageViews}</strong></td>
+              <td><div class="bar-bg"><div class="bar-fill" style="width:${pct}%;background:linear-gradient(90deg,#0f766e,#34d399)"></div></div></td>
+              <td>${c.sessions}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    `;
+  }
+}
+
+// ─── Emoji flag from country code ───
+function getFlagEmoji(code) {
+  if (!code || code.length !== 2) return '';
+  const base = 0x1F1E6;
+  const a = code.toUpperCase().charCodeAt(0) - 65;
+  const b = code.toUpperCase().charCodeAt(1) - 65;
+  if (a < 0 || a > 25 || b < 0 || b > 25) return '';
+  return String.fromCodePoint(base + a, base + b);
 }
 
 // ─── Helpers ───

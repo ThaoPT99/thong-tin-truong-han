@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS analytics_page_views (
 CREATE INDEX IF NOT EXISTS idx_analytics_pv_page_type ON analytics_page_views(page_type);
 CREATE INDEX IF NOT EXISTS idx_analytics_pv_school ON analytics_page_views(school_slug);
 CREATE INDEX IF NOT EXISTS idx_analytics_pv_created ON analytics_page_views(created_at DESC);
-CREATE INDEX IF NOT EXISTS idx_analytics_pv_date ON analytics_page_views(DATE(created_at));
+-- (Không cần index DATE(created_at) — index created_at DESC đã hỗ trợ date range query)
 
 -- 2. Search Queries — theo dõi tìm kiếm và filter
 CREATE TABLE IF NOT EXISTS analytics_searches (
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS analytics_searches (
 
 CREATE INDEX IF NOT EXISTS idx_analytics_search_query ON analytics_searches(query);
 CREATE INDEX IF NOT EXISTS idx_analytics_search_created ON analytics_searches(created_at DESC);
-CREATE INDEX IF NOT EXISTS idx_analytics_search_date ON analytics_searches(DATE(created_at));
+-- (Index trên created_at DESC đủ cho date grouping)
 
 -- 3. Custom Events — theo dõi hành vi người dùng
 CREATE TABLE IF NOT EXISTS analytics_events (
@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS analytics_events (
 
 CREATE INDEX IF NOT EXISTS idx_analytics_ev_type ON analytics_events(event_type);
 CREATE INDEX IF NOT EXISTS idx_analytics_ev_created ON analytics_events(created_at DESC);
-CREATE INDEX IF NOT EXISTS idx_analytics_ev_date ON analytics_events(DATE(created_at));
+-- (Index trên created_at DESC đủ cho date grouping)
 
 -- 4. User Sessions — theo dõi phiên truy cập
 CREATE TABLE IF NOT EXISTS analytics_sessions (
@@ -68,7 +68,31 @@ CREATE TABLE IF NOT EXISTS analytics_sessions (
 );
 
 CREATE INDEX IF NOT EXISTS idx_analytics_sess_session ON analytics_sessions(session_id);
-CREATE INDEX IF NOT EXISTS idx_analytics_sess_date ON analytics_sessions(DATE(started_at));
+-- (Index trên started_at DESC đủ cho date grouping)
+
+-- ============================================================
+-- Location columns — ghi nhận vị trí địa lý từ IP
+-- ============================================================
+
+ALTER TABLE analytics_page_views ADD COLUMN IF NOT EXISTS city VARCHAR(100);
+ALTER TABLE analytics_page_views ADD COLUMN IF NOT EXISTS region VARCHAR(100);
+ALTER TABLE analytics_page_views ADD COLUMN IF NOT EXISTS country VARCHAR(100);
+ALTER TABLE analytics_page_views ADD COLUMN IF NOT EXISTS country_code VARCHAR(5);
+ALTER TABLE analytics_page_views ADD COLUMN IF NOT EXISTS lat DECIMAL(10,7);
+ALTER TABLE analytics_page_views ADD COLUMN IF NOT EXISTS lon DECIMAL(10,7);
+ALTER TABLE analytics_page_views ADD COLUMN IF NOT EXISTS isp VARCHAR(200);
+
+ALTER TABLE analytics_sessions ADD COLUMN IF NOT EXISTS city VARCHAR(100);
+ALTER TABLE analytics_sessions ADD COLUMN IF NOT EXISTS region VARCHAR(100);
+ALTER TABLE analytics_sessions ADD COLUMN IF NOT EXISTS country VARCHAR(100);
+ALTER TABLE analytics_sessions ADD COLUMN IF NOT EXISTS country_code VARCHAR(5);
+ALTER TABLE analytics_sessions ADD COLUMN IF NOT EXISTS lat DECIMAL(10,7);
+ALTER TABLE analytics_sessions ADD COLUMN IF NOT EXISTS lon DECIMAL(10,7);
+ALTER TABLE analytics_sessions ADD COLUMN IF NOT EXISTS isp VARCHAR(200);
+
+CREATE INDEX IF NOT EXISTS idx_analytics_pv_city ON analytics_page_views(city);
+CREATE INDEX IF NOT EXISTS idx_analytics_pv_region ON analytics_page_views(region);
+CREATE INDEX IF NOT EXISTS idx_analytics_sess_city ON analytics_sessions(city);
 
 -- Row Level Security: public can insert, only director can select
 ALTER TABLE analytics_page_views ENABLE ROW LEVEL SECURITY;

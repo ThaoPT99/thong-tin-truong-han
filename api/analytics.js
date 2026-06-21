@@ -7,6 +7,46 @@
 
 const { supabase } = require('../lib/supabase');
 const { requireAdmin } = require('../lib/auth');
+const http = require('http');
+
+// ─── IP Geolocation via ip-api.com (free, 45 req/min limit) ───
+function resolveIpLocation(ip) {
+  return new Promise((resolve) => {
+    // Skip private/local IPs
+    if (!ip || ip === '' || ip === '127.0.0.1' || ip === '::1' || ip === 'localhost' ||
+        ip.startsWith('10.') || ip.startsWith('172.16.') || ip.startsWith('192.168.')) {
+      return resolve(null);
+    }
+
+    const url = `http://ip-api.com/json/${ip}?fields=status,message,city,regionName,country,countryCode,lat,lon,isp,org,query`;
+    const req = http.get(url, (res) => {
+      let body = '';
+      res.on('data', chunk => body += chunk);
+      res.on('end', () => {
+        try {
+          const data = JSON.parse(body);
+          if (data.status === 'success') {
+            resolve({
+              city: data.city || null,
+              region: data.regionName || null,
+              country: data.country || null,
+              country_code: data.countryCode || null,
+              lat: data.lat || null,
+              lon: data.lon || null,
+              isp: data.isp || data.org || null,
+            });
+          } else {
+            resolve(null);
+          }
+        } catch {
+          resolve(null);
+        }
+      });
+    });
+    req.on('error', () => resolve(null));
+    req.setTimeout(1500, () => { req.destroy(); resolve(null); });
+  });
+}
 
 // ─── Public Tracking (POST) ───
 async function handleTrack(req, res) {
@@ -25,6 +65,9 @@ async function handleTrack(req, res) {
       const { pageType, schoolSlug, schoolName, referrer, sessionId, userAgent } = data;
       if (!pageType) return res.status(400).json({ error: 'pageType is required' });
 
+      // Resolve IP to location (non-blocking, best-effort)
+      const location = await resolveIpLocation(clientIp);
+
       const { error: viewErr } = await supabase.from('analytics_page_views').insert({
         page_type: pageType,
         school_slug: schoolSlug || null,
@@ -33,6 +76,13 @@ async function handleTrack(req, res) {
         session_id: sessionId || null,
         user_agent: userAgent || null,
         ip: clientIp || null,
+        city: location?.city || null,
+        region: location?.region || null,
+        country: location?.country || null,
+        country_code: location?.country_code || null,
+        lat: location?.lat || null,
+        lon: location?.lon || null,
+        isp: location?.isp || null,
       });
       if (viewErr) throw viewErr;
       break;
@@ -89,6 +139,8 @@ async function handleTrack(req, res) {
             })
             .eq('session_id', sessionId);
         } else {
+          // Resolve IP to location
+          const location = await resolveIpLocation(clientIp);
           await supabase.from('analytics_sessions').insert({
             session_id: sessionId,
             ip: clientIp || null,
@@ -98,6 +150,13 @@ async function handleTrack(req, res) {
             page_views: 1,
             started_at: new Date().toISOString(),
             last_activity: new Date().toISOString(),
+            city: location?.city || null,
+            region: location?.region || null,
+            country: location?.country || null,
+            country_code: location?.country_code || null,
+            lat: location?.lat || null,
+            lon: location?.lon || null,
+            isp: location?.isp || null,
           });
         }
       }
@@ -425,6 +484,108 @@ async function handleAdminData(req, res) {
             { stage: 'Submit form phân tích', count: advisorSubmitCount },
             { stage: 'Lưu kết quả', count: advisorSaveEvents || 0 },
           ],
+        },
+      });
+    }
+
+    // ─── LOCATIONS VIEW ───
+    if (view === 'locations') {
+      const [
+        { data: allPageViews },
+        { data: allSessions },
+      ] = await Promise.all([
+        supabase
+          .from('analytics_page_views')
+          .select('city, region, country, country_code, lat, lon')
+          .gte('created_at', since)
+          .not('city', 'is', null),
+        supabase
+          .from('analytics_sessions')
+          .select('city, region, country, country_code, lat, lon, page_views')
+          .gte('started_at', since)
+          .not('city', 'is', null),
+      ]);
+
+      // Group page views by city
+      const cityCounts = {};
+      for (const row of allPageViews || []) {
+        if (!row.city) continue;
+        const key = `${row.city}|${row.region || ''}|${row.country || ''}`;
+        if (!cityCounts[key]) {
+          cityCounts[key] = { city: row.city, region: row.region || '', country: row.country || '', country_code: row.country_code || '', lat: row.lat, lon: row.lon, views: 0 };
+        }
+        cityCounts[key].views++;
+      }
+
+      // Group sessions by city
+      const sessionCityCounts = {};
+      for (const row of allSessions || []) {
+        if (!row.city) continue;
+        const key = `${row.city}|${row.region || ''}|${row.country || ''}`;
+        if (!sessionCityCounts[key]) {
+          sessionCityCounts[key] = { city: row.city, region: row.region || '', country: row.country || '', country_code: row.country_code || '', lat: row.lat, lon: row.lon, sessions: 0, pageViews: 0 };
+        }
+        sessionCityCounts[key].sessions++;
+        sessionCityCounts[key].pageViews += row.page_views || 1;
+      }
+
+      // Merge
+      const allCities = new Set([...Object.keys(cityCounts), ...Object.keys(sessionCityCounts)]);
+      const locations = [];
+      for (const key of allCities) {
+        const pv = cityCounts[key];
+        const sess = sessionCityCounts[key];
+        locations.push({
+          city: pv?.city || sess?.city || '',
+          region: pv?.region || sess?.region || '',
+          country: pv?.country || sess?.country || '',
+          country_code: pv?.country_code || sess?.country_code || '',
+          lat: parseFloat(pv?.lat) || parseFloat(sess?.lat) || 0,
+          lon: parseFloat(pv?.lon) || parseFloat(sess?.lon) || 0,
+          pageViews: pv?.views || 0,
+          sessions: sess?.sessions || 0,
+          pageViewsPerSession: sess?.sessions > 0 ? Math.round((sess?.pageViews || 0) / sess?.sessions * 10) / 10 : 0,
+        });
+      }
+
+      // Sort by page views descending
+      locations.sort((a, b) => b.pageViews - a.pageViews);
+
+      // Group by region
+      const regionCounts = {};
+      for (const loc of locations) {
+        const regionKey = loc.region || (loc.city ? `Khu vực khác` : 'Không xác định');
+        if (!regionCounts[regionKey]) {
+          regionCounts[regionKey] = { region: regionKey, country: loc.country, pageViews: 0, sessions: 0 };
+        }
+        regionCounts[regionKey].pageViews += loc.pageViews;
+        regionCounts[regionKey].sessions += loc.sessions;
+      }
+
+      const regions = Object.values(regionCounts).sort((a, b) => b.pageViews - a.pageViews);
+
+      // Country totals
+      const countryCounts = {};
+      for (const loc of locations) {
+        const c = loc.country || 'Unknown';
+        if (!countryCounts[c]) {
+          countryCounts[c] = { country: c, code: loc.country_code, pageViews: 0, sessions: 0 };
+        }
+        countryCounts[c].pageViews += loc.pageViews;
+        countryCounts[c].sessions += loc.sessions;
+      }
+
+      const countries = Object.values(countryCounts).sort((a, b) => b.pageViews - a.pageViews);
+
+      return res.json({
+        success: true,
+        data: {
+          locations: locations.slice(0, 50), // Top 50 locations
+          regions: regions,
+          countries: countries,
+          totalLocatedViews: locations.reduce((a, b) => a + b.pageViews, 0),
+          totalLocatedSessions: locations.reduce((a, b) => a + b.sessions, 0),
+          uniqueCities: locations.length,
         },
       });
     }
