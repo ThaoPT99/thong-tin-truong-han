@@ -7,6 +7,7 @@
 
 const { supabase } = require('../lib/supabase');
 const { requireAdmin } = require('../lib/auth');
+const { sendNewCityAlert } = require('../lib/telegram');
 const http = require('http');
 
 // ─── IP Geolocation via ip-api.com (free, 45 req/min limit) ───
@@ -93,6 +94,66 @@ async function updateIpCache(ip, userAgent, location) {
   }
 }
 
+// ─── Kiểm tra + gửi cảnh báo Telegram nếu city hoàn toàn mới ───
+async function checkNewCityTelegramAlert(location, clientIp, pageType) {
+  try {
+    const { city, region, country, country_code, isp } = location;
+    if (!city) return;
+
+    // Kiểm tra xem city này đã từng xuất hiện trước đây chưa
+    const { data: existingCity } = await supabase
+      .from('analytics_ip_cache')
+      .select('ip')
+      .eq('city', city)
+      .order('first_seen', { ascending: true })
+      .limit(1);
+
+    // Nếu đã có >= 1 IP khác từ city này → không phải city mới
+    if (existingCity && existingCity.length > 0) {
+      // Kiểm tra: IP hiện tại có phải là IP đầu tiên từ city này không
+      // existingCity[0] có thể chính là IP này (nếu insert đã hoàn thành)
+      // Nếu IP đầu tiên trùng với IP này → đây là city mới
+      if (existingCity.length === 1 && existingCity[0].ip === clientIp) {
+        // City mới! Gửi cảnh báo
+        const pageLabels = {
+          school_list: 'Danh sách trường',
+          school_detail: 'Chi tiết trường',
+          advisor: 'Công cụ tư vấn',
+          compare: 'So sánh trường',
+        };
+        await sendNewCityAlert({
+          city: city,
+          region: region || '',
+          country: country || 'Vietnam',
+          ip: clientIp,
+          isp: isp || 'Không rõ',
+          url: pageLabels[pageType] || pageType || 'Trang chủ',
+        });
+      }
+      return;
+    }
+
+    // Chưa có IP nào từ city này → city mới hoàn toàn
+    const pageLabels = {
+      school_list: 'Danh sách trường',
+      school_detail: 'Chi tiết trường',
+      advisor: 'Công cụ tư vấn',
+      compare: 'So sánh trường',
+    };
+    await sendNewCityAlert({
+      city: city,
+      region: region || '',
+      country: country || 'Vietnam',
+      ip: clientIp,
+      isp: isp || 'Không rõ',
+      url: pageLabels[pageType] || pageType || 'Trang chủ',
+    });
+  } catch (err) {
+    // Silent fail — không ảnh hưởng tới tracking
+    console.error('checkNewCityTelegramAlert error:', err.message);
+  }
+}
+
 // ─── Public Tracking (POST) ───
 async function handleTrack(req, res) {
   const body = req.body || {};
@@ -136,6 +197,10 @@ async function handleTrack(req, res) {
           // IP mới → resolve location rồi cache
           const location = await resolveIpLocation(clientIp);
           await updateIpCache(clientIp, userAgent, location);
+          // Nếu có location + city mới → gửi cảnh báo Telegram
+          if (location?.city) {
+            await checkNewCityTelegramAlert(location, clientIp, pageType);
+          }
         }
       } catch { /* silent */ }
 
@@ -218,6 +283,10 @@ async function handleTrack(req, res) {
           } else {
             const location = await resolveIpLocation(clientIp);
             await updateIpCache(clientIp, userAgent, location);
+            // Nếu có location + city mới → gửi cảnh báo Telegram
+            if (location?.city) {
+              await checkNewCityTelegramAlert(location, clientIp, pageType || 'unknown');
+            }
           }
         } catch { /* silent */ }
       }

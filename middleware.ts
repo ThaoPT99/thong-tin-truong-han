@@ -123,6 +123,7 @@ export default async function middleware(request: Request): Promise<Response | v
   // Skip paths
   const skipPaths = [
     '/api/auth',
+    '/api/telegram',
     '/api/admin/access-control',
     '/api/admin/access-logs',
     '/admin/login',
@@ -328,6 +329,6 @@ async function logAccess(data: Record<string, unknown>): Promise<void> {
 
 export const config = {
   matcher: [
-    '/((?!api/auth|api/admin/access-control|api/admin/access-logs|_next|_vercel|favicon.ico|.*\\.(?:ico|png|jpg|jpeg|gif|svg|css|js|woff2?)$).*)',
+    '/((?!api/auth|api/telegram|api/admin/access-control|api/admin/access-logs|_next|_vercel|favicon.ico|.*\\.(?:ico|png|jpg|jpeg|gif|svg|css|js|woff2?)$).*)',
   ],
 }
