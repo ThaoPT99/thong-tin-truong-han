@@ -276,6 +276,7 @@ Bot này giúp bạn quản lý thông tin du học Hàn Quốc visa D2-6.
 📝 <code>/dieukien</code> — Visa checklist D2-6
 👤 <code>/gui [tên], [SĐT], [trường]</code> — Thêm học sinh mới
 ℹ️ <code>/thongtin</code> — Thông tin hệ thống
+🧠 <code>/phan-tich</code> — Phân tích IP bằng AI (phát hiện đối tác)
 ❓ <code>/help</code> — Xem hướng dẫn chi tiết
 
 <i>Liên hệ admin nếu cần hỗ trợ thêm.</i>`;
@@ -298,6 +299,9 @@ async function handleTelegramHelp(chatId) {
 
 👤 <b>Quản lý học sinh</b>
 <code>/gui Nguyễn Văn A, 0978123456, Osan</code> — Thêm học sinh vào CRM
+
+🧠 <b>Phân tích AI</b>
+<code>/phan-tich</code> — Phân tích IP bằng AI, phát hiện đối tác tiềm năng
 
 ℹ️ <b>Khác</b>
 <code>/thongtin</code> — Thông tin hệ thống, liên hệ
@@ -681,6 +685,156 @@ async function handleTelegramSystemInfo(chatId) {
   await sendTelegramMessage(chatId, text);
 }
 
+// ─── Lệnh: /phan-tich — Phân tích IP bằng AI ───
+async function handleTelegramIpAnalysis(chatId) {
+  const apiKey = getDeepSeekKey();
+  if (!apiKey) {
+    return await sendTelegramMessage(chatId, '❌ DEEPSEEK_API_KEY chưa được cấu hình để dùng tính năng này.');
+  }
+
+  await sendTelegramMessage(chatId, '🧠 <b>Đang phân tích dữ liệu IP...</b>\n\nTôi đang thu thập thông tin và phân tích bằng AI. Sẽ mất vài giây...');
+
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+
+  try {
+    // Lấy top IP đáng chú ý (có location, nhiều lượt xem)
+    const { data: topIps } = await supabase
+      .from('analytics_ip_cache')
+      .select('ip, city, region, country, country_code, isp, total_views, first_seen, last_seen')
+      .gte('last_seen', sevenDaysAgo)
+      .not('city', 'is', null)
+      .order('total_views', { ascending: false })
+      .limit(10);
+
+    if (!topIps || topIps.length === 0) {
+      return await sendTelegramMessage(chatId, '❌ Chưa có dữ liệu IP nào để phân tích. Hãy đợi thêm lượt truy cập.');
+    }
+
+    // Với mỗi IP, lấy các trường họ đã xem
+    const ipAnalysis = [];
+    for (const ip of topIps) {
+      const { data: pageViews } = await supabase
+        .from('analytics_page_views')
+        .select('page_type, school_slug, school_name')
+        .eq('ip', ip.ip)
+        .gte('created_at', sevenDaysAgo)
+        .not('school_slug', 'is', null)
+        .order('created_at', { ascending: false })
+        .limit(20);
+
+      // Đếm số trường đã xem
+      const schoolsSeen = new Set();
+      const schoolCounts = {};
+      let hasAdvisor = false;
+      let hasCompare = false;
+      let totalViewCount = 0;
+
+      for (const view of pageViews || []) {
+        totalViewCount++;
+        if (view.school_slug) {
+          schoolsSeen.add(view.school_slug);
+          schoolCounts[view.school_name || view.school_slug] = (schoolCounts[view.school_name || view.school_slug] || 0) + 1;
+        }
+        if (view.page_type === 'advisor') hasAdvisor = true;
+        if (view.page_type === 'compare') hasCompare = true;
+      }
+
+      ipAnalysis.push({
+        ip: ip.ip,
+        city: ip.city || '',
+        region: ip.region || '',
+        country: ip.country_code || '',
+        isp: ip.isp || '',
+        totalViews: ip.total_views || 0,
+        uniqueSchools: schoolsSeen.size,
+        schools: Object.entries(schoolCounts)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 5)
+          .map(([name, count]) => `${name} (${count} lượt)`),
+        usedAdvisor: hasAdvisor,
+        usedCompare: hasCompare,
+        daysActive: Math.ceil((new Date(ip.last_seen) - new Date(ip.first_seen)) / (24 * 60 * 60 * 1000)),
+      });
+    }
+
+    // Thống kê tổng quan
+    const totalUniqueIps = topIps.length;
+    const totalPartnersEstimate = ipAnalysis.filter(i => i.uniqueSchools >= 3 || i.usedAdvisor).length;
+    const citiesGrouped = {};
+    for (const ip of ipAnalysis) {
+      const key = `${ip.city}${ip.region ? `, ${ip.region}` : ''}`;
+      citiesGrouped[key] = (citiesGrouped[key] || 0) + 1;
+    }
+
+    // Build prompt
+    const ipSummary = ipAnalysis.map((ip, i) =>
+      `IP ${i + 1}: ${ip.ip}
+  • Vị trí: ${ip.city}${ip.region ? `, ${ip.region}` : ''} (${ip.country})
+  • ISP: ${ip.isp || 'Không rõ'}
+  • Lượt xem: ${ip.totalViews}
+  • Trường đã xem: ${ip.uniqueSchools} trường — ${ip.schools.join(', ') || 'Không có'}
+  • Đã dùng công cụ: ${ip.usedAdvisor ? 'Có (tư vấn)' : ''}${ip.usedCompare ? ', Có (so sánh)' : ''}${!ip.usedAdvisor && !ip.usedCompare ? 'Không' : ''}
+  • Số ngày hoạt động: ${ip.daysActive} ngày`
+    ).join('\n');
+
+    const citySummary = Object.entries(citiesGrouped)
+      .sort((a, b) => b[1] - a[1])
+      .map(([city, count]) => `• ${city}: ${count} IP`)
+      .join('\n');
+
+    const systemPrompt = `Bạn là chuyên gia phân tích dữ liệu khách hàng cho một doanh nghiệp xử lý visa du học Hàn Quốc (visa D2-6).
+
+NHIỆM VỤ:
+Phân tích danh sách IP truy cập website thongtintruonghan.vercel.app và xác định:
+1. IP nào có khả năng là **đối tác / trung tâm du học** (dấu hiệu: xem nhiều trường, dùng công cụ tư vấn, so sánh trường, ISP là VNPT/FPT, truy cập nhiều ngày)
+2. IP nào là **học sinh cá nhân** (dấu hiệu: xem 1-2 trường, không dùng công cụ)
+3. **Cụm địa lý** nào đáng chú ý (nhiều IP từ cùng thành phố)
+4. **Hành vi bất thường** cần theo dõi
+
+YÊU CẦU TRẢ LỜI:
+- Bằng tiếng Việt, ngắn gọn, dễ đọc
+- Dùng bullet points, in đậm các phát hiện quan trọng
+- Kết thúc bằng khuyến nghị hành động (nên tiếp cận đối tác nào, ở đâu)
+- Nếu có IP đáng nghi (truy cập bất thường), cảnh báo rõ
+
+DỮ LIỆU:
+- Tổng số IP đáng chú ý: ${totalUniqueIps}
+- IP nghi là đối tác: ~${totalPartnersEstimate}
+
+=== TOP IP ===\n${ipSummary}\n
+=== PHÂN BỐ THEO THÀNH PHỐ ===\n${citySummary}`;
+
+    const analysis = await callDeepSeek(
+      [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: 'Phân tích danh sách IP trên và đưa ra nhận xét chi tiết về các đối tác tiềm năng.' },
+      ],
+      { temperature: 0.3, maxTokens: 2500, timeout: 40000 }
+    );
+
+    if (analysis) {
+      // DeepSeek response might exceed Telegram's 4096 char limit, split if needed
+      const maxMsgLen = 4000;
+      if (analysis.length > maxMsgLen) {
+        const parts = [];
+        for (let i = 0; i < analysis.length; i += maxMsgLen) {
+          parts.push(analysis.substring(i, i + maxMsgLen));
+        }
+        for (const part of parts) {
+          await sendTelegramMessage(chatId, part);
+        }
+      } else {
+        await sendTelegramMessage(chatId, analysis);
+      }
+    } else {
+      await sendTelegramMessage(chatId, '❌ AI không phản hồi, vui lòng thử lại sau.');
+    }
+  } catch (err) {
+    console.error('IP analysis error:', err);
+    await sendTelegramMessage(chatId, '❌ Lỗi phân tích: ' + (err.message || 'Unknown error'));
+  }
+}
+
 async function handleTelegramWebhook(req, res) {
   // GET — health check
   if (req.method === 'GET') {
@@ -717,6 +871,7 @@ async function handleTelegramWebhook(req, res) {
     case '/baocao': case '/report': await handleTelegramReport(chatId); break;
     case '/dieukien': case '/visa': case '/checklist': await handleTelegramVisaChecklist(chatId); break;
     case '/gui': case '/them': await handleTelegramAddStudent(chatId, args); break;
+    case '/phan-tich': case '/phan_tich': case '/analyze': case '/ai': await handleTelegramIpAnalysis(chatId); break;
     case '/thongtin': case '/info': await handleTelegramSystemInfo(chatId); break;
     default:
       await sendTelegramMessage(chatId, `❓ Không hiểu lệnh "<b>${escapeHtmlTelegram(command)}</b>".\n\nGõ <code>/help</code> để xem danh sách lệnh.`);
