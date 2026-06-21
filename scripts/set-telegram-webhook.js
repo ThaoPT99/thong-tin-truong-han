@@ -18,7 +18,7 @@ if (!WEBHOOK_URL) {
   const pkg = require('../package.json');
   const repoUrl = pkg.repository?.url || '';
   const repoName = repoUrl.split('/').pop()?.replace('.git', '') || 'thong-tin-truong-han';
-  WEBHOOK_URL = `https://${repoName}.vercel.app/api/telegram`;
+  WEBHOOK_URL = `https://${repoName}.vercel.app/api/deepseek?action=telegram-webhook`;
 }
 
 const SECRET_TOKEN = process.env.TELEGRAM_WEBHOOK_SECRET || '';
