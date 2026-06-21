@@ -17,8 +17,56 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const { slug, full, semester } = req.query;
+    const { slug, full, semester, include } = req.query;
     const semesterFilter = semester || null;
+
+    // ─── Include extras data (semesters, visa checklist, interviews) ───
+    if (include === 'extras') {
+      const [
+        { data: semesters },
+        { data: visaChecklist },
+        { data: interviews },
+      ] = await Promise.all([
+        supabase.from('semesters').select('*').order('sort_order').order('nam', { ascending: false }).order('ky', { ascending: false }),
+        supabase.from('extra_visa_checklist').select('*').order('sort_order'),
+        supabase.from('extra_interviews').select('*').order('sort_order'),
+      ]);
+
+      const activeSemester = (semesters || []).find(s => s.is_active) || (semesters || [])[0] || null;
+
+      return res.json({
+        success: true,
+        data: {
+          semesterInfo: activeSemester
+            ? { ky: activeSemester.ky, nam: activeSemester.nam, title: activeSemester.title }
+            : null,
+          semesters: (semesters || []).map((s) => ({
+            id: s.id,
+            ky: s.ky,
+            nam: s.nam,
+            title: s.title || `Kỳ tháng ${s.ky}/${s.nam}`,
+            isActive: s.is_active,
+            sortOrder: s.sort_order,
+          })),
+          activeSemesterId: activeSemester?.id || null,
+          visaChecklist: (visaChecklist || []).map((r) => ({
+            stt: r.stt,
+            content: r.content,
+            note: r.note,
+            linkUrl: r.link_url,
+            linkText: r.link_text,
+            groupName: r.group_name,
+            level: r.level,
+          })),
+          interviews: (interviews || []).map((r) => ({
+            stt: r.stt,
+            content: r.content,
+            linkUrl: r.link_url,
+            linkText: r.link_text,
+          })),
+        },
+      });
+    }
 
     // ─── Lấy semester_schools map ───
     const { data: semesterSchoolsRaw } = await supabase

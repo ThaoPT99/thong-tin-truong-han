@@ -254,7 +254,7 @@ window.REGION_LABELS = {
       const ts = Date.now();
       const [schoolsRes, extrasRes] = await Promise.all([
         fetch(API_BASE + '/schools?_=' + ts, { signal: controller.signal }),
-        fetch(API_BASE + '/extras?_=' + ts, { signal: controller.signal })
+        fetch(API_BASE + '/schools?include=extras&_=' + ts, { signal: controller.signal })
       ]);
 
       clearTimeout(timeout);
