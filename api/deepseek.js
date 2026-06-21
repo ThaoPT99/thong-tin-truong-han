@@ -399,11 +399,30 @@ async function handleTelegramReport(chatId) {
     }
   }
 
-  const reportSent = await sendDailyReport({ date: today, totalViews, totalSearches, totalSessions, newIps, topSchools, newCities });
+  // Format report và gửi trực tiếp về chat người yêu cầu
+  const schoolLines = topSchools
+    .map((s, i) => `${i + 1}. ${s.name || s.slug} — ${s.count} lượt`)
+    .join('\n');
+  const cityLines = newCities
+    .map(c => `  • ${c.city || ''}${c.region ? ` (${c.region})` : ''}`)
+    .join('\n');
 
-  if (!reportSent) {
-    await sendTelegramMessage(chatId, '❌ Chưa cấu hình TELEGRAM_ADMIN_CHAT_ID để nhận báo cáo.');
-  }
+  const text = `📊 <b>Báo cáo ngày ${today}</b>
+
+👁 Lượt xem: <b>${totalViews}</b>
+🔍 Tìm kiếm: <b>${totalSearches}</b>
+👤 Phiên: <b>${totalSessions}</b>
+🆕 IP mới: <b>${newIps}</b>
+
+${schoolLines ? `🏆 <b>Top trường:</b>
+${schoolLines}` : ''}
+
+${cityLines ? `📍 <b>Địa điểm mới:</b>
+${cityLines}` : ''}
+
+<i>Xem chi tiết: thongtintruonghan.vercel.app/admin/analytics.html</i>`;
+
+  await sendTelegramMessage(chatId, text);
 }
 
 async function handleTelegramAddStudent(chatId, text) {
