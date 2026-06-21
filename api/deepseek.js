@@ -731,6 +731,100 @@ function escapeHtmlTelegram(str) {
 }
 
 // ═══════════════════════════════════════════════════
+// ─── Cron: Daily Report (action=telegram-daily-report)
+// Gọi endpoint này mỗi sáng bằng cron-job.org để nhận báo cáo tự động
+// ═══════════════════════════════════════════════════
+async function handleTelegramDailyReport(req, res) {
+  // Chỉ cho phép GET (để cron-job.org dễ gọi)
+  if (req.method !== 'GET') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  // Verify secret để tránh bị gọi trái phép
+  const cronSecret = process.env.CRON_SECRET;
+  const providedSecret = req.query.secret;
+
+  if (cronSecret && providedSecret !== cronSecret) {
+    return res.status(403).json({ error: 'Invalid secret' });
+  }
+
+  // Kiểm tra Telegram đã cấu hình chưa
+  if (!getBotToken()) {
+    return res.status(503).json({ success: false, error: 'TELEGRAM_BOT_TOKEN chưa được cấu hình.' });
+  }
+
+  try {
+    const today = new Date().toISOString().split('T')[0];
+    const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+    // Query dữ liệu hôm qua (báo cáo sáng hôm sau)
+    const [viewsRes, searchesRes, sessionsRes, ipCacheRes, newCitiesRes] = await Promise.all([
+      supabase.from('analytics_page_views').select('*', { count: 'exact', head: true }).gte('created_at', yesterday),
+      supabase.from('analytics_searches').select('*', { count: 'exact', head: true }).gte('created_at', yesterday),
+      supabase.from('analytics_sessions').select('*', { count: 'exact', head: true }).gte('started_at', yesterday),
+      supabase.from('analytics_ip_cache').select('*', { count: 'exact', head: true }).gte('last_seen', yesterday),
+      supabase.from('analytics_ip_cache').select('city, region, first_seen').gte('first_seen', yesterday).not('city', 'is', null),
+    ]);
+
+    const totalViews = viewsRes.count || 0;
+    const totalSearches = searchesRes.count || 0;
+    const totalSessions = sessionsRes.count || 0;
+    const newIps = ipCacheRes.count || 0;
+
+    // Top schools hôm qua
+    const { data: topSchoolsRaw } = await supabase
+      .from('analytics_page_views')
+      .select('school_slug, school_name')
+      .gte('created_at', yesterday)
+      .not('school_slug', 'is', null);
+
+    const schoolCounts = {};
+    for (const row of topSchoolsRaw || []) {
+      if (!row.school_slug) continue;
+      schoolCounts[row.school_slug] = schoolCounts[row.school_slug] || { name: row.school_name || row.school_slug, count: 0 };
+      schoolCounts[row.school_slug].count++;
+    }
+
+    const topSchools = Object.entries(schoolCounts)
+      .map(([slug, d]) => ({ slug, name: d.name, count: d.count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5);
+
+    // Thành phố mới hôm qua
+    const citySeen = new Set();
+    const newCities = [];
+    for (const row of newCitiesRes.data || []) {
+      if (!row.city) continue;
+      const key = `${row.city}|${row.region || ''}`;
+      if (!citySeen.has(key)) {
+        citySeen.add(key);
+        newCities.push({ city: row.city, region: row.region || '' });
+      }
+    }
+
+    // Gửi báo cáo qua sendDailyReport (đọc TELEGRAM_ADMIN_CHAT_ID từ env)
+    const sent = await sendDailyReport({
+      date: yesterday,
+      totalViews,
+      totalSearches,
+      totalSessions,
+      newIps,
+      topSchools,
+      newCities,
+    });
+
+    if (sent) {
+      return res.json({ success: true, message: `Báo cáo ngày ${yesterday} đã gửi.` });
+    } else {
+      return res.json({ success: false, message: 'TELEGRAM_ADMIN_CHAT_ID chưa được cấu hình để nhận báo cáo.' });
+    }
+  } catch (err) {
+    console.error('Daily report error:', err);
+    return res.status(500).json({ success: false, error: err.message || 'Internal server error' });
+  }
+}
+
+// ═══════════════════════════════════════════════════
 // ─── Main Router ───
 // ═══════════════════════════════════════════════════
 
@@ -741,7 +835,7 @@ module.exports = async (req, res) => {
 
   if (req.method === 'OPTIONS') return res.status(200).end();
   // Telegram webhook cho phép GET (health check) + POST; các action khác chỉ POST
-  if (req.query.action === 'telegram-webhook') {
+  if (req.query.action === 'telegram-webhook' || req.query.action === 'telegram-daily-report') {
     if (req.method !== 'POST' && req.method !== 'GET') {
       return res.status(405).json({ error: 'Method not allowed' });
     }
@@ -758,6 +852,7 @@ module.exports = async (req, res) => {
       case 'search-parse': return await handleSearchParse(req, res);
       case 'generate-description': return await handleGenerateDescription(req, res);
       case 'telegram-webhook': return await handleTelegramWebhook(req, res);
+      case 'telegram-daily-report': return await handleTelegramDailyReport(req, res);
       default:
         return res.status(400).json({ error: `Unknown action: ${action}` });
     }
