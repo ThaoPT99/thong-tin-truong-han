@@ -5,8 +5,8 @@
 // Gộp từ api/analytics/track.js + api/admin/analytics/index.js
 // để không vượt quá giới hạn 12 functions của Vercel Hobby.
 
-const { supabase } = require('./lib/supabase');
-const { requireAdmin } = require('./lib/auth');
+const { supabase } = require('../lib/supabase');
+const { requireAdmin } = require('../lib/auth');
 
 // ─── Public Tracking (POST) ───
 async function handleTrack(req, res) {
