@@ -150,6 +150,77 @@ async function handleSearchParse(req, res) {
   return res.json({ success: true, region: null, tags: [], searchTerms: query });
 }
 
+// ─── Action: Generate Description (Admin Editor) ───
+async function handleGenerateDescription(req, res) {
+  const school = req.body || {};
+
+  const hasData = school.name || school.system || school.location || school.tuition ||
+    school.ktx || (school.conditions?.length) || (school.majors?.length) || (school.advantages?.length);
+
+  if (!hasData) {
+    return res.json({
+      success: true,
+      intro: '',
+      suggestedAdvantages: [],
+      message: 'Chưa có dữ liệu trường để sinh mô tả. Vui lòng nhập thông tin trước.'
+    });
+  }
+
+  const systemPrompt = `Bạn là chuyên viên content du học Hàn Quốc. Viết mô tả giới thiệu trường chuyên nghiệp bằng tiếng Việt.
+
+QUY TẮC:
+- Viết 1-2 đoạn ngắn (60-120 từ), giọng văn chuyên nghiệp, hấp dẫn
+- CHỈ dùng thông tin được cung cấp, KHÔNG thêm thông tin mới
+- Tập trung vào: vị trí, học phí, hệ đào tạo, điều kiện, ưu điểm chính
+- Phù hợp với đối tượng học sinh muốn đi du học D2-6
+- Không dùng emoji, không xuống dòng quá nhiều
+
+Trả về JSON:
+{
+  "intro": "Đoạn giới thiệu trường...",
+  "suggestedAdvantages": ["Ưu điểm 1", "Ưu điểm 2", "Ưu điểm 3"]
+}`;
+
+  const conditionsText = (school.conditions || []).join('; ');
+  const majorsText = (school.majors || []).join('; ');
+  const advantagesText = (school.advantages || []).join('; ');
+
+  const userMessage = `Dữ liệu trường:
+- Tên: ${school.name || 'Chưa rõ'}${school.nameKr ? ` (${school.nameKr})` : ''}
+- Hệ: ${school.system || 'Chưa rõ'}
+- Khu vực: ${school.location || 'Chưa rõ'}
+- Học phí: ${school.tuition || 'Chưa rõ'}
+- Ký túc xá: ${school.ktx || 'Chưa rõ'}
+- MOU: ${school.mou || 'Không có'}
+- Điều kiện: ${conditionsText || 'Chưa rõ'}
+- Chuyên ngành: ${(majorsText || 'Chưa rõ').substring(0, 300)}
+- Ưu điểm hiện tại: ${(advantagesText || 'Chưa có').substring(0, 300)}
+
+Viết intro giới thiệu trường và gợi ý thêm ưu điểm dựa trên dữ liệu.`;
+
+  const result = await callDeepSeek(
+    [{ role: 'system', content: systemPrompt }, { role: 'user', content: userMessage }],
+    { temperature: 0.4, maxTokens: 1000, timeout: 20000 }
+  );
+
+  if (result) {
+    try {
+      const jsonStr = result.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+      const parsed = JSON.parse(jsonStr);
+      return res.json({
+        success: true,
+        intro: parsed.intro || '',
+        suggestedAdvantages: parsed.suggestedAdvantages || [],
+      });
+    } catch (e) {
+      // If not valid JSON, use raw text as intro
+      return res.json({ success: true, intro: result, suggestedAdvantages: [] });
+    }
+  }
+
+  return res.json({ success: true, intro: '', suggestedAdvantages: [], message: 'AI không phản hồi, vui lòng thử lại.' });
+}
+
 // ─── Router ───
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -174,6 +245,8 @@ module.exports = async (req, res) => {
         return await handleGenerateZalo(req, res);
       case 'search-parse':
         return await handleSearchParse(req, res);
+      case 'generate-description':
+        return await handleGenerateDescription(req, res);
       default:
         return res.status(400).json({ error: `Unknown action: ${action}` });
     }

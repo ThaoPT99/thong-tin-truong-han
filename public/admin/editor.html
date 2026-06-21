@@ -183,7 +183,11 @@
           <div class="section-body">
             <div class="form-group">
               <label for="intro">Giới thiệu trường</label>
-              <textarea id="intro" rows="6" placeholder="Giới thiệu về trường..."></textarea>
+              <div style="display:flex;gap:8px;margin-bottom:6px;">
+                <textarea id="intro" rows="6" placeholder="Giới thiệu về trường..." style="flex:1;"></textarea>
+              </div>
+              <button type="button" class="btn btn-outline btn-sm" id="ai-generate-desc-btn" onclick="aiGenerateDescription()" style="margin-bottom:4px;">🤖 AI Sinh mô tả</button>
+              <span id="ai-desc-status" style="font-size:12px;color:var(--gray-400);margin-left:8px;"></span>
             </div>
             <div class="form-row">
               <div class="form-group">
@@ -700,6 +704,72 @@ async function saveSchool() {
   } finally {
     btn.disabled = false;
     setTimeout(() => { status.textContent = ''; }, 3000);
+  }
+}
+
+// ─── AI Generate Description ───
+async function aiGenerateDescription() {
+  const btn = document.getElementById('ai-generate-desc-btn');
+  const status = document.getElementById('ai-desc-status');
+  const introField = document.getElementById('intro');
+
+  try {
+    btn.disabled = true;
+    btn.textContent = '⏳ Đang sinh...';
+    status.textContent = 'Đang gọi AI...';
+
+    const payload = {
+      name: document.getElementById('name').value.trim(),
+      nameKr: document.getElementById('nameKr').value.trim(),
+      system: document.getElementById('system').value.trim(),
+      location: document.getElementById('location').value.trim(),
+      tuition: document.getElementById('tuition').value.trim(),
+      ktx: document.getElementById('ktx').value.trim(),
+      mou: document.getElementById('mou').value.trim(),
+      conditions: getListValues('conditions'),
+      majors: getListValues('majors'),
+      advantages: getListValues('advantages'),
+    };
+
+    const res = await fetch('/api/deepseek?action=generate-description', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      if (data.intro) {
+        introField.value = data.intro;
+        status.textContent = '✅ Đã sinh mô tả!';
+      } else if (data.message) {
+        status.textContent = '⚠️ ' + data.message;
+      }
+
+      // Gợi ý thêm ưu điểm nếu có
+      if (data.suggestedAdvantages && data.suggestedAdvantages.length > 0) {
+        // Chỉ thêm nếu chưa có ưu điểm nào
+        const existingAdv = getListValues('advantages');
+        if (existingAdv.length === 0) {
+          data.suggestedAdvantages.forEach(function(adv) {
+            addListItem('advantages', adv);
+          });
+          status.textContent += ' + ' + data.suggestedAdvantages.length + ' ưu điểm'; 
+        }
+      }
+    } else {
+      status.textContent = '❌ Lỗi: ' + (data.error || 'Không phản hồi');
+    }
+  } catch (err) {
+    status.textContent = '❌ Lỗi: ' + err.message;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '🤖 AI Sinh mô tả';
+    setTimeout(function() {
+      if (status.textContent.startsWith('✅') || status.textContent.startsWith('⚠️')) {
+        status.textContent = '';
+      }
+    }, 5000);
   }
 }
 
