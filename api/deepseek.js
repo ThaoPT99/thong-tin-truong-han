@@ -270,8 +270,12 @@ Bot này giúp bạn quản lý thông tin du học Hàn Quốc visa D2-6.
 
 <b>Các lệnh có sẵn:</b>
 🏫 <code>/truong [tên]</code> — Tra cứu thông tin trường
+📋 <code>/danhsach</code> — Danh sách tất cả trường
+⚖️ <code>/sosanh [t1], [t2]</code> — So sánh 2 trường
 📊 <code>/baocao</code> — Báo cáo tổng quan hôm nay
-👤 <code>/gui [tên], [SĐT], [trường], [ghi chú]</code> — Thêm học sinh mới
+📝 <code>/dieukien</code> — Visa checklist D2-6
+👤 <code>/gui [tên], [SĐT], [trường]</code> — Thêm học sinh mới
+ℹ️ <code>/thongtin</code> — Thông tin hệ thống
 ❓ <code>/help</code> — Xem hướng dẫn chi tiết
 
 <i>Liên hệ admin nếu cần hỗ trợ thêm.</i>`;
@@ -281,22 +285,27 @@ Bot này giúp bạn quản lý thông tin du học Hàn Quốc visa D2-6.
 async function handleTelegramHelp(chatId) {
   const text = `📖 <b>Hướng dẫn sử dụng Bot</b>
 
-<b>1. Tra cứu trường</b>
-<code>/truong Osan</code> — Tìm trường theo tên
-<code>/truong nữ Busan</code> — Tìm theo tên Tiếng Việt
-→ Bot trả về thông tin: học phí, KTX, điều kiện, chuyên ngành
+🏫 <b>Tra cứu trường</b>
+<code>/truong Osan</code> — Chi tiết 1 trường (tên, học phí, KTX, điều kiện...)
+<code>/danhsach</code> — Xem tất cả 18 trường (phân theo khu vực)
+<code>/sosanh Osan, Induk</code> — So sánh 2 trường
 
-<b>2. Báo cáo tổng quan</b>
-<code>/baocao</code> — Xem thống kê lượt xem, IP mới, top trường hôm nay
+📊 <b>Thống kê</b>
+<code>/baocao</code> — Báo cáo hôm nay (lượt xem, IP mới, top trường)
 
-<b>3. Thêm học sinh mới</b>
-<code>/gui Nguyễn Văn A, 0978123456, Osan, Gọi lại 2h chiều</code>
-→ Bot tự động tạo học sinh trong CRM + gửi thông báo
+📝 <b>Visa & Hồ sơ</b>
+<code>/dieukien</code> — Checklist visa D2-6, phỏng vấn
 
-<b>4. Cảnh báo tự động</b>
-Bot sẽ tự động gửi tin nhắn khi:
-• 📍 Phát hiện IP mới từ thành phố lạ
-• 📊 Báo cáo tổng quan mỗi sáng`;
+👤 <b>Quản lý học sinh</b>
+<code>/gui Nguyễn Văn A, 0978123456, Osan</code> — Thêm học sinh vào CRM
+
+ℹ️ <b>Khác</b>
+<code>/thongtin</code> — Thông tin hệ thống, liên hệ
+<code>/start</code> — Xem lại menu
+
+🤖 <b>Cảnh báo tự động:</b>
+• 📍 Khi có IP mới từ thành phố lạ
+• 🆕 Khi có học sinh mới được tạo qua Telegram`;
   return await sendTelegramMessage(chatId, text);
 }
 
@@ -466,6 +475,212 @@ async function handleTelegramAddStudent(chatId, text) {
   await sendTelegramMessage(chatId, `✅ Đã tạo học sinh <b>${escapeHtmlTelegram(name)}</b> (${schoolText}) thành công!\n📞 SĐT: ${escapeHtmlTelegram(phone)}\n📝 Ghi chú: ${escapeHtmlTelegram(note || 'Không có')}\n\nBạn có thể xem trong CRM: thongtintruonghan.vercel.app/admin/students.html`);
 }
 
+// ─── Lệnh: /danhsach — Danh sách tất cả trường ───
+async function handleTelegramSchoolList(chatId) {
+  const { data: schools, error } = await supabase
+    .from('schools')
+    .select('slug, name, name_kr, system, region, location')
+    .order('slug');
+
+  if (error || !schools || schools.length === 0) {
+    return await sendTelegramMessage(chatId, '❌ Không thể lấy danh sách trường.');
+  }
+
+  const regionLabels = {
+    seoul: 'Seoul', 'near-seoul': 'Gần Seoul', busan: 'Busan',
+    gwangju: 'Gwangju', incheon: 'Incheon', gyeonggi: 'Gyeonggi',
+    chungcheongbuk: 'Chungcheongbuk', jeollanam: 'Jeollanam',
+    jeollabuk: 'Jeollabuk', gyeongsangnam: 'Gyeongsangnam',
+    daegu: 'Daegu', daejeon: 'Daejeon', gangwon: 'Gangwon',
+  };
+
+  // Group by region
+  const groups = {};
+  for (const s of schools) {
+    const region = regionLabels[s.region] || s.region || 'Khác';
+    if (!groups[region]) groups[region] = [];
+    groups[region].push(s);
+  }
+
+  let text = `🏫 <b>Danh sách ${schools.length} trường</b>
+
+`;
+  for (const [region, list] of Object.entries(groups)) {
+    text += `<b>📍 ${region}</b>
+`;
+    for (const s of list) {
+      text += `  • ${escapeHtmlTelegram(s.name)}${s.name_kr ? ` (${escapeHtmlTelegram(s.name_kr)})` : ''}${s.system ? ` — ${escapeHtmlTelegram(s.system)}` : ''}
+`;
+    }
+    text += '\n';
+  }
+
+  text += `🔍 Tra cứu chi tiết: <code>/truong [tên]</code>
+⚖️ So sánh: <code>/sosanh [t1], [t2]</code>`;
+
+  await sendTelegramMessage(chatId, text);
+}
+
+// ─── Lệnh: /sosanh — So sánh 2 trường ───
+async function handleTelegramCompare(chatId, args) {
+  const parts = args.split(',').map(s => s.trim()).filter(Boolean);
+  if (parts.length < 2) {
+    return await sendTelegramMessage(chatId, 'Vui lòng nhập tên 2 trường, cách nhau bằng dấu phẩy.\n\nVí dụ: <code>/sosanh Osan, Induk</code>');
+  }
+
+  const [name1, name2] = parts;
+
+  const { data: schools } = await supabase
+    .from('schools')
+    .select(`*, school_conditions(text), school_majors(text), school_advantages(text), school_documents(text)`)
+    .or(`name.ilike.%${name1}%,name.ilike.%${name2}%`)
+    .limit(10);
+
+  if (!schools || schools.length < 2) {
+    return await sendTelegramMessage(chatId, `❌ Không tìm thấy đủ 2 trường. Thử gõ đúng tên, ví dụ: <code>/sosanh Osan, Induk</code>`);
+  }
+
+  // Find the closest matches
+  const getSchool = (schools, search) => {
+    const lower = search.toLowerCase();
+    return schools.find(s => s.name.toLowerCase().includes(lower) || s.name_kr?.toLowerCase().includes(lower) || s.slug.includes(lower));
+  };
+
+  const s1 = getSchool(schools, name1);
+  const s2 = getSchool(schools, name2);
+
+  if (!s1 || !s2 || s1.id === s2.id) {
+    return await sendTelegramMessage(chatId, `❌ Không tìm thấy 2 trường khác nhau. Thử lại, ví dụ: <code>/sosanh Osan, Induk</code>`);
+  }
+
+  const formatSchool = (s) => ({
+    name: s.name,
+    nameKr: s.name_kr || '',
+    region: s.location || 'Chưa rõ',
+    system: s.system || 'Chưa rõ',
+    tuition: s.tuition || 'Chưa rõ',
+    ktx: s.ktx || 'Chưa rõ',
+    quota: s.quota || 'Chưa rõ',
+    conditions: (s.school_conditions || []).slice(0, 3).map(c => c.text).join('; ') || 'Chưa rõ',
+    majors: (s.school_majors || []).slice(0, 5).map(m => m.text).join(', ') || 'Chưa rõ',
+    advantages: (s.school_advantages || []).slice(0, 3).map(a => a.text).join('; ') || '',
+  });
+
+  const a = formatSchool(s1);
+  const b = formatSchool(s2);
+
+  const text = `⚖️ <b>So sánh:</b> ${escapeHtmlTelegram(a.name)} vs ${escapeHtmlTelegram(b.name)}
+
+<b>📌 Vị trí</b>
+• ${escapeHtmlTelegram(a.name)}: ${a.region}
+• ${escapeHtmlTelegram(b.name)}: ${b.region}
+
+<b>📚 Hệ đào tạo</b>
+• ${escapeHtmlTelegram(a.name)}: ${a.system}
+• ${escapeHtmlTelegram(b.name)}: ${b.system}
+
+<b>💰 Học phí</b>
+• ${escapeHtmlTelegram(a.name)}: ${a.tuition}
+• ${escapeHtmlTelegram(b.name)}: ${b.tuition}
+
+<b>🏠 KTX</b>
+• ${escapeHtmlTelegram(a.name)}: ${a.ktx}
+• ${escapeHtmlTelegram(b.name)}: ${b.ktx}
+
+<b>🎯 Chỉ tiêu</b>
+• ${escapeHtmlTelegram(a.name)}: ${a.quota}
+• ${escapeHtmlTelegram(b.name)}: ${b.quota}
+
+<b>📋 Điều kiện</b>
+• ${escapeHtmlTelegram(a.name)}: ${a.conditions}
+• ${escapeHtmlTelegram(b.name)}: ${b.conditions}
+
+<a href="https://thongtintruonghan.vercel.app/?compare=${s1.slug},${s2.slug}">🔗 Xem so sánh trên web</a>`;
+
+  await sendTelegramMessage(chatId, text);
+}
+
+// ─── Lệnh: /dieukien — Visa checklist ───
+async function handleTelegramVisaChecklist(chatId) {
+  const [{ data: checklist }, { data: interviews }] = await Promise.all([
+    supabase.from('extra_visa_checklist').select('*').order('sort_order'),
+    supabase.from('extra_interviews').select('*').order('sort_order'),
+  ]);
+
+  if (!checklist || checklist.length === 0) {
+    return await sendTelegramMessage(chatId, '❌ Chưa có dữ liệu checklist visa. Vui lòng import dữ liệu.');
+  }
+
+  // Group by level
+  const groups = { 'Bắt buộc': [], 'Khuyến khích': [], 'Bổ sung': [] };
+  for (const item of checklist) {
+    const level = item.level || 'Bắt buộc';
+    if (!groups[level]) groups[level] = [];
+    groups[level].push(item);
+  }
+
+  let text = `📝 <b>Checklist visa D2-6</b>
+
+`;
+
+  for (const [level, items] of Object.entries(groups)) {
+    if (items.length === 0) continue;
+    const icon = level === 'Bắt buộc' ? '🔴' : level === 'Khuyến khích' ? '🟡' : '🔵';
+    text += `<b>${icon} ${level}</b>
+`;
+    for (const item of items.slice(0, 8)) {
+      text += `• ${escapeHtmlTelegram(item.content || '')}`;
+      if (item.note) text += ` <i>(${escapeHtmlTelegram(item.note)})</i>`;
+      text += '\n';
+    }
+    if (items.length > 8) text += `  <i>...và ${items.length - 8} mục nữa</i>\n`;
+    text += '\n';
+  }
+
+  // Interview section
+  if (interviews && interviews.length > 0) {
+    text += `<b>🎤 Phỏng vấn visa</b>
+`;
+    for (const item of interviews.slice(0, 5)) {
+      text += `• ${escapeHtmlTelegram(item.content || '')}\n`;
+    }
+    if (interviews.length > 5) text += `  <i>...và ${interviews.length - 5} câu hỏi nữa</i>\n`;
+  }
+
+  text += `\n🔗 <a href="https://thongtintruonghan.vercel.app/">Xem đầy đủ trên web</a>`;
+
+  await sendTelegramMessage(chatId, text);
+}
+
+// ─── Lệnh: /thongtin — Thông tin hệ thống ───
+async function handleTelegramSystemInfo(chatId) {
+  const [schoolsRes, semRes, analyticsRes] = await Promise.all([
+    supabase.from('schools').select('id', { count: 'exact', head: true }),
+    supabase.from('semesters').select('ky, nam, title').eq('is_active', true).maybeSingle(),
+    supabase.from('analytics_page_views').select('*', { count: 'exact', head: true }).gte('created_at', new Date().toISOString().split('T')[0]),
+  ]);
+
+  const schoolCount = schoolsRes.count || 0;
+  const activeSem = semRes.data;
+  const todayViews = analyticsRes.count || 0;
+
+  const text = `ℹ️ <b>Thông tin hệ thống</b>
+
+🏫 Số trường: <b>${schoolCount}</b>
+📅 Kỳ hiện tại: <b>${activeSem ? escapeHtmlTelegram(activeSem.title || `Kỳ ${activeSem.ky}/${activeSem.nam}`) : 'Chưa cập nhật'}</b>
+👁 Lượt xem hôm nay: <b>${todayViews}</b>
+
+<b>👤 Liên hệ</b>
+📞 Xử lý visa D2-6
+📱 Zalo: Tham gia nhóm trên web
+
+🌐 <a href="https://thongtintruonghan.vercel.app/">thongtintruonghan.vercel.app</a>
+
+📋 Gõ <code>/help</code> để xem hướng dẫn chi tiết.`;
+
+  await sendTelegramMessage(chatId, text);
+}
+
 async function handleTelegramWebhook(req, res) {
   // GET — health check
   if (req.method === 'GET') {
@@ -497,8 +712,12 @@ async function handleTelegramWebhook(req, res) {
     case '/start': await handleTelegramStart(chatId); break;
     case '/help': await handleTelegramHelp(chatId); break;
     case '/truong': case '/school': await handleTelegramSearchSchool(chatId, args); break;
+    case '/danhsach': case '/list': case '/ds': await handleTelegramSchoolList(chatId); break;
+    case '/sosanh': case '/compare': await handleTelegramCompare(chatId, args); break;
     case '/baocao': case '/report': await handleTelegramReport(chatId); break;
-    case '/gui': await handleTelegramAddStudent(chatId, args); break;
+    case '/dieukien': case '/visa': case '/checklist': await handleTelegramVisaChecklist(chatId); break;
+    case '/gui': case '/them': await handleTelegramAddStudent(chatId, args); break;
+    case '/thongtin': case '/info': await handleTelegramSystemInfo(chatId); break;
     default:
       await sendTelegramMessage(chatId, `❓ Không hiểu lệnh "<b>${escapeHtmlTelegram(command)}</b>".\n\nGõ <code>/help</code> để xem danh sách lệnh.`);
   }
