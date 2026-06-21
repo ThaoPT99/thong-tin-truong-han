@@ -166,8 +166,10 @@ function getAdvisorTemplate() {
 
         <div class="advisor-actions">
           <button type="submit" class="advisor-submit">Phân tích hồ sơ</button>
+          <button type="button" class="advisor-ai-btn" id="advisor-ai-btn">🤖 AI Tư vấn</button>
           <button type="button" class="advisor-reset">Nhập lại</button>
         </div>
+        <div id="advisor-ai-response" class="advisor-ai-response" style="display:none;margin-top:1rem;padding:1rem;border:2px solid #2563eb;border-radius:12px;background:#eff6ff;white-space:pre-wrap;line-height:1.7;font-size:0.92rem;"></div>
       </form>
 
       <div id="advisor-results" class="advisor-results" aria-live="polite"></div>
@@ -180,6 +182,8 @@ function bindAdvisorEvents(container) {
   const reset = container.querySelector(".advisor-reset");
   const quickInput = container.querySelector("#advisor-quick-input");
   const quickBtn = container.querySelector("#advisor-quick-btn");
+  const aiBtn = container.querySelector("#advisor-ai-btn");
+  const aiResponse = container.querySelector("#advisor-ai-response");
 
   if (quickInput && quickBtn) {
     quickBtn.addEventListener("click", function() {
@@ -233,7 +237,49 @@ function bindAdvisorEvents(container) {
   reset.addEventListener("click", () => {
     form.reset();
     container.querySelector("#advisor-results").innerHTML = "";
+    if (aiResponse) { aiResponse.style.display = 'none'; aiResponse.textContent = ''; }
   });
+
+  // ─── AI Tư vấn ───
+  if (aiBtn && aiResponse) {
+    aiBtn.addEventListener("click", async function() {
+      const profile = readAdvisorForm(form);
+      aiBtn.disabled = true;
+      aiBtn.textContent = '⏳ Đang phân tích...';
+      aiResponse.style.display = 'block';
+      aiResponse.textContent = '⏳ Đang gọi AI phân tích hồ sơ...';
+
+      try {
+        const res = await fetch('/api/deepseek/advisor', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(profile),
+        });
+        const data = await res.json();
+
+        if (data.success && data.advice) {
+          // Convert response safely: chỉ allow <br> và <strong>, escape mọi thứ khác
+          let safeText = data.advice
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+          // Restore allowed formatting
+          safeText = safeText
+            .replace(/&lt;br&gt;/g, '<br>')
+            .replace(/\n/g, '<br>')
+            .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+            .replace(/<br>- /g, '<br>• ');
+          aiResponse.innerHTML = safeText;
+        } else {
+          aiResponse.textContent = '❌ Lỗi: ' + (data.error || 'Không nhận được phản hồi');
+        }
+      } catch (err) {
+        aiResponse.textContent = '❌ Lỗi kết nối: ' + err.message;
+      } finally {
+        aiBtn.disabled = false;
+        aiBtn.textContent = '🤖 AI Tư vấn';
+      }
+    });
+  }
 }
 
 function readAdvisorForm(form) {

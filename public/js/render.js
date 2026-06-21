@@ -198,6 +198,7 @@ function renderSchool(schoolId) {
         <div class="detail-actions">
           <button type="button" class="copy-school-info" data-school-id="${escapeHtml(schoolId)}">Copy thông tin</button>
           <button type="button" class="copy-school-zalo" data-school-id="${escapeHtml(schoolId)}">📱 Copy Zalo</button>
+          <button type="button" class="zalo-ai-btn" data-school-id="${escapeHtml(schoolId)}">🤖 Soạn Zalo AI</button>
           <button type="button" class="copy-school-link" data-school-id="${escapeHtml(schoolId)}">Copy link</button>
           <button type="button" class="open-zalo-detail">Tư vấn Zalo</button>
         </div>
@@ -413,12 +414,16 @@ function bindSchoolsDirectory(container) {
   const chipsContainer = container.querySelector('#smart-chips');
   let currentIntents = {};
 
+  let aiSearchCache = {};
+  let aiSearchInFlight = false;
+
   function parseSearchIntent(query) {
     const q = (query || '').toLowerCase().trim();
     const intents = { region: null, tags: [] };
 
     if (q.length < 2) return intents;
 
+    // Bước 1: Regex-based parsing (nhanh)
     INTENT_MAP.region.forEach(function(rule) {
       rule.patterns.forEach(function(p) {
         if (p.test(q)) intents.region = rule.value;
@@ -432,6 +437,37 @@ function bindSchoolsDirectory(container) {
         }
       });
     });
+
+    // Bước 2: Nếu regex không parse được region, thử gọi AI fallback
+    if (!intents.region && intents.tags.length === 0 && q.length >= 4) {
+      // Sử dụng cache để tránh gọi API liên tục
+      if (aiSearchCache[q]) {
+        const cached = aiSearchCache[q];
+        intents.region = cached.region;
+        intents.tags = cached.tags;
+      } else if (!aiSearchInFlight) {
+        aiSearchInFlight = true;
+        fetch('/api/deepseek/search-parse', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: q }),
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data.success && (data.region || data.tags.length > 0)) {
+            aiSearchCache[q] = { region: data.region, tags: data.tags };
+            // Re-apply filters if this was a meaningful parse
+            if (data.region || data.tags.length > 0) {
+              applyFilters();
+            }
+          }
+          aiSearchInFlight = false;
+        })
+        .catch(function() {
+          aiSearchInFlight = false;
+        });
+      }
+    }
 
     return intents;
   }
@@ -839,6 +875,42 @@ function bindSchoolDetail(container, schoolId) {
       showCopyToast(container, "Trình duyệt chưa cho phép copy tự động");
     }
   });
+
+  // ─── Soạn Zalo AI ───
+  const zaloAiBtn = container.querySelector(".zalo-ai-btn");
+  if (zaloAiBtn) {
+    zaloAiBtn.addEventListener("click", async function() {
+      this.disabled = true;
+      this.textContent = '⏳ Đang soạn...';
+      try {
+        const res = await fetch('/api/deepseek/generate-zalo', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ slug: school.slug || school.id }),
+        });
+        const data = await res.json();
+        if (data.success && data.zaloText) {
+          await navigator.clipboard.writeText(data.zaloText);
+          showCopyToast(container, '✅ Đã copy nội dung AI vào clipboard!');
+        } else {
+          // Fallback: dùng text cũ
+          await navigator.clipboard.writeText(getSchoolZaloText(school));
+          showCopyToast(container, '⚠️ AI không phản hồi, đã copy text mặc định');
+        }
+      } catch (err) {
+        // Fallback
+        try {
+          await navigator.clipboard.writeText(getSchoolZaloText(school));
+          showCopyToast(container, '⚠️ Lỗi kết nối AI, đã copy text mặc định');
+        } catch (e) {
+          showCopyToast(container, '❌ Lỗi: ' + e.message);
+        }
+      } finally {
+        this.disabled = false;
+        this.textContent = '🤖 Soạn Zalo AI';
+      }
+    });
+  }
   container.querySelector(".copy-school-link")?.addEventListener("click", async () => {
     const link = `${location.origin}${location.pathname}?school=${encodeURIComponent(schoolId)}`;
     try {

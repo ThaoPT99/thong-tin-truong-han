@@ -737,6 +737,53 @@ body {
     margin-top: 1rem;
 }
 
+.advisor-ai-btn {
+    min-height: 2.7rem;
+    padding: 0.65rem 1rem;
+    border: none;
+    border-radius: 8px;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+    color: #fff;
+    box-shadow: 0 3px 12px rgba(124, 58, 237, 0.28);
+}
+
+.advisor-ai-btn:hover {
+    opacity: 0.9;
+}
+
+.advisor-ai-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.advisor-ai-response {
+    animation: fadeIn 0.3s ease-out;
+}
+
+.detail-actions .zalo-ai-btn {
+    min-height: 2.5rem;
+    padding: 0.55rem 0.8rem;
+    border: 1px solid rgba(255,255,255,0.22);
+    border-radius: 9px;
+    background: linear-gradient(135deg, #7c3aed 0%, #2563eb 100%);
+    color: #fff;
+    font: inherit;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.detail-actions .zalo-ai-btn:hover {
+    opacity: 0.9;
+}
+
+.detail-actions .zalo-ai-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
 .advisor-submit,
 .advisor-reset,
 .advisor-open-school {
