@@ -792,7 +792,7 @@ async function handleAdminData(req, res) {
     if (view === 'map') {
       const { data: ips } = await supabase
         .from('analytics_ip_cache')
-        .select('ip, city, region, country, country_code, lat, lon, total_views, last_seen, location_source, precise_district, precise_ward')
+        .select('ip, city, region, country, country_code, lat, lon, precise_lat, precise_lon, total_views, last_seen, location_source, precise_district, precise_ward')
         .gte('last_seen', since)
         .not('lat', 'is', null)
         .not('lon', 'is', null);
@@ -800,20 +800,26 @@ async function handleAdminData(req, res) {
       return res.json({
         success: true,
         data: {
-          markers: (ips || []).map(ip => ({
-            ip: ip.ip,
-            city: ip.city || '',
-            region: ip.region || '',
-            country: ip.country || '',
-            country_code: ip.country_code || '',
-            lat: parseFloat(ip.lat),
-            lon: parseFloat(ip.lon),
-            totalViews: ip.total_views || 0,
-            lastSeen: ip.last_seen,
-            locationSource: ip.location_source || 'ip',
-            preciseDistrict: ip.precise_district || '',
-            preciseWard: ip.precise_ward || '',
-          })),
+          markers: (ips || []).map(ip => {
+            // Dùng GPS coordinate nếu có (chính xác hơn IP coordinate)
+            const isGps = ip.location_source === 'gps';
+            const useLat = isGps && ip.precise_lat != null ? parseFloat(ip.precise_lat) : parseFloat(ip.lat);
+            const useLon = isGps && ip.precise_lon != null ? parseFloat(ip.precise_lon) : parseFloat(ip.lon);
+            return {
+              ip: ip.ip,
+              city: ip.city || '',
+              region: ip.region || '',
+              country: ip.country || '',
+              country_code: ip.country_code || '',
+              lat: useLat,
+              lon: useLon,
+              totalViews: ip.total_views || 0,
+              lastSeen: ip.last_seen,
+              locationSource: ip.location_source || 'ip',
+              preciseDistrict: ip.precise_district || '',
+              preciseWard: ip.precise_ward || '',
+            };
+          }),
           totalMarkers: ips?.length || 0,
           gpsMarkers: (ips || []).filter(ip => ip.location_source === 'gps').length,
         },
