@@ -2453,6 +2453,289 @@ body.zalo-popup-open {
     }
 }
 
+/* ═══════════════════════════════════════════════════
+   A/B Testing Variants
+   ═══════════════════════════════════════════════════ */
+
+/* Zalo FAB — Variant B: left side + animated + badge */
+html[data-ab-zalo-fab="b"] .zalo-fab {
+    right: auto;
+    left: 1.25rem;
+    bottom: 1.25rem;
+    padding: 0.7rem 1.15rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, #0068ff 0%, #0052cc 100%);
+    box-shadow: 0 6px 24px rgba(0, 104, 255, 0.5);
+    animation: zaloFabPulse 2s ease-in-out infinite;
+    z-index: 9999;
+}
+
+html[data-ab-zalo-fab="b"] .zalo-fab::after {
+    content: "";
+    position: absolute;
+    inset: -3px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #0068ff, #00c6ff, #0068ff);
+    background-size: 200% 200%;
+    z-index: -1;
+    animation: zaloFabGlow 2s ease-in-out infinite;
+}
+
+html[data-ab-zalo-fab="b"] .zalo-fab:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 8px 30px rgba(0, 104, 255, 0.6);
+    animation: none;
+}
+
+html[data-ab-zalo-fab="b"] .zalo-fab:active {
+    transform: scale(0.97);
+}
+
+html[data-ab-zalo-fab="b"] .zalo-fab .zalo-fab-badge {
+    display: inline-block;
+    padding: 0.15rem 0.45rem;
+    border-radius: 999px;
+    background: #fbbf24;
+    color: #1e3a5f;
+    font-size: 0.65rem;
+    font-weight: 800;
+    line-height: 1.3;
+    margin-left: 0.1rem;
+    animation: zaloFabBadgePulse 2s ease-in-out infinite;
+}
+
+@keyframes zaloFabPulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 6px 24px rgba(0, 104, 255, 0.5); }
+    50% { transform: scale(1.04); box-shadow: 0 8px 32px rgba(0, 104, 255, 0.65); }
+}
+
+@keyframes zaloFabGlow {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 0.9; }
+}
+
+@keyframes zaloFabBadgePulse {
+    0%, 100% { background: #fbbf24; }
+    50% { background: #f59e0b; }
+}
+
+/* Zalo FAB — Variant A: giữ nguyên (control) */
+html[data-ab-zalo-fab="a"] .zalo-fab::after {
+    display: none;
+}
+
+html[data-ab-zalo-fab="a"] .zalo-fab .zalo-fab-badge {
+    display: none;
+}
+
+/* Responsive cho variant B */
+@media (max-width: 640px) {
+    html[data-ab-zalo-fab="b"] .zalo-fab {
+        left: 0.75rem;
+        bottom: 4.5rem;
+        padding: 0.55rem 0.9rem;
+        font-size: 0.85rem;
+    }
+}
+
+/* ═══════════════════════════════════════════════════
+   A/B: AI Chat Position
+   ═══════════════════════════════════════════════════ */
+
+/* Variant B: AI Chat ở bên trái */
+html[data-ab-ai-chat="b"] .ai-chat-fab {
+    right: auto;
+    left: 1.25rem;
+    bottom: 1.25rem;
+    background: linear-gradient(135deg, #0f766e 0%, #2563eb 100%);
+}
+
+html[data-ab-ai-chat="b"] .ai-chat-panel {
+    right: auto;
+    left: 1.25rem;
+    bottom: 5.5rem;
+    transform-origin: bottom left;
+}
+
+html[data-ab-ai-chat="b"] .ai-chat-panel.is-open {
+    transform-origin: bottom left;
+}
+
+/* Variant A: giữ nguyên mặc định (phải) */
+
+/* Responsive */
+@media (max-width: 640px) {
+    html[data-ab-ai-chat="b"] .ai-chat-fab {
+        left: 0.75rem;
+        bottom: 1rem;
+    }
+    html[data-ab-ai-chat="b"] .ai-chat-panel {
+        left: 0.75rem;
+        right: 0.75rem;
+        bottom: 5rem;
+    }
+}
+
+/* ═══════════════════════════════════════════════════
+   A/B: School Directory Layout
+   ═══════════════════════════════════════════════════ */
+
+/* Variant B: List layout (dạng bảng thay vì grid) */
+html[data-ab-school-layout="b"] .school-name-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 0.75rem;
+}
+
+html[data-ab-school-layout="b"] .school-name-item {
+    display: flex;
+    align-items: center;
+    min-height: 2.6rem;
+    padding: 0.55rem 0.85rem;
+    font-size: 0.95rem;
+    border-left: 4px solid #2563eb;
+    border-radius: 8px;
+    transition: background 0.12s, transform 0.12s;
+}
+
+html[data-ab-school-layout="b"] .school-name-item:nth-child(3n+1) {
+    border-left-color: #2dd4bf;
+}
+
+html[data-ab-school-layout="b"] .school-name-item:nth-child(3n+2) {
+    border-left-color: #60a5fa;
+}
+
+html[data-ab-school-layout="b"] .school-name-item:nth-child(3n) {
+    border-left-color: #fbbf24;
+}
+
+html[data-ab-school-layout="b"] .school-name-item:hover {
+    transform: translateX(4px);
+    background: #eaf2ff;
+}
+
+/* Variant A: grid mặc định (giữ nguyên) */
+
+/* Responsive */
+@media (max-width: 640px) {
+    html[data-ab-school-layout="b"] .school-name-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ═══════════════════════════════════════════════════
+   A/B: Advisor Button Color
+   ═══════════════════════════════════════════════════ */
+
+html[data-ab-advisor-btn-color="b"] .advisor-submit {
+    background: linear-gradient(135deg, #0f766e 0%, #047857 100%);
+    box-shadow: 0 3px 12px rgba(15, 118, 110, 0.28);
+}
+
+html[data-ab-advisor-btn-color="b"] .advisor-ai-btn {
+    background: linear-gradient(135deg, #0f766e 0%, #2563eb 100%);
+}
+
+html[data-ab-advisor-btn-color="b"] .advisor-submit:hover {
+    opacity: 0.9;
+}
+
+/* ═══════════════════════════════════════════════════
+   A/B: Sidebar Zalo Button Color
+   ═══════════════════════════════════════════════════ */
+
+html[data-ab-sidebar-zalo-btn="b"] .sidebar-zalo button {
+    background: #f59e0b;
+    color: #7c2d12;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35);
+}
+
+html[data-ab-sidebar-zalo-btn="b"] .sidebar-zalo button:hover {
+    background: #d97706;
+}
+
+/* ═══════════════════════════════════════════════════
+   A/B: Header Color (Topbar Background)
+   ═══════════════════════════════════════════════════ */
+
+html[data-ab-header-color="b"] .app-topbar {
+    background: #fff;
+    border-color: #e2e8f0;
+}
+
+html[data-ab-header-color="b"] .app-topbar .advisor-kicker {
+    color: #0f766e;
+}
+
+html[data-ab-header-color="b"] .app-topbar h2 {
+    color: #0f172a;
+}
+
+html[data-ab-header-color="b"] .app-topbar .topbar-stats span {
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+    color: #166534;
+}
+
+/* ═══════════════════════════════════════════════════
+   A/B: School Detail Layout
+   ═══════════════════════════════════════════════════ */
+
+html[data-ab-detail-layout="b"] .detail-grid {
+    grid-template-columns: 1fr;
+}
+
+html[data-ab-detail-layout="b"] .detail-overview {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+/* ═══════════════════════════════════════════════════
+   A/B: AI Chat New Badge
+   ═══════════════════════════════════════════════════ */
+
+html[data-ab-ai-chat-badge="b"] .ai-chat-fab::after {
+    content: "Mới";
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: #ef4444;
+    color: #fff;
+    font-size: 0.6rem;
+    font-weight: 800;
+    line-height: 1.3;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.5);
+    animation: aiBadgePulse 1.5s ease-in-out infinite;
+}
+
+html[data-ab-ai-chat-badge="b"] .ai-chat-fab.is-open::after {
+    content: none;
+}
+
+@keyframes aiBadgePulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.12); }
+}
+
+/* Variant A: no badge (default) */
+html[data-ab-ai-chat-badge="a"] .ai-chat-fab::after {
+    content: none;
+}
+
+@media (max-width: 640px) {
+    html[data-ab-ai-chat-badge="b"] .ai-chat-fab::after {
+        top: -4px;
+        right: -4px;
+        padding: 1px 5px;
+        font-size: 0.55rem;
+    }
+}
+
 /* ===== DARK MODE ===== */
 
 

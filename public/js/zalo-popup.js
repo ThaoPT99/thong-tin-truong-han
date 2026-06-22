@@ -9,11 +9,29 @@
     } catch (e) {}
   }
 
+  var lastOpenSource = "auto_popup";
+
+  function setOpenSource(source) {
+    lastOpenSource = source;
+  }
+
   function openPopup() {
     const overlay = document.getElementById("zalo-popup");
     if (!overlay) return;
     overlay.classList.add("is-open");
     document.body.classList.add("zalo-popup-open");
+    // Track A/B test variant khi mở popup
+    try {
+      if (typeof window.trackAnalytics === "function") {
+        window.trackAnalytics("event", {
+          eventType: "zalo_popup_open",
+          eventData: {
+            variant: (window.__AB && window.__AB['zalo-fab']) || "a",
+            source: lastOpenSource
+          }
+        });
+      }
+    } catch (e) {}
   }
 
   function checkAutoShowPopup() {
@@ -22,8 +40,11 @@
       const now = Date.now();
       // 12 giờ = 12 * 60 * 60 * 1000 = 43200000 ms
       if (!dismissedAt || (now - parseInt(dismissedAt, 10)) > 43200000) {
-        // Tự động mở sau khi load trang 15 giây
-        setTimeout(openPopup, 15000);
+        // A/B test: zalo-timing
+        // A = 15s (current), B = 45s
+        var timingVariant = (window.__AB && window.__AB['zalo-timing']) || "a";
+        var delay = timingVariant === "b" ? 45000 : 15000;
+        setTimeout(openPopup, delay);
       }
     } catch (e) {}
   }
@@ -55,5 +76,8 @@
     initAll();
   }
 
-  window.openZaloPopup = openPopup;
+  window.openZaloPopup = function() {
+    setOpenSource("fab_click");
+    openPopup();
+  };
 })();

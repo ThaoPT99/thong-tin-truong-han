@@ -23,6 +23,20 @@ function renderValue(val) {
   return rendered || `<span class="muted-empty">Đang cập nhật</span>`;
 }
 
+function renderTuitionWithVND(val) {
+  var html = renderValue(val);
+  // A/B test: tuition-display — nếu variant B, thêm VND
+  if (window.__AB && window.__AB['tuition-display'] === 'b') {
+    var krwVal = extractKRWValue(val);
+    if (krwVal) {
+      var rate = typeof DEFAULT_EXCHANGE_RATE !== 'undefined' ? DEFAULT_EXCHANGE_RATE : 20;
+      var vnd = krwVal * rate;
+      html += '<br><span style="font-size:0.85rem;color:#0f766e;font-weight:700;">≈ ' + vnd.toLocaleString('vi-VN') + ' ₫</span>';
+    }
+  }
+  return html;
+}
+
 function renderSimpleList(items) {
   if (!items || !items.length) return `<span class="muted-empty">Đang cập nhật</span>`;
   return `<ul class="detail-list">${items.map(item => `<li>${renderText(String(item))}</li>`).join("")}</ul>`;
@@ -235,11 +249,11 @@ function renderSchool(schoolId) {
         </article>
         <article class="detail-card" id="hoc-phi">
           <h3>Học phí</h3>
-          <div>${renderValue(s.tuition)}</div>
+          <div>${renderTuitionWithVND(s.tuition)}</div>
         </article>
         <article class="detail-card">
           <h3>Ký túc xá</h3>
-          <div>${renderValue(s.ktx)}</div>
+          <div>${renderTuitionWithVND(s.ktx)}</div>
         </article>
         <article class="detail-card">
           <h3>Ưu điểm</h3>
