@@ -272,12 +272,7 @@
       });
     });
 
-    // A/B test: ai-chat-auto — auto-open after 30s for variant B (nếu chưa từng chat)
-    if (window.__AB && window.__AB['ai-chat-auto'] === 'b' && messages.length === 0) {
-      setTimeout(openChat, 30000);
-    }
-
-    // Auto-open after 3 seconds if has previous messages
+    // Auto-open after 1 second if has previous messages
     if (messages.length > 0) {
       setTimeout(openChat, 1000);
     }

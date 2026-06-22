@@ -12,104 +12,36 @@
       name: 'Zalo FAB Button Style',
       description: 'So sánh vị trí và kiểu nút Zalo nổi',
       variants: ['a', 'b']
-      // A = control (current): right:5rem, text "Zalo"
-      // B = test: left side + animated + badge "MIỄN PHÍ"
-    },
-    {
-      key: 'ai-chat',
-      name: 'AI Chat Widget Position',
-      description: 'Vị trí widget chat AI trên màn hình',
-      variants: ['a', 'b']
-      // A = control (current): góc phải dưới
-      // B = test: góc trái dưới (tránh xung đột Zalo)
     },
     {
       key: 'zalo-timing',
       name: 'Zalo Popup Auto-Show Timing',
       description: 'Thời gian tự động hiện popup Zalo',
       variants: ['a', 'b']
-      // A = control (current): 15 giây
-      // B = test: 45 giây (ít gây khó chịu hơn)
-    },
-    {
-      key: 'school-layout',
-      name: 'School Directory Layout',
-      description: 'Cách hiển thị danh sách trường',
-      variants: ['a', 'b']
-      // A = control (current): grid 4 cột
-      // B = test: dạng list/table
     },
     {
       key: 'advisor-btn-color',
       name: 'Advisor Button Color',
       description: 'Màu nút "Phân tích hồ sơ"',
       variants: ['a', 'b']
-      // A = control (current): xanh dương (#2563eb)
-      // B = test: xanh lá (#0f766e)
-    },
-    {
-      key: 'sidebar-zalo-btn',
-      name: 'Sidebar Zalo Button Color',
-      description: 'Màu nút Zalo trong sidebar',
-      variants: ['a', 'b']
-      // A = control (current): mint (#2dd4bf)
-      // B = test: cam (#f59e0b)
     },
     {
       key: 'header-color',
       name: 'Topbar Header Background',
       description: 'Màu nền topbar header',
       variants: ['a', 'b']
-      // A = control (current): xanh đậm gradient
-      // B = test: trắng (sáng, hiện đại hơn)
-    },
-    {
-      key: 'detail-layout',
-      name: 'School Detail Layout',
-      description: 'Cách hiển thị chi tiết trường',
-      variants: ['a', 'b']
-      // A = control (current): grid 2 cột
-      // B = test: 1 cột (dễ đọc hơn trên mobile)
-    },
-    {
-      key: 'ai-chat-badge',
-      name: 'AI Chat New Badge',
-      description: 'Badge "Mới" trên nút AI Chat',
-      variants: ['a', 'b']
-      // A = control (current): không badge
-      // B = test: có badge "Mới" + animation
-    },
-    {
-      key: 'hero-title',
-      name: 'Hero Title Text',
-      description: 'Tiêu đề trang chủ',
-      variants: ['a', 'b']
-      // A = control (current): "Thông tin trường Visa D2-6"
-      // B = test: "18 trường Hàn Quốc tuyển sinh D2-6"
     },
     {
       key: 'cta-text',
       name: 'CTA Button Text',
       description: 'Text nút kêu gọi hành động',
       variants: ['a', 'b']
-      // A = control (current): "Phân tích hồ sơ"
-      // B = test: "Kiểm tra hồ sơ miễn phí 🎯"
-    },
-    {
-      key: 'ai-chat-auto',
-      name: 'AI Chat Auto-Open',
-      description: 'Tự động mở AI Chat',
-      variants: ['a', 'b']
-      // A = control (current): không auto-open
-      // B = test: auto-open sau 30s (nếu chưa từng chat)
     },
     {
       key: 'tuition-display',
       name: 'Tuition Display Format',
       description: 'Cách hiển thị học phí',
       variants: ['a', 'b']
-      // A = control (current): chỉ KRW
-      // B = test: KRW + VND (dễ hình dung hơn)
     }
   ];
 
@@ -183,14 +115,8 @@
     return window.__getABVariant(testKey) === 'b';
   };
 
-  // ─── Áp dụng text variants (hero-title, cta-text) sau khi DOM sẵn sàng ───
+  // ─── Áp dụng text variants sau khi DOM sẵn sàng ───
   function applyTextVariants() {
-    // Hero title
-    if (assignments['hero-title'] === 'b') {
-      var h2 = document.querySelector('.app-topbar h2');
-      if (h2) h2.textContent = '18 trường Hàn Quốc tuyển sinh D2-6';
-    }
-
     // CTA button text
     if (assignments['cta-text'] === 'b') {
       var cta = document.querySelector('.topbar-action');
