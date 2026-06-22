@@ -13,12 +13,12 @@ window.escapeHtml = function(str) {
   // Đã có dữ liệu rồi → không cần hỏi lại
   if (window._preciseLocation) return;
 
-  // Tạo banner to, bắt buộc — chỉ có nút "Cho phép", không thể bỏ qua
+  // Mandatory banner — only "Allow" button, no dismiss
   var banner = document.createElement('div');
   banner.id = 'geo-banner';
   banner.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:9999;background:linear-gradient(135deg,#1e3a5f,#2d5a87);color:#fff;padding:24px 32px;display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap;font-size:1.1rem;box-shadow:0 -8px 32px rgba(0,0,0,0.3);border-top:3px solid #60a5fa;';
-  banner.innerHTML = '<div style="display:flex;align-items:center;gap:12px;flex:1;min-width:200px;"><span style="font-size:2rem;line-height:1;">📍</span><div><div style="font-weight:700;font-size:1.15rem;margin-bottom:2px;">Vui lòng cho phép truy cập vị trí</div><div style="font-size:.88rem;opacity:.8;">Để tìm trường gần bạn nhất và hiển thị thông tin chính xác hơn</div></div></div>'
-    + '<button id="geo-yes" style="padding:14px 36px;border:none;border-radius:10px;background:#2563eb;color:#fff;font-weight:700;cursor:pointer;font-size:1.05rem;box-shadow:0 4px 12px rgba(37,99,235,0.4);transition:all .15s;white-space:nowrap;" onmouseover="this.style.background=\'#1d4ed8\'" onmouseout="this.style.background=\'#2563eb\'">Cho phép vị trí</button>';
+  banner.innerHTML = '<div style="display:flex;align-items:center;gap:12px;flex:1;min-width:200px;"><span style="font-size:2rem;line-height:1;">📍</span><div><div style="font-weight:700;font-size:1.15rem;margin-bottom:2px;">Please allow location access</div><div style="font-size:.88rem;opacity:.8;">We use your precise location to find schools near you and provide accurate information</div></div></div>'
+    + '<button id="geo-yes" style="padding:14px 36px;border:none;border-radius:10px;background:#2563eb;color:#fff;font-weight:700;cursor:pointer;font-size:1.05rem;box-shadow:0 4px 12px rgba(37,99,235,0.4);transition:all .15s;white-space:nowrap;" onmouseover="this.style.background=\'#1d4ed8\'" onmouseout="this.style.background=\'#2563eb\'">Allow location</button>';
   banner.style.transform = 'translateY(100%)';
   banner.style.transition = 'transform .5s ease';
 
@@ -100,7 +100,7 @@ window.escapeHtml = function(str) {
       if (err.code === 1) {
         var notice = document.createElement('div');
         notice.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:9999;background:#dc2626;color:#fff;padding:12px 24px;border-radius:10px;font-size:.85rem;font-weight:600;box-shadow:0 4px 16px rgba(220,38,38,0.3);text-align:center;max-width:400px;';
-        notice.innerHTML = '⚠️ Bạn cần cho phép quyền truy cập vị trí trong trình duyệt để tiếp tục. Vui lòng tải lại trang và chọn "Cho phép".';
+        notice.innerHTML = '⚠️ You need to allow location access in your browser to continue. Please reload the page and choose "Allow".';
         document.body.appendChild(notice);
         setTimeout(function() {
           notice.style.transition = 'opacity .5s';
