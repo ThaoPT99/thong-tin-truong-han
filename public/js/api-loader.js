@@ -63,29 +63,38 @@ window.escapeHtml = function(str) {
         // Silent - vẫn giữ tọa độ thô
       });
     }, function(err) {
-      // User denied ở trình duyệt → thông báo nhẹ
+      // User denied ở trình duyệt → lưu flag + thông báo
       if (err.code === 1) {
+        // Lưu flag để lần sau không hỏi lại (tránh vòng lặp)
+        try { localStorage.setItem('location_denied', 'true'); } catch(e) {}
+
         var notice = document.createElement('div');
         notice.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:9999;background:#dc2626;color:#fff;padding:12px 24px;border-radius:10px;font-size:.85rem;font-weight:600;box-shadow:0 4px 16px rgba(220,38,38,0.3);text-align:center;max-width:400px;';
-        notice.innerHTML = '⚠️ You need to allow location access in your browser to continue. Please reload the page and choose "Allow".';
+        notice.innerHTML = '⚠️ Location access was denied. <a href="https://support.google.com/chrome/answer/142065" target="_blank" rel="noopener" style="color:#fde68a;font-weight:700;">Enable it in Chrome settings</a> for precise results.';
         document.body.appendChild(notice);
         setTimeout(function() {
           notice.style.transition = 'opacity .5s';
           notice.style.opacity = '0';
           setTimeout(function() { if (notice.parentNode) notice.parentNode.removeChild(notice); }, 500);
-        }, 6000);
+        }, 8000);
       }
     }, options);
   }
 
-  // === ĐÃ TỪNG CHO PHÉP TRƯỚC ĐÂY? ===
-  // Kiểm tra localStorage trước (nhanh nhất)
+  // === KIỂM TRA localStorage (nhanh nhất) ===
   var alreadyGranted = false;
+  var alreadyDenied = false;
   try { alreadyGranted = localStorage.getItem('location_granted') === 'true'; } catch(e) {}
+  try { alreadyDenied = localStorage.getItem('location_denied') === 'true'; } catch(e) {}
 
   if (alreadyGranted) {
     // Đã cho phép rồi → lấy GPS thầm lặng, không banner
     getPreciseLocation();
+    return;
+  }
+
+  if (alreadyDenied) {
+    // Đã từ chối rồi → fallback IP, không banner, không hỏi lại
     return;
   }
 
@@ -98,7 +107,13 @@ window.escapeHtml = function(str) {
           getPreciseLocation();
           return;
         }
-        // Chưa có quyền → hiện banner
+        if (result.state === 'denied') {
+          // Đã chặn vĩnh viễn → lưu flag + fallback IP, không banner
+          try { localStorage.setItem('location_denied', 'true'); } catch(e) {}
+          showDeniedHint();
+          return;
+        }
+        // 'prompt' (chưa có quyết định) → hiện banner
         showBannerUi();
       }).catch(function() {
         // permissions API không hoạt động → fallback về banner
@@ -107,6 +122,26 @@ window.escapeHtml = function(str) {
     } else {
       showBannerUi();
     }
+  }
+
+  // Thanh thông báo nhỏ: location đã bị chặn, hướng dẫn bật lại
+  var deniedHintShown = false;
+  function showDeniedHint() {
+    if (deniedHintShown) return;
+    deniedHintShown = true;
+    var hint = document.createElement('div');
+    hint.id = 'geo-denied-hint';
+    hint.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:9999;background:#fef3c7;color:#92400e;padding:10px 20px;font-size:.85rem;text-align:center;border-top:2px solid #f59e0b;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;';
+    hint.innerHTML = '🔒 <span>Location access is blocked. <a href="https://support.google.com/chrome/answer/142065" target="_blank" rel="noopener" style="color:#1d4ed8;font-weight:600;">Enable in Chrome settings</a> for precise results. Using approximate location instead.</span>'
+      + '<button id="geo-dismiss-hint" style="background:none;border:none;color:#92400e;font-size:1.2rem;cursor:pointer;padding:0 4px;line-height:1;">✕</button>';
+    document.body.appendChild(hint);
+    setTimeout(function() {
+      document.getElementById('geo-dismiss-hint')?.addEventListener('click', function() {
+        hint.style.transition = 'opacity .3s';
+        hint.style.opacity = '0';
+        setTimeout(function() { if (hint.parentNode) hint.parentNode.removeChild(hint); }, 300);
+      });
+    }, 0);
   }
 
   // === Mandatory banner ===
