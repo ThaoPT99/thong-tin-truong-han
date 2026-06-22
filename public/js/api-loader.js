@@ -8,50 +8,14 @@ window.escapeHtml = function(str) {
   return d.innerHTML;
 };
 
-// ─── Precise Location via Browser Geolocation (GPS/WiFi) — BẮT BUỘC ───
+// ─── Precise Location via Browser Geolocation (GPS/WiFi) ───
 (function initPreciseLocation() {
   // Đã có dữ liệu rồi → không cần hỏi lại
   if (window._preciseLocation) return;
 
-  // Mandatory banner — only "Allow" button, no dismiss
-  var banner = document.createElement('div');
-  banner.id = 'geo-banner';
-  banner.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:9999;background:linear-gradient(135deg,#1e3a5f,#2d5a87);color:#fff;padding:24px 32px;display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap;font-size:1.1rem;box-shadow:0 -8px 32px rgba(0,0,0,0.3);border-top:3px solid #60a5fa;';
-  banner.innerHTML = '<div style="display:flex;align-items:center;gap:12px;flex:1;min-width:200px;"><span style="font-size:2rem;line-height:1;">📍</span><div><div style="font-weight:700;font-size:1.15rem;margin-bottom:2px;">Please allow location access</div><div style="font-size:.88rem;opacity:.8;">We use your precise location to find schools near you and provide accurate information</div></div></div>'
-    + '<button id="geo-yes" style="padding:14px 36px;border:none;border-radius:10px;background:#2563eb;color:#fff;font-weight:700;cursor:pointer;font-size:1.05rem;box-shadow:0 4px 12px rgba(37,99,235,0.4);transition:all .15s;white-space:nowrap;" onmouseover="this.style.background=\'#1d4ed8\'" onmouseout="this.style.background=\'#2563eb\'">Allow location</button>';
-  banner.style.transform = 'translateY(100%)';
-  banner.style.transition = 'transform .5s ease';
-
-  // Overlay tối phía sau
-  var overlay = document.createElement('div');
-  overlay.id = 'geo-overlay';
-  overlay.style.cssText = 'position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,0.55);opacity:0;transition:opacity .5s ease;';
-
-  function showBanner() {
-    document.body.appendChild(overlay);
-    document.body.appendChild(banner);
-    requestAnimationFrame(function() {
-      overlay.style.opacity = '1';
-      banner.style.transform = 'translateY(0)';
-    });
-  }
-
-  function hideBanner() {
-    overlay.style.opacity = '0';
-    banner.style.transform = 'translateY(100%)';
-    setTimeout(function() {
-      if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
-      if (banner.parentNode) banner.parentNode.removeChild(banner);
-    }, 400);
-  }
-
-  // Chỉ có nút "Cho phép" — bắt buộc phải nhấn
-  banner.querySelector('#geo-yes').addEventListener('click', function() {
-    hideBanner();
-    if (!navigator.geolocation) {
-      // Trình duyệt không hỗ trợ → fallback về IP
-      return;
-    }
+  // Helper: lấy GPS + reverse geocode + lưu localStorage
+  function getPreciseLocation() {
+    if (!navigator.geolocation) return;
 
     var options = {
       enableHighAccuracy: true,
@@ -72,6 +36,9 @@ window.escapeHtml = function(str) {
         ward: '',
         address: ''
       };
+
+      // Đã cho phép → lưu localStorage để lần sau không hỏi lại
+      try { localStorage.setItem('location_granted', 'true'); } catch(e) {}
 
       // Reverse geocode bằng Nominatim (OpenStreetMap, miễn phí)
       var nomUrl = 'https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=' + lat + '&lon=' + lon + '&accept-language=vi';
@@ -109,14 +76,84 @@ window.escapeHtml = function(str) {
         }, 6000);
       }
     }, options);
+  }
+
+  // === ĐÃ TỪNG CHO PHÉP TRƯỚC ĐÂY? ===
+  // Kiểm tra localStorage trước (nhanh nhất)
+  var alreadyGranted = false;
+  try { alreadyGranted = localStorage.getItem('location_granted') === 'true'; } catch(e) {}
+
+  if (alreadyGranted) {
+    // Đã cho phép rồi → lấy GPS thầm lặng, không banner
+    getPreciseLocation();
+    return;
+  }
+
+  // Kiểm tra permissions API (trình duyệt có thể đã nhớ quyền)
+  function checkPermissionAndProceed() {
+    if (typeof navigator.permissions !== 'undefined' && navigator.permissions.query) {
+      navigator.permissions.query({ name: 'geolocation' }).then(function(result) {
+        if (result.state === 'granted') {
+          // Trình duyệt đã nhớ quyền → lấy GPS thầm lặng
+          getPreciseLocation();
+          return;
+        }
+        // Chưa có quyền → hiện banner
+        showBannerUi();
+      }).catch(function() {
+        // permissions API không hoạt động → fallback về banner
+        showBannerUi();
+      });
+    } else {
+      showBannerUi();
+    }
+  }
+
+  // === Mandatory banner ===
+  var banner = document.createElement('div');
+  banner.id = 'geo-banner';
+  banner.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:9999;background:linear-gradient(135deg,#1e3a5f,#2d5a87);color:#fff;padding:24px 32px;display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap;font-size:1.1rem;box-shadow:0 -8px 32px rgba(0,0,0,0.3);border-top:3px solid #60a5fa;';
+  banner.innerHTML = '<div style="display:flex;align-items:center;gap:12px;flex:1;min-width:200px;"><span style="font-size:2rem;line-height:1;">📍</span><div><div style="font-weight:700;font-size:1.15rem;margin-bottom:2px;">Please allow location access</div><div style="font-size:.88rem;opacity:.8;">We use your precise location to find schools near you and provide accurate information</div></div></div>'
+    + '<button id="geo-yes" style="padding:14px 36px;border:none;border-radius:10px;background:#2563eb;color:#fff;font-weight:700;cursor:pointer;font-size:1.05rem;box-shadow:0 4px 12px rgba(37,99,235,0.4);transition:all .15s;white-space:nowrap;" onmouseover="this.style.background=\'#1d4ed8\'" onmouseout="this.style.background=\'#2563eb\'">Allow location</button>';
+  banner.style.transform = 'translateY(100%)';
+  banner.style.transition = 'transform .5s ease';
+
+  var overlay = document.createElement('div');
+  overlay.id = 'geo-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,0.55);opacity:0;transition:opacity .5s ease;';
+
+  function showBannerUi() {
+    document.body.appendChild(overlay);
+    document.body.appendChild(banner);
+    requestAnimationFrame(function() {
+      overlay.style.opacity = '1';
+      banner.style.transform = 'translateY(0)';
+    });
+  }
+
+  function hideBanner() {
+    overlay.style.opacity = '0';
+    banner.style.transform = 'translateY(100%)';
+    setTimeout(function() {
+      if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+      if (banner.parentNode) banner.parentNode.removeChild(banner);
+    }, 400);
+  }
+
+  banner.querySelector('#geo-yes').addEventListener('click', function() {
+    hideBanner();
+    getPreciseLocation();
   });
 
-  // Hiện banner ngay khi trang load (không chờ 2 giây)
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', showBanner);
-  } else {
-    showBanner();
+  // Hiện banner (nếu cần)
+  function show() {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', checkPermissionAndProceed);
+    } else {
+      checkPermissionAndProceed();
+    }
   }
+  show();
 })();
 
 // ─── Analytics Tracking Helper ───
