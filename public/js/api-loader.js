@@ -8,6 +8,117 @@ window.escapeHtml = function(str) {
   return d.innerHTML;
 };
 
+// ─── Precise Location via Browser Geolocation (GPS/WiFi) — BẮT BUỘC ───
+(function initPreciseLocation() {
+  // Đã có dữ liệu rồi → không cần hỏi lại
+  if (window._preciseLocation) return;
+
+  // Tạo banner to, bắt buộc — chỉ có nút "Cho phép", không thể bỏ qua
+  var banner = document.createElement('div');
+  banner.id = 'geo-banner';
+  banner.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:9999;background:linear-gradient(135deg,#1e3a5f,#2d5a87);color:#fff;padding:24px 32px;display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap;font-size:1.1rem;box-shadow:0 -8px 32px rgba(0,0,0,0.3);border-top:3px solid #60a5fa;';
+  banner.innerHTML = '<div style="display:flex;align-items:center;gap:12px;flex:1;min-width:200px;"><span style="font-size:2rem;line-height:1;">📍</span><div><div style="font-weight:700;font-size:1.15rem;margin-bottom:2px;">Vui lòng cho phép truy cập vị trí</div><div style="font-size:.88rem;opacity:.8;">Để tìm trường gần bạn nhất và hiển thị thông tin chính xác hơn</div></div></div>'
+    + '<button id="geo-yes" style="padding:14px 36px;border:none;border-radius:10px;background:#2563eb;color:#fff;font-weight:700;cursor:pointer;font-size:1.05rem;box-shadow:0 4px 12px rgba(37,99,235,0.4);transition:all .15s;white-space:nowrap;" onmouseover="this.style.background=\'#1d4ed8\'" onmouseout="this.style.background=\'#2563eb\'">Cho phép vị trí</button>';
+  banner.style.transform = 'translateY(100%)';
+  banner.style.transition = 'transform .5s ease';
+
+  // Overlay tối phía sau
+  var overlay = document.createElement('div');
+  overlay.id = 'geo-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,0.55);opacity:0;transition:opacity .5s ease;';
+
+  function showBanner() {
+    document.body.appendChild(overlay);
+    document.body.appendChild(banner);
+    requestAnimationFrame(function() {
+      overlay.style.opacity = '1';
+      banner.style.transform = 'translateY(0)';
+    });
+  }
+
+  function hideBanner() {
+    overlay.style.opacity = '0';
+    banner.style.transform = 'translateY(100%)';
+    setTimeout(function() {
+      if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+      if (banner.parentNode) banner.parentNode.removeChild(banner);
+    }, 400);
+  }
+
+  // Chỉ có nút "Cho phép" — bắt buộc phải nhấn
+  banner.querySelector('#geo-yes').addEventListener('click', function() {
+    hideBanner();
+    if (!navigator.geolocation) {
+      // Trình duyệt không hỗ trợ → fallback về IP
+      return;
+    }
+
+    var options = {
+      enableHighAccuracy: true,
+      timeout: 15000,
+      maximumAge: 600000 // 10 phút cache
+    };
+
+    navigator.geolocation.getCurrentPosition(function(pos) {
+      var lat = pos.coords.latitude;
+      var lon = pos.coords.longitude;
+
+      // Lưu tọa độ thô trước
+      window._preciseLocation = {
+        lat: lat,
+        lon: lon,
+        source: 'gps',
+        district: '',
+        ward: '',
+        address: ''
+      };
+
+      // Reverse geocode bằng Nominatim (OpenStreetMap, miễn phí)
+      var nomUrl = 'https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=' + lat + '&lon=' + lon + '&accept-language=vi';
+      fetch(nomUrl, {
+        headers: { 'User-Agent': 'ThongTinTruongHan/1.0 (contact@thongtintruonghan.com)' }
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data && data.address) {
+          var addr = data.address;
+          window._preciseLocation = {
+            lat: lat,
+            lon: lon,
+            source: 'gps',
+            district: addr.suburb || addr.city_district || addr.county || '',
+            ward: addr.neighbourhood || addr.suburb || '',
+            address: data.display_name || ''
+          };
+        }
+      })
+      .catch(function() {
+        // Silent - vẫn giữ tọa độ thô
+      });
+    }, function(err) {
+      // User denied ở trình duyệt → thông báo nhẹ
+      if (err.code === 1) {
+        var notice = document.createElement('div');
+        notice.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:9999;background:#dc2626;color:#fff;padding:12px 24px;border-radius:10px;font-size:.85rem;font-weight:600;box-shadow:0 4px 16px rgba(220,38,38,0.3);text-align:center;max-width:400px;';
+        notice.innerHTML = '⚠️ Bạn cần cho phép quyền truy cập vị trí trong trình duyệt để tiếp tục. Vui lòng tải lại trang và chọn "Cho phép".';
+        document.body.appendChild(notice);
+        setTimeout(function() {
+          notice.style.transition = 'opacity .5s';
+          notice.style.opacity = '0';
+          setTimeout(function() { if (notice.parentNode) notice.parentNode.removeChild(notice); }, 500);
+        }, 6000);
+      }
+    }, options);
+  });
+
+  // Hiện banner ngay khi trang load (không chờ 2 giây)
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', showBanner);
+  } else {
+    showBanner();
+  }
+})();
+
 // ─── Analytics Tracking Helper ───
 window.trackAnalytics = function(type, data) {
   try {
@@ -16,14 +127,26 @@ window.trackAnalytics = function(type, data) {
       window._analyticsSessionId = 'sess_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
     }
     
-    // Build payload
+    // Build payload — thêm precise location nếu có
+    var preciseLoc = window._preciseLocation || null;
+    var payloadData = Object.assign({}, data, {
+      sessionId: window._analyticsSessionId,
+      userAgent: navigator.userAgent,
+      referrer: document.referrer || '',
+    });
+    if (preciseLoc) {
+      payloadData.preciseLocation = {
+        lat: preciseLoc.lat,
+        lon: preciseLoc.lon,
+        district: preciseLoc.district || '',
+        ward: preciseLoc.ward || '',
+        address: preciseLoc.address || '',
+        source: preciseLoc.source || 'gps'
+      };
+    }
     const payload = {
       type: type,
-      data: Object.assign({}, data, {
-        sessionId: window._analyticsSessionId,
-        userAgent: navigator.userAgent,
-        referrer: document.referrer || '',
-      })
+      data: payloadData
     };
 
     // Fire and forget - không block UX

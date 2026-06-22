@@ -1861,12 +1861,12 @@ body.zalo-popup-open {
    AI Chat Widget
    ═══════════════════════════════════════════════════ */
 
-/* Floating action button — rightmost position, highest priority */
+/* Floating action button — sẽ bị geo-banner che khi đang hiện */
 .ai-chat-fab {
     position: fixed;
     right: 1.25rem;
     bottom: 1.25rem;
-    z-index: 10000;
+    z-index: 9995;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1919,7 +1919,7 @@ body.zalo-popup-open {
     position: fixed;
     right: 1.25rem;
     bottom: 5.5rem;
-    z-index: 9997;
+    z-index: 9994;
     width: 380px;
     max-width: calc(100vw - 2.5rem);
     height: 560px;
@@ -3502,7 +3502,7 @@ html {
     position: fixed;
     right: 1.25rem;
     bottom: 5rem;
-    z-index: 10001;
+    z-index: 9996;
     padding: 0.75rem 1rem;
     border-radius: 10px;
     background: #0f766e;

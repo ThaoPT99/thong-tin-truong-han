@@ -50,11 +50,19 @@ function resolveIpLocation(ip) {
 }
 
 // ─── IP Cache — mỗi IP chỉ lưu 1 dòng (upsert) ───
-async function updateIpCache(ip, userAgent, location) {
+async function updateIpCache(ip, userAgent, location, preciseLocation) {
   if (!ip || ip.startsWith('10.') || ip.startsWith('172.16.') || ip.startsWith('192.168.') ||
       ip === '127.0.0.1' || ip === '::1' || ip === 'localhost' || ip === '') return;
 
   const now = new Date().toISOString();
+
+  // Extract precise location fields (from browser GPS)
+  const preciseLat = preciseLocation?.lat != null ? preciseLocation.lat : null;
+  const preciseLon = preciseLocation?.lon != null ? preciseLocation.lon : null;
+  const preciseDistrict = preciseLocation?.district || null;
+  const preciseWard = preciseLocation?.ward || null;
+  const preciseAddress = preciseLocation?.address || null;
+  const locationSource = preciseLocation?.source || (location?.city ? 'ip' : null);
 
   // Kiểm tra cache đã có chưa
   const { data: existing } = await supabase
@@ -64,14 +72,24 @@ async function updateIpCache(ip, userAgent, location) {
     .maybeSingle();
 
   if (existing) {
-    // Đã có → tăng total_views, cập nhật last_seen
+    // Đã có → tăng total_views, cập nhật last_seen, cập nhật precise nếu có
+    const updateFields = {
+      last_seen: now,
+      total_views: (existing.total_views || 0) + 1,
+      user_agent: userAgent || existing.user_agent,
+    };
+    // Chỉ ghi đè precise location nếu có dữ liệu mới từ GPS
+    if (preciseLocation) {
+      updateFields.precise_lat = preciseLat;
+      updateFields.precise_lon = preciseLon;
+      updateFields.precise_district = preciseDistrict;
+      updateFields.precise_ward = preciseWard;
+      updateFields.precise_address = preciseAddress;
+      updateFields.location_source = locationSource;
+    }
     await supabase
       .from('analytics_ip_cache')
-      .update({
-        last_seen: now,
-        total_views: (existing.total_views || 0) + 1,
-        user_agent: userAgent || existing.user_agent,
-      })
+      .update(updateFields)
       .eq('ip', ip);
   } else {
     // Chưa có → insert mới (dù location có hay không — tránh gọi ip-api lại)
@@ -90,6 +108,12 @@ async function updateIpCache(ip, userAgent, location) {
         first_seen: now,
         last_seen: now,
         total_views: 1,
+        precise_lat: preciseLat,
+        precise_lon: preciseLon,
+        precise_district: preciseDistrict,
+        precise_ward: preciseWard,
+        precise_address: preciseAddress,
+        location_source: locationSource,
       });
   }
 }
@@ -182,6 +206,9 @@ async function handleTrack(req, res) {
       });
       if (viewErr) throw viewErr;
 
+      // Extract precise location từ browser (nếu có)
+      const preciseLocation = data.preciseLocation || null;
+
       // Cập nhật IP cache: check cache trước, chỉ resolve IP mới
       try {
         const { data: cached } = await supabase
@@ -192,11 +219,11 @@ async function handleTrack(req, res) {
 
         if (cached) {
           // Đã cache → chỉ tăng biến đếm, không resolve lại
-          await updateIpCache(clientIp, userAgent, null);
+          await updateIpCache(clientIp, userAgent, null, preciseLocation);
         } else {
           // IP mới → resolve location rồi cache
           const location = await resolveIpLocation(clientIp);
-          await updateIpCache(clientIp, userAgent, location);
+          await updateIpCache(clientIp, userAgent, location, preciseLocation);
           // Nếu có location + city mới → gửi cảnh báo Telegram
           if (location?.city) {
             await checkNewCityTelegramAlert(location, clientIp, pageType);
@@ -270,6 +297,9 @@ async function handleTrack(req, res) {
           });
         }
 
+        // Extract precise location từ browser (nếu có)
+        const preciseLocation = data.preciseLocation || null;
+
         // Cập nhật IP cache: check cache trước, chỉ resolve IP mới
         try {
           const { data: cached } = await supabase
@@ -279,10 +309,10 @@ async function handleTrack(req, res) {
             .maybeSingle();
 
           if (cached) {
-            await updateIpCache(clientIp, userAgent, null);
+            await updateIpCache(clientIp, userAgent, null, preciseLocation);
           } else {
             const location = await resolveIpLocation(clientIp);
-            await updateIpCache(clientIp, userAgent, location);
+            await updateIpCache(clientIp, userAgent, location, preciseLocation);
             // Nếu có location + city mới → gửi cảnh báo Telegram
             if (location?.city) {
               await checkNewCityTelegramAlert(location, clientIp, pageType || 'unknown');
@@ -622,7 +652,7 @@ async function handleAdminData(req, res) {
     if (view === 'locations') {
       const { data: ipCache } = await supabase
         .from('analytics_ip_cache')
-        .select('city, region, country, country_code, lat, lon, total_views')
+        .select('city, region, country, country_code, lat, lon, total_views, location_source')
         .gte('last_seen', since)
         .not('city', 'is', null)
         .order('total_views', { ascending: false });
@@ -630,19 +660,28 @@ async function handleAdminData(req, res) {
       if (!ipCache || ipCache.length === 0) {
         return res.json({
           success: true,
-          data: { locations: [], regions: [], countries: [], totalLocatedViews: 0, totalLocatedSessions: 0, uniqueCities: 0 },
+          data: { locations: [], regions: [], countries: [], totalLocatedViews: 0, totalLocatedSessions: 0, uniqueCities: 0, gpsCount: 0, ipCount: 0 },
         });
       }
 
       // Group by city
       const cityCounts = {};
+      let gpsCount = 0;
+      let ipCount = 0;
       for (const row of ipCache) {
         if (!row.city) continue;
         const key = `${row.city}|${row.region || ''}|${row.country || ''}`;
         if (!cityCounts[key]) {
-          cityCounts[key] = { city: row.city, region: row.region || '', country: row.country || '', country_code: row.country_code || '', lat: row.lat, lon: row.lon, views: 0 };
+          cityCounts[key] = { city: row.city, region: row.region || '', country: row.country || '', country_code: row.country_code || '', lat: row.lat, lon: row.lon, views: 0, gps: 0, ip: 0 };
         }
         cityCounts[key].views += row.total_views || 1;
+        if (row.location_source === 'gps') {
+          cityCounts[key].gps += row.total_views || 1;
+          gpsCount++;
+        } else {
+          cityCounts[key].ip += row.total_views || 1;
+          ipCount++;
+        }
       }
 
       const locations = Object.values(cityCounts).sort((a, b) => b.views - a.views);
@@ -679,6 +718,8 @@ async function handleAdminData(req, res) {
           countries,
           totalLocatedViews: locations.reduce((a, b) => a + b.views, 0),
           uniqueCities: locations.length,
+          gpsCount,
+          ipCount,
         },
       });
     }
@@ -734,6 +775,11 @@ async function handleAdminData(req, res) {
             lastSeen: ip.last_seen,
             totalViews: ip.total_views || 0,
             isNewCity: newCities.some(nc => nc.city === ip.city),
+            // Precise location fields
+            preciseDistrict: ip.precise_district || '',
+            preciseWard: ip.precise_ward || '',
+            preciseAddress: ip.precise_address || '',
+            locationSource: ip.location_source || 'ip',
           })),
           totalIps: ips?.length || 0,
           newCities: newCities.slice(0, 20),
@@ -746,7 +792,7 @@ async function handleAdminData(req, res) {
     if (view === 'map') {
       const { data: ips } = await supabase
         .from('analytics_ip_cache')
-        .select('ip, city, region, country, country_code, lat, lon, total_views, last_seen')
+        .select('ip, city, region, country, country_code, lat, lon, total_views, last_seen, location_source, precise_district, precise_ward')
         .gte('last_seen', since)
         .not('lat', 'is', null)
         .not('lon', 'is', null);
@@ -764,8 +810,12 @@ async function handleAdminData(req, res) {
             lon: parseFloat(ip.lon),
             totalViews: ip.total_views || 0,
             lastSeen: ip.last_seen,
+            locationSource: ip.location_source || 'ip',
+            preciseDistrict: ip.precise_district || '',
+            preciseWard: ip.precise_ward || '',
           })),
           totalMarkers: ips?.length || 0,
+          gpsMarkers: (ips || []).filter(ip => ip.location_source === 'gps').length,
         },
       });
     }

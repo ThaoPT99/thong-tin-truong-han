@@ -824,6 +824,11 @@ function renderLocations(data) {
       <div class="stat-value">${data.regions?.length || 0}</div>
       <div class="stat-sub">Tỉnh/thành phố khác nhau</div>
     </div>
+    <div class="stat-card" style="${data.gpsCount > 0 ? 'border-left:3px solid #2563eb;' : ''}">
+      <div class="stat-label">🛰️ GPS chính xác</div>
+      <div class="stat-value" style="color:${data.gpsCount > 0 ? '#2563eb' : 'var(--gray-500)'}">${data.gpsCount || 0}</div>
+      <div class="stat-sub">Địa điểm có tọa độ GPS thực</div>
+    </div>
   `;
 
   // Top locations table
@@ -857,7 +862,7 @@ function renderLocations(data) {
         </tbody>
       </table>
       <div style="padding:.5rem .75rem;font-size:.78rem;color:var(--gray-400);border-top:1px solid var(--gray-100);">
-        Hiển thị ${locations.length} địa điểm — dữ liệu từ ip-api.com
+        Hiển thị ${locations.length} địa điểm — ${data.gpsCount > 0 ? data.gpsCount + ' địa điểm có GPS 🛰️, ' : ''}phần còn lại từ ip-api.com
       </div>
     `;
   }
@@ -986,9 +991,14 @@ function renderIpLogs(data) {
               ? `${ip.city}${ip.region ? ', ' + ip.region : ''}`
               : (ip.country ? flag + ' ' + ip.country : '⏳ Đang chờ');
             const isNew = ip.isNewCity ? '🆕 ' : '';
+            const hasGps = ip.locationSource === 'gps';
+            const gpsBadge = hasGps ? '<span style="display:inline-flex;align-items:center;gap:2px;background:#dbeafe;color:#1d4ed8;font-size:.7rem;padding:.1rem .35rem;border-radius:99px;font-weight:600;margin-left:4px;">🛰️ GPS</span>' : '';
+            const preciseDetail = (ip.preciseDistrict || ip.preciseWard) 
+              ? '<br><span style="font-size:.75rem;color:#6b7280;">' + escapeHtml(ip.preciseDistrict || '') + (ip.preciseWard ? ' - ' + escapeHtml(ip.preciseWard) : '') + '</span>'
+              : '';
             return `<tr>
               <td><code style="background:var(--gray-100);padding:.15rem .4rem;border-radius:4px;font-size:.8rem;">${escapeHtml(ip.ip)}</code></td>
-              <td><strong>${flag} ${isNew}${escapeHtml(location)}</strong>${ip.isNewCity ? '<br><span style="font-size:.7rem;color:#ef4444;font-weight:600;">📍 MỚI</span>' : ''}</td>
+              <td><strong>${flag} ${isNew}${escapeHtml(location)}</strong>${gpsBadge}${preciseDetail}${ip.isNewCity ? '<br><span style="font-size:.7rem;color:#ef4444;font-weight:600;">📍 MỚI</span>' : ''}</td>
               <td style="color:var(--gray-500);font-size:.78rem;">${escapeHtml(ip.isp || '—')}</td>
               <td><strong>${ip.totalViews}</strong></td>
               <td style="font-size:.78rem;">${formatTime(ip.lastSeen)}</td>
@@ -999,7 +1009,7 @@ function renderIpLogs(data) {
       </table>
     </div>
     <div style="padding:.5rem .75rem;font-size:.78rem;color:var(--gray-400);border-top:1px solid var(--gray-100);display:flex;justify-content:space-between;">
-      <span>Hiển thị ${ips.length} IP — dữ liệu từ ip-api.com (45 req/phút)</span>
+      <span>Hiển thị ${ips.length} IP — dữ liệu từ ip-api.com (45 req/phút) ${ips.filter(i => i.locationSource === 'gps').length > 0 ? '| 🛰️ ' + ips.filter(i => i.locationSource === 'gps').length + ' IP có GPS' : ''}</span>
       <span>✅ Mỗi IP chỉ 1 dòng, cập nhật last_seen + total_views</span>
     </div>
   `;
@@ -1026,10 +1036,10 @@ function renderMap(data) {
       <div class="stat-value">${data.totalMarkers || 0}</div>
       <div class="stat-sub">Đã định vị thành công</div>
     </div>
-    <div class="stat-card">
-      <div class="stat-label">Tổng lượt xem</div>
-      <div class="stat-value">${(data.markers || []).reduce((a, b) => a + (b.totalViews || 0), 0).toLocaleString('vi-VN')}</div>
-      <div class="stat-sub">Từ các IP này</div>
+    <div class="stat-card" style="${data.gpsMarkers > 0 ? 'border-left:3px solid #2563eb;' : ''}">
+      <div class="stat-label">🛰️ GPS</div>
+      <div class="stat-value" style="color:${data.gpsMarkers > 0 ? '#2563eb' : 'var(--gray-500)'}">${data.gpsMarkers || 0}</div>
+      <div class="stat-sub">Chấm có GPS chính xác</div>
     </div>
   `;
 
@@ -1066,18 +1076,25 @@ function renderMap(data) {
     const color = m.totalViews >= 10 ? '#ef4444' : m.totalViews >= 5 ? '#f59e0b' : '#2563eb';
     const flag = m.country_code ? getFlagEmoji(m.country_code) : '';
 
+    const isGps = m.locationSource === 'gps';
+    const markerColor = isGps ? '#2563eb' : color;
     const marker = L.circleMarker([m.lat, m.lon], {
-      radius: size,
-      fillColor: color,
+      radius: isGps ? size + 2 : size,
+      fillColor: markerColor,
       color: '#fff',
-      weight: 2,
+      weight: isGps ? 3 : 2,
       opacity: 1,
-      fillOpacity: 0.7,
+      fillOpacity: isGps ? 0.9 : 0.7,
     }).addTo(map);
+
+    const gpsBadge = isGps ? '<span style="display:inline-block;background:#dbeafe;color:#1d4ed8;font-size:.7rem;padding:1px 6px;border-radius:99px;font-weight:600;margin-bottom:4px;">🛰️ GPS</span><br>' : '';
+    const preciseDetail = (m.preciseDistrict || m.preciseWard) 
+      ? '<br><span style="color:#6b7280;font-size:.78rem;">' + escapeHtml(m.preciseDistrict || '') + (m.preciseWard ? ' - ' + escapeHtml(m.preciseWard) : '') + '</span>'
+      : '';
 
     marker.bindPopup(`
       <div style="font-size:.85rem;line-height:1.5;">
-        <div style="font-weight:700;margin-bottom:4px;">${flag} ${escapeHtml(m.city)}${m.region ? ', ' + escapeHtml(m.region) : ''}</div>
+        ${gpsBadge}<div style="font-weight:700;margin-bottom:4px;">${flag} ${escapeHtml(m.city)}${m.region ? ', ' + escapeHtml(m.region) : ''}</div>${preciseDetail}
         <div style="color:var(--gray-500);font-size:.8rem;">IP: <code>${escapeHtml(m.ip)}</code></div>
         <div style="color:var(--gray-500);font-size:.8rem;">Lượt xem: <strong>${m.totalViews}</strong></div>
         <div style="color:var(--gray-500);font-size:.8rem;">Lần cuối: ${formatTime(m.lastSeen)}</div>
