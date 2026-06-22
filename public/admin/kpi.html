@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KPI Sale — Admin Thông Tin Trường Hàn</title>
+<link rel="stylesheet" href="admin.css">
+<style>
+  .kpi-period { display:flex; gap:6px; align-items:center; margin-bottom:1rem; }
+  .kpi-period button { padding:.35rem .65rem; border:1px solid var(--gray-300); border-radius:6px; background:#fff; color:var(--gray-600); font:inherit; font-size:.78rem; font-weight:600; cursor:pointer; }
+  .kpi-period button.active { background:var(--primary); color:#fff; border-color:var(--primary); }
+
+  .kpi-sale-card { background:#fff; border-radius:var(--radius); box-shadow:var(--shadow); margin-bottom:1.25rem; overflow:hidden; }
+  .kpi-sale-header { display:flex; align-items:center; justify-content:space-between; gap:.75rem; padding:.85rem 1.1rem; border-bottom:1px solid var(--gray-200); background:var(--gray-50); }
+  .kpi-sale-header .sale-info { display:flex; align-items:center; gap:.6rem; }
+  .kpi-sale-header .sale-avatar { width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,var(--primary),#7c3aed); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:.9rem; }
+  .kpi-sale-header .sale-name { font-weight:700; color:var(--gray-800); font-size:.92rem; }
+  .kpi-sale-header .sale-email { font-size:.78rem; color:var(--gray-400); }
+  .kpi-sale-body { padding:1rem 1.1rem; }
+  .kpi-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:.75rem; margin-bottom:1rem; }
+  .kpi-metric { text-align:center; padding:.6rem .4rem; border:1px solid var(--gray-200); border-radius:8px; background:#fff; }
+  .kpi-metric .value { font-size:1.35rem; font-weight:700; color:var(--gray-900); }
+  .kpi-metric .label { font-size:.72rem; color:var(--gray-500); margin-top:2px; }
+
+  .kpi-status-bar { display:flex; height:28px; border-radius:99px; overflow:hidden; margin:.75rem 0; }
+  .kpi-status-segment { display:flex; align-items:center; justify-content:center; font-size:.65rem; font-weight:700; color:#fff; transition:width .4s ease; min-width:0; overflow:hidden; }
+  .seg-new { background:#2563eb; }
+  .seg-consulting { background:#f59e0b; }
+  .seg-applied { background:#7c3aed; }
+  .seg-waiting_visa { background:#ec4899; }
+  .seg-visa_approved { background:#0f766e; }
+  .seg-visa_rejected { background:#ef4444; }
+  .seg-enrolled { background:#16a34a; }
+
+  .kpi-status-legend { display:flex; flex-wrap:wrap; gap:.3rem .75rem; margin-bottom:.75rem; font-size:.72rem; color:var(--gray-600); }
+  .kpi-status-legend span { display:flex; align-items:center; gap:4px; }
+  .kpi-legend-dot { width:8px; height:8px; border-radius:50%; display:inline-block; }
+
+  .kpi-top-schools { display:flex; flex-wrap:wrap; gap:.4rem; }
+  .kpi-top-schools .school-badge { display:inline-flex; align-items:center; gap:4px; background:var(--primary-light); color:var(--primary-dark); padding:.25rem .6rem; border-radius:99px; font-size:.75rem; font-weight:600; }
+  .kpi-top-schools .school-count { background:var(--primary); color:#fff; padding:.05rem .35rem; border-radius:99px; font-size:.65rem; }
+
+  .kpi-summary-stats { display:grid; grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); gap:.75rem; margin-bottom:1.5rem; }
+  .kpi-summary-card { background:#fff; border-radius:var(--radius); box-shadow:var(--shadow); padding:1rem 1.1rem; text-align:center; }
+  .kpi-summary-card .value { font-size:1.65rem; font-weight:700; color:var(--gray-900); }
+  .kpi-summary-card .label { font-size:.78rem; color:var(--gray-500); margin-top:2px; }
+
+  .kpi-table-wrap { overflow-x:auto; }
+  .kpi-table { width:100%; border-collapse:collapse; font-size:.85rem; }
+  .kpi-table th { padding:.6rem .65rem; border-bottom:2px solid var(--gray-200); background:var(--gray-50); font-size:.7rem; text-transform:uppercase; letter-spacing:.4px; color:var(--gray-500); text-align:left; white-space:nowrap; }
+  .kpi-table td { padding:.6rem .65rem; border-bottom:1px solid var(--gray-100); vertical-align:middle; }
+  .kpi-table tbody tr:hover { background:var(--gray-50); }
+  .kpi-table .rank { font-weight:700; color:var(--gray-400); width:28px; }
+  .kpi-table .rank.top1 { color:#f59e0b; }
+  .kpi-table .rank.top2 { color:#94a3b8; }
+  .kpi-table .rank.top3 { color:#d97706; }
+
+  .conversion-badge { display:inline-flex; align-items:center; gap:4px; padding:.2rem .55rem; border-radius:99px; font-size:.72rem; font-weight:700; }
+  .conversion-good { background:#d1fae5; color:#065f46; }
+  .conversion-ok { background:#fef3c7; color:#92400e; }
+  .conversion-low { background:#fee2e2; color:#991b1b; }
+
+  .empty-state { text-align:center; padding:3rem; color:var(--gray-400); }
+  .loading-state { text-align:center; padding:3rem; color:var(--gray-400); }
+
+  @media (max-width:640px) {
+    .kpi-grid { grid-template-columns:repeat(2, 1fr); }
+    .kpi-sale-header { flex-direction:column; align-items:stretch; }
+  }
+</style>
+</head>
+<body>
+<script src="admin.js"></script>
+<script>checkAuth();</script>
+
+<div class="admin-layout">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h2>🏫 Trường Hàn</h2>
+      <div class="sub">Quản lý dữ liệu</div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" class="role-director">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+        Dashboard
+      </a>
+      <a href="kpi.html" class="active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        KPI Sale
+      </a>
+      <a href="editor.html?mode=new" class="role-director">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Thêm trường
+      </a>
+      <a href="students.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        Học sinh
+      </a>
+      <a href="checklist.html" class="role-director">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        Checklist Visa
+      </a>
+      <a href="semester.html" class="role-director">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Kỳ tuyển sinh
+      </a>
+      <a href="import.html" class="role-director">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Import Excel
+      </a>
+      <a href="users.html" class="role-director">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        Người dùng
+      </a>
+      <a href="access-control.html" class="role-director">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg>
+        Quản lý Truy cập
+      </a>
+      <a href="analytics.html" class="role-director">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+        Analytics
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div id="sidebar-user"></div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="top-bar">
+      <h1>🏆 KPI Sale</h1>
+      <div class="user-info">
+        <span id="user-display"></span>
+        <button class="btn btn-outline btn-sm" onclick="logout()">Đăng xuất</button>
+      </div>
+    </div>
+
+    <div class="content-area">
+      <!-- Loading -->
+      <div id="loading-state" class="loading-state">
+        <div class="spinner"></div> Đang tải KPI...
+      </div>
+
+      <!-- Summary (chỉ director) -->
+      <div id="summary-section" style="display:none"></div>
+
+      <!-- Sales list -->
+      <div id="sales-container"></div>
+    </div>
+  </main>
+</div>
+
+<script>
+const user = getUser();
+if (user) {
+  document.getElementById('user-display').textContent = user.displayName || user.email;
+  document.getElementById('sidebar-user').textContent = user.email;
+}
+
+async function loadKpi() {
+
+  try {
+    const res = await api('GET', '/admin/kpi');
+    const data = res.data;
+    renderKpi(data);
+  } catch (err) {
+    document.getElementById('sales-container').innerHTML =
+      '<div class="empty-state" style="color:var(--danger)">Lỗi: ' + escapeHtml(err.message) + '</div>';
+  } finally {
+    document.getElementById('loading-state').style.display = 'none';
+  }
+}
+
+function renderKpi(data) {
+  const { sales, summary, isDirector } = data;
+
+  if (!sales || sales.length === 0) {
+    document.getElementById('sales-container').innerHTML = '<div class="empty-state">Chưa có dữ liệu KPI.</div>';
+    return;
+  }
+
+  // Summary cho director
+  if (isDirector && summary) {
+    document.getElementById('summary-section').style.display = 'block';
+    document.getElementById('summary-section').innerHTML = `
+      <div class="kpi-summary-stats">
+        <div class="kpi-summary-card">
+          <div class="value">${summary.totalSales}</div>
+          <div class="label">Sale đang hoạt động</div>
+        </div>
+        <div class="kpi-summary-card">
+          <div class="value">${summary.totalStudents}</div>
+          <div class="label">Tổng học sinh</div>
+        </div>
+        <div class="kpi-summary-card">
+          <div class="value">${summary.totalEnrolled}</div>
+          <div class="label">Đã nhập học</div>
+        </div>
+        <div class="kpi-summary-card">
+          <div class="value">${summary.avgConversion}%</div>
+          <div class="label">Tỷ lệ CĐ trung bình</div>
+        </div>
+        <div class="kpi-summary-card">
+          <div class="value">${summary.avgPerSale}</div>
+          <div class="label">TB học sinh/Sale</div>
+        </div>
+      </div>
+
+      <!-- Bảng xếp hạng sales -->
+      <div class="kpi-sale-card">
+        <div class="kpi-sale-header"><h3 style="font-size:.95rem;">📊 Bảng xếp hạng Sale</h3></div>
+        <div class="kpi-sale-body" style="padding:0;">
+          <div class="kpi-table-wrap">
+            <table class="kpi-table">
+              <thead><tr>
+                <th>#</th><th>Sale</th><th>HS mới/tuần</th><th>Tổng HS</th><th>Đang TV</th><th>Đã nộp</th><th>Chờ visa</th><th>Đã đỗ</th><th>Trượt</th><th>Đã NH</th><th>CĐ%</th>
+              </tr></thead>
+              <tbody>
+                ${sales.sort((a, b) => b.conversionRate - a.conversionRate).map((s, i) => {
+                  const rankClass = i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : '';
+                  const convClass = s.conversionRate >= 30 ? 'conversion-good' : s.conversionRate >= 15 ? 'conversion-ok' : 'conversion-low';
+                  return `<tr>
+                    <td class="rank ${rankClass}">${i + 1}</td>
+                    <td><strong>${escapeHtml(s.displayName)}</strong><br><span style="font-size:.75rem;color:var(--gray-400);">${escapeHtml(s.email)}</span></td>
+                    <td><strong>${s.newThisWeek}</strong></td>
+                    <td>${s.totalStudents}</td>
+                    <td>${s.statusBreakdown.consulting}</td>
+                    <td>${s.statusBreakdown.applied}</td>
+                    <td>${s.statusBreakdown.waiting_visa}</td>
+                    <td>${s.statusBreakdown.visa_approved}</td>
+                    <td style="color:${s.statusBreakdown.visa_rejected > 0 ? 'var(--danger)' : 'inherit'}">${s.statusBreakdown.visa_rejected}</td>
+                    <td><strong>${s.enrolled}</strong></td>
+                    <td><span class="conversion-badge ${convClass}">${s.conversionRate}%</span></td>
+                  </tr>`;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // Render từng sale card
+  const container = document.getElementById('sales-container');
+  container.innerHTML = sales.sort((a, b) => b.totalStudents - a.totalStudents).map(s => {
+    const sb = s.statusBreakdown;
+    const total = s.totalStudents || 1;
+    const segNew = (sb.new / total) * 100;
+    const segConsulting = (sb.consulting / total) * 100;
+    const segApplied = (sb.applied / total) * 100;
+    const segWaiting = (sb.waiting_visa / total) * 100;
+    const segVisaApproved = (sb.visa_approved / total) * 100;
+    const segVisaRejected = (sb.visa_rejected / total) * 100;
+    const segEnrolled = (sb.enrolled / total) * 100;
+
+    const convClass = s.conversionRate >= 30 ? 'conversion-good' : s.conversionRate >= 15 ? 'conversion-ok' : 'conversion-low';
+    const initial = (s.displayName || s.email)[0].toUpperCase();
+
+    return `
+      <div class="kpi-sale-card">
+        <div class="kpi-sale-header">
+          <div class="sale-info">
+            <div class="sale-avatar">${escapeHtml(initial)}</div>
+            <div>
+              <div class="sale-name">${escapeHtml(s.displayName)}</div>
+              <div class="sale-email">${escapeHtml(s.email)}</div>
+            </div>
+          </div>
+          <span class="conversion-badge ${convClass}">CĐ ${s.conversionRate}%</span>
+        </div>
+        <div class="kpi-sale-body">
+          <div class="kpi-grid">
+            <div class="kpi-metric"><div class="value">${s.totalStudents}</div><div class="label">Tổng HS</div></div>
+            <div class="kpi-metric"><div class="value" style="color:#2563eb;">${s.newThisWeek}</div><div class="label">Mới / tuần</div></div>
+            <div class="kpi-metric"><div class="value" style="color:#f59e0b;">${s.statusBreakdown.consulting}</div><div class="label">Đang tư vấn</div></div>
+            <div class="kpi-metric"><div class="value" style="color:#16a34a;">${sb.enrolled}</div><div class="label">Đã nhập học</div></div>
+          </div>
+
+          <!-- Status bar -->
+          <div class="kpi-status-bar">
+            ${segNew > 0 ? `<div class="kpi-status-segment seg-new" style="width:${segNew}%">${sb.new}</div>` : ''}
+            ${segConsulting > 0 ? `<div class="kpi-status-segment seg-consulting" style="width:${segConsulting}%">${sb.consulting}</div>` : ''}
+            ${segApplied > 0 ? `<div class="kpi-status-segment seg-applied" style="width:${segApplied}%">${sb.applied}</div>` : ''}
+            ${segWaiting > 0 ? `<div class="kpi-status-segment seg-waiting_visa" style="width:${segWaiting}%">${sb.waiting_visa}</div>` : ''}
+            ${segVisaApproved > 0 ? `<div class="kpi-status-segment seg-visa_approved" style="width:${segVisaApproved}%">${sb.visa_approved}</div>` : ''}
+            ${segVisaRejected > 0 ? `<div class="kpi-status-segment seg-visa_rejected" style="width:${segVisaRejected}%">${sb.visa_rejected}</div>` : ''}
+            ${segEnrolled > 0 ? `<div class="kpi-status-segment seg-enrolled" style="width:${segEnrolled}%">${sb.enrolled}</div>` : ''}
+          </div>
+
+          <div class="kpi-status-legend">
+            <span><span class="kpi-legend-dot" style="background:#2563eb"></span> Mới (${sb.new})</span>
+            <span><span class="kpi-legend-dot" style="background:#f59e0b"></span> Tư vấn (${sb.consulting})</span>
+            <span><span class="kpi-legend-dot" style="background:#7c3aed"></span> Đã nộp (${sb.applied})</span>
+            <span><span class="kpi-legend-dot" style="background:#ec4899"></span> Chờ visa (${sb.waiting_visa})</span>
+            <span><span class="kpi-legend-dot" style="background:#0f766e"></span> Đỗ visa (${sb.visa_approved})</span>
+            <span><span class="kpi-legend-dot" style="background:#ef4444"></span> Trượt (${sb.visa_rejected})</span>
+            <span><span class="kpi-legend-dot" style="background:#16a34a"></span> Nhập học (${sb.enrolled})</span>
+          </div>
+
+          ${s.topSchools && s.topSchools.length > 0 ? `
+            <div style="font-size:.78rem;color:var(--gray-500);margin-bottom:.3rem;">🏫 Top trường</div>
+            <div class="kpi-top-schools">
+              ${s.topSchools.map(t => `<span class="school-badge">${escapeHtml(t.name)} <span class="school-count">${t.count}</span></span>`).join('')}
+            </div>
+          ` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+loadKpi();
+</script>
+</body>
+</html>
