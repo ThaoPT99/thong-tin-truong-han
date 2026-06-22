@@ -10,13 +10,119 @@ module.exports = requireAdmin(async (req, res) => {
 
   if (req.method === 'OPTIONS') return res.status(200).end();
 
-  const { id } = req.query;
+  const { id, view } = req.query;
   const isDirector = req.user?.role === 'director';
   const userId = req.user?.id;
 
   try {
     // ─── GET ───
     if (req.method === 'GET') {
+      // View KPI Dashboard
+      if (view === 'kpi') {
+        // Lấy danh sách sales (director thấy hết, sale chỉ thấy mình)
+        let userQuery = supabase
+          .from('users')
+          .select('id, email, display_name, role, is_active');
+
+        if (!isDirector) {
+          userQuery = userQuery.eq('id', userId);
+        }
+
+        const { data: users } = await userQuery;
+        if (!users || users.length === 0) {
+          return res.json({ success: true, data: { sales: [], summary: {} } });
+        }
+
+        // Lấy tất cả students
+        let studentQuery = supabase
+          .from('students')
+          .select('id, name, owner_id, status, school_id, created_at, updated_at, schools(name)');
+
+        if (!isDirector) {
+          studentQuery = studentQuery.eq('owner_id', userId);
+        }
+
+        const { data: allStudents } = await studentQuery;
+        const students = allStudents || [];
+
+        // Map schools
+        const { data: schoolsData } = await supabase
+          .from('schools')
+          .select('id, name');
+        const schoolMap = {};
+        for (const s of schoolsData || []) schoolMap[s.id] = s.name;
+
+        // Tính toán KPI
+        const now = new Date();
+        const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
+        const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
+
+        const salesKpi = [];
+
+        for (const u of users) {
+          if (isDirector && u.role !== 'sale') continue;
+
+          const myStudents = students.filter(s => s.owner_id === u.id);
+          const statusCounts = {};
+          let newThisWeek = 0;
+          let newThisMonth = 0;
+          const schoolCounts = {};
+
+          for (const s of myStudents) {
+            const st = s.status || 'new';
+            statusCounts[st] = (statusCounts[st] || 0) + 1;
+            if (new Date(s.created_at) >= new Date(weekAgo)) newThisWeek++;
+            if (new Date(s.created_at) >= new Date(monthAgo)) newThisMonth++;
+            if (s.school_id) schoolCounts[s.school_id] = (schoolCounts[s.school_id] || 0) + 1;
+          }
+
+          const topSchools = Object.entries(schoolCounts)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 3)
+            .map(([id, count]) => ({ id, name: schoolMap[id] || 'Đã xoá', count }));
+
+          const totalStudentsCount = Object.values(statusCounts).reduce((sum, v) => sum + v, 0);
+          const enrolled = statusCounts['enrolled'] || 0;
+          const conversionRate = totalStudentsCount > 0 ? (enrolled / totalStudentsCount) * 100 : 0;
+
+          salesKpi.push({
+            userId: u.id,
+            email: u.email,
+            displayName: u.display_name || u.email.split('@')[0],
+            role: u.role,
+            totalStudents: myStudents.length,
+            newThisWeek,
+            newThisMonth,
+            statusBreakdown: {
+              new: statusCounts['new'] || 0,
+              consulting: statusCounts['consulting'] || 0,
+              applied: statusCounts['applied'] || 0,
+              waiting_visa: statusCounts['waiting_visa'] || 0,
+              visa_approved: statusCounts['visa_approved'] || 0,
+              visa_rejected: statusCounts['visa_rejected'] || 0,
+              enrolled,
+            },
+            topSchools,
+            enrolled,
+            conversionRate: Math.round(conversionRate * 10) / 10,
+          });
+        }
+
+        const summary = isDirector ? {
+          totalSales: salesKpi.length,
+          totalStudents: salesKpi.reduce((a, b) => a + b.totalStudents, 0),
+          totalEnrolled: salesKpi.reduce((a, b) => a + b.enrolled, 0),
+          avgConversion: salesKpi.length > 0
+            ? Math.round((salesKpi.reduce((a, b) => a + b.conversionRate, 0) / salesKpi.length) * 10) / 10
+            : 0,
+          avgPerSale: salesKpi.length > 0
+            ? Math.round((salesKpi.reduce((a, b) => a + b.totalStudents, 0) / salesKpi.length) * 10) / 10
+            : 0,
+        } : null;
+
+        return res.json({ success: true, data: { sales: salesKpi, summary, isDirector } });
+      }
+
       // Nếu có id → lấy chi tiết 1 student + logs
       if (id) {
         let query = supabase

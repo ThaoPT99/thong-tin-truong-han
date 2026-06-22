@@ -160,7 +160,7 @@ if (user) {
 async function loadKpi() {
 
   try {
-    const res = await api('GET', '/admin/kpi');
+    const res = await api('GET', '/admin/students?view=kpi');
     const data = res.data;
     renderKpi(data);
   } catch (err) {
