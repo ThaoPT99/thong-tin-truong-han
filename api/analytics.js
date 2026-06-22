@@ -826,6 +826,98 @@ async function handleAdminData(req, res) {
       });
     }
 
+    // ─── A/B TESTS VIEW ───
+    if (view === 'ab-tests') {
+      // Lấy ab_assignment events
+      const { data: assignments } = await supabase
+        .from('analytics_events')
+        .select('event_data')
+        .eq('event_type', 'ab_assignment')
+        .gte('created_at', since)
+        .limit(5000);
+
+      // Lấy zalo_popup_open events (chỉ fab_click — bỏ auto_popup)
+      const { data: zaloEvents } = await supabase
+        .from('analytics_events')
+        .select('event_data')
+        .eq('event_type', 'zalo_popup_open')
+        .filter('event_data->>source', 'eq', 'fab_click')
+        .gte('created_at', since)
+        .limit(5000);
+
+      // Định nghĩa 6 test
+      const testDefs = [
+        { key: 'zalo-fab', name: 'Zalo FAB', convEvent: 'zalo_popup_open', convLabel: 'Mở popup Zalo' },
+        { key: 'zalo-timing', name: 'Zalo Timing', convEvent: null, convLabel: null },
+        { key: 'advisor-btn-color', name: 'Advisor Button', convEvent: null, convLabel: null },
+        { key: 'header-color', name: 'Header Topbar', convEvent: null, convLabel: null },
+        { key: 'cta-text', name: 'CTA Text', convEvent: null, convLabel: null },
+        { key: 'tuition-display', name: 'Tuition Display', convEvent: null, convLabel: null },
+      ];
+
+      // Group assignments by test + variant
+      const assignByTest = {};
+      for (const row of assignments || []) {
+        const ed = row.event_data || {};
+        const t = ed.test;
+        const v = ed.variant;
+        if (!t || !v) continue;
+        if (!assignByTest[t]) assignByTest[t] = { a: 0, b: 0 };
+        assignByTest[t][v] = (assignByTest[t][v] || 0) + 1;
+      }
+
+      // Group zalo_popup_open by variant
+      const zaloByVariant = { a: 0, b: 0 };
+      for (const row of zaloEvents || []) {
+        const v = (row.event_data || {}).variant;
+        if (v === 'a' || v === 'b') zaloByVariant[v]++;
+      }
+
+      // Build test results
+      const tests = [];
+      for (const def of testDefs) {
+        const aCount = assignByTest[def.key]?.a || 0;
+        const bCount = assignByTest[def.key]?.b || 0;
+        const total = aCount + bCount;
+
+        let aConv = 0, bConv = 0;
+        if (def.key === 'zalo-fab') {
+          aConv = zaloByVariant.a || 0;
+          bConv = zaloByVariant.b || 0;
+        }
+
+        const aRate = aCount > 0 ? ((aConv / aCount) * 100).toFixed(1) + '%' : '—';
+        const bRate = bCount > 0 ? ((bConv / bCount) * 100).toFixed(1) + '%' : '—';
+
+        let winner = null;
+        if (aCount > 0 && bCount > 0 && def.convEvent) {
+          const rateA = aConv / aCount;
+          const rateB = bConv / bCount;
+          if (rateA > rateB) winner = 'a';
+          else if (rateB > rateA) winner = 'b';
+        }
+
+        tests.push({
+          key: def.key,
+          name: def.name,
+          convLabel: def.convLabel,
+          aCount: aCount,
+          bCount: bCount,
+          total: total,
+          aConv: aConv,
+          bConv: bConv,
+          aRate: aRate,
+          bRate: bRate,
+          winner: winner
+        });
+      }
+
+      return res.json({
+        success: true,
+        data: { tests: tests }
+      });
+    }
+
     return res.status(400).json({ error: `Unknown view: ${view}` });
   } catch (err) {
     console.error('/api/analytics error:', err);
