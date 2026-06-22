@@ -837,15 +837,14 @@ function renderLocations(data) {
   if (!locations.length) {
     locContainer.innerHTML = '<div class="no-data">Chưa có dữ liệu vị trí — cần có người dùng thật truy cập để ghi nhận</div>';
   } else {
-    const maxViews = locations[0]?.pageViews || 1;
+    const maxViews = locations[0]?.views || 1;
     locContainer.innerHTML = `
       <table class="top-schools-table">
         <thead><tr>
-          <th>#</th><th>Thành phố</th><th>Vùng</th><th>Quốc gia</th><th>Lượt xem</th><th></th><th>Phiên</th><th>Trang/phiên</th>
-        </tr></thead>
+          <th>#</th><th>Thành phố</th><th>Vùng</th><th>Quốc gia</th><th>Lượt xem</th><th></th></tr></thead>
         <tbody>
           ${locations.map((loc, i) => {
-            const pct = Math.round((loc.pageViews / maxViews) * 100);
+            const pct = Math.round((loc.views / maxViews) * 100);
             const flag = loc.country_code ? getFlagEmoji(loc.country_code) : '';
             const rankClass = i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : '';
             return `<tr>
@@ -853,10 +852,8 @@ function renderLocations(data) {
               <td><strong>${escapeHtml(loc.city)}</strong></td>
               <td>${escapeHtml(loc.region)}</td>
               <td>${flag} ${escapeHtml(loc.country)}</td>
-              <td><strong>${loc.pageViews}</strong></td>
+              <td><strong>${loc.views}</strong></td>
               <td><div class="bar-bg"><div class="bar-fill" style="width:${pct}%"></div></div></td>
-              <td>${loc.sessions}</td>
-              <td>${loc.pageViewsPerSession}</td>
             </tr>`;
           }).join('')}
         </tbody>
