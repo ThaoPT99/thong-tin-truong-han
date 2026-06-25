@@ -209,12 +209,15 @@ body {
    TABLE OF CONTENTS
    ═══════════════════════════════════════ */
 .toc-page {
-  page-break-before: always;
   padding: 40px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   min-height: 100vh;
+}
+
+.toc-page.page-break {
+  page-break-before: always;
 }
 
 .toc-page h2 {
@@ -300,11 +303,14 @@ body {
    SECTION PAGES (Part 1 - Overview)
    ═══════════════════════════════════════ */
 .section-page {
-  page-break-before: always;
   padding: 32px 40px;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+}
+
+.section-page.page-break {
+  page-break-before: always;
 }
 
 .section-header {
@@ -534,11 +540,11 @@ body {
    SCHOOL DIRECTORY (Part 2)
    ═══════════════════════════════════════ */
 .school-page {
-  page-break-before: always;
   padding: 28px 36px 20px;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  page-break-inside: avoid;
 }
 
 .school-header-strip {
@@ -634,9 +640,7 @@ body {
   white-space: nowrap;
 }
 
-.school-meta-tag strong { color: var(--primary); }
-
-.school-intro-box {
+.school-meta-tag strong { color: var(--primary); }    .school-intro-box {
   padding: 10px 14px;
   background: #f0f4ff;
   border-radius: 6px;
@@ -644,8 +648,27 @@ body {
   font-size: 0.85rem;
   line-height: 1.6;
   color: var(--text);
-  text-align: justify;
   border: 1px solid #dbeafe;
+}
+
+.school-intro-box h3 {
+  font-size: 0.8rem;
+  color: var(--primary);
+  margin-bottom: 4px;
+  padding-bottom: 3px;
+  border-bottom: 1px solid #dbeafe;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.school-intro-box ul {
+  margin: 4px 0 0 16px;
+  font-size: 0.85rem;
+}
+
+.school-intro-box li {
+  margin-bottom: 4px;
+  line-height: 1.5;
 }
 
 .school-body {
@@ -715,9 +738,12 @@ body {
    COMPARISON SECTION (Part 3)
    ═══════════════════════════════════════ */
 .comparison-page {
-  page-break-before: always;
   padding: 32px 36px;
   min-height: 100vh;
+}
+
+.comparison-page.page-break {
+  page-break-before: always;
 }
 
 .comparison-page h2 {
@@ -783,11 +809,14 @@ body {
    APPENDIX
    ═══════════════════════════════════════ */
 .appendix-page {
-  page-break-before: always;
   padding: 36px 40px;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+}
+
+.appendix-page.page-break {
+  page-break-before: always;
 }
 
 .appendix-page h2 {
@@ -860,24 +889,39 @@ body {
   .cover-page::before,
   .cover-page::after { display: none; }
 
-  .toc-page,
-  .section-page,
-  .school-page,
+  .toc-page {
+    padding: 0;
+    page-break-before: always;
+  }
+
+  .section-page:not(.no-force-break),
   .comparison-page,
   .appendix-page {
     padding: 0;
     page-break-before: always;
   }
 
-  .toc-page { min-height: 100vh; }
-
-  .section-hero {
-    height: 110px;
-    margin-bottom: 16px;
+  .school-page {
+    padding: 0;
+    page-break-inside: avoid;
+    /* no page-break-before — schools flow naturally to avoid blank pages */
   }
 
-  .section-page { min-height: 100vh; }
-  .school-page { min-height: 100vh; }
+  .toc-page,
+  .section-page,
+  .school-page,
+  .comparison-page,
+  .appendix-page {
+    /* remove min-height in print to prevent overflow blank pages */
+    min-height: auto !important;
+    /* remove flex so content flows naturally */
+    display: block !important;
+  }
+
+  .section-hero {
+    height: 100px;
+    margin-bottom: 14px;
+  }
 
   .school-body {
     grid-template-columns: 1fr 1fr;
@@ -895,7 +939,8 @@ body {
   .route-step .route-desc { font-size: 0.7rem; }
 
   .info-card, .school-card, .step-list li, .compact-table tr,
-  .route-timeline, .warning-box, .tip-box {
+  .route-timeline, .warning-box, .tip-box,
+  .school-page { /* keep schools together */
     page-break-inside: avoid;
   }
 
@@ -991,7 +1036,10 @@ body {
     schoolDir: 'https://images.unsplash.com/photo-1562774053-701939374585?w=800&q=80',
     comparison: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80',
     appendix: 'https://images.unsplash.com/photo-1423666639041-f56000c27a9a?w=800&q=80',
-    // School filler
+    // Extra images for school pages
+    study: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=400&q=80',
+    campus: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400&q=80',
+    korea: 'https://images.unsplash.com/photo-1506816562107-5762191f49cf?w=400&q=80',
   };
 
   (async function() {
@@ -1070,6 +1118,25 @@ body {
       return '<ul>' + items.map(function(i) { return '<li>' + esc(i) + '</li>'; }).join('') + '</ul>';
     }
 
+    function renderIntro(text) {
+      if (!text) return '';
+      // Split by sentence-ending punctuation into bullet points
+      var sentences = text.split(/(?<=[.?!])\s+/);
+      // Also split by newlines
+      var lines = [];
+      sentences.forEach(function(s) {
+        s.split('\n').forEach(function(l) {
+          var t = l.trim();
+          if (t) lines.push(t);
+        });
+      });
+      // If only 1 sentence or too short, return as summary paragraph
+      if (lines.length <= 2 && text.length < 120) {
+        return '<p>' + esc(text) + '</p>';
+      }
+      return '<ul>' + lines.map(function(l) { return '<li>' + esc(l) + '</li>'; }).join('') + '</ul>';
+    }
+
     function renderPartnerTags(school) {
       var seen = {};
       var tags = [];
@@ -1111,7 +1178,7 @@ body {
 
     // ─── TABLE OF CONTENTS ───
     html += `
-    <div class="toc-page">
+    <div class="toc-page page-break">
       <h2>Mục lục</h2>
       <ol class="toc-list">
         <li><a href="#sec-tong-quan">Tổng quan chương trình D2-6</a></li>
@@ -1130,7 +1197,7 @@ body {
 
     // ─── PART 1: TỔNG QUAN ───
     html += `
-    <div class="section-page" id="sec-tong-quan">
+    <div class="section-page page-break" id="sec-tong-quan">
       <div class="section-hero">
         <img src="${IMG.overview}" alt="Giáo dục Hàn Quốc" loading="eager">
         <div class="hero-overlay"></div>
@@ -1166,7 +1233,7 @@ body {
 
     // ─── LỢI ÍCH ───
     html += `
-    <div class="section-page" id="sec-loi-ich">
+    <div class="section-page" id="sec-loi-ich" style="page-break-before:always;">
       <div class="section-hero">
         <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&q=80" alt="Sinh viên" loading="eager">
         <div class="hero-overlay"></div>
@@ -1200,7 +1267,7 @@ body {
 
     // ─── ĐIỀU KIỆN ───
     html += `
-    <div class="section-page" id="sec-dieu-kien">
+    <div class="section-page" id="sec-dieu-kien" style="page-break-before:always;">
       <div class="section-hero">
         <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&q=80" alt="Học tập" loading="eager">
         <div class="hero-overlay"></div>
@@ -1239,7 +1306,7 @@ body {
 
     // ─── HỒ SƠ ───
     html += `
-    <div class="section-page" id="sec-ho-so">
+    <div class="section-page" id="sec-ho-so" style="page-break-before:always;">
       <div class="section-hero">
         <img src="https://images.unsplash.com/photo-1455390582262-044cdead277a?w=800&q=80" alt="Hồ sơ" loading="eager">
         <div class="hero-overlay"></div>
@@ -1277,7 +1344,7 @@ body {
 
     // ─── LỘ TRÌNH XỬ LÝ ───
     html += `
-    <div class="section-page" id="sec-lo-trinh">
+    <div class="section-page" id="sec-lo-trinh" style="page-break-before:always;">
       <div class="section-hero">
         <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800&q=80" alt="Quy trình" loading="eager">
         <div class="hero-overlay"></div>
@@ -1316,7 +1383,7 @@ body {
 
     // ─── ĐỊNH HƯỚNG DÀI HẠN ───
     html += `
-    <div class="section-page" id="sec-dinh-huong">
+    <div class="section-page" id="sec-dinh-huong" style="page-break-before:always;">
       <div class="section-hero">
         <img src="https://images.unsplash.com/photo-1521791136064-7986c2924716?w=800&q=80" alt="Lộ trình dài hạn" loading="eager">
         <div class="hero-overlay"></div>
@@ -1378,7 +1445,7 @@ body {
 
     // ─── LỖI THƯỜNG GẶP ───
     html += `
-    <div class="section-page" id="sec-loi-thuong-gap">
+    <div class="section-page" id="sec-loi-thuong-gap" style="page-break-before:always;">
       <div class="section-hero">
         <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&q=80" alt="Lỗi thường gặp" loading="eager">
         <div class="hero-overlay"></div>
@@ -1424,7 +1491,7 @@ body {
 
     // ═══ PART 2: SCHOOL DIRECTORY ═══
     html += `
-    <div class="section-page" id="sec-danh-ba">
+    <div class="section-page page-break" id="sec-danh-ba">
       <div class="section-hero">
         <img src="${IMG.schoolDir}" alt="Trường Hàn Quốc" loading="eager">
         <div class="hero-overlay"></div>
@@ -1496,10 +1563,17 @@ body {
       if (s.website) html += '<span class="school-meta-tag"><strong>🌐</strong> ' + esc(s.website.replace('https://', '').substring(0, 30)) + '</span>';
       html += '</div>';
 
-      // Intro
+      // Intro (as bullet points)
       if (s.intro) {
-        html += '<div class="school-intro-box">' + esc(s.intro) + '</div>';
+        html += '<div class="school-intro-box"><h3 style="font-size:0.8rem;color:var(--primary);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.3px;">📌 Tổng quan</h3>' + renderIntro(s.intro) + '</div>';
       }
+
+      // Small decorative image (alternating for visual variety)
+      var imgAlt = (idx % 3 === 0) ? IMG.study : (idx % 3 === 1) ? IMG.campus : IMG.korea;
+      html += '<div style="display:flex;gap:10px;margin-bottom:10px;">';
+      html += '<div style="flex:1;"></div>';
+      html += '<img src="' + imgAlt + '" alt="" style="width:80px;height:60px;border-radius:6px;object-fit:cover;flex-shrink:0;border:1px solid var(--border);" loading="eager">';
+      html += '</div>';
 
       // Body grid (2 columns)
       html += '<div class="school-body">';
@@ -1535,7 +1609,7 @@ body {
 
     // ═══ PART 3: COMPARISON ═══
     html += `
-    <div class="comparison-page" id="sec-so-sanh">
+    <div class="comparison-page page-break" id="sec-so-sanh">
       <div class="section-hero">
         <img src="${IMG.comparison}" alt="So sánh" loading="eager">
         <div class="hero-overlay"></div>
@@ -1592,7 +1666,7 @@ body {
 
     // ═══ APPENDIX ═══
     html += `
-    <div class="appendix-page" id="sec-phu-luc">
+    <div class="appendix-page page-break" id="sec-phu-luc">
       <div class="section-hero">
         <img src="${IMG.appendix}" alt="Liên hệ" loading="eager">
         <div class="hero-overlay"></div>
