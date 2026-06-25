@@ -6,7 +6,7 @@
 <title>Cẩm nang Tuyển sinh Du học Hàn Quốc</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800;900&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 /* ═══════════════════════════════════════
    ROOT & RESET
@@ -16,6 +16,7 @@
   --primary-light: #2d5a87;
   --accent: #0f766e;
   --gold: #d97706;
+  --red: #dc2626;
   --text: #1e293b;
   --text-muted: #64748b;
   --border: #e2e8f0;
@@ -38,7 +39,7 @@ body {
    SCREEN STYLES
    ═══════════════════════════════════════ */
 .book-container {
-  max-width: 900px;
+  max-width: 1000px;
   margin: 0 auto;
   padding: 20px;
 }
@@ -64,7 +65,7 @@ body {
 .error-screen {
   text-align: center;
   padding: 60px 20px;
-  color: #dc2626;
+  color: var(--red);
 }
 
 .print-toolbar {
@@ -75,10 +76,11 @@ body {
   align-items: center;
   justify-content: center;
   gap: 12px;
-  padding: 12px;
+  padding: 12px 16px;
   background: var(--primary);
   color: #fff;
   font-size: 0.9rem;
+  flex-wrap: wrap;
 }
 
 .print-toolbar button {
@@ -91,8 +93,11 @@ body {
   cursor: pointer;
   font-size: 0.9rem;
 }
-
 .print-toolbar button:hover { background: #e2e8f0; }
+.print-toolbar .toolbar-hint {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.7);
+}
 
 /* ═══════════════════════════════════════
    COVER PAGE
@@ -104,7 +109,7 @@ body {
   align-items: center;
   min-height: 100vh;
   text-align: center;
-  background: linear-gradient(135deg, #0f2f4f 0%, #1a5276 50%, #0f766e 100%);
+  background: linear-gradient(135deg, #0c1f33 0%, #1a5276 45%, #0f766e 100%);
   color: #fff;
   padding: 60px 40px;
   position: relative;
@@ -116,9 +121,22 @@ body {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse at 20% 50%, rgba(45, 212, 191, 0.15) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 20%, rgba(96, 165, 250, 0.1) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 80%, rgba(251, 191, 36, 0.08) 0%, transparent 50%);
+    radial-gradient(ellipse at 15% 60%, rgba(45, 212, 191, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 85% 30%, rgba(96, 165, 250, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 85%, rgba(251, 191, 36, 0.06) 0%, transparent 50%);
+}
+
+.cover-page::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.04;
+  background-image:
+    radial-gradient(circle at 20px 20px, #fff 1px, transparent 1px),
+    radial-gradient(circle at 60px 120px, #fff 1px, transparent 1px),
+    radial-gradient(circle at 120px 40px, #fff 1px, transparent 1px),
+    radial-gradient(circle at 200px 80px, #fff 1px, transparent 1px);
+  background-size: 200px 200px;
 }
 
 .cover-page > * { position: relative; z-index: 1; }
@@ -128,33 +146,46 @@ body {
   padding: 4px 16px;
   border: 1px solid rgba(255,255,255,0.3);
   border-radius: 999px;
-  font-size: 0.75rem;
-  letter-spacing: 2px;
+  font-size: 0.72rem;
+  letter-spacing: 2.5px;
   text-transform: uppercase;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 
 .cover-page h1 {
-  font-size: 2.4rem;
-  font-weight: 800;
-  line-height: 1.2;
-  margin-bottom: 8px;
-  letter-spacing: -0.02em;
+  font-size: 2.6rem;
+  font-weight: 900;
+  line-height: 1.15;
+  margin-bottom: 6px;
+  letter-spacing: -0.03em;
 }
 
 .cover-page .cover-sub {
-  font-size: 1.1rem;
-  color: rgba(255,255,255,0.85);
-  margin-bottom: 32px;
-  max-width: 560px;
+  font-size: 1rem;
+  color: rgba(255,255,255,0.8);
+  margin-bottom: 0;
+  max-width: 600px;
+  line-height: 1.6;
 }
 
-.cover-line {
-  width: 80px;
-  height: 3px;
+.cover-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 28px 0;
+}
+
+.cover-divider .line {
+  width: 60px;
+  height: 2px;
+  background: rgba(255,255,255,0.2);
+}
+
+.cover-divider .diamond {
+  width: 8px;
+  height: 8px;
   background: #2dd4bf;
-  border-radius: 2px;
-  margin-bottom: 32px;
+  transform: rotate(45deg);
 }
 
 .cover-meta {
@@ -162,8 +193,17 @@ body {
   color: rgba(255,255,255,0.7);
   line-height: 2;
 }
+.cover-meta strong { color: #fff; font-weight: 700; }
 
-.cover-meta strong { color: #fff; }
+.cover-footer {
+  position: absolute;
+  bottom: 32px;
+  left: 0;
+  right: 0;
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.35);
+  letter-spacing: 1px;
+}
 
 /* ═══════════════════════════════════════
    TABLE OF CONTENTS
@@ -171,21 +211,25 @@ body {
 .toc-page {
   page-break-before: always;
   padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100vh;
 }
 
 .toc-page h2 {
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   color: var(--primary);
-  margin-bottom: 24px;
-  padding-bottom: 8px;
-  border-bottom: 2px solid var(--primary);
+  margin-bottom: 28px;
+  padding-bottom: 10px;
+  border-bottom: 3px solid var(--primary);
 }
 
 .toc-list { list-style: none; counter-reset: toc-counter; }
 
 .toc-list > li {
   counter-increment: toc-counter;
-  padding: 6px 0;
+  padding: 8px 0;
   border-bottom: 1px dotted var(--border);
   display: flex;
   justify-content: space-between;
@@ -193,10 +237,13 @@ body {
 }
 
 .toc-list > li::before {
-  content: counter(toc-counter) ". ";
-  font-weight: 700;
+  content: "0" counter(toc-counter);
+  font-weight: 800;
   color: var(--primary);
-  margin-right: 8px;
+  font-size: 0.85rem;
+  margin-right: 10px;
+  width: 28px;
+  opacity: 0.6;
 }
 
 .toc-list > li a {
@@ -204,49 +251,69 @@ body {
   text-decoration: none;
   flex: 1;
   padding: 4px 0;
+  font-weight: 500;
 }
-
 .toc-list > li a:hover { color: var(--primary); }
 
 .toc-list .toc-page-num {
   color: var(--text-muted);
   font-size: 0.85rem;
+  font-weight: 600;
 }
 
-.toc-sublist {
-  list-style: none;
-  padding-left: 24px;
-  counter-reset: toc-sub;
-}
-
-.toc-sublist li {
-  counter-increment: toc-sub;
-  padding: 3px 0;
-  font-size: 0.9rem;
-}
-
-.toc-sublist li a {
+.toc-note {
+  margin-top: 32px;
+  padding: 14px 16px;
+  background: var(--bg-light);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.85rem;
   color: var(--text-muted);
-  text-decoration: none;
+  text-align: center;
 }
 
-.toc-sublist li a:hover { color: var(--accent); }
+/* ═══════════════════════════════════════
+   SECTION HERO IMAGE BANNER
+   ═══════════════════════════════════════ */
+.section-hero {
+  width: 100%;
+  height: 140px;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.section-hero img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.section-hero .hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(30,58,95,0.7) 0%, rgba(30,58,95,0.3) 100%);
+}
 
 /* ═══════════════════════════════════════
    SECTION PAGES (Part 1 - Overview)
    ═══════════════════════════════════════ */
 .section-page {
   page-break-before: always;
-  padding: 40px;
+  padding: 32px 40px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .section-header {
-  margin-bottom: 28px;
+  margin-bottom: 20px;
 }
 
 .section-header .section-num {
   display: inline-block;
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 2px;
@@ -255,9 +322,10 @@ body {
 }
 
 .section-header h2 {
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   color: var(--primary);
   line-height: 1.3;
+  font-weight: 800;
 }
 
 .section-header .section-divider {
@@ -265,21 +333,28 @@ body {
   height: 3px;
   background: var(--gold);
   border-radius: 2px;
-  margin-top: 12px;
+  margin-top: 10px;
+}
+
+.section-body {
+  flex: 1;
+}
+
+.section-body > p:first-child {
+  margin-bottom: 14px;
+  text-align: justify;
+  font-size: 0.95rem;
 }
 
 .section-body p {
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   text-align: justify;
 }
 
 .section-body ul, .section-body ol {
-  margin: 8px 0 16px 20px;
+  margin: 6px 0 14px 20px;
 }
-
-.section-body li {
-  margin-bottom: 6px;
-}
+.section-body li { margin-bottom: 5px; }
 
 /* Highlight cards */
 .info-card {
@@ -287,37 +362,70 @@ body {
   border: 1px solid var(--border);
   border-radius: 8px;
   background: var(--bg-light);
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   page-break-inside: avoid;
 }
 
 .info-card h3 {
-  font-size: 0.95rem;
+  font-size: 0.93rem;
   color: var(--primary);
-  margin-bottom: 6px;
+  margin-bottom: 5px;
 }
 
 .info-card p {
-  font-size: 0.92rem;
+  font-size: 0.9rem;
   color: var(--text-muted);
   margin: 0;
+  text-align: left;
 }
 
 .info-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  margin: 16px 0;
+  gap: 10px;
+  margin: 12px 0;
+}
+
+.info-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 12px 0;
+}
+
+.info-grid-1 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin: 12px 0;
 }
 
 .warning-box {
-  padding: 14px 16px;
+  padding: 12px 16px;
   border-left: 4px solid var(--gold);
   background: #fffbeb;
   border-radius: 4px;
-  margin: 16px 0;
-  font-size: 0.9rem;
+  margin: 14px 0;
+  font-size: 0.88rem;
   page-break-inside: avoid;
+}
+
+.warning-box strong {
+  color: var(--gold);
+}
+
+.tip-box {
+  padding: 12px 16px;
+  border-left: 4px solid var(--accent);
+  background: #f0fdfa;
+  border-radius: 4px;
+  margin: 14px 0;
+  font-size: 0.88rem;
+  page-break-inside: avoid;
+}
+
+.tip-box strong {
+  color: var(--accent);
 }
 
 .step-list {
@@ -328,11 +436,11 @@ body {
 
 .step-list li {
   counter-increment: step;
-  padding: 12px 16px 12px 48px;
+  padding: 10px 14px 10px 44px;
   position: relative;
   border: 1px solid var(--border);
   border-radius: 8px;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   background: #fff;
   page-break-inside: avoid;
 }
@@ -340,57 +448,158 @@ body {
 .step-list li::before {
   content: counter(step);
   position: absolute;
-  left: 12px;
-  top: 12px;
-  width: 26px;
-  height: 26px;
+  left: 11px;
+  top: 11px;
+  width: 24px;
+  height: 24px;
   background: var(--primary);
   color: #fff;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 700;
 }
 
 .step-list li strong {
   display: block;
   color: var(--primary);
-  font-size: 0.95rem;
+  font-size: 0.9rem;
 }
 
 .step-list li span {
   color: var(--text-muted);
-  font-size: 0.88rem;
+  font-size: 0.85rem;
 }
+
+/* ═══════════════════════════════════════
+   ROUTE TIMELINE (D2-6 → D2-1/2 → D10 → E7)
+   ═══════════════════════════════════════ */
+.route-timeline {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  margin: 16px 0;
+  page-break-inside: avoid;
+}
+
+.route-step {
+  flex: 1;
+  padding: 14px 10px;
+  text-align: center;
+  position: relative;
+}
+
+.route-step .route-icon {
+  font-size: 1.6rem;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.route-step .route-label {
+  font-weight: 800;
+  font-size: 0.9rem;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.route-step .route-desc {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  display: block;
+  line-height: 1.4;
+}
+
+.route-step .route-arrow {
+  position: absolute;
+  right: -12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.2rem;
+  color: var(--text-muted);
+  z-index: 2;
+}
+
+.route-step-1 { background: #dbeafe; border-radius: 8px 0 0 8px; }
+.route-step-1 .route-label { color: #1d4ed8; }
+.route-step-2 { background: #e0f2fe; }
+.route-step-2 .route-label { color: #0369a1; }
+.route-step-3 { background: #ccfbf1; }
+.route-step-3 .route-label { color: #0f766e; }
+.route-step-4 { background: #fef3c7; border-radius: 0 8px 8px 0; }
+.route-step-4 .route-label { color: #b45309; }
 
 /* ═══════════════════════════════════════
    SCHOOL DIRECTORY (Part 2)
    ═══════════════════════════════════════ */
 .school-page {
   page-break-before: always;
-  padding: 32px 40px;
-}
-
-.school-page-header {
+  padding: 28px 36px 20px;
+  min-height: 100vh;
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 20px;
-  padding-bottom: 16px;
-  border-bottom: 2px solid var(--primary);
+  flex-direction: column;
 }
 
-.school-page-header .school-badge {
+.school-header-strip {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+
+.school-header-strip .school-num {
+  width: 44px;
+  height: 44px;
+  background: var(--primary);
+  color: #fff;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.school-header-strip .school-title-group {
+  flex: 1;
+}
+
+.school-header-strip h2 {
+  font-size: 1.2rem;
+  color: var(--primary);
+  line-height: 1.2;
+  margin: 0;
+}
+
+.school-header-strip .name-kr {
+  font-family: var(--font-kr);
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.school-header-strip .name-en {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.school-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+.school-badge {
   display: inline-block;
   padding: 3px 10px;
   border-radius: 999px;
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
 }
 
 .badge-system {
@@ -403,48 +612,48 @@ body {
   color: #065f46;
 }
 
-.school-page-header h2 {
-  font-size: 1.3rem;
-  color: var(--primary);
-  margin: 4px 0 2px;
-}
-
-.school-page-header .name-kr {
-  font-family: var(--font-kr);
-  font-size: 1rem;
-  color: var(--text-muted);
-}
-
-.school-page-header .name-en {
-  font-size: 0.85rem;
-  color: var(--text-muted);
+.badge-quota {
+  background: #fef3c7;
+  color: #92400e;
 }
 
 .school-meta-strip {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 16px;
+  gap: 6px;
+  margin-bottom: 12px;
 }
 
 .school-meta-tag {
-  padding: 3px 10px;
+  padding: 2px 8px;
   background: var(--bg-light);
   border: 1px solid var(--border);
-  border-radius: 6px;
-  font-size: 0.78rem;
+  border-radius: 5px;
+  font-size: 0.72rem;
   font-weight: 600;
   white-space: nowrap;
 }
 
-.school-meta-tag strong {
-  color: var(--primary);
+.school-meta-tag strong { color: var(--primary); }
+
+.school-intro-box {
+  padding: 10px 14px;
+  background: #f0f4ff;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--text);
+  text-align: justify;
+  border: 1px solid #dbeafe;
 }
 
 .school-body {
+  flex: 1;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 14px;
+  gap: 10px;
+  align-content: start;
 }
 
 .school-body .full-width {
@@ -452,58 +661,53 @@ body {
 }
 
 .school-card {
-  padding: 14px;
+  padding: 10px 12px;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 6px;
   background: var(--bg-light);
   page-break-inside: avoid;
 }
 
 .school-card h3 {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: var(--primary);
-  margin-bottom: 6px;
-  padding-bottom: 4px;
+  margin-bottom: 4px;
+  padding-bottom: 3px;
   border-bottom: 1px solid var(--border);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
 }
 
 .school-card p, .school-card div {
-  font-size: 0.88rem;
-  line-height: 1.6;
+  font-size: 0.82rem;
+  line-height: 1.55;
   color: var(--text);
 }
 
 .school-card ul {
-  margin: 4px 0 0 16px;
-  font-size: 0.88rem;
+  margin: 3px 0 0 14px;
+  font-size: 0.82rem;
 }
 
 .school-card li {
-  margin-bottom: 3px;
-  line-height: 1.5;
+  margin-bottom: 2px;
+  line-height: 1.45;
 }
 
 .school-card .muted {
   color: var(--text-muted);
   font-style: italic;
-}
-
-.school-intro {
-  line-height: 1.7;
-  text-align: justify;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
 }
 
 .partner-tag {
   display: inline-block;
-  padding: 2px 8px;
-  margin: 2px 3px;
+  padding: 2px 7px;
+  margin: 2px 2px;
   background: #eaf2ff;
   color: #1d4ed8;
   border-radius: 4px;
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   font-weight: 600;
 }
 
@@ -512,35 +716,36 @@ body {
    ═══════════════════════════════════════ */
 .comparison-page {
   page-break-before: always;
-  padding: 40px;
+  padding: 32px 36px;
+  min-height: 100vh;
 }
 
 .comparison-page h2 {
   font-size: 1.3rem;
   color: var(--primary);
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
 .compact-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.78rem;
-  margin-bottom: 20px;
+  font-size: 0.72rem;
+  margin-bottom: 16px;
 }
 
 .compact-table th {
   background: var(--primary);
   color: #fff;
-  padding: 7px 8px;
+  padding: 6px 7px;
   text-align: left;
   font-weight: 600;
-  font-size: 0.72rem;
+  font-size: 0.65rem;
   text-transform: uppercase;
   letter-spacing: 0.3px;
 }
 
 .compact-table td {
-  padding: 5px 8px;
+  padding: 4px 7px;
   border-bottom: 1px solid var(--border);
   vertical-align: top;
 }
@@ -549,33 +754,74 @@ body {
   background: var(--bg-light);
 }
 
-.compact-table .highlight-cell {
-  background: #dbeafe;
-  font-weight: 600;
-}
-
 .compact-table .region-seoul { border-left: 3px solid #2563eb; }
-.compact-table .region-near-seoul { border-left: 3px solid #0f766e; }
+.compact-table .region-near-seoul,
+.compact-table .region-gyeonggi,
+.compact-table .region-incheon { border-left: 3px solid #0f766e; }
 .compact-table .region-busan { border-left: 3px solid #d97706; }
 .compact-table .region-gwangju { border-left: 3px solid #7c3aed; }
 .compact-table .region-province { border-left: 3px solid #64748b; }
-.compact-table .region-chungcheong { border-left: 3px solid #0891b2; }
-.compact-table .region-gyeongsang { border-left: 3px solid #be123c; }
+.compact-table .region-chungcheong,
+.compact-table .region-chungcheongbuk,
+.compact-table .region-chungcheongnam { border-left: 3px solid #0891b2; }
+.compact-table .region-gyeongsang,
+.compact-table .region-gyeongsangnam,
+.compact-table .region-gyeongsangbuk { border-left: 3px solid #be123c; }
 .compact-table .region-gangwon { border-left: 3px solid #15803d; }
-.compact-table .region-jeolla { border-left: 3px solid #a21caf; }
+.compact-table .region-jeolla,
+.compact-table .region-jeollanam,
+.compact-table .region-jeollabuk { border-left: 3px solid #a21caf; }
+
+.table-note {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-align: center;
+  margin-top: 8px;
+}
 
 /* ═══════════════════════════════════════
    APPENDIX
    ═══════════════════════════════════════ */
 .appendix-page {
   page-break-before: always;
-  padding: 40px;
+  padding: 36px 40px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .appendix-page h2 {
   font-size: 1.3rem;
   color: var(--primary);
-  margin-bottom: 16px;
+  margin-bottom: 14px;
+}
+
+.appendix-body { flex: 1; }
+
+.appendix-card {
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-light);
+  margin-bottom: 14px;
+  page-break-inside: avoid;
+}
+
+.appendix-card h3 {
+  font-size: 0.95rem;
+  color: var(--primary);
+  margin-bottom: 6px;
+}
+
+.appendix-card p {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.appendix-card a {
+  color: var(--primary);
+  font-weight: 700;
+  text-decoration: none;
 }
 
 /* ═══════════════════════════════════════
@@ -584,15 +830,12 @@ body {
 @media print {
   @page {
     size: A4;
-    margin: 1.8cm 2cm 2cm;
+    margin: 1.6cm 1.8cm 1.8cm;
   }
-
-  @page :first {
-    margin: 0;
-  }
+  @page :first { margin: 0; }
 
   body {
-    font-size: 10pt;
+    font-size: 9.5pt;
     background: #fff;
     color: #000;
     -webkit-print-color-adjust: exact;
@@ -610,12 +853,12 @@ body {
   }
 
   .cover-page {
+    height: 100vh;
     min-height: 100vh;
-    padding: 60px 40px;
+    padding: 50px 40px;
   }
-
-  .cover-page::before { display: none; }
-  .cover-page { height: 100vh; }
+  .cover-page::before,
+  .cover-page::after { display: none; }
 
   .toc-page,
   .section-page,
@@ -626,16 +869,33 @@ body {
     page-break-before: always;
   }
 
+  .toc-page { min-height: 100vh; }
+
+  .section-hero {
+    height: 110px;
+    margin-bottom: 16px;
+  }
+
+  .section-page { min-height: 100vh; }
+  .school-page { min-height: 100vh; }
+
   .school-body {
     grid-template-columns: 1fr 1fr;
-    gap: 12px;
+    gap: 8px;
   }
 
-  .info-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  .info-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .info-grid-3 { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .info-grid-1 { gap: 8px; }
 
-  .info-card, .school-card, .step-list li, .compact-table tr {
+  .route-timeline { margin: 12px 0; }
+  .route-step { padding: 10px 8px; }
+  .route-step .route-icon { font-size: 1.3rem; }
+  .route-step .route-label { font-size: 0.82rem; }
+  .route-step .route-desc { font-size: 0.7rem; }
+
+  .info-card, .school-card, .step-list li, .compact-table tr,
+  .route-timeline, .warning-box, .tip-box {
     page-break-inside: avoid;
   }
 
@@ -645,27 +905,21 @@ body {
     background: #1e3a5f !important;
     color: #fff !important;
   }
+  .compact-table tr:nth-child(even) td { background: #f8fafc !important; }
 
-  .compact-table .highlight-cell {
-    background: #dbeafe !important;
-  }
+  .section-header .section-divider { background: #d97706 !important; }
+  .warning-box { border-left-color: #d97706 !important; background: #fffbeb !important; }
 
-  .compact-table tr:nth-child(even) td {
-    background: #f8fafc !important;
-  }
+  .school-header-strip .school-num { background: #1e3a5f !important; }
+  .school-intro-box { background: #f0f4ff !important; border-color: #dbeafe !important; }
+  .badge-system { background: #dbeafe !important; color: #1d4ed8 !important; }
+  .badge-region { background: #d1fae5 !important; color: #065f46 !important; }
+  .badge-quota { background: #fef3c7 !important; color: #92400e !important; }
+  .partner-tag { background: #eaf2ff !important; color: #1d4ed8 !important; }
 
-  .section-header .section-divider {
-    background: #d97706 !important;
-  }
+  .section-hero img { display: block; }
 
-  .warning-box {
-    border-left-color: #d97706 !important;
-    background: #fffbeb !important;
-  }
-
-  .school-page-header {
-    border-bottom-color: #1e3a5f !important;
-  }
+  .school-card h3 { border-bottom-color: #e2e8f0 !important; }
 }
 
 /* ═══════════════════════════════════════
@@ -674,14 +928,18 @@ body {
 @media (max-width: 768px) {
   .cover-page h1 { font-size: 1.6rem; }
   .school-body { grid-template-columns: 1fr; }
-  .info-grid { grid-template-columns: 1fr; }
+  .info-grid, .info-grid-3 { grid-template-columns: 1fr; }
+  .route-timeline { flex-wrap: wrap; }
+  .route-step { flex: 1 0 45%; margin: 2px; border-radius: 6px; }
+  .route-step .route-arrow { display: none; }
   .toc-page, .section-page, .school-page, .comparison-page, .appendix-page { padding: 20px; }
-  .school-page-header { flex-direction: column; }
+  .school-header-strip { flex-wrap: wrap; }
+  .school-badges { margin-top: 4px; }
 }
 
 @media (max-width: 640px) {
-  .compact-table { font-size: 0.7rem; }
-  .compact-table th, .compact-table td { padding: 4px 5px; }
+  .compact-table { font-size: 0.65rem; }
+  .compact-table th, .compact-table td { padding: 3px 4px; }
 }
 </style>
 </head>
@@ -691,6 +949,7 @@ body {
 <div class="print-toolbar" id="print-toolbar">
   <span>📖 Cẩm nang Tuyển sinh Du học Hàn Quốc</span>
   <button onclick="window.print()">🖨️ In / Xuất PDF</button>
+  <span class="toolbar-hint">(Chọn "Save as PDF" hoặc in ra giấy A4)</span>
 </div>
 
 <!-- ═══ LOADING ═══ -->
@@ -713,7 +972,7 @@ body {
 //  MAIN — FETCH DATA & RENDER
 // ══════════════════════════════════════════════════════════
 (function main() {
-  var LOADING_TIMEOUT = 15000; // 15s
+  var LOADING_TIMEOUT = 15000;
   var timeoutId = setTimeout(function() {
     document.getElementById('loading-screen').style.display = 'none';
     document.getElementById('error-screen').style.display = 'block';
@@ -723,13 +982,23 @@ body {
   const API_BASE = 'https://thongtintruonghan.vercel.app/api';
   const SEMESTER_INFO = { ky: '3', nam: '2027' };
 
+  // ─── Unsplash images for sections ───
+  // Using reliable free stock photos related to Korea / Education
+  const IMG = {
+    cover: 'https://images.unsplash.com/photo-1534274988757-a28bf1a57c17?w=800&q=80',
+    overview: 'https://images.unsplash.com/photo-1523050854058-8df90110c7f1?w=800&q=80',
+    route: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&q=80',
+    schoolDir: 'https://images.unsplash.com/photo-1562774053-701939374585?w=800&q=80',
+    comparison: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80',
+    appendix: 'https://images.unsplash.com/photo-1423666639041-f56000c27a9a?w=800&q=80',
+    // School filler
+    schoolDefault: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600&q=80',
+  };
+
   (async function() {
   try {
     const schoolsRes = await fetch(API_BASE + '/schools?_=' + Date.now());
-
-    if (!schoolsRes.ok) {
-      throw new Error('API error: ' + schoolsRes.status);
-    }
+    if (!schoolsRes.ok) throw new Error('API error: ' + schoolsRes.status);
 
     const schoolsJson = await schoolsRes.json();
     const rawSchools = schoolsJson.data || [];
@@ -781,12 +1050,12 @@ body {
 
     function getRegionClass(r) {
       if (!r) return '';
-      if (r === 'seoul' || r === 'near-seoul') return 'region-' + r;
+      if (r === 'seoul' || r === 'near-seoul' || r === 'incheon' || r === 'gyeonggi') return 'region-' + r;
       if (r === 'busan' || r === 'gwangju') return 'region-' + r;
       if (r.indexOf('chungcheong') !== -1) return 'region-chungcheong';
       if (r.indexOf('gyeongsang') !== -1) return 'region-gyeongsang';
       if (r.indexOf('jeolla') !== -1) return 'region-jeolla';
-      if (r === 'gangwon') return 'region-gangwon';
+      if (r === 'gangwon' || r === 'daegu' || r === 'daejeon' || r === 'ulsan' || r === 'sejong' || r === 'jeju') return 'region-province';
       return 'region-province';
     }
 
@@ -803,20 +1072,24 @@ body {
     }
 
     function renderPartnerTags(school) {
+      var seen = {};
       var tags = [];
       if (school.mou) {
         school.mou.split(',').forEach(function(p) {
           var code = p.trim();
-          if (code) tags.push('<span class="partner-tag">' + esc(code) + '</span>');
+          if (code && !seen[code]) { seen[code] = true; tags.push('<span class="partner-tag">' + esc(code) + '</span>'); }
         });
       }
       school.partners.forEach(function(p) {
-        tags.push('<span class="partner-tag">' + esc(p.code || p.name) + '</span>');
+        var key = p.code || p.name;
+        if (key && !seen[key]) { seen[key] = true; tags.push('<span class="partner-tag">' + esc(key) + '</span>'); }
       });
       return tags.length > 0 ? tags.join(' ') : '<span class="muted">Đang cập nhật</span>';
     }
 
-    // ═══ RENDER BOOK ═══
+    // ══════════════════════════════════════════
+    //  RENDER BOOK
+    // ══════════════════════════════════════════
     var html = '';
 
     // ─── COVER PAGE ───
@@ -824,12 +1097,17 @@ body {
     <div class="cover-page">
       <div class="cover-badge">Tài liệu dành cho đối tác</div>
       <h1>Cẩm nang Tuyển sinh<br>Du học Hàn Quốc</h1>
-      <p class="cover-sub">Thông tin chi tiết 18 trường — Visa D2-6: điều kiện, chuyên ngành, học phí, hồ sơ và hướng dẫn tuyển sinh</p>
-      <div class="cover-line"></div>
+      <p class="cover-sub">Thông tin chi tiết ${schools.length} trường — Visa D2-6: điều kiện, chuyên ngành, học phí, hồ sơ và hướng dẫn tuyển sinh</p>
+      <div class="cover-divider">
+        <span class="line"></span>
+        <span class="diamond"></span>
+        <span class="line"></span>
+      </div>
       <div class="cover-meta">
         <strong>${esc(kyName)}</strong><br>
-        <span>Cập nhật: tháng ${SEMESTER_INFO.nam || '2027'}</span>
+        <span>Cập nhật: tháng ${SEMESTER_INFO.nam}</span>
       </div>
+      <div class="cover-footer">THÔNG TIN TUYỂN SINH DÀNH CHO ĐỐI TÁC</div>
     </div>`;
 
     // ─── TABLE OF CONTENTS ───
@@ -842,17 +1120,22 @@ body {
         <li><a href="#sec-dieu-kien">Điều kiện tuyển sinh</a></li>
         <li><a href="#sec-ho-so">Hồ sơ cần chuẩn bị</a></li>
         <li><a href="#sec-lo-trinh">Lộ trình xử lý hồ sơ</a></li>
-        <li><a href="#sec-dinh-huong">Định hướng dài hạn D2-6 → E7</a></li>
+        <li><a href="#sec-dinh-huong">Định hướng dài hạn D2-6 → D10 → E7</a></li>
         <li><a href="#sec-loi-thuong-gap">Lỗi thường gặp cần tránh</a></li>
-        <li><a href="#sec-danh-ba">Danh bạ 18 trường Hàn Quốc</a></li>
+        <li><a href="#sec-danh-ba">Danh bạ ${schools.length} trường Hàn Quốc</a></li>
         <li><a href="#sec-so-sanh">Bảng so sánh các trường</a></li>
-        <li><a href="#sec-phu-luc">Phụ lục — Thông tin đối tác & Liên hệ</a></li>
+        <li><a href="#sec-phu-luc">Phụ lục — Thông tin đối tác &amp; Liên hệ</a></li>
       </ol>
+      <div class="toc-note">📖 Tổng cộng <strong>${schools.length} trường</strong> — Dữ liệu ${kyName}</div>
     </div>`;
 
-    // ─── PART 1: OVERVIEW ───
+    // ─── PART 1: TỔNG QUAN ───
     html += `
     <div class="section-page" id="sec-tong-quan">
+      <div class="section-hero">
+        <img src="${IMG.overview}" alt="Giáo dục Hàn Quốc" loading="lazy">
+        <div class="hero-overlay"></div>
+      </div>
       <div class="section-header">
         <div class="section-num">Phần 1</div>
         <h2>Tổng quan chương trình D2-6</h2>
@@ -882,8 +1165,13 @@ body {
       </div>
     </div>`;
 
+    // ─── LỢI ÍCH ───
     html += `
     <div class="section-page" id="sec-loi-ich">
+      <div class="section-hero">
+        <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&q=80" alt="Sinh viên" loading="lazy">
+        <div class="hero-overlay"></div>
+      </div>
       <div class="section-header">
         <div class="section-num">Phần 1</div>
         <h2>Lợi ích chương trình D2-6</h2>
@@ -905,14 +1193,19 @@ body {
           </div>
           <div class="info-card">
             <h3>🔄 Nền tảng chuyển đổi</h3>
-            <p>Sau khi hoàn thành chương trình, học sinh có thể cân nhắc các lộ trình D10 (tìm việc) hoặc E7 (làm việc chuyên môn).</p>
+            <p>Sau khi hoàn thành chương trình, học sinh có thể chuyển tiếp lên D2-1/D2-2, sau đó cân nhắc D10 (tìm việc) hoặc E7 (làm việc chuyên môn).</p>
           </div>
         </div>
       </div>
     </div>`;
 
+    // ─── ĐIỀU KIỆN ───
     html += `
     <div class="section-page" id="sec-dieu-kien">
+      <div class="section-hero">
+        <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&q=80" alt="Học tập" loading="lazy">
+        <div class="hero-overlay"></div>
+      </div>
       <div class="section-header">
         <div class="section-num">Phần 1</div>
         <h2>Điều kiện tuyển sinh</h2>
@@ -920,7 +1213,7 @@ body {
       </div>
       <div class="section-body">
         <p>Các điều kiện cần kiểm tra trước khi tư vấn và nộp hồ sơ cho học sinh:</p>
-        <div class="info-grid" style="grid-template-columns: 1fr;">
+        <div class="info-grid-1">
           <div class="info-card">
             <h3>📊 Học lực</h3>
             <p>GPA, bảng điểm, số buổi nghỉ và quá trình học có hợp lý hay không. Đa số trường yêu cầu GPA từ 5.0 trở lên.</p>
@@ -945,8 +1238,13 @@ body {
       </div>
     </div>`;
 
+    // ─── HỒ SƠ ───
     html += `
     <div class="section-page" id="sec-ho-so">
+      <div class="section-hero">
+        <img src="https://images.unsplash.com/photo-1455390582262-044cdead277a?w=800&q=80" alt="Hồ sơ" loading="lazy">
+        <div class="hero-overlay"></div>
+      </div>
       <div class="section-header">
         <div class="section-num">Phần 1</div>
         <h2>Hồ sơ cần chuẩn bị</h2>
@@ -978,8 +1276,13 @@ body {
       </div>
     </div>`;
 
+    // ─── LỘ TRÌNH XỬ LÝ ───
     html += `
     <div class="section-page" id="sec-lo-trinh">
+      <div class="section-hero">
+        <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800&q=80" alt="Quy trình" loading="lazy">
+        <div class="hero-overlay"></div>
+      </div>
       <div class="section-header">
         <div class="section-num">Phần 1</div>
         <h2>Lộ trình xử lý hồ sơ D2-6</h2>
@@ -1001,7 +1304,7 @@ body {
             <span>Gom đủ hồ sơ học tập, tài chính, nhân thân, MOU và tài liệu trường Hàn. Dịch thuật công chứng và kiểm tra tính thống nhất.</span>
           </li>
           <li>
-            <strong>Bước 4: Nộp trường & Xử lý</strong>
+            <strong>Bước 4: Nộp trường &amp; Xử lý</strong>
             <span>Nộp hồ sơ sang trường Hàn, theo dõi phản hồi, bổ sung giấy tờ nếu cần, chuẩn bị phỏng vấn hoặc giải trình.</span>
           </li>
           <li>
@@ -1012,37 +1315,75 @@ body {
       </div>
     </div>`;
 
+    // ─── ĐỊNH HƯỚNG DÀI HẠN ───
     html += `
     <div class="section-page" id="sec-dinh-huong">
+      <div class="section-hero">
+        <img src="https://images.unsplash.com/photo-1521791136064-7986c2924716?w=800&q=80" alt="Lộ trình dài hạn" loading="lazy">
+        <div class="hero-overlay"></div>
+      </div>
       <div class="section-header">
         <div class="section-num">Phần 1</div>
-        <h2>Định hướng dài hạn: Từ D2-6 đến E7</h2>
+        <h2>Định hướng dài hạn: D2-6 → D10 → E7</h2>
         <div class="section-divider"></div>
       </div>
       <div class="section-body">
         <p>D2-6 không nên được nhìn như "đi cho nhanh", mà nên là bước đầu của một lộ trình học chuyên ngành, tích lũy kinh nghiệm và chuẩn bị điều kiện việc làm lâu dài tại Hàn Quốc.</p>
-        <div class="info-grid" style="grid-template-columns: repeat(3, 1fr);">
-          <div class="info-card">
-            <h3>🟢 D2-6</h3>
-            <p>Học tập tại trường Hàn theo chương trình trao đổi, tích lũy kiến thức chuyên ngành và năng lực tiếng Hàn.</p>
+
+        <div class="route-timeline">
+          <div class="route-step route-step-1">
+            <span class="route-icon">🛂</span>
+            <span class="route-label">D2-6</span>
+            <span class="route-desc">Visa trao đổi<br>theo chương trình MOU</span>
+            <span class="route-arrow">›</span>
           </div>
-          <div class="info-card">
-            <h3>🟡 D10</h3>
-            <p>Tìm việc sau tốt nghiệp nếu đáp ứng điều kiện. Được ở lại Hàn tối đa 2 năm để tìm việc làm phù hợp.</p>
+          <div class="route-step route-step-2">
+            <span class="route-icon">🎓</span>
+            <span class="route-label">D2-1 / D2-2</span>
+            <span class="route-desc">Cao đẳng (2-3 năm)<br>hoặc Đại học (4 năm)</span>
+            <span class="route-arrow">›</span>
           </div>
-          <div class="info-card">
-            <h3>🔵 E7</h3>
-            <p>Làm việc chuyên môn khi đủ điều kiện: ngành học phù hợp, năng lực tiếng Hàn và có doanh nghiệp bảo lãnh.</p>
+          <div class="route-step route-step-3">
+            <span class="route-icon">💼</span>
+            <span class="route-label">D-10</span>
+            <span class="route-desc">Tìm việc sau tốt nghiệp<br>(tối đa 2 năm)</span>
+            <span class="route-arrow">›</span>
+          </div>
+          <div class="route-step route-step-4">
+            <span class="route-icon">🏆</span>
+            <span class="route-label">E-7</span>
+            <span class="route-desc">Làm việc chuyên môn<br>có doanh nghiệp bảo lãnh</span>
           </div>
         </div>
-        <div class="warning-box">
-          <strong>⚡ Lời khuyên cho đối tác:</strong> Khi tư vấn học sinh, hãy định hướng ngay từ đầu về mục tiêu dài hạn. Chọn trường và ngành học có tiềm năng chuyển đổi E7 sẽ giúp học sinh có lợi thế lớn sau này.
+
+        <div class="info-grid-3">
+          <div class="info-card">
+            <h3>🛂 D2-6 → D2-1/D2-2</h3>
+            <p>Học tại trường Hàn theo chương trình trao đổi. Sau giai đoạn đầu, học sinh chuyển tiếp lên D2-1 (cao đẳng) hoặc D2-2 (đại học) để học chuyên ngành.</p>
+          </div>
+          <div class="info-card">
+            <h3>🟡 D-10 (Tìm việc)</h3>
+            <p>Sau tốt nghiệp, học sinh đủ điều kiện xin visa D10 để ở lại Hàn tối đa 2 năm tìm việc làm phù hợp với chuyên ngành đã học.</p>
+          </div>
+          <div class="info-card">
+            <h3>🔵 E-7 (Làm việc)</h3>
+            <p>Khi có doanh nghiệp bảo lãnh và công việc đúng chuyên môn, học sinh chuyển lên visa E7 — con đường định cư và phát triển sự nghiệp tại Hàn.</p>
+          </div>
+        </div>
+
+        <div class="tip-box">
+          <strong>⚡ Lời khuyên cho đối tác:</strong> Khi tư vấn học sinh, hãy định hướng ngay từ đầu về mục tiêu dài hạn. Chọn trường và ngành học có tiềm năng chuyển đổi E7 sẽ giúp học sinh có lợi thế lớn sau này. Lộ trình chuẩn: <strong>D2-6 → D2-1/D2-2 (học chuyên ngành) → D10 (tìm việc) → E7 (làm việc chuyên môn)</strong>.
         </div>
       </div>
     </div>`;
 
+    // ─── LỖI THƯỜNG GẶP ───
     html += `
     <div class="section-page" id="sec-loi-thuong-gap">
+      <div class="section-hero">
+        <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&q=80" alt="Lỗi thường gặp" loading="lazy">
+        <div class="hero-overlay"></div>
+      </div>
       <div class="section-header">
         <div class="section-num">Phần 1</div>
         <h2>Những lỗi thường gặp cần tránh</h2>
@@ -1076,19 +1417,40 @@ body {
             <p>Chọn trường và nộp hồ sơ sát deadline dẫn đến lịch nộp trường và visa bị gấp, dễ sai sót.</p>
           </div>
         </div>
+        <div class="warning-box">
+          <strong>🔑 Chìa khóa thành công:</strong> Tư vấn kỹ lưỡng ngay từ đầu, kiểm tra đầy đủ 5 yếu tố (học lực, tiếng Hàn, tài chính, trường liên kết, lịch sử visa) và chọn trường phù hợp với năng lực thực tế của học sinh.
+        </div>
       </div>
     </div>`;
 
     // ═══ PART 2: SCHOOL DIRECTORY ═══
     html += `
     <div class="section-page" id="sec-danh-ba">
+      <div class="section-hero">
+        <img src="${IMG.schoolDir}" alt="Trường Hàn Quốc" loading="lazy">
+        <div class="hero-overlay"></div>
+      </div>
       <div class="section-header">
         <div class="section-num">Phần 2</div>
-        <h2>Danh bạ 18 trường Hàn Quốc</h2>
+        <h2>Danh bạ ${schools.length} trường Hàn Quốc</h2>
         <div class="section-divider"></div>
       </div>
       <div class="section-body">
         <p>Danh sách đầy đủ <strong>${schools.length} trường</strong> đang tuyển sinh D2-6 ${kyName}. Mỗi trường bao gồm thông tin tổng quan, điều kiện tuyển sinh, chuyên ngành, học phí và các thông tin quan trọng khác.</p>
+        <div class="info-grid-3">
+          <div class="info-card">
+            <h3>🏫 Các trường</h3>
+            <p><strong>${schools.length}</strong> trường trên khắp Hàn Quốc, bao gồm Seoul, Gyeonggi, Busan, Gwangju, Gangwon và các tỉnh.</p>
+          </div>
+          <div class="info-card">
+            <h3>🎓 Hệ đào tạo</h3>
+            <p>D2-6 → D2-1 (Cao đẳng) hoặc D2-6 → D2-2 (Đại học). Nhiều trường có lộ trình chuyển tiếp rõ ràng.</p>
+          </div>
+          <div class="info-card">
+            <h3>📊 Chỉ tiêu</h3>
+            <p>Tổng chỉ tiêu tuyển sinh các trường lên đến <strong>hàng trăm suất</strong> cho kỳ tháng ${SEMESTER_INFO.ky}/${SEMESTER_INFO.nam}.</p>
+          </div>
+        </div>
         <div class="warning-box">
           <strong>📌 Lưu ý cho đối tác:</strong> Thông tin có thể thay đổi theo từng kỳ tuyển sinh. Vui lòng kiểm tra phiên bản mới nhất trên website <strong>thongtintruonghan.vercel.app</strong> trước khi tư vấn cho học sinh.
         </div>
@@ -1104,22 +1466,26 @@ body {
       if (ai === -1) ai = 99;
       if (bi === -1) bi = 99;
       if (ai !== bi) return ai - bi;
-      return a.name.localeCompare(b.name, 'vi');
+      return (a.name || '').localeCompare(b.name || '', 'vi');
     });
 
     sortedSchools.forEach(function(s, idx) {
+      var hasEnoughContent = (s.conditions && s.conditions.length >= 3) || (s.majors && s.majors.length >= 5) || (s.advantages && s.advantages.length >= 3);
+
       html += '<div class="school-page">';
-      html += '<div class="school-page-header">';
-      html += '<div>';
-      html += '<span class="school-badge badge-system">' + esc(s.system || 'Đang cập nhật') + '</span>';
-      html += '<span class="school-badge badge-region" style="margin-left:6px;">' + esc(getRegionLabel(s.region)) + '</span>';
+
+      // Header
+      html += '<div class="school-header-strip">';
+      html += '<div class="school-num">' + (idx + 1) + '</div>';
+      html += '<div class="school-title-group">';
       html += '<h2>' + esc(s.name) + '</h2>';
       if (s.nameKr) html += '<div class="name-kr">' + esc(s.nameKr) + '</div>';
       if (s.nameEn) html += '<div class="name-en">' + esc(s.nameEn) + '</div>';
       html += '</div>';
-      html += '<div style="text-align:right;flex-shrink:0;">';
-      html += '<div style="font-size:2rem;font-weight:800;color:var(--primary);">#' + (idx + 1) + '</div>';
-      html += '<div style="font-size:0.75rem;color:var(--text-muted);">Chỉ tiêu: <strong>' + (s.quota ? esc(s.quota) : 'Đang cập nhật') + '</strong></div>';
+      html += '<div class="school-badges">';
+      html += '<span class="school-badge badge-system">' + esc(s.system || 'Đang cập nhật') + '</span>';
+      html += '<span class="school-badge badge-region">' + esc(getRegionLabel(s.region)) + '</span>';
+      if (s.quota) html += '<span class="school-badge badge-quota">Chỉ tiêu: ' + esc(s.quota) + '</span>';
       html += '</div>';
       html += '</div>';
 
@@ -1127,47 +1493,54 @@ body {
       html += '<div class="school-meta-strip">';
       html += '<span class="school-meta-tag"><strong>📍</strong> ' + esc(getRegionLabel(s.region)) + (s.location ? ' — ' + esc(s.location.substring(0, 60)) : '') + '</span>';
       if (s.schedule) html += '<span class="school-meta-tag"><strong>📅</strong> ' + esc(s.schedule.substring(0, 50)) + '</span>';
-      if (s.insurance) html += '<span class="school-meta-tag"><strong>🛡️</strong> ' + esc(s.insurance.substring(0, 40)) + '</span>';
+      if (s.tuition) html += '<span class="school-meta-tag"><strong>💰</strong> ' + esc(s.tuition.replace(/\\n/g, ' ').substring(0, 45)) + '</span>';
       if (s.website) html += '<span class="school-meta-tag"><strong>🌐</strong> ' + esc(s.website.replace('https://', '').substring(0, 30)) + '</span>';
       html += '</div>';
 
       // Intro
       if (s.intro) {
-        html += '<div class="school-card full-width"><h3>Giới thiệu</h3><div class="school-intro">' + esc(s.intro) + '</div></div>';
+        html += '<div class="school-intro-box">' + esc(s.intro) + '</div>';
       }
 
-      // Body grid
+      // Body grid (2 columns)
       html += '<div class="school-body">';
 
-      // Conditions
-      html += '<div class="school-card"><h3>📋 Điều kiện tuyển sinh</h3>' + renderList(s.conditions, 'Đang cập nhật') + '</div>';
-
-      // Majors
+      // Row 1: Conditions + Majors
+      html += '<div class="school-card"><h3>📋 Điều kiện</h3>' + renderList(s.conditions, 'Đang cập nhật') + '</div>';
       html += '<div class="school-card"><h3>🎓 Chuyên ngành</h3>' + renderList(s.majors, 'Đang cập nhật') + '</div>';
 
-      // Tuition & KTX
-      var tuitionHtml = s.tuition ? '<p>' + esc(s.tuition).replace(/\n/g, '<br>') + '</p>' : '<span class="muted">Đang cập nhật</span>';
+      // Row 2: Tuition + KTX
+      var tuitionHtml = s.tuition ? '<p>' + esc(s.tuition).replace(/\\n/g, '<br>') + '</p>' : '<span class="muted">Đang cập nhật</span>';
       html += '<div class="school-card"><h3>💰 Học phí</h3>' + tuitionHtml + '</div>';
-
-      var ktxHtml = s.ktx ? '<p>' + esc(s.ktx).replace(/\n/g, '<br>') + '</p>' : '<span class="muted">Đang cập nhật</span>';
+      var ktxHtml = s.ktx ? '<p>' + esc(s.ktx).replace(/\\n/g, '<br>') + '</p>' : '<span class="muted">Đang cập nhật</span>';
       html += '<div class="school-card"><h3>🏠 Ký túc xá</h3>' + ktxHtml + '</div>';
 
-      // Advantages
+      // Row 3: Advantages + Conversion (or filler if empty)
       html += '<div class="school-card"><h3>⭐ Ưu điểm</h3>' + renderList(s.advantages, 'Đang cập nhật') + '</div>';
-
-      // Conversion
       html += '<div class="school-card"><h3>🔄 Lộ trình chuyển đổi</h3>' + renderList(s.conversion, 'Đang cập nhật') + '</div>';
 
       // Partners (full width)
       html += '<div class="school-card full-width"><h3>🤝 Đối tác Việt Nam</h3><p>' + renderPartnerTags(s) + '</p></div>';
 
       html += '</div>'; // end school-body
+
+      // If content is sparse, add a decorative note to fill
+      if (!hasEnoughContent) {
+        html += '<div style="margin-top:10px;padding:10px 14px;background:#f0fdfa;border:1px solid #d1fae5;border-radius:6px;page-break-inside:avoid;">';
+        html += '<div style="font-size:0.78rem;color:#065f46;"><strong>💡 Ghi chú:</strong> Liên hệ để cập nhật đầy đủ thông tin tuyển sinh mới nhất của trường.</div>';
+        html += '</div>';
+      }
+
       html += '</div>'; // end school-page
     });
 
     // ═══ PART 3: COMPARISON ═══
     html += `
     <div class="comparison-page" id="sec-so-sanh">
+      <div class="section-hero">
+        <img src="${IMG.comparison}" alt="So sánh" loading="lazy">
+        <div class="hero-overlay"></div>
+      </div>
       <div class="section-header">
         <div class="section-num">Phần 3</div>
         <h2>Bảng so sánh các trường</h2>
@@ -1188,57 +1561,76 @@ body {
         </thead>
         <tbody>
           ${sortedSchools.map(function(s, i) {
-            var tuitionShort = (s.tuition || '').replace(/\n/g, ' ').substring(0, 40);
-            var ktxShort = (s.ktx || '').replace(/\n/g, ' ').substring(0, 35);
+            var tuitionShort = (s.tuition || '').replace(/\\n/g, ' ').substring(0, 40) || '—';
+            var ktxShort = (s.ktx || '').replace(/\\n/g, ' ').substring(0, 35) || '—';
+            var partnerStr = '—';
+            if (s.mou) partnerStr = esc(s.mou.substring(0, 20));
+            else if (s.partners && s.partners.length) partnerStr = s.partners.length + ' đối tác';
             return '<tr class="' + getRegionClass(s.region) + '">' +
               '<td>' + (i + 1) + '</td>' +
               '<td><strong>' + esc(s.name) + '</strong></td>' +
               '<td>' + esc(s.system || '—').substring(0, 25) + '</td>' +
               '<td>' + esc(getRegionLabel(s.region)) + '</td>' +
-              '<td>' + esc(tuitionShort || '—') + '</td>' +
-              '<td>' + esc(ktxShort || '—') + '</td>' +
+              '<td>' + esc(tuitionShort) + '</td>' +
+              '<td>' + esc(ktxShort) + '</td>' +
               '<td>' + (s.majors ? s.majors.length : '—') + '</td>' +
-              '<td>' + (s.mou ? esc(s.mou.substring(0, 20)) : (s.partners && s.partners.length ? s.partners.length + ' đối tác' : '—')) + '</td>' +
+              '<td>' + partnerStr + '</td>' +
               '</tr>';
           }).join('')}
         </tbody>
       </table>
+      <div class="table-note">
+        <strong>Màu sắc</strong> · <span style="border-left:3px solid #2563eb;padding-left:4px;">Seoul</span>
+        <span style="border-left:3px solid #0f766e;padding-left:4px;margin-left:8px;">Gần Seoul</span>
+        <span style="border-left:3px solid #d97706;padding-left:4px;margin-left:8px;">Busan</span>
+        <span style="border-left:3px solid #7c3aed;padding-left:4px;margin-left:8px;">Gwangju</span>
+        <span style="border-left:3px solid #0891b2;padding-left:4px;margin-left:8px;">Chungcheong</span>
+        <span style="border-left:3px solid #be123c;padding-left:4px;margin-left:8px;">Gyeongsang</span>
+        <span style="border-left:3px solid #15803d;padding-left:4px;margin-left:8px;">Gangwon</span>
+        <span style="border-left:3px solid #a21caf;padding-left:4px;margin-left:8px;">Jeolla</span>
+      </div>
     </div>`;
 
     // ═══ APPENDIX ═══
     html += `
     <div class="appendix-page" id="sec-phu-luc">
+      <div class="section-hero">
+        <img src="${IMG.appendix}" alt="Liên hệ" loading="lazy">
+        <div class="hero-overlay"></div>
+      </div>
       <div class="section-header">
         <div class="section-num">Phụ lục</div>
-        <h2>Thông tin đối tác & Liên hệ</h2>
+        <h2>Thông tin đối tác &amp; Liên hệ</h2>
         <div class="section-divider"></div>
       </div>
-      <div class="section-body">
-        <h3 style="color:var(--primary);margin-bottom:12px;">🌐 Nguồn dữ liệu trực tuyến</h3>
-        <p>Truy cập website để xem thông tin mới nhất, so sánh trường và sử dụng công cụ tư vấn hồ sơ:</p>
-        <p style="font-size:1.1rem;font-weight:700;margin:8px 0;">
-          🔗 <a href="https://thongtintruonghan.vercel.app" target="_blank" style="color:var(--primary);">thongtintruonghan.vercel.app</a>
-        </p>
-        <p style="font-size:1rem;font-weight:700;margin:8px 0;">
-          📊 <a href="https://docs.google.com/spreadsheets/d/1H5tFffhJeLETHrNeRLV2l_gpg-KDQITD/edit?usp=sharing" target="_blank" style="color:var(--primary);">Nguồn dữ liệu Google Sheets</a>
-        </p>
-
-        <div style="margin-top:24px;padding:16px;border:1px solid var(--border);border-radius:8px;background:var(--bg-light);">
-          <h3 style="color:var(--primary);margin-bottom:8px;">💬 Cộng đồng Zalo D2-6</h3>
-          <p>Tham gia nhóm Zalo để nhận cập nhật tuyển sinh, checklist, catalog và tư vấn hồ sơ:</p>
-          <p style="margin-top:8px;">
-            <a href="https://zalo.me/g/1oq8ngti4pcbfmxdbe9g" target="_blank" style="display:inline-block;padding:8px 16px;background:#0068ff;color:#fff;border-radius:8px;text-decoration:none;font-weight:700;">📱 Tham gia nhóm Zalo</a>
-          </p>
+      <div class="appendix-body">
+        <div class="appendix-card">
+          <h3>🌐 Website chính thức</h3>
+          <p>Truy cập website để xem thông tin mới nhất, so sánh trường và sử dụng công cụ tư vấn hồ sơ.</p>
+          <p style="font-size:1rem;font-weight:700;margin-top:6px;"><a href="https://thongtintruonghan.vercel.app" target="_blank">thongtintruonghan.vercel.app</a></p>
         </div>
 
-        <div style="margin-top:20px;padding:16px;border:1px solid var(--border);border-radius:8px;background:var(--bg-light);">
-          <h3 style="color:var(--primary);margin-bottom:8px;">📄 Phiên bản và cập nhật</h3>
+        <div class="appendix-card">
+          <h3>📊 Nguồn dữ liệu</h3>
+          <p>Dữ liệu được thu thập và cập nhật từ Google Sheets. Truy cập để xem chi tiết từng trường.</p>
+          <p style="margin-top:4px;"><a href="https://docs.google.com/spreadsheets/d/1H5tFffhJeLETHrNeRLV2l_gpg-KDQITD/edit?usp=sharing" target="_blank">Xem dữ liệu gốc →</a></p>
+        </div>
+
+        <div class="appendix-card">
+          <h3>💬 Cộng đồng Zalo D2-6</h3>
+          <p>Tham gia nhóm Zalo để nhận cập nhật tuyển sinh, checklist, catalog và tư vấn hồ sơ trực tiếp.</p>
+          <p style="margin-top:6px;"><a href="https://zalo.me/g/1oq8ngti4pcbfmxdbe9g" target="_blank" style="display:inline-block;padding:8px 16px;background:#0068ff;color:#fff;border-radius:8px;text-decoration:none;font-weight:700;">📱 Tham gia nhóm Zalo</a></p>
+        </div>
+
+        <div class="appendix-card">
+          <h3>📄 Phiên bản &amp; Cập nhật</h3>
           <p>Cuốn sách này được tạo từ dữ liệu ${kyName}. Thông tin có thể thay đổi theo từng kỳ tuyển sinh. Vui lòng kiểm tra website để có dữ liệu mới nhất.</p>
+          <p style="margin-top:4px;color:var(--text-muted);font-size:0.85rem;">📅 Cập nhật lần cuối: ${new Date().toLocaleDateString('vi-VN')}</p>
         </div>
 
-        <div style="margin-top:32px;text-align:center;color:var(--text-muted);font-size:0.85rem;">
+        <div style="margin-top:24px;text-align:center;color:var(--text-muted);font-size:0.82rem;page-break-inside:avoid;padding:12px;border-top:1px solid var(--border);">
           <p>Cẩm nang Tuyển sinh Du học Hàn Quốc — ${kyName}</p>
-          <p>📅 Cập nhật lần cuối: ${new Date().toLocaleDateString('vi-VN')}</p>
+          <p style="margin-top:2px;">Dành cho đối tác tuyển sinh</p>
         </div>
       </div>
     </div>`;
