@@ -823,7 +823,10 @@ function exportComparePDF(container) {
         .better { background: #d1fae5; }
         .worse { background: #fee2e2; }
         .compare-radar-wrap { page-break-inside: avoid; }
-        @media print { .compare-actions { display: none; } }
+        @media print {
+          .compare-actions { display: none; }
+          @page { margin: 1.5cm; size: A4; }
+        }
       </style>
     </head>
     <body>

@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EBOOK - SALEKIT - VISA D2-6 | FASTGO</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Noto+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red:    #C0272D;
+    --navy:   #1B3A6B;
+    --blue:   #2E6DB4;
+    --light-blue: #4A90D9;
+    --gold:   #C9A84C;
+    --white:  #ffffff;
+    --off-white: #f7f8fa;
+    --gray:   #6b7280;
+    --light-gray: #e8ecf0;
+    --text:   #1a1a2e;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans', sans-serif;
+    background: #e9eef5;
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  /* ── PAGE SYSTEM ── */
+  .page {
+    width: 595px;
+    min-height: 842px;
+    background: white;
+    margin: 0 auto 32px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+    page-break-after: always;
+  }
+
+  /* ── PRINT ── */
+  @media print {
+    body { background: white; }
+    .page { margin: 0; box-shadow: none; page-break-after: always; }
+    .print-btn { display: none; }
+    @page { margin: 1.5cm; size: A4; }
+  }
+
+  /* ── PRINT BUTTON ── */
+  .print-btn {
+    position: fixed; top: 20px; right: 20px; z-index: 9999;
+    background: var(--red); color: white;
+    border: none; padding: 10px 22px; border-radius: 6px;
+    font-family: 'Montserrat', sans-serif; font-weight: 700;
+    cursor: pointer; font-size: 13px; letter-spacing: 0.5px;
+    box-shadow: 0 4px 16px rgba(192,39,45,0.4);
+  }
+  .print-btn:hover { background: #a01f24; }
+
+  /* ── UTILITY ── */
+  .red    { color: var(--red); }
+  .navy   { color: var(--navy); }
+  .blue   { color: var(--blue); }
+  .white  { color: white; }
+  .bold   { font-weight: 700; }
+  .italic { font-style: italic; }
+
+  /* ── TOP HEADER BAR (most pages) ── */
+  .page-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 28px; border-bottom: 1px solid var(--light-gray);
+    background: white;
+  }
+  .page-header .logo-text {
+    font-family: 'Montserrat', sans-serif; font-weight: 900;
+    font-size: 15px; color: var(--navy); letter-spacing: 1px;
+  }
+  .page-header .logo-text span { color: var(--red); }
+  .page-header-line { width: 1px; height: 24px; background: var(--light-gray); }
+
+  /* ── SIDE ACCENT (right edge bar) ── */
+  .side-accent {
+    position: absolute; right: 0; top: 0; bottom: 0;
+    width: 6px; background: var(--red);
+  }
+
+  /* ── SECTION LABEL BOX ── */
+  .section-box {
+    background: var(--light-blue);
+    color: white; font-family: 'Montserrat', sans-serif;
+    font-weight: 700; font-size: 11px;
+    padding: 6px 14px; letter-spacing: 1.5px;
+    text-transform: uppercase; display: inline-block;
+    margin-bottom: 10px;
+  }
+  .section-box.red { background: var(--red); }
+  .section-box.navy { background: var(--navy); }
+
+  /* ── NUMBERED SUB-HEADING ── */
+  .numbered-heading {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800; font-size: 11px; text-transform: uppercase;
+    letter-spacing: 1px; color: white;
+    background: var(--red); padding: 7px 14px;
+    margin: 14px 0 8px; display: block;
+  }
+
+  /* ── BODY TEXT ── */
+  .body-text { font-size: 12.5px; line-height: 1.75; color: #2a2a3a; }
+  .body-text p { margin-bottom: 10px; }
+  .body-text ul { padding-left: 18px; margin-bottom: 10px; }
+  .body-text ul li { margin-bottom: 5px; }
+  .body-text .highlight { font-weight: 700; color: var(--red); }
+
+  /* ── PAGE FOOTER ── */
+  .page-footer {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: var(--red); height: 8px;
+  }
+  .page-number {
+    position: absolute; bottom: 16px;
+    left: 50%; transform: translateX(-50%);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700; font-size: 12px; color: var(--gray);
+  }
+
+  /* ─────────────────────────────────────────
+     PAGE 1 — COVER
+  ───────────────────────────────────────── */
+  .cover {
+    background: linear-gradient(160deg, #f0f4f8 0%, #dce6f0 40%, #c8d8ec 100%);
+    min-height: 842px; position: relative; overflow: hidden;
+  }
+  .cover-bg {
+    position: absolute; inset: 0;
+    background:
+      url('https://images.unsplash.com/photo-1517154421773-0529f29ea451?w=600&q=80') center/cover no-repeat;
+    opacity: 0.25;
+  }
+  .cover-content {
+    position: relative; z-index: 2;
+    padding: 36px 40px 0;
+  }
+  .cover-title-block {
+    margin-top: 40px; margin-bottom: 20px;
+  }
+  .cover-title-line1 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900; font-size: 58px; line-height: 1;
+    color: var(--navy); text-transform: uppercase;
+    letter-spacing: -1px;
+  }
+  .cover-title-line1 span { display: block; }
+  .cover-visa {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900; font-size: 72px; line-height: 1;
+    color: var(--red); letter-spacing: -2px;
+    text-transform: uppercase;
+  }
+  .cover-tagline-box {
+    background: var(--navy); padding: 20px 26px;
+    margin-top: 0; display: inline-block; width: 260px;
+  }
+  .cover-tagline-box h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800; font-size: 14px; color: white;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+  .cover-tagline-box p {
+    font-family: 'Libre Baskerville', serif;
+    font-style: italic; font-size: 11px; color: rgba(255,255,255,0.85);
+    line-height: 1.5;
+  }
+  .cover-contact {
+    position: absolute; bottom: 70px; left: 40px;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .cover-contact-item {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 12px; color: var(--navy);
+  }
+  .cover-contact-icon {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--navy); display: flex; align-items: center;
+    justify-content: center; flex-shrink: 0;
+  }
+  .cover-contact-icon svg { width: 14px; height: 14px; fill: white; }
+  .cover-bottom-bar {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: var(--red); height: 44px;
+    display: flex; align-items: center; justify-content: space-around;
+  }
+  .cover-bottom-bar span {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700; font-size: 10px; color: white;
+    letter-spacing: 2px; text-transform: uppercase;
+  }
+  .cover-bottom-bar .sep { color: rgba(255,255,255,0.5); }
+
+  /* ─────────────────────────────────────────
+     PAGE 2 — TABLE OF CONTENTS
+  ───────────────────────────────────────── */
+  .toc-title {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900; font-size: 52px; text-align: center;
+    color: var(--red); text-transform: uppercase;
+    letter-spacing: 2px; margin: 30px 0 24px;
+  }
+  .toc-item {
+    display: flex; align-items: center;
+    padding: 11px 40px 11px 60px;
+    border-bottom: 1px solid var(--light-gray);
+  }
+  .toc-item:last-child { border-bottom: none; }
+  .toc-label {
+    flex: 1; font-family: 'Montserrat', sans-serif;
+    font-weight: 700; font-size: 12px; text-transform: uppercase;
+    letter-spacing: 0.5px; color: var(--navy);
+  }
+  .toc-page {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900; font-size: 16px; color: var(--red);
+    min-width: 36px; text-align: right;
+  }
+  .toc-bg-deco {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 140px;
+    background: url('https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=600&q=60') center/cover;
+    opacity: 0.12;
+  }
+
+  /* ─────────────────────────────────────────
+     CHAPTER OPENER STYLE
+  ───────────────────────────────────────── */
+  .chapter-img-grid {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    height: 200px; overflow: hidden;
+  }
+  .chapter-img-grid img {
+    width: 100%; height: 200px; object-fit: cover;
+    display: block;
+  }
+  .chapter-title-overlay {
+    position: absolute; top: 152px; left: 60px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900; font-size: 44px; text-transform: uppercase;
+    color: var(--red); letter-spacing: 1px;
+    text-shadow: 2px 2px 0 rgba(255,255,255,0.9);
+  }
+
+  /* ─────────────────────────────────────────
+     STANDARD CONTENT PAGE
+  ───────────────────────────────────────── */
+  .content-wrap { padding: 0 28px 60px; }
+  .big-chapter-title {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900; font-size: 38px; text-transform: uppercase;
+    color: var(--red); line-height: 1.05;
+    margin-bottom: 16px; letter-spacing: -0.5px;
+  }
+  .big-chapter-title .navy { color: var(--navy); }
+
+  /* ─────────────────────────────────────────
+     BENEFIT BLOCK
+  ───────────────────────────────────────── */
+  .benefit-header-box {
+    background: var(--navy);
+    padding: 18px 20px; margin-bottom: 16px;
+  }
+  .benefit-header-box h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900; font-size: 15px; text-transform: uppercase;
+    color: white; line-height: 1.3; letter-spacing: 0.3px;
+  }
+  .benefit-intro-col {
+    float: right; width: 220px; margin-left: 16px; margin-bottom: 8px;
+    background: var(--navy); color: white;
+    padding: 14px 16px; font-size: 11.5px; line-height: 1.6;
+  }
+  .benefit-intro-col::after { content: ''; display: table; clear: both; }
+
+  /* ─────────────────────────────────────────
+     ROADMAP STAGE CARDS
+  ───────────────────────────────────────── */
+  .roadmap-card {
+    border: 1.5px dashed #b0bec5;
+    margin-bottom: 14px; overflow: hidden;
+  }
+  .roadmap-card-header {
+    display: flex; align-items: stretch; background: var(--off-white);
+  }
+  .roadmap-number {
+    background: var(--navy); color: white;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900; font-size: 36px;
+    padding: 10px 16px; display: flex; align-items: center;
+    justify-content: center; min-width: 72px;
+    line-height: 1;
+  }
+  .roadmap-card-title {
+    padding: 10px 14px; flex: 1;
+  }
+  .roadmap-card-title h3 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800; font-size: 12px; color: var(--red);
+    text-transform: uppercase; letter-spacing: 0.3px;
+    margin-bottom: 2px;
+  }
+  .roadmap-card-title p {
+    font-size: 11px; color: var(--gray); font-style: italic;
+  }
+  .roadmap-card-body {
+    padding: 10px 14px 10px 20px;
+    font-size: 11.5px; line-height: 1.65;
+  }
+  .roadmap-card-body ul { padding-left: 16px; }
+  .roadmap-card-body li { margin-bottom: 4px; }
+
+  /* ─────────────────────────────────────────
+     TWO-COLUMN LAYOUT
+  ───────────────────────────────────────── */
+  .two-col { display: flex; gap: 16px; }
+  .two-col .col-left  { flex: 1; }
+  .two-col .col-right { flex: 1; }
+
+  /* ─────────────────────────────────────────
+     HERO BANNER (section openers)
+  ───────────────────────────────────────── */
+  .hero-banner {
+    background: var(--red);
+    padding: 20px 28px; margin: 0 0 20px;
+  }
+  .hero-banner h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900; font-size: 32px; text-transform: uppercase;
+    color: white; line-height: 1.1; letter-spacing: -0.5px;
+  }
+
+  /* ─────────────────────────────────────────
+     TABLE
+  ───────────────────────────────────────── */
+  .data-table { width: 100%; border-collapse: collapse; font-size: 11.5px; }
+  .data-table th {
+    background: var(--navy); color: white;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700; padding: 9px 10px; text-align: left;
+    text-transform: uppercase; font-size: 10px; letter-spacing: 0.5px;
+  }
+  .data-table td {
+    padding: 9px 10px; border-bottom: 1px solid var(--light-gray);
+    vertical-align: top; line-height: 1.6;
+  }
+  .data-table tr:nth-child(even) td { background: var(--off-white); }
+  .data-table .cell-highlight {
+    font-weight: 700; color: var(--red);
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  /* ─────────────────────────────────────────
+     QUOTE BLOCK
+  ───────────────────────────────────────── */
+  .quote-box {
+    border: 1.5px solid var(--navy);
+    padding: 16px 18px; margin: 16px 0;
+    position: relative;
+  }
+  .quote-box::before {
+    content: '\201C';
+    position: absolute; top: -12px; left: 10px;
+    font-family: 'Libre Baskerville', serif;
+    font-size: 36px; color: var(--red);
+    background: white; padding: 0 4px; line-height: 1;
+  }
+  .quote-box p {
+    font-family: 'Libre Baskerville', serif;
+    font-style: italic; font-size: 12px; line-height: 1.7;
+  }
+  .quote-box::after {
+    content: '\201D';
+    position: absolute; bottom: -12px; right: 10px;
+    font-family: 'Libre Baskerville', serif;
+    font-size: 36px; color: var(--red);
+    background: white; padding: 0 4px; line-height: 1;
+  }
+
+  /* ─────────────────────────────────────────
+     PARTNER TABLE
+  ───────────────────────────────────────── */
+  .partner-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .partner-table th {
+    background: var(--navy); color: white;
+    padding: 10px; font-family: 'Montserrat', sans-serif;
+    font-weight: 700; font-size: 11px; text-transform: uppercase;
+  }
+  .partner-table td {
+    padding: 14px 12px; border: 1px solid var(--light-gray);
+    text-align: center; vertical-align: middle;
+    font-size: 12px; line-height: 1.5;
+  }
+  .partner-table tr:nth-child(even) td { background: var(--off-white); }
+
+  /* ─────────────────────────────────────────
+     MAJORS GRID
+  ───────────────────────────────────────── */
+  .majors-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 12px; padding: 0 28px 16px;
+  }
+  .major-card {
+    border-radius: 6px; overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1); position: relative;
+    height: 110px;
+  }
+  .major-card img {
+    width: 100%; height: 110px; object-fit: cover; display: block;
+  }
+  .major-card-label {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: rgba(27,58,107,0.85);
+    color: white; text-align: center;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700; font-size: 11px;
+    padding: 7px 8px; text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  /* ─────────────────────────────────────────
+     CONTACT BACK COVER
+  ───────────────────────────────────────── */
+  .back-cover {
+    background: linear-gradient(140deg, var(--navy) 0%, #0d2040 100%);
+    min-height: 842px; display: flex; flex-direction: column;
+    justify-content: center; align-items: center; padding: 60px 40px;
+    text-align: center; position: relative; overflow: hidden;
+  }
+  .back-cover::before {
+    content: ''; position: absolute; inset: 0;
+    background: url('https://images.unsplash.com/photo-1546514714-df0ccc50d7bf?w=600&q=50') center/cover;
+    opacity: 0.08;
+  }
+  .back-cover-content { position: relative; z-index: 2; }
+  .back-cover h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900; font-size: 40px; color: white;
+    text-transform: uppercase; letter-spacing: 2px;
+    margin-bottom: 6px;
+  }
+  .back-cover h1 span { color: var(--red); }
+  .back-cover .tagline {
+    font-family: 'Libre Baskerville', serif;
+    font-style: italic; font-size: 13px;
+    color: rgba(255,255,255,0.7); margin-bottom: 40px;
+  }
+  .back-contact-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 12px; margin-bottom: 36px; width: 100%;
+  }
+  .back-contact-item {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.15);
+    padding: 14px 12px; text-align: left;
+  }
+  .back-contact-item label {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700; font-size: 9px; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--red);
+    display: block; margin-bottom: 4px;
+  }
+  .back-contact-item span {
+    font-size: 11px; color: rgba(255,255,255,0.85); line-height: 1.5;
+  }
+  .back-cover-motto {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900; font-size: 11px; letter-spacing: 3px;
+    text-transform: uppercase; color: rgba(255,255,255,0.4);
+  }
+
+  /* ─────────────────────────────────────────
+     PHOTO GALLERY PAGE
+  ───────────────────────────────────────── */
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto auto auto;
+    gap: 8px;
+    padding: 0 28px 16px;
+  }
+  .gallery-img {
+    width: 100%; aspect-ratio: 16/9;
+    object-fit: cover; border-radius: 3px;
+    display: block;
+  }
+
+</style>
+</head>
+<body>
+
+<button class="print-btn" onclick="window.print()">🖨 In / Xuất PDF</button>
+
+<!-- ══════════════════════════════════════════
+     PAGE 1 — BÌA
+══════════════════════════════════════════ -->
+<div class="page">
+  <div class="cover">
+    <div class="cover-bg"></div>
+    <div class="cover-content">
+      <div style="font-family:'Montserrat',sans-serif;font-weight:900;font-size:17px;color:var(--navy);letter-spacing:2px;">
+        FASTGO <span style="color:var(--red);font-size:11px;font-weight:600;letter-spacing:1px;">DU HỌC HÀN QUỐC</span>
+      </div>
+
+      <div class="cover-title-block">
+        <div class="cover-title-line1">
+          <span>DU HỌC</span>
+          <span>HÀN QUỐC</span>
+        </div>
+        <div class="cover-visa">VISA D2-6</div>
+      </div>
+
+      <div class="cover-tagline-box">
+        <h2>Hành trình xứng tầm<br>Tương lai xứng đáng</h2>
+        <p>Mở lối du học Hàn Quốc bằng chương trình trao đổi sinh viên D2-6</p>
+      </div>
+    </div>
+
+    <div class="cover-contact">
+      <div class="cover-contact-item">
+        <div class="cover-contact-icon">
+          <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+        </div>
+        <span style="font-weight:600;">tuyensinh@fastgo.edu.vn</span>
+      </div>
+      <div class="cover-contact-item">
+        <div class="cover-contact-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+        </div>
+        <span style="font-weight:600;">duhocfastgo.vn</span>
+      </div>
+    </div>
+
+    <div class="cover-bottom-bar">
+      <span>Trải nghiệm quốc tế</span>
+      <span class="sep">|</span>
+      <span>Lộ trình rõ ràng</span>
+      <span class="sep">|</span>
+      <span>Sẵn sàng hội nhập</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE 2 — PHỤ LỤC
+══════════════════════════════════════════ -->
+<div class="page" style="background:#f8f9fb;">
+  <div style="position:relative;z-index:2;">
+    <div style="display:grid;grid-template-columns:160px 1fr;height:200px;overflow:hidden;">
+      <div style="background:var(--red);display:flex;align-items:center;justify-content:center;">
+        <div style="font-family:'Montserrat',sans-serif;font-weight:900;font-size:72px;color:rgba(255,255,255,0.15);writing-mode:vertical-rl;">D2-6</div>
+      </div>
+      <img src="https://images.unsplash.com/photo-1534430480872-3498386e7856?w=500&q=70" style="width:100%;height:200px;object-fit:cover;">
+    </div>
+
+    <div class="toc-title">PHỤ LỤC</div>
+
+    <div class="toc-item"><div class="toc-label">Thư Ngỏ</div><div class="toc-page">01</div></div>
+    <div class="toc-item"><div class="toc-label">Giới Thiệu Chung</div><div class="toc-page">02</div></div>
+    <div class="toc-item"><div class="toc-label">Tổng Quan Chương Trình Visa D2-6</div><div class="toc-page">03</div></div>
+    <div class="toc-item"><div class="toc-label">Cơ Sở Pháp Lý</div><div class="toc-page">04</div></div>
+    <div class="toc-item"><div class="toc-label">Lợi Ích</div><div class="toc-page">06</div></div>
+    <div class="toc-item"><div class="toc-label">Đối Tượng Và Điều Kiện Áp Dụng</div><div class="toc-page">08</div></div>
+    <div class="toc-item"><div class="toc-label">Hồ Sơ Ứng Tuyển</div><div class="toc-page">10</div></div>
+    <div class="toc-item"><div class="toc-label">Lộ Trình</div><div class="toc-page">12</div></div>
+    <div class="toc-item"><div class="toc-label">Cơ Hội</div><div class="toc-page">14</div></div>
+    <div class="toc-item"><div class="toc-label">Đối Tác & Hợp Tác Quốc Tế</div><div class="toc-page">17</div></div>
+    <div class="toc-item"><div class="toc-label">Định Hướng Tập Trung Đào Tạo Ngành</div><div class="toc-page">18</div></div>
+  </div>
+  <div class="toc-bg-deco"></div>
+  <div style="position:absolute;bottom:0;left:0;right:0;height:8px;background:var(--red);z-index:3;"></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE 3 — THƯ NGỎ (trang 1)
+══════════════════════════════════════════ -->
+<div class="page">
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;height:190px;overflow:hidden;">
+    <img src="https://images.unsplash.com/photo-1533050487297-09b450131914?w=250&q=70" style="width:100%;height:190px;object-fit:cover;">
+    <img src="https://images.unsplash.com/photo-1517154421773-0529f29ea451?w=250&q=70" style="width:100%;height:190px;object-fit:cover;">
+    <img src="https://images.unsplash.com/photo-1546514714-df0ccc50d7bf?w=250&q=70" style="width:100%;height:190px;object-fit:cover;">
+  </div>
+  <div style="position:relative;top:-44px;left:50px;display:inline-block;
+    font-family:'Montserrat',sans-serif;font-weight:900;font-size:46px;
+    color:var(--red);text-transform:uppercase;letter-spacing:1px;
+    text-shadow:3px 3px 0 rgba(255,255,255,0.95);">
+    THƯ NGỎ
+  </div>
+
+  <div class="content-wrap" style="margin-top:-20px;">
+    <div class="body-text">
+      <p>Trong bối cảnh nền kinh tế tri thức và làn sóng dịch chuyển nhân lực toàn cầu ngày càng mạnh mẽ, việc sở hữu trải nghiệm làm việc quốc tế không chỉ là lợi thế cạnh tranh, mà còn là nền tảng để mỗi cá nhân định vị bản thân trong một thế giới không ngừng biến đổi.</p>
+      <p>Tuy nhiên, giữa rất nhiều lựa chọn, điều quan trọng không chỉ là "đi đâu", mà là "đi như thế nào để an toàn – hiệu quả – và có tương lai rõ ràng". Thấu hiểu điều đó, <span class="highlight">FASTGO</span> mang đến chương trình trao đổi sinh viên tại Hàn Quốc diện visa D2-6 – một lộ trình toàn diện giúp học viên từng bước tiếp cận môi trường làm việc quốc tế ngay từ khi còn trên ghế nhà trường.</p>
+      <p>Với định hướng trở thành đơn vị tiên phong trong đào tạo và phát triển nguồn nhân lực quốc tế, <span class="highlight">FASTGO</span> xây dựng một hệ sinh thái hỗ trợ toàn diện, nơi mỗi học viên được định hướng, đào tạo và được đồng hành xuyên suốt hành trình phát triển sự nghiệp.</p>
+      <p>Chúng tôi tin rằng, một lựa chọn đúng không chỉ thay đổi điểm đến – mà có thể thay đổi cả tương lai.</p>
+    </div>
+  </div>
+  <div class="page-number">1</div>
+  <div class="page-footer"></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE 4 — TỔNG QUAN VISA D2-6 (trang 3)
+══════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="logo-text">FAST<span>GO</span></div>
+    <div class="page-header-line"></div>
+    <div style="font-size:10px;color:var(--gray);font-family:'Montserrat',sans-serif;letter-spacing:0.5px;">DU HỌC HÀN QUỐC</div>
+  </div>
+  <div class="side-accent"></div>
+  <div style="padding:16px 28px 0;">
+    <div class="big-chapter-title">
+      TỔNG QUAN<br>CHƯƠNG TRÌNH <span style="color:var(--navy);">D2-6</span>
+    </div>
+    <div class="body-text">
+      <p>Chương trình Visa D2-6 là mô hình du học trao đổi sinh viên chính quy, được thiết lập dựa trên thỏa thuận hợp tác đào tạo giữa các trường Cao đẳng, Đại học hàng đầu tại Việt Nam và Hàn Quốc. Đây không chỉ đơn thuần là một khóa học thuật, mà là lộ trình chiến lược giúp sinh viên quốc tế tiếp cận nền giáo dục tiên tiến kết hợp trải nghiệm thực tế tại các tập đoàn, doanh nghiệp hàng đầu xứ sở Kim Chi.</p>
+      <p>Điểm khác biệt cốt lõi của chương trình D2-6 so với các diện du học truyền thống chính là triết lý "Học đi đôi với hành". Học viên được tham gia các khóa đào tạo chuyên sâu, đan xen giữa lý thuyết tại giảng đường và thực tập hưởng lương tại doanh nghiệp đối tác. Mô hình này giúp sinh viên không chỉ tích lũy kiến thức chuyên môn vững chắc mà còn sở hữu kinh nghiệm làm việc thực tế và nguồn thu nhập ổn định ngay trong quá trình học tập.</p>
+      <p>Với thời gian đào tạo linh hoạt từ 2 đến 3 năm (tùy theo ngành học), Visa D2-6 mở ra cánh cửa rộng lớn để sinh viên nhận bằng cấp quốc tế, đồng thời tạo tiền đề vững chắc cho việc chuyển đổi sang các diện Visa làm việc, thực tập (D10) hoặc chuyên gia (E-7) sau khi tốt nghiệp.</p>
+    </div>
+  </div>
+  <div style="margin-top:10px;height:190px;overflow:hidden;">
+    <img src="https://images.unsplash.com/photo-1578637387939-43c525550085?w=600&q=70" style="width:100%;height:190px;object-fit:cover;">
+  </div>
+  <div class="page-number">3</div>
+  <div class="page-footer"></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE 5 — CƠ SỞ PHÁP LÝ (trang 4)
+══════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="logo-text">FAST<span>GO</span></div>
+    <div class="page-header-line"></div>
+    <div style="font-size:10px;color:var(--gray);font-family:'Montserrat',sans-serif;letter-spacing:0.5px;">DU HỌC HÀN QUỐC</div>
+  </div>
+  <div class="side-accent"></div>
+  <div style="padding:14px 28px 0;">
+    <div style="text-align:right;">
+      <span style="font-family:'Montserrat',sans-serif;font-weight:900;font-size:36px;color:var(--red);text-transform:uppercase;">CƠ SỞ PHÁP LÝ</span>
+    </div>
+    <div class="body-text" style="margin-top:8px;">
+      <p>Chương trình Visa D2-6 (Du học trao đổi) của <span class="highlight">FASTGO</span> được xây dựng và triển khai dựa trên nền tảng pháp lý vững chắc của Hàn Quốc, đảm bảo tính hợp pháp, minh bạch và quyền lợi tối đa cho du học sinh.</p>
+    </div>
+
+    <span class="numbered-heading">1. Hệ thống văn bản pháp luật chung</span>
+    <div class="two-col" style="margin-bottom:12px;">
+      <div class="col-left">
+        <div class="body-text">
+          <p>Mọi hoạt động xuất nhập cảnh và lưu trú tại Hàn Quốc, bao gồm cả các loại visa và tư cách lưu trú (trong đó có nhóm D-2), đều chịu sự điều chỉnh của Đạo luật Kiểm soát Nhập cư (출입국관리법). Đây là văn bản pháp luật cao nhất quy định về việc nhập cảnh, lưu trú, thay đổi tư cách lưu trú, thời hạn lưu trú, cũng như các quy định về báo cáo thay đổi thông tin và xử lý vi phạm.</p>
+        </div>
+      </div>
+      <div class="col-right">
+        <img src="https://images.unsplash.com/photo-1523731407965-2430cd12f5e4?w=280&q=70" style="width:100%;height:130px;object-fit:cover;border-radius:4px;">
+      </div>
+    </div>
+    <div class="body-text">
+      <p>Để cụ thể hóa các điều khoản của Đạo luật này, Nghị định thi hành Luật quản lý xuất nhập cảnh (출입국관리법 시행령) và Nội quy thi hành Luật quản lý xuất nhập cảnh (출입국관리법 시행규칙) được ban hành. Các văn bản này quy định chi tiết về khung quản lý tư cách lưu trú, hồ sơ/thủ tục cần thiết, thời hạn lưu trú, điều kiện chung, cũng như các yêu cầu kỹ thuật và quy trình giải quyết thủ tục hồ sơ.</p>
+    </div>
+
+    <span class="numbered-heading">2. Quy định chuyên biệt về tư cách lưu trú D-2 và tiểu loại D-2-6</span>
+    <div class="body-text">
+      <p>Visa D-2-6 là một tiểu phân loại trong nhóm tư cách lưu trú D-2 (Study/유학) dành cho sinh viên trao đổi. Các quy định cụ thể về đối tượng áp dụng, giấy tờ chứng minh, thời hạn cấp, và điều kiện gia hạn/thay đổi tư cách lưu trú thường được Bộ Tư pháp (Ministry of Justice - MOJ) và Sở Di trú Hàn Quốc ban hành hoặc cập nhật định kỳ thông qua các thông báo (고시) và hướng dẫn nghiệp vụ.</p>
+      <p>Những văn bản này đóng vai trò then chốt trong việc xác định các yêu cầu chi tiết mà du học sinh cần đáp ứng để được cấp và duy trì Visa D2-6, đặc biệt là các quy định liên quan đến việc thực tập và làm thêm, vốn là điểm mạnh của chương trình này.</p>
+    </div>
+  </div>
+  <div class="page-number">4</div>
+  <div class="page-footer"></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE 6 — CƠ SỞ PHÁP LÝ (tiếp – trang 5)
+══════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="logo-text">FAST<span>GO</span></div>
+    <div class="page-header-line"></div>
+    <div style="font-size:10px;color:var(--gray);font-family:'Montserrat',sans-serif;letter-spacing:0.5px;">DU HỌC HÀN QUỐC</div>
+  </div>
+  <div class="side-accent"></div>
+  <div style="padding:14px 28px 0;">
+    <span class="numbered-heading">3. Quản lý cơ sở giáo dục và tiếp nhận sinh viên quốc tế</span>
+    <div class="body-text">
+      <p>Ngoài các quy định về xuất nhập cảnh, việc sinh viên có đủ điều kiện để được cấp Visa D2-6 còn phụ thuộc vào việc các trường/đơn vị tiếp nhận tại Hàn Quốc có được phép tiếp nhận sinh viên quốc tế và chương trình trao đổi có được công nhận hay không. Các quy định nội bộ và tiêu chuẩn quản lý của các cơ quan chức năng Hàn Quốc đối với trường học thường được thể hiện qua yêu cầu trường cấp Giấy chứng nhận nhập học (표준입학허가서) hoặc giấy xác nhận trao đổi.</p>
+    </div>
+
+    <span class="numbered-heading">4. Nguồn tra cứu chính thống</span>
+    <div class="body-text">
+      <p>Để đảm bảo tính chính xác và minh bạch, <span class="highlight">FASTGO</span> luôn dựa trên các nguồn thông tin pháp lý chính thống sau đây khi tư vấn và hoàn thiện hồ sơ cho học viên:</p>
+      <ul>
+        <li><strong>Korea Law Translation Center (KLTC):</strong> Cung cấp bản dịch tiếng Anh của Đạo luật Kiểm soát Nhập cư và các văn bản liên quan.</li>
+        <li><strong>HiKorea (Cổng thông tin xuất nhập cảnh):</strong> Hướng dẫn chi tiết về điều kiện và hồ sơ theo từng tư cách lưu trú, bao gồm mục D-2 và các phân nhóm.</li>
+        <li><strong>Bộ Pháp luật Chính phủ (법령정보센터):</strong> Cung cấp bản tiếng Hàn đầy đủ và cập nhật nhất của các luật, nghị định, và thông tư.</li>
+      </ul>
+      <p><span class="highlight">FASTGO</span> cam kết tuân thủ mọi quy định pháp luật hiện hành, mang đến sự an tâm tuyệt đối cho quý phụ huynh và học viên khi lựa chọn chương trình Visa D2-6.</p>
+    </div>
+  </div>
+  <div style="position:absolute;bottom:30px;left:28px;right:34px;">
+    <img src="https://images.unsplash.com/photo-1539635278303-d4002c07eae3?w=600&q=70" style="width:100%;height:80px;object-fit:cover;border-radius:4px;">
+  </div>
+  <div class="page-number">5</div>
+  <div class="page-footer"></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE 7 — LỢI ÍCH (trang 6)
+══════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="logo-text">FAST<span>GO</span></div>
+    <div class="page-header-line"></div>
+    <div style="font-size:10px;color:var(--gray);font-family:'Montserrat',sans-serif;letter-spacing:0.5px;">DU HỌC HÀN QUỐC</div>
+  </div>
+  <div class="side-accent"></div>
+  <div style="padding:14px 28px 0;">
+    <div class="benefit-header-box">
+      <h2>LỢI ÍCH VƯỢT TRỘI KHI THAM GIA<br>CHƯƠNG TRÌNH VISA D2-6 HÀN QUỐC<br>CÙNG FASTGO</h2>
+    </div>
+
+    <div style="overflow:hidden;margin-bottom:14px;">
+      <div class="benefit-intro-col">
+        Chương trình Visa D2-6 không chỉ là một con đường du học thông thường, mà là một hành trình kiến tạo tương lai, mở ra cánh cửa đến với nền giáo dục tiên tiến và cơ hội nghề nghiệp rộng mở tại Hàn Quốc. <strong>FASTGO</strong> tự hào là đối tác đồng hành, mang đến những lợi ích vượt trội, giúp học viên hiện thực hóa ước mơ du học một cách dễ dàng và hiệu quả nhất.
+      </div>
+      <div class="body-text">
+        <span class="numbered-heading">1. Cơ hội tiếp cận du học rộng mở: Tỷ lệ đỗ Visa cao, thủ tục tinh gọn</span>
+        <p>Với bản chất là chương trình trao đổi sinh viên được bảo trợ bởi sự hợp tác chính thức giữa các trường Đại học, Cao đẳng uy tín tại Việt Nam và Hàn Quốc, Visa D2-6 mang đến tỷ lệ đỗ Visa vượt trội. Ngay cả những ứng viên có hồ sơ không quá nổi bật về tuổi tác (lên đến 30 tuổi) hay điểm học bạ, vẫn có cơ hội lớn để được chấp thuận. Đặc biệt, quy trình xét duyệt Visa D2-6 thường được tinh gọn, giúp học viên không cần trải qua phỏng vấn trực tiếp tại Đại sứ quán, giảm thiểu áp lực và rút ngắn thời gian chờ đợi.</p>
+      </div>
+    </div>
+
+    <img src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=580&q=70" style="width:100%;height:100px;object-fit:cover;border-radius:4px;margin-bottom:12px;">
+
+    <div class="body-text">
+      <span class="numbered-heading">2. Học đi đôi với hành: Tối ưu hóa thời gian, tích lũy kinh nghiệm thực tế</span>
+      <p>Chương trình D2-6 được thiết kế linh hoạt, cho phép sinh viên học thẳng chuyên ngành ngay từ đầu mà không cần qua giai đoạn học tiếng kéo dài. Với lịch học chỉ khoảng 2-3 buổi/tuần, học viên có quỹ thời gian dồi dào để chủ động tìm kiếm cơ hội thực tập hưởng lương hoặc làm thêm tại các doanh nghiệp đối tác. Điều này không chỉ giúp bạn tích lũy kinh nghiệm làm việc quý báu, áp dụng kiến thức vào thực tiễn mà còn tạo nguồn thu nhập ổn định, hỗ trợ đáng kể chi phí sinh hoạt và học tập.</p>
+    </div>
+  </div>
+  <div class="page-number">6</div>
+  <div class="page-footer"></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE 8 — LỢI ÍCH tiếp (trang 7)
+══════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="logo-text">FAST<span>GO</span></div>
+    <div class="page-header-line"></div>
+    <div style="font-size:10px;color:var(--gray);font-family:'Montserrat',sans-serif;letter-spacing:0.5px;">DU HỌC HÀN QUỐC</div>
+  </div>
+  <div class="side-accent"></div>
+  <div style="padding:14px 28px 0;">
+    <div class="body-text">
+      <span class="numbered-heading">3. Lộ trình sự nghiệp bền vững: Bằng cấp quốc tế, cơ hội định cư lâu dài</span>
+      <p>Chương trình học chuyên ngành tại Hàn Quốc theo diện D2-6 thường có thời gian ngắn gọn, chỉ từ 2 đến 3 năm tùy ngành, giúp học viên nhanh chóng hoàn thành chương trình và nhận bằng cấp quốc tế được danh giá. Sau khi tốt nghiệp, bạn sẽ có cơ hội ở lại Hàn Quốc làm việc với Visa D-10 (Tìm kiếm việc làm) trong 2 năm, và sau đó có thể được xét duyệt chuyển đổi sang Visa E-7 (Lao động chuyên môn) để làm việc lâu dài, mở ra cánh cửa định cư và phát triển sự nghiệp bền vững.</p>
+
+      <span class="numbered-heading">4. Đầu tư hiệu quả, tiết kiệm chi phí: Học phí hợp lý, nhiều cơ hội học bổng</span>
+      <p>Các trường Đại học, Cao đẳng đối tác của <span class="highlight">FASTGO</span> tại Hàn Quốc nổi tiếng với mức học phí hợp lý, cạnh tranh so với nhiều quốc gia phát triển khác. Đặc biệt, sinh viên theo diện trao đổi D2-6 thường xuyên có cơ hội nhận được các suất học bổng giá trị từ trường hoặc các tổ chức giáo dục, giúp giảm bớt gánh nặng tài chính cho gia đình.</p>
+
+      <span class="numbered-heading">5. Phát triển toàn diện: Mở rộng mạng lưới, nâng cao năng lực ngôn ngữ và văn hóa</span>
+      <p>Du học Hàn Quốc theo chương trình D2-6 là cơ hội tuyệt vời để bạn hòa mình vào môi trường quốc tế năng động, mở rộng các mối quan hệ với bạn bè đa quốc gia và các chuyên gia trong ngành. Việc sinh sống và học tập tại Hàn Quốc sẽ giúp bạn nhanh chóng nâng cao trình độ tiếng Hàn, hiểu sâu sắc hơn về văn hóa và con người xứ sở Kim Chi. Những trải nghiệm này không chỉ làm phong phú thêm vốn sống mà còn là tiền đề vững chắc cho sự phát triển cá nhân và sự nghiệp trong tương lai.</p>
+    </div>
+  </div>
+  <div class="page-number">7</div>
+  <div class="page-footer"></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE 9 — ĐỐI TƯỢNG & ĐIỀU KIỆN (trang 8)
+══════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="logo-text">FAST<span>GO</span></div>
+    <div class="page-header-line"></div>
+    <div style="font-size:10px;color:var(--gray);font-family:'Montserrat',sans-serif;letter-spacing:0.5px;">DU HỌC HÀN QUỐC</div>
+  </div>
+  <div class="side-accent"></div>
+  <div style="padding:14px 28px 0;">
+    <div class="two-col" style="margin-bottom:14px;">
+      <div class="col-left">
+        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=280&q=70" style="width:100%;height:220px;object-fit:cover;border-radius:4px;">
+      </div>
+      <div class="col-right" style="padding-left:8px;">
+        <div style="font-family:'Montserrat',sans-serif;font-weight:900;font-size:26px;color:var(--red);text-transform:uppercase;line-height:1.1;margin-bottom:8px;">ĐỐI TƯỢNG &amp; ĐIỀU KIỆN ÁP DỤNG CHƯƠNG TRÌNH VISA D2-6</div>
+        <div style="font-family:'Libre Baskerville',serif;font-style:italic;font-size:11.5px;line-height:1.65;color:#444;">
+          Để đảm bảo chất lượng đào tạo và tuân thủ các quy định khắt khe từ Bộ Tư pháp Hàn Quốc, chương trình Visa D2-6 (Du học trao đổi) của <strong>FASTGO</strong> thiết lập các tiêu chuẩn tuyển chọn rõ ràng. Đây là những điều kiện nền tảng giúp học viên xây dựng một hồ sơ năng lực mạnh mẽ, đảm bảo tỷ lệ chấp thuận Visa cao nhất.
+        </div>
+      </div>
+    </div>
+
+    <span class="numbered-heading">1. Đối tượng tuyển sinh</span>
+    <div class="body-text">
+      <p>Chương trình dành riêng cho các bạn trẻ năng động, khao khát trải nghiệm nền giáo dục quốc tế và xây dựng sự nghiệp tại Hàn Quốc, cụ thể:</p>
+      <ul>
+        <li>Sinh viên đang theo học tại các trường Đại học, Cao đẳng tại Việt Nam (đã hoàn thành ít nhất 01 học kỳ hoặc 06 tháng học tập).</li>
+        <li>Độ tuổi lý tưởng từ 18 đến 30 tuổi. Đây là một lợi thế lớn của diện D2-6, mở rộng cơ hội cho cả những ứng viên đã tốt nghiệp hoặc đang đi làm muốn nâng cao trình độ chuyên môn.</li>
+      </ul>
+    </div>
+
+    <span class="numbered-heading">2. Tiêu chuẩn học thuật &amp; ngôn ngữ</span>
+    <div class="body-text">
+      <p>Năng lực học tập và khả năng ngôn ngữ là "chìa khóa" giúp học viên nhanh chóng hòa nhập với môi trường học thuật tại Hàn Quốc:</p>
+      <ul>
+        <li><strong>Kết quả học tập (GPA):</strong> Điểm trung bình tích lũy tại trường Đại học/Cao đẳng Việt Nam đạt từ 6.0 - 6.5 trở lên (tùy theo yêu cầu cụ thể của trường đối tác tại Hàn Quốc).</li>
+        <li><strong>Năng lực ngôn ngữ:</strong> Sở hữu chứng chỉ tiếng Hàn Topik 2 hoặc chứng chỉ tương đương (như KLAT, Sejong 2B). Đối với một số chương trình đặc thù, học viên có thể được hỗ trợ đào tạo tiếng Hàn cấp tốc để đạt chuẩn đầu vào trước khi xuất cảnh.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="page-number">8</div>
+  <div class="page-footer"></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE 10 — ĐIỀU KIỆN tiếp (trang 9)
+══════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="logo-text">FAST<span>GO</span></div>
+    <div class="page-header-line"></div>
+    <div style="font-size:10px;color:var(--gray);font-family:'Montserrat',sans-serif;letter-spacing:0.5px;">DU HỌC HÀN QUỐC</div>
+  </div>
+  <div class="side-accent"></div>
+  <div style="padding:14px 28px 0;">
+    <div class="body-text">
+      <span class="numbered-heading">3. Tiêu chuẩn sức khỏe &amp; pháp lý</span>
+      <p>Sự an toàn và tính minh bạch về pháp lý là ưu tiên hàng đầu của chương trình:</p>
+      <ul>
+        <li><strong>Sức khỏe:</strong> Học viên cần có sức khỏe tốt, không mắc các bệnh truyền nhiễm nguy hiểm (đặc biệt là lao phổi). Giấy xác nhận sức khỏe phải được cấp bởi các cơ sở y tế do Đại sứ quán/Lãnh sự quán Hàn Quốc chỉ định và có giá trị trong vòng 06 tháng.</li>
+        <li><strong>Pháp lý cá nhân:</strong> Học viên phải có lý lịch trong sạch, không có tiền án tiền sự và không thuộc danh sách cấm xuất cảnh tại Việt Nam hoặc cấm nhập cảnh tại Hàn Quốc.</li>
+      </ul>
+
+      <span class="numbered-heading">4. Năng lực tài chính</span>
+      <p>Học viên và gia đình cần chứng minh khả năng chi trả cho quá trình học tập và sinh hoạt tại Hàn Quốc. Thông thường, yêu cầu bao gồm số tiết kiệm tối thiểu từ 10,000 USD (được gửi trước thời điểm xin Visa theo quy định của từng giai đoạn). <span class="highlight">FASTGO</span> sẽ tư vấn chi tiết các phương thức chứng minh tài chính tối ưu và hợp pháp nhất cho từng trường hợp hồ sơ cụ thể.</p>
+      <p><span class="highlight">FASTGO</span> cam kết đồng hành cùng học viên trong việc đánh giá năng lực hồ sơ và đưa ra lộ trình bồi dưỡng phù hợp để đáp ứng đầy đủ các điều kiện trên, mở cánh cửa thành công tại xứ sở Kim Chi.</p>
+    </div>
+    <div style="height:210px;overflow:hidden;border-radius:4px;margin-top:14px;">
+      <img src="https://images.unsplash.com/photo-1534430480872-3498386e7856?w=580&q=70" style="width:100%;height:210px;object-fit:cover;">
+    </div>
+  </div>
+  <div class="page-number">9</div>
+  <div class="page-footer"></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE 11 — HỒ SƠ ỨNG TUYỂN (trang 10)
+══════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="logo-text">FAST<span>GO</span></div>
+    <div class="page-header-line"></div>
+    <div style="font-size:10px;color:var(--gray);font-family:'Montserrat',sans-serif;letter-spacing:0.5px;">DU HỌC HÀN QUỐC</div>
+  </div>
+  <div class="side-accent"></div>
+  <div style="padding:14px 28px 0;">
+    <div class="two-col" style="margin-bottom:12px;">
+      <div class="col-left">
+        <div class="big-chapter-title" style="font-size:30px;">HỒ SƠ &amp; QUY TRÌNH ỨNG TUYỂN VISA D2-6 HÀN QUỐC</div>
+        <div class="body-text">
+          <span class="numbered-heading">1. Danh mục hồ sơ chi tiết</span>
+          <p>Hồ sơ xin Visa D2-6 được chia thành 4 nhóm chính, đảm bảo tính minh bạch về nhân thân, học thuật, sự bảo trợ từ nhà trường và năng lực tài chính.</p>
+          <p style="font-style:italic;font-weight:700;color:var(--navy);">Nhóm 1: Hồ sơ Nhân thân &amp; Pháp lý</p>
+          <ul>
+            <li>Hộ chiếu: Bản gốc, còn hạn sử dụng trên 06 tháng.</li>
+            <li>Đơn xin cấp Visa: Theo mẫu mới nhất của Lãnh sự quán/Đại sứ quán Hàn Quốc.</li>
+            <li>Ảnh thẻ: 01 ảnh kích thước 3.5cm x 4.5cm, phông nền trắng, chụp trong vòng 06 tháng gần nhất.</li>
+            <li>Căn cước công dân: Bản sao công chứng kèm bản gốc để đối chiếu.</li>
+            <li>Giấy khám sức khỏe (Lao phổi): Được cấp bởi các bệnh viện do Lãnh sự quán chỉ định, có giá trị trong vòng 06 tháng.</li>
+          </ul>
+          <p style="font-style:italic;font-weight:700;color:var(--navy);margin-top:8px;">Nhóm 2: Hồ sơ Học thuật tại Việt Nam</p>
+          <ul>
+            <li>Thẻ sinh viên: Bản sao công chứng 02 mặt hoặc Giấy xác nhận đang là sinh viên (bản gốc).</li>
+            <li>Bảng điểm học tập: Bản gốc kèm bản dịch tiếng Anh hoặc tiếng Hàn, đã được Hợp pháp hóa lãnh sự tại Sở Ngoại vụ.</li>
+            <li>Văn bản quyết định cử đi du học: Do trường Đại học/Cao đẳng tại Việt Nam cấp (bản gốc kèm bản dịch công chứng).</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-right">
+        <div class="quote-box">
+          <p>Để hiện thực hóa ước mơ du học Hàn Quốc diện trao đổi sinh viên (D2-6), việc chuẩn bị một bộ hồ sơ đầy đủ, chính xác và chuyên nghiệp là yếu tố tiên quyết. <strong>FASTGO</strong> cam kết đồng hành cùng bạn trong từng bước chuẩn bị, giúp tối ưu hóa hồ sơ và đảm bảo tỷ lệ đỗ Visa cao nhất.</p>
+        </div>
+        <img src="https://images.unsplash.com/photo-1455390582262-044cdead277a?w=260&q=70" style="width:100%;height:200px;object-fit:cover;border-radius:4px;margin-top:12px;">
+      </div>
+    </div>
+  </div>
+  <div class="page-number">10</div>
+  <div class="page-footer"></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE 12 — HỒ SƠ tiếp (trang 11)
+══════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="logo-text">FAST<span>GO</span></div>
+    <div class="page-header-line"></div>
+    <div style="font-size:10px;color:var(--gray);font-family:'Montserrat',sans-serif;letter-spacing:0.5px;">DU HỌC HÀN QUỐC</div>
+  </div>
+  <div class="side-accent"></div>
+  <div style="padding:14px 28px 0;">
+    <div class="body-text">
+      <p style="font-style:italic;font-weight:700;color:var(--navy);">Nhóm 3: Hồ sơ Bảo trợ từ Hàn Quốc &amp; Sự liên kết</p>
+      <ul>
+        <li>Thư mời nhập học (Certificate of Admission): Bản gốc do trường Đại học/Cao đẳng tại Hàn Quốc cấp.</li>
+        <li>Giấy đăng ký kinh doanh của trường Hàn Quốc: Bản sao.</li>
+        <li>Biên bản ghi nhớ (MOU): Bản sao thỏa thuận hợp tác trao đổi sinh viên giữa hai trường Việt Nam và Hàn Quốc.</li>
+      </ul>
+
+      <p style="font-style:italic;font-weight:700;color:var(--navy);margin-top:10px;">Nhóm 4: Hồ sơ Năng lực Tài chính</p>
+      <p>Đây là phần quan trọng để chứng minh khả năng chi trả trong suốt thời gian lưu trú:</p>
+      <ul>
+        <li><strong>Giấy xác nhận số dư &amp; Số tiết kiệm:</strong> Bản gốc từ ngân hàng, số dư tối thiểu thường yêu cầu từ 10,000 USD trở lên (tương đương khoảng 250 - 280 triệu VNĐ). Số tiết kiệm nên được gửi trước thời điểm nộp hồ sơ ít nhất 03 tháng để tăng tính thuyết phục.</li>
+        <li><strong>Chứng minh thu nhập:</strong> Các giấy tờ liên quan đến thu nhập của người bảo lãnh (bố mẹ) nếu cần thiết.</li>
+      </ul>
+
+      <span class="numbered-heading">2. Lưu ý quan trọng</span>
+      <ul>
+        <li>Mọi giấy tờ tiếng Việt đều phải được dịch thuật sang tiếng Anh hoặc tiếng Hàn và công chứng tư pháp.</li>
+        <li>Các loại giấy tờ học thuật (Bảng điểm, Bằng cấp) bắt buộc phải có tem Hợp pháp hóa lãnh sự để được phía Hàn Quốc công nhận.</li>
+        <li><span class="highlight">FASTGO</span> sẽ hỗ trợ kiểm tra tính logic và đầy đủ của hồ sơ trước khi nộp, giúp hạn chế tối đa các sai sót không đáng có.</li>
+      </ul>
+    </div>
+    <div style="height:155px;overflow:hidden;border-radius:4px;margin-top:14px;">
+      <img src="https://images.unsplash.com/photo-1521791055366-0d553872952f?w=580&q=70" style="width:100%;height:155px;object-fit:cover;">
+    </div>
+  </div>
+  <div class="page-number">11</div>
+  <div class="page-footer"></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE 13 — LỘ TRÌNH (trang 12)
+══════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="logo-text">FAST<span>GO</span></div>
+    <div class="page-header-line"></div>
+    <div style="font-size:10px;color:var(--gray);font-family:'Montserrat',sans-serif;letter-spacing:0.5px;">DU HỌC HÀN QUỐC</div>
+  </div>
+  <div class="side-accent"></div>
+  <div style="padding:14px 28px 0;">
+    <div class="big-chapter-title" style="text-align:center;font-size:28px;">
+      LỘ TRÌNH CHIẾN LƯỢC DU HỌC HÀN QUỐC CÙNG VISA D2-6
+    </div>
+    <p style="font-family:'Libre Baskerville',serif;font-style:italic;font-size:11.5px;text-align:center;color:#555;margin-bottom:18px;line-height:1.65;">
+      <strong>FASTGO</strong> kiến tạo một lộ trình rõ ràng, tối ưu, đồng hành cùng học viên từ những bước đầu tiên tại Việt Nam đến khi vững vàng phát triển sự nghiệp tại Hàn Quốc. Lộ trình được chia thành 4 giai đoạn then chốt, đảm bảo sự chuẩn bị kỹ lưỡng và thành công bền vững.
+    </p>
+
+    <div class="roadmap-card">
+      <div class="roadmap-card-header">
+        <div class="roadmap-number">01.</div>
+        <div class="roadmap-card-title" style="background:#edf3fb;">
+          <h3>Xây dựng nền tảng tại Việt Nam</h3>
+          <p>6 tháng - 1 năm</p>
+        </div>
+      </div>
+      <div class="roadmap-card-body body-text">
+        <ul>
+          <li><strong>Hoạt động:</strong> Học viên tham gia chương trình đào tạo tại các trường Đại học/Cao đẳng đối tác tại Việt Nam. Trong giai đoạn này, học viên sẽ được trang bị kiến thức chuyên ngành và bồi dưỡng năng lực tiếng Hàn (đạt trình độ Topik 2).</li>
+          <li><strong>Vai trò FASTGO:</strong> Kết nối học viên với các trường liên kết, hỗ trợ đào tạo tiếng Hàn chuyên sâu và chuẩn bị hồ sơ học thuật.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="roadmap-card">
+      <div class="roadmap-card-header">
+        <div class="roadmap-number" style="background:var(--red);">02.</div>
+        <div class="roadmap-card-title" style="background:#fef0f0;">
+          <h3>Bứt phá tại Hàn Quốc — Học thẳng chuyên ngành &amp; Thực tập hưởng lương</h3>
+          <p>2 - 3 năm</p>
+        </div>
+      </div>
+      <div class="roadmap-card-body body-text">
+        <ul>
+          <li><strong>Hoạt động:</strong> Học viên chuyển tiếp sang Hàn Quốc, học thẳng chuyên ngành tại các trường Đại học/Cao đẳng uy tín. Với lịch học linh hoạt, học viên có cơ hội thực tập hưởng lương tại các doanh nghiệp đối tác, tích lũy kinh nghiệm và thu nhập.</li>
+          <li><strong>Vai trò FASTGO:</strong> Hỗ trợ thủ tục chuyển tiếp, kết nối cơ hội thực tập và việc làm thêm, đảm bảo môi trường học tập và sinh hoạt ổn định.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="page-number">12</div>
+  <div class="page-footer"></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE 14 — LỘ TRÌNH tiếp (trang 13)
+══════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="logo-text">FAST<span>GO</span></div>
+    <div class="page-header-line"></div>
+    <div style="font-size:10px;color:var(--gray);font-family:'Montserrat',sans-serif;letter-spacing:0.5px;">DU HỌC HÀN QUỐC</div>
+  </div>
+  <div class="side-accent"></div>
+  <div style="padding:14px 28px 0;">
+    <div class="roadmap-card">
+      <div class="roadmap-card-header">
+        <div class="roadmap-number">03.</div>
+        <div class="roadmap-card-title" style="background:#edf3fb;">
+          <h3>Tốt nghiệp &amp; Mở rộng cơ hội</h3>
+          <p>Sau 2 - 3 năm</p>
+        </div>
+      </div>
+      <div class="roadmap-card-body body-text">
+        <ul>
+          <li><strong>Hoạt động:</strong> Hoàn thành chương trình học, nhận bằng cấp quốc tế từ trường Hàn Quốc. Học viên có thể lựa chọn tiếp tục ở lại Hàn Quốc để tìm kiếm việc làm hoặc quay về Việt Nam phát triển sự nghiệp.</li>
+          <li><strong>Vai trò FASTGO:</strong> Tư vấn định hướng nghề nghiệp, hỗ trợ thủ tục chuyển đổi Visa D-10 (tìm việc) hoặc E-7 (lao động chuyên môn) để học viên có thể làm việc lâu dài tại Hàn Quốc.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="roadmap-card">
+      <div class="roadmap-card-header">
+        <div class="roadmap-number" style="background:var(--red);">04.</div>
+        <div class="roadmap-card-title" style="background:#fef0f0;">
+          <h3>Vững bước sự nghiệp &amp; Định cư</h3>
+          <p>Dài hạn</p>
+        </div>
+      </div>
+      <div class="roadmap-card-body body-text">
+        <ul>
+          <li><strong>Hoạt động:</strong> Phát triển sự nghiệp tại Hàn Quốc với Visa E-7 hoặc các diện Visa khác phù hợp. Học viên có thể tiếp tục nâng cao trình độ, tích lũy kinh nghiệm và hướng tới mục tiêu định cư lâu dài.</li>
+          <li><strong>Vai trò FASTGO:</strong> Tiếp tục hỗ trợ tư vấn, cập nhật thông tin về chính sách lao động và định cư, là cầu nối vững chắc cho tương lai của học viên.</li>
+        </ul>
+      </div>
+    </div>
+    <div style="height:155px;overflow:hidden;border-radius:4px;margin-top:14px;">
+      <img src="https://images.unsplash.com/photo-1546514714-df0ccc50d7bf?w=580&q=70" style="width:100%;height:155px;object-fit:cover;">
+    </div>
+  </div>
+  <div class="page-number">13</div>
+  <div class="page-footer"></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE 15 — CƠ HỘI (trang 14)
+══════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="logo-text">FAST<span>GO</span></div>
+    <div class="page-header-line"></div>
+    <div style="font-size:10px;color:var(--gray);font-family:'Montserrat',sans-serif;letter-spacing:0.5px;">DU HỌC HÀN QUỐC</div>
+  </div>
+  <div class="side-accent"></div>
+  <div style="padding:14px 28px 0;">
+    <div class="two-col" style="margin-bottom:12px;">
+      <div class="col-left">
+        <div class="big-chapter-title" style="font-size:27px;">HƠN CẢ MỘT CHƯƠNG TRÌNH DU HỌC – ĐÓ LÀ LỘ TRÌNH SỰ NGHIỆP QUỐC TẾ</div>
+      </div>
+      <div class="col-right">
+        <img src="https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=280&q=70" style="width:100%;height:120px;object-fit:cover;border-radius:4px;">
+        <img src="https://images.unsplash.com/photo-1578637387939-43c525550085?w=280&q=70" style="width:100%;height:120px;object-fit:cover;border-radius:4px;margin-top:6px;">
+      </div>
+    </div>
+
+    <div style="font-family:'Libre Baskerville',serif;font-style:italic;font-size:11.5px;color:#444;margin-bottom:12px;line-height:1.65;">
+      Tại <strong>FASTGO</strong>, chúng tôi tin rằng giáo dục không chỉ là kiến thức, mà là hành trình kiến tạo tương lai. Chương trình Visa D2-6 (Trao đổi sinh viên) không chỉ mở ra cánh cửa du học Hàn Quốc, mà còn là bệ phóng vững chắc cho một sự nghiệp quốc tế rạng rỡ.
+    </div>
+
+    <div class="body-text">
+      <span class="numbered-heading">1. Visa D2-6: Lợi thế đột phá cho thế hệ trẻ</span>
+      <p>Chương trình Visa D2-6 của Fastgo là mô hình du học độc đáo và tối ưu, kết hợp chặt chẽ giữa đào tạo học thuật chất lượng cao tại các trường Đại học/Cao đẳng hàng đầu Hàn Quốc và thực tập hưởng lương tại các doanh nghiệp đối tác uy tín. Đây là giải pháp hoàn hảo cho những sinh viên khao khát:</p>
+      <ul>
+        <li><strong>Bằng cấp quốc tế:</strong> Nhận bằng chính quy từ các cơ sở giáo dục danh tiếng Hàn Quốc.</li>
+        <li><strong>Kinh nghiệm thực chiến:</strong> Trực tiếp làm việc trong môi trường chuyên nghiệp, tích lũy kỹ năng và xây dựng mạng lưới quan hệ ngay từ khi còn đi học.</li>
+        <li><strong>Tự chủ tài chính:</strong> Thu nhập từ thực tập và làm thêm giúp trang trải học phí, sinh hoạt phí, giảm gánh nặng cho gia đình.</li>
+      </ul>
+
+      <span class="numbered-heading">2. Lộ trình vàng: Từ D2-6 đến định cư E7</span>
+      <p>Fastgo tự hào mang đến một lộ trình chuyển đổi visa minh bạch và khả thi, giúp sinh viên an tâm xây dựng tương lai lâu dài tại Hàn Quốc:</p>
+    </div>
+  </div>
+  <div class="page-number">14</div>
+  <div class="page-footer"></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE 16 — CƠ HỘI tiếp (trang 15)
+══════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="logo-text">FAST<span>GO</span></div>
+    <div class="page-header-line"></div>
+    <div style="font-size:10px;color:var(--gray);font-family:'Montserrat',sans-serif;letter-spacing:0.5px;">DU HỌC HÀN QUỐC</div>
+  </div>
+  <div class="side-accent"></div>
+  <div style="padding:14px 28px 0;">
+    <table class="data-table" style="margin-bottom:14px;">
+      <thead>
+        <tr>
+          <th>Giai đoạn</th>
+          <th>Loại Visa</th>
+          <th>Mục đích &amp; Lợi ích nổi bật</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="cell-highlight">KHỞI ĐẦU</td>
+          <td>D2-6 (Trao đổi sinh viên)</td>
+          <td>Học đi đôi với hành: Học tập chính quy tại trường, đồng thời thực tập hưởng lương tại doanh nghiệp đối tác. Tích lũy kinh nghiệm, làm quen văn hóa làm việc, và tự chủ tài chính.</td>
+        </tr>
+        <tr>
+          <td class="cell-highlight">CHUYỂN TIẾP</td>
+          <td>D10 (Tìm việc)</td>
+          <td>Cơ hội vàng sau tốt nghiệp: Dành cho sinh viên đã hoàn thành chương trình D2-6 và muốn ở lại Hàn Quốc tìm kiếm việc làm chính thức. Thời hạn lên đến 2 năm.</td>
+        </tr>
+        <tr>
+          <td class="cell-highlight">ĐỊNH HƯỚNG</td>
+          <td>E7 (Kỹ sư/Chuyên gia)</td>
+          <td>Đích đến của sự nghiệp: Visa lao động chuyên môn cao, mở ra cánh cửa định cư lâu dài tại Hàn Quốc. Sinh viên có thể bảo lãnh người thân, hưởng các phúc lợi xã hội, và tiến tới cư trú vĩnh viễn (F5) hoặc nhập tịch.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="body-text">
+      <span class="numbered-heading">3. FASTGO: Người đồng hành tận tâm – Kiến tạo giá trị thật</span>
+
+      <p style="font-style:italic;font-weight:600;color:var(--navy);">3.1. Mạng lưới đối tác độc quyền - cơ hội làm việc đảm bảo</p>
+      <p>Fastgo tự hào sở hữu mạng lưới rộng khắp với hàng trăm tập đoàn, doanh nghiệp hàng đầu tại Hàn Quốc. Sinh viên D2-6 của chúng tôi được ưu tiên giới thiệu thực tập và làm việc tại các đối tác này, đảm bảo:</p>
+      <ul>
+        <li>Việc làm ngay sau tốt nghiệp: Tăng cơ hội chuyển đổi sang visa E7 nhờ mối quan hệ bền chặt với doanh nghiệp.</li>
+        <li>Thu nhập ổn định: Đảm bảo cuộc sống và học tập tại Hàn Quốc.</li>
+        <li>Phát triển sự nghiệp: Môi trường làm việc chuyên nghiệp giúp sinh viên phát huy tối đa năng lực.</li>
+      </ul>
+
+      <p style="font-style:italic;font-weight:600;color:var(--navy);">3.2. Hỗ trợ pháp lý &amp; tư vấn chuyên sâu</p>
+      <p>Đội ngũ chuyên gia của Fastgo, cùng với các đối tác luật sư và tư vấn tại Hàn Quốc, sẽ hỗ trợ toàn diện sinh viên trong mọi thủ tục, từ tư vấn lộ trình học tập đến hỗ trợ hồ sơ và đàm phán việc làm, đảm bảo quyền lợi tối đa cho sinh viên.</p>
+    </div>
+  </div>
+  <div class="page-number">15</div>
+  <div class="page-footer"></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE 17 — CƠ HỘI tiếp (trang 16)
+══════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="logo-text">FAST<span>GO</span></div>
+    <div class="page-header-line"></div>
+    <div style="font-size:10px;color:var(--gray);font-family:'Montserrat',sans-serif;letter-spacing:0.5px;">DU HỌC HÀN QUỐC</div>
+  </div>
+  <div class="side-accent"></div>
+  <div style="padding:14px 28px 0;">
+    <div class="body-text">
+      <p style="font-style:italic;font-weight:600;color:var(--navy);">3.3. Hệ sinh thái hỗ trợ 360 độ</p>
+      <p>Fastgo xây dựng một hệ sinh thái hỗ trợ toàn diện, từ khi sinh viên đặt chân đến Hàn Quốc cho đến khi ổn định sự nghiệp:</p>
+      <ul>
+        <li>Hỗ trợ sinh hoạt: Giải quyết các vấn đề về nhà ở, đi lại, y tế, hòa nhập văn hóa.</li>
+        <li>Tư vấn tâm lý: Luôn lắng nghe và hỗ trợ sinh viên vượt qua mọi khó khăn.</li>
+        <li>Cập nhật thông tin: Cung cấp thông tin mới nhất về chính sách visa, cơ hội việc làm tại Hàn Quốc.</li>
+      </ul>
+
+      <span class="numbered-heading">4. Vì sao chọn Fastgo?</span>
+      <ul>
+        <li><strong>UY TÍN VỮNG CHẮC:</strong> Đối tác chiến lược của các trường và doanh nghiệp hàng đầu Việt Nam – Hàn Quốc.</li>
+        <li><strong>LỘ TRÌNH RÕ RÀNG:</strong> Kế hoạch học tập, làm việc và định cư được cá nhân hóa, tối ưu.</li>
+        <li><strong>HỖ TRỢ TẬN TÂM:</strong> Đội ngũ chuyên gia luôn đồng hành, giải đáp mọi thắc mắc 24/7.</li>
+        <li><strong>CƠ HỘI ĐỘT PHÁ:</strong> Mở ra cánh cửa sự nghiệp và cuộc sống mơ ước tại Hàn Quốc.</li>
+      </ul>
+    </div>
+
+    <div style="text-align:center;margin-top:20px;padding:16px;background:linear-gradient(120deg,var(--navy),var(--blue));border-radius:6px;">
+      <p style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:14px;color:white;text-transform:uppercase;letter-spacing:0.5px;">
+        Fastgo – Nơi khởi nguồn cho hành trình vươn tầm quốc tế của bạn!
+      </p>
+    </div>
+
+    <div style="height:180px;overflow:hidden;border-radius:4px;margin-top:14px;">
+      <img src="https://images.unsplash.com/photo-1517154421773-0529f29ea451?w=580&q=70" style="width:100%;height:180px;object-fit:cover;">
+    </div>
+  </div>
+  <div class="page-number">16</div>
+  <div class="page-footer"></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE 18 — ĐỐI TÁC & HỢP TÁC QUỐC TẾ (trang 17)
+══════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="logo-text">FAST<span>GO</span></div>
+    <div class="page-header-line"></div>
+    <div style="font-size:10px;color:var(--gray);font-family:'Montserrat',sans-serif;letter-spacing:0.5px;">DU HỌC HÀN QUỐC</div>
+  </div>
+  <div class="side-accent"></div>
+  <div style="padding:14px 28px 0;">
+    <div class="hero-banner">
+      <h1>ĐỐI TÁC &amp; HỢP TÁC QUỐC TẾ</h1>
+    </div>
+
+    <table class="partner-table">
+      <thead>
+        <tr>
+          <th style="width:50px;">STT</th>
+          <th>Trường</th>
+          <th>Khu vực</th>
+          <th>Loại hình</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>ĐH Osan</td><td>Gyeonggi (gần Seoul)</td><td>Cao đẳng</td></tr>
+        <tr><td>2</td><td>ĐH Induk</td><td>Seoul/Dobong-gu</td><td>Cao đẳng</td></tr>
+        <tr><td>3</td><td>ĐH Yeonsung</td><td>Ansan, Gyeonggi</td><td>Cao đẳng</td></tr>
+        <tr><td>4</td><td>ĐH Sangmyung</td><td>Seoul &amp; Cheonan</td><td>Đại học 4 năm</td></tr>
+        <tr><td>5</td><td>ĐH Nữ sinh Kyungin</td><td>Incheon</td><td>Cao đẳng (Nữ)</td></tr>
+        <tr><td>6</td><td>ĐH Y Tế Dongnam</td><td>Suwon, Gyeonggi</td><td>Cao đẳng Y tế</td></tr>
+        <tr><td>7</td><td>ĐH Dongeui</td><td>Busan</td><td>Đại học 4 năm</td></tr>
+        <tr><td>8</td><td>CĐ Suncheon Jeil</td><td>Suncheon, Jeonnam</td><td>Cao đẳng</td></tr>
+        <tr><td>9</td><td>ĐH Nữ sinh Busan</td><td>Busan</td><td>Cao đẳng (Nữ)</td></tr>
+        <tr><td>10</td><td>ĐH Busan Catholic</td><td>Busan/Geumjeong-gu</td><td>Đại học tư thục</td></tr>
+        <tr><td>11</td><td>ĐH Gimhae</td><td>Gimhae, Gyeongnam</td><td>Cao đẳng</td></tr>
+        <tr><td>12</td><td>ĐH Gwangju</td><td>Gwangju</td><td>Đại học 4 năm</td></tr>
+        <tr><td>13</td><td>ĐH Nambu</td><td>Gwangju</td><td>Đại học 4 năm</td></tr>
+        <tr><td>14</td><td>ĐH Daewon</td><td>Jecheon, Chungbuk</td><td>Cao đẳng</td></tr>
+        <tr><td>15</td><td>ĐH Sengmyung</td><td>Jecheon, Chungbuk</td><td>Đại học 4 năm</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="page-number">17</div>
+  <div class="page-footer"></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE 19 — ĐỊNH HƯỚNG ĐÀO TẠO NGÀNH (trang 18)
+══════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="logo-text">FAST<span>GO</span></div>
+    <div class="page-header-line"></div>
+    <div style="font-size:10px;color:var(--gray);font-family:'Montserrat',sans-serif;letter-spacing:0.5px;">DU HỌC HÀN QUỐC</div>
+  </div>
+  <div class="side-accent"></div>
+  <div style="padding:0 0 60px;">
+    <div class="hero-banner" style="margin:0 0 16px;">
+      <h1>ĐỊNH HƯỚNG TẬP TRUNG ĐÀO TẠO NGÀNH</h1>
+    </div>
+    <div class="majors-grid">
+      <div class="major-card">
+        <img src="https://images.unsplash.com/photo-1486325212027-8081e485255e?w=300&q=70" alt="Kinh doanh BĐS">
+        <div class="major-card-label">Quản trị kinh doanh</div>
+      </div>
+      <div class="major-card">
+        <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=300&q=70" alt="Quản trị khách sạn">
+        <div class="major-card-label">Quản trị khách sạn</div>
+      </div>
+      <div class="major-card">
+        <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=300&q=70" alt="CNTT">
+        <div class="major-card-label">Công nghệ thông tin</div>
+      </div>
+      <div class="major-card">
+        <img src="https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=300&q=70" alt="Ngôn ngữ Anh">
+        <div class="major-card-label">Ngôn ngữ Anh</div>
+      </div>
+      <div class="major-card">
+        <img src="https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=300&q=70" alt="Ngôn ngữ Hàn">
+        <div class="major-card-label">Ngôn ngữ Hàn Quốc</div>
+      </div>
+      <div class="major-card">
+        <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=300&q=70" alt="Chế biến món ăn">
+        <div class="major-card-label">Kỹ thuật chế biến món ăn</div>
+      </div>
+    </div>
+  </div>
+  <div class="page-number">18</div>
+  <div class="page-footer"></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE 20 — NGÀNH tiếp (trang 19)
+══════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="logo-text">FAST<span>GO</span></div>
+    <div class="page-header-line"></div>
+    <div style="font-size:10px;color:var(--gray);font-family:'Montserrat',sans-serif;letter-spacing:0.5px;">DU HỌC HÀN QUỐC</div>
+  </div>
+  <div class="side-accent"></div>
+  <div style="padding:0 0 60px;">
+    <div class="majors-grid" style="padding-top:20px;">
+      <div class="major-card">
+        <img src="https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=300&q=70" alt="Ngôn ngữ Nhật">
+        <div class="major-card-label">Ngôn ngữ Nhật</div>
+      </div>
+      <div class="major-card">
+        <img src="https://images.unsplash.com/photo-1547981609-4b6bfe67ca0b?w=300&q=70" alt="Ngôn ngữ Trung Quốc">
+        <div class="major-card-label">Ngôn ngữ Trung Quốc</div>
+      </div>
+      <div class="major-card">
+        <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?w=300&q=70" alt="Kỹ thuật thực phẩm">
+        <div class="major-card-label">Công nghệ thực phẩm</div>
+      </div>
+      <div class="major-card">
+        <img src="https://images.unsplash.com/photo-1559034750-cdab70a66b8e?w=300&q=70" alt="Thú y">
+        <div class="major-card-label">Thú y</div>
+      </div>
+      <div class="major-card">
+        <img src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=300&q=70" alt="Khoa học thể thao">
+        <div class="major-card-label">Khoa học thể thao</div>
+      </div>
+      <div class="major-card">
+        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=300&q=70" alt="Thiết kế">
+        <div class="major-card-label">Thiết kế đồ họa</div>
+      </div>
+    </div>
+  </div>
+  <div class="page-number">19</div>
+  <div class="page-footer"></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE 21 — BACK COVER
+══════════════════════════════════════════ -->
+<div class="page">
+  <div class="back-cover">
+    <div class="back-cover-content">
+      <div style="font-family:'Montserrat',sans-serif;font-weight:900;font-size:52px;color:white;letter-spacing:4px;text-transform:uppercase;margin-bottom:4px;">
+        FAST<span style="color:var(--red);">GO</span>
+      </div>
+      <div style="font-family:'Libre Baskerville',serif;font-style:italic;font-size:13px;color:rgba(255,255,255,0.65);margin-bottom:36px;">
+        Du học Hàn Quốc – Hành trình xứng tầm, Tương lai xứng đáng
+      </div>
+
+      <div style="width:60px;height:2px;background:var(--red);margin:0 auto 32px;"></div>
+
+      <div class="back-contact-grid">
+        <div class="back-contact-item">
+          <label>🌐 Website</label>
+          <span>duhocfastgo.vn<br>fastgo.edu.vn</span>
+        </div>
+        <div class="back-contact-item">
+          <label>📧 Email</label>
+          <span>tuyensinh@fastgo.edu.vn</span>
+        </div>
+        <div class="back-contact-item">
+          <label>📞 Hotline</label>
+          <span>0795.956.854</span>
+        </div>
+        <div class="back-contact-item">
+          <label>📍 Địa chỉ</label>
+          <span>Văn phòng tại Hà Nội &amp; TP. Hồ Chí Minh</span>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:20px;justify-content:center;margin-bottom:32px;">
+        <div style="text-align:center;">
+          <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:28px;color:white;">3.000<span style="color:var(--red);">+</span></div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:1px;">Học viên</div>
+        </div>
+        <div style="width:1px;background:rgba(255,255,255,0.1);"></div>
+        <div style="text-align:center;">
+          <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:28px;color:white;">15<span style="color:var(--red);">+</span></div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:1px;">Trường đối tác HQ</div>
+        </div>
+        <div style="width:1px;background:rgba(255,255,255,0.1);"></div>
+        <div style="text-align:center;">
+          <div style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:28px;color:white;">90<span style="color:var(--red);">%</span></div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:1px;">Tỷ lệ đỗ visa</div>
+        </div>
+      </div>
+
+      <div class="back-cover-motto">TRẢI NGHIỆM QUỐC TẾ &nbsp;|&nbsp; LỘ TRÌNH RÕ RÀNG &nbsp;|&nbsp; SẴN SÀNG HỘI NHẬP</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -5,6 +5,7 @@
   "main": "advisor.js",
   "scripts": {
     "build": "node scripts/pre-render.js",
+    "generate-partner-book": "node scripts/generate-partner-book.js",
     "dev": "node scripts/pre-render.js --watch",
     "test": "vitest run",
     "test:watch": "vitest",
