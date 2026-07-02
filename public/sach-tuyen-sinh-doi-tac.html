@@ -98,6 +98,11 @@ body {
     min-height: 0;
     height: auto;
   }
+  .page-cover .backcover-wrap {
+    flex: 1;
+    min-height: 0;
+    height: auto;
+  }
   .page-header {
     padding: 6px 0;
   }
@@ -156,22 +161,15 @@ body {
 .cover-wrap {
   min-height: 842px; position: relative; overflow: hidden;
   display: flex; flex-direction: column;
-  background: linear-gradient(160deg, #0a1628 0%, #132044 40%, #1B3A6B 100%);
+  background: none;
 }
 .cover-bg-img {
   position: absolute; inset:0;
   background-size: cover; background-position: center;
-  opacity: 0.12;
-  filter: saturate(0.7) brightness(0.8);
+  opacity: 1;
 }
 .cover-overlay {
-  position: absolute; inset:0;
-  background: linear-gradient(135deg, 
-    rgba(10,22,40,0.92) 0%, 
-    rgba(19,32,68,0.85) 30%, 
-    rgba(27,58,107,0.75) 60%, 
-    rgba(10,22,40,0.9) 100%
-  );
+  display: none;
 }
 .cover-accent-line {
   position: absolute; top: 0; left: 0; right: 0; z-index:3;
@@ -186,19 +184,21 @@ body {
 .cover-badge {
   display: inline-block; align-self:flex-start;
   padding: 6px 18px;
-  background: rgba(201,168,76,0.12);
+  background: rgba(0,0,0,0.55);
   border: 1px solid var(--gold);
   color: var(--gold);
   border-radius: 999px;
   font-family: 'Montserrat', sans-serif;
   font-weight: 700; font-size: 9px; letter-spacing: 2.5px;
   text-transform: uppercase; margin-bottom: 24px;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.6);
 }
 .cover-title {
   font-family: 'Montserrat', sans-serif;
   font-weight: 900; font-size: 48px; line-height: 1.08;
   color: white; margin-bottom: 4px;
   letter-spacing: -1px;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.8), 0 4px 40px rgba(0,0,0,0.5), 0 8px 60px rgba(0,0,0,0.3);
 }
 .cover-title .gold { color: var(--gold); }
 .cover-divider {
@@ -208,9 +208,10 @@ body {
   border-radius: 2px;
 }
 .cover-subtitle {
-  font-size: 13px; color: rgba(255,255,255,0.65);
+  font-size: 13px; color: rgba(255,255,255,0.85);
   margin-bottom: 10px; line-height: 1.6;
   max-width: 420px;
+  text-shadow: 0 1px 10px rgba(0,0,0,0.6);
 }
 .cover-subtitle strong { color: var(--gold); }
 .cover-visa {
@@ -218,13 +219,13 @@ body {
   font-weight: 900; font-size: 60px; line-height: 1;
   color: var(--accent); letter-spacing: -2px;
   text-transform: uppercase; margin-bottom: 18px;
-  text-shadow: 0 2px 20px rgba(192,39,45,0.3);
+  text-shadow: 0 2px 20px rgba(0,0,0,0.6), 0 4px 40px rgba(192,39,45,0.5);
 }
 .cover-tagline {
   display: inline-block; align-self:flex-start;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.12);
-  backdrop-filter: blur(8px);
+  background: rgba(0,0,0,0.55);
+  border: 1px solid rgba(255,255,255,0.15);
+  backdrop-filter: blur(6px);
   padding: 14px 22px; max-width: 340px;
   border-radius: 6px;
 }
@@ -233,11 +234,13 @@ body {
   font-weight: 800; font-size: 11px; color: var(--gold);
   text-transform: uppercase; letter-spacing: 0.5px;
   margin-bottom: 4px;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.5);
 }
 .cover-tagline p {
   font-family: 'Libre Baskerville', serif;
-  font-style: italic; font-size: 10px; color: rgba(255,255,255,0.65);
+  font-style: italic; font-size: 10px; color: rgba(255,255,255,0.9);
   line-height: 1.5;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.4);
 }
 .cover-bottom-bar {
   position: absolute; bottom:0; left:0; right:0; z-index:3;
@@ -249,8 +252,9 @@ body {
 }
 .cover-bottom-bar span {
   font-family: 'Montserrat', sans-serif;
-  font-weight: 700; font-size: 9px; color: rgba(255,255,255,0.7);
+  font-weight: 700; font-size: 9px; color: rgba(255,255,255,0.8);
   letter-spacing: 2.5px; text-transform: uppercase;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.3);
 }
 .cover-bottom-bar .sep { color: rgba(255,255,255,0.15); }
 
@@ -795,17 +799,15 @@ ul.dot-list.compact { column-count: 2; column-gap: 12px; }
 .backcover-wrap {
   min-height: 842px; position: relative; overflow: hidden;
   display: flex; flex-direction: column;
-  background: linear-gradient(160deg, #080f1d 0%, #0f1a2e 40%, #162a45 100%);
+  background: none;
 }
 .backcover-bg {
   position: absolute; inset:0;
   background-size: cover; background-position: center;
-  opacity: 0.1;
-  filter: saturate(0.5) brightness(0.6);
+  opacity: 1;
 }
 .backcover-overlay {
-  position: absolute; inset:0;
-  background: linear-gradient(180deg, rgba(8,15,29,0.8) 0%, rgba(15,26,46,0.7) 50%, rgba(22,42,69,0.85) 100%);
+  display: none;
 }
 .backcover-accent-bar {
   position: absolute; left:0; right:0; top:0;
@@ -820,19 +822,21 @@ ul.dot-list.compact { column-count: 2; column-gap: 12px; }
 .backcover-badge {
   display: inline-block;
   padding: 4px 14px;
-  background: rgba(201,168,76,0.1);
+  background: rgba(0,0,0,0.55);
   border: 1px solid rgba(201,168,76,0.3);
   border-radius: 999px;
   font-family: 'Montserrat', sans-serif;
   font-weight: 700; font-size: 8px; letter-spacing: 2px;
   color: var(--gold); text-transform: uppercase;
   margin-bottom: 10px;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.5);
 }
 .backcover-title {
   font-family: 'Montserrat', sans-serif;
   font-weight: 900; font-size: 36px;
   color: white; line-height: 1.1;
   letter-spacing: -0.5px;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.8), 0 4px 40px rgba(0,0,0,0.5);
 }
 .backcover-divider {
   width: 50px; height: 3px;
@@ -844,7 +848,7 @@ ul.dot-list.compact { column-count: 2; column-gap: 12px; }
   position: relative; z-index:2;
   display: flex; gap: 0;
   margin: 0 24px;
-  background: rgba(255,255,255,0.06);
+  background: rgba(0,0,0,0.35);
   border-radius: 10px;
   overflow: hidden;
   border: 1px solid rgba(255,255,255,0.08);
@@ -862,13 +866,15 @@ ul.dot-list.compact { column-count: 2; column-gap: 12px; }
   font-weight: 900; font-size: 30px;
   color: var(--gold);
   line-height: 1;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.4);
 }
 .bc-stat-label {
   font-family: 'Montserrat', sans-serif;
   font-weight: 600; font-size: 8px;
-  color: rgba(255,255,255,0.6);
+  color: rgba(255,255,255,0.8);
   text-transform: uppercase;
   letter-spacing: 1px;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.3);
 }
 .backcover-quote {
   position: relative; z-index:2;
@@ -887,9 +893,10 @@ ul.dot-list.compact { column-count: 2; column-gap: 12px; }
 .backcover-quote p {
   font-family: 'Libre Baskerville', serif;
   font-size: 12px; line-height: 1.65;
-  color: rgba(255,255,255,0.8);
+  color: rgba(255,255,255,0.9);
   font-style: italic;
   max-width: 90%;
+  text-shadow: 0 1px 10px rgba(0,0,0,0.6);
 }
 .backcover-quote .bc-quote-author {
   font-family: 'Montserrat', sans-serif;
@@ -908,7 +915,7 @@ ul.dot-list.compact { column-count: 2; column-gap: 12px; }
 .bc-card {
   flex: 1;
   padding: 14px;
-  background: rgba(255,255,255,0.06);
+  background: rgba(0,0,0,0.35);
   border: 1px solid rgba(255,255,255,0.1);
   border-radius: 8px;
   text-decoration: none;
@@ -917,7 +924,7 @@ ul.dot-list.compact { column-count: 2; column-gap: 12px; }
   transition: background 0.2s, border-color 0.2s;
 }
 .bc-card:hover { 
-  background: rgba(255,255,255,0.1); 
+  background: rgba(0,0,0,0.5); 
   border-color: rgba(201,168,76,0.3);
 }
 .bc-card-icon { font-size: 24px; }
@@ -927,10 +934,12 @@ ul.dot-list.compact { column-count: 2; column-gap: 12px; }
   color: white;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.4);
 }
 .bc-card-desc {
-  font-size: 9px; color: rgba(255,255,255,0.5);
+  font-size: 9px; color: rgba(255,255,255,0.7);
   line-height: 1.4;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.3);
 }
 .bc-card-link {
   font-family: 'Montserrat', sans-serif;
@@ -952,9 +961,10 @@ ul.dot-list.compact { column-count: 2; column-gap: 12px; }
 .bc-footer-text {
   font-family: 'Montserrat', sans-serif;
   font-weight: 700; font-size: 9px;
-  color: rgba(255,255,255,0.4);
+  color: rgba(255,255,255,0.6);
   letter-spacing: 1px;
   text-transform: uppercase;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.3);
 }
 .bc-footer-sub {
   font-size: 8px;
@@ -970,7 +980,7 @@ ul.dot-list.compact { column-count: 2; column-gap: 12px; }
   <div class="page-body page-body-cover">
     <div class="cover-wrap">
       <div class="cover-accent-line"></div>
-      <div class="cover-bg-img" style="background-image:url('https://images.unsplash.com/photo-1534274988757-a28bf1a57c17?w=800&q=80');"></div>
+      <div class="cover-bg-img" style="background-image:url('https://vklinks.vn/wp-content/uploads/2024/04/3ff5e169da27d72f19690e4ff551164c-819x1024.jpeg');"></div>
       <div class="cover-overlay"></div>
       <div class="cover-inner">
         <div class="cover-badge">TÀI LIỆU DÀNH CHO ĐỐI TÁC</div>
@@ -4287,7 +4297,7 @@ n    <span class="section-badge">PHẦN 5</span>
   <div class="page-body page-body-cover">
     
     <div class="backcover-wrap">
-      <div class="backcover-bg" style="background-image:url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&q=80');"></div>
+      <div class="backcover-bg" style="background-image:url('https://cdn-media.sforum.vn/storage/app/media/thanhhuyen/h%C3%ACnh%20%E1%BA%A3nh%20h%C3%A0n%20qu%E1%BB%91c/1/hinh-anh-han-quoc-1.jpg');"></div>
       <div class="backcover-overlay"></div>
       <div class="backcover-accent-bar"></div>
 
@@ -4306,7 +4316,7 @@ n    <span class="section-badge">PHẦN 5</span>
       <div class="backcover-quote">
         <div class="bc-quote-mark">"</div>
         <p>Đồng hành cùng đối tác trong việc cung cấp thông tin tuyển sinh chính xác, kịp thời và toàn diện về chương trình Visa D2-6 tại Hàn Quốc.</p>
-        <div class="bc-quote-author">— FASTGO Du học Hàn Quốc</div>
+        <div class="bc-quote-author">Du học Hàn Quốc</div>
       </div>
 
       <div class="backcover-cards">

@@ -16,7 +16,7 @@ const OUTPUT = path.join(__dirname, '..', 'public', 'sach-tuyen-sinh-doi-tac.htm
 
 // ─── Unsplash images ──────────────────────────────────────
 const IMG = {
-  cover:   'https://images.unsplash.com/photo-1534274988757-a28bf1a57c17?w=800&q=80',
+  cover:   'https://images.pexels.com/photos/10419064/pexels-photo-10419064.jpeg?auto=compress&cs=tinysrgb&w=800',
   overview:'https://images.unsplash.com/photo-1523050854058-8df90110c7f1?w=800&q=80',
   school:  'https://images.unsplash.com/photo-1562774053-701939374585?w=800&q=80',
   study:   'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=400&q=80',
@@ -248,11 +248,13 @@ async function main() {
   // ═══ COVER ══════════════════════════════════════════
   pages.push(page(`
     <div class="cover-wrap">
+      <div class="cover-accent-line"></div>
       <div class="cover-bg-img" style="background-image:url('${IMG.cover}');"></div>
       <div class="cover-overlay"></div>
       <div class="cover-inner">
         <div class="cover-badge">TÀI LIỆU DÀNH CHO ĐỐI TÁC</div>
-        <div class="cover-title">Cẩm nang<br>Tuyển sinh<br>Du học Hàn Quốc</div>
+        <div class="cover-title"><span class="gold">Cẩm nang</span><br>Tuyển sinh<br>Du học Hàn Quốc</div>
+        <div class="cover-divider"></div>
         <div class="cover-visa">VISA D2-6</div>
         <div class="cover-subtitle"><strong>${schools.length} trường</strong> đối tác · Chương trình trao đổi sinh viên</div>
         <div class="cover-tagline">
@@ -1008,8 +1010,33 @@ body {
     min-height: 0;
     height: auto;
   }
+  .page-cover .backcover-wrap {
+    flex: 1;
+    min-height: 0;
+    height: auto;
+  }
   .page-header {
     padding: 6px 0;
+  }
+  .side-bar { display: none; }
+  .backcover-stats {
+    backdrop-filter: none;
+    background: rgba(255,255,255,0.15);
+  }
+  .bc-card {
+    background: rgba(255,255,255,0.12);
+  }
+  .cover-tagline {
+    backdrop-filter: none;
+    background: rgba(27,58,107,0.9);
+  }
+  .cover-bottom-bar {
+    backdrop-filter: none;
+    background: rgba(10,22,40,0.9);
+  }
+  .cover-accent-line {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 }
 
@@ -1054,74 +1081,103 @@ body {
 .cover-wrap {
   min-height: 842px; position: relative; overflow: hidden;
   display: flex; flex-direction: column;
-  background: linear-gradient(160deg, #f0f4f8 0%, #dce6f0 40%, #c8d8ec 100%);
+  background: linear-gradient(160deg, #0a1628 0%, #132044 40%, #1B3A6B 100%);
 }
 .cover-bg-img {
   position: absolute; inset:0;
   background-size: cover; background-position: center;
-  opacity: 0.2;
+  opacity: 0.25;
+  filter: saturate(0.7) brightness(0.8);
 }
 .cover-overlay {
   position: absolute; inset:0;
-  background: linear-gradient(160deg, rgba(245,247,250,0.85) 0%, rgba(220,230,240,0.9) 100%);
+  background: linear-gradient(135deg, 
+    rgba(10,22,40,0.75) 0%, 
+    rgba(19,32,68,0.65) 30%, 
+    rgba(27,58,107,0.55) 60%, 
+    rgba(10,22,40,0.7) 100%
+  );
+}
+.cover-accent-line {
+  position: absolute; top: 0; left: 0; right: 0; z-index:3;
+  height: 5px;
+  background: linear-gradient(90deg, var(--accent), var(--gold), var(--accent));
 }
 .cover-inner {
   position: relative; z-index:2;
   flex:1; display:flex; flex-direction:column;
-  padding: 40px; justify-content: center;
+  padding: 50px 44px; justify-content: center;
 }
 .cover-badge {
   display: inline-block; align-self:flex-start;
-  padding: 4px 14px;
-  border: 1px solid var(--accent); color: var(--accent);
+  padding: 6px 18px;
+  background: rgba(201,168,76,0.12);
+  border: 1px solid var(--gold);
+  color: var(--gold);
   border-radius: 999px;
   font-family: 'Montserrat', sans-serif;
-  font-weight: 700; font-size: 9px; letter-spacing: 2px;
-  text-transform: uppercase; margin-bottom: 20px;
+  font-weight: 700; font-size: 9px; letter-spacing: 2.5px;
+  text-transform: uppercase; margin-bottom: 24px;
 }
 .cover-title {
   font-family: 'Montserrat', sans-serif;
-  font-weight: 900; font-size: 46px; line-height: 1.05;
-  color: var(--navy); margin-bottom: 6px;
+  font-weight: 900; font-size: 48px; line-height: 1.08;
+  color: white; margin-bottom: 4px;
   letter-spacing: -1px;
 }
-.cover-subtitle {
-  font-size: 13px; color: var(--gray);
-  margin-bottom: 10px; line-height: 1.6;
+.cover-title .gold { color: var(--gold); }
+.cover-divider {
+  width: 60px; height: 3px;
+  background: linear-gradient(90deg, var(--gold), var(--accent));
+  margin: 12px 0 14px;
+  border-radius: 2px;
 }
-.cover-subtitle strong { color: var(--accent); }
+.cover-subtitle {
+  font-size: 13px; color: rgba(255,255,255,0.65);
+  margin-bottom: 10px; line-height: 1.6;
+  max-width: 420px;
+}
+.cover-subtitle strong { color: var(--gold); }
 .cover-visa {
   font-family: 'Montserrat', sans-serif;
-  font-weight: 900; font-size: 56px; line-height: 1;
+  font-weight: 900; font-size: 60px; line-height: 1;
   color: var(--accent); letter-spacing: -2px;
-  text-transform: uppercase; margin-bottom: 16px;
+  text-transform: uppercase; margin-bottom: 18px;
+  text-shadow: 0 2px 20px rgba(192,39,45,0.3);
 }
 .cover-tagline {
   display: inline-block; align-self:flex-start;
-  background: var(--navy); padding: 14px 20px; max-width: 320px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  backdrop-filter: blur(8px);
+  padding: 14px 22px; max-width: 340px;
+  border-radius: 6px;
 }
 .cover-tagline h3 {
   font-family: 'Montserrat', sans-serif;
-  font-weight: 800; font-size: 12px; color: white;
+  font-weight: 800; font-size: 11px; color: var(--gold);
   text-transform: uppercase; letter-spacing: 0.5px;
   margin-bottom: 4px;
 }
 .cover-tagline p {
   font-family: 'Libre Baskerville', serif;
-  font-style: italic; font-size: 10px; color: rgba(255,255,255,0.8);
+  font-style: italic; font-size: 10px; color: rgba(255,255,255,0.65);
   line-height: 1.5;
 }
 .cover-bottom-bar {
   position: absolute; bottom:0; left:0; right:0; z-index:3;
-  background: var(--accent); height: 40px;
-  display: flex; align-items: center; justify-content: center; gap: 20px;
+  background: rgba(10,22,40,0.75);
+  backdrop-filter: blur(4px);
+  height: 44px;
+  display: flex; align-items: center; justify-content: center; gap: 24px;
+  border-top: 1px solid rgba(255,255,255,0.06);
 }
 .cover-bottom-bar span {
   font-family: 'Montserrat', sans-serif;
-  font-weight: 700; font-size: 9px; color: white;
-  letter-spacing: 2px; text-transform: uppercase;
+  font-weight: 700; font-size: 9px; color: rgba(255,255,255,0.7);
+  letter-spacing: 2.5px; text-transform: uppercase;
 }
-.cover-bottom-bar .sep { color: rgba(255,255,255,0.4); }
+.cover-bottom-bar .sep { color: rgba(255,255,255,0.15); }
 
 /* ─── Titles ─── */
 .page-title {
@@ -1676,115 +1732,132 @@ ul.dot-list.compact { column-count: 2; column-gap: 12px; }
 .backcover-wrap {
   min-height: 842px; position: relative; overflow: hidden;
   display: flex; flex-direction: column;
-  background: linear-gradient(160deg, #0f1a2e 0%, #162a45 40%, #1B3A6B 100%);
+  background: linear-gradient(160deg, #080f1d 0%, #0f1a2e 40%, #162a45 100%);
 }
 .backcover-bg {
   position: absolute; inset:0;
   background-size: cover; background-position: center;
-  opacity: 0.15;
+  opacity: 0.25;
+  filter: saturate(0.5) brightness(0.6);
 }
 .backcover-overlay {
   position: absolute; inset:0;
-  background: linear-gradient(180deg, rgba(15,26,46,0.6) 0%, rgba(27,58,107,0.85) 100%);
+  background: linear-gradient(180deg, rgba(8,15,29,0.65) 0%, rgba(15,26,46,0.55) 50%, rgba(22,42,69,0.7) 100%);
 }
 .backcover-accent-bar {
   position: absolute; left:0; right:0; top:0;
-  height: 6px;
-  background: linear-gradient(90deg, var(--accent), #e85d5d, var(--gold), #e85d5d, var(--accent));
+  height: 5px;
+  background: linear-gradient(90deg, var(--accent), var(--gold), var(--accent));
   z-index:2;
 }
 .backcover-top {
   position: relative; z-index:2;
-  padding: 30px 28px 10px;
+  padding: 36px 30px 12px;
 }
 .backcover-badge {
   display: inline-block;
+  padding: 4px 14px;
+  background: rgba(201,168,76,0.1);
+  border: 1px solid rgba(201,168,76,0.3);
+  border-radius: 999px;
   font-family: 'Montserrat', sans-serif;
   font-weight: 700; font-size: 8px; letter-spacing: 2px;
   color: var(--gold); text-transform: uppercase;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 .backcover-title {
   font-family: 'Montserrat', sans-serif;
-  font-weight: 900; font-size: 34px;
+  font-weight: 900; font-size: 36px;
   color: white; line-height: 1.1;
   letter-spacing: -0.5px;
 }
 .backcover-divider {
   width: 50px; height: 3px;
-  background: var(--accent);
-  margin: 12px 0;
+  background: linear-gradient(90deg, var(--gold), var(--accent));
+  margin: 14px 0 16px;
   border-radius: 2px;
 }
 .backcover-stats {
   position: relative; z-index:2;
   display: flex; gap: 0;
-  margin: 0 20px;
-  background: rgba(255,255,255,0.08);
+  margin: 0 24px;
+  background: rgba(255,255,255,0.06);
   border-radius: 10px;
   overflow: hidden;
-  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255,255,255,0.08);
 }
 .bc-stat {
   flex: 1; text-align: center;
-  padding: 14px 8px;
+  padding: 16px 8px;
   display: flex; flex-direction: column;
-  gap: 2px;
-  border-right: 1px solid rgba(255,255,255,0.1);
+  gap: 3px;
+  border-right: 1px solid rgba(255,255,255,0.06);
 }
 .bc-stat:last-child { border-right: none; }
 .bc-stat-num {
   font-family: 'Montserrat', sans-serif;
-  font-weight: 900; font-size: 28px;
+  font-weight: 900; font-size: 30px;
   color: var(--gold);
   line-height: 1;
 }
 .bc-stat-label {
   font-family: 'Montserrat', sans-serif;
   font-weight: 600; font-size: 8px;
-  color: rgba(255,255,255,0.7);
+  color: rgba(255,255,255,0.6);
   text-transform: uppercase;
   letter-spacing: 1px;
 }
 .backcover-quote {
   position: relative; z-index:2;
-  padding: 18px 28px;
+  padding: 16px 30px;
   flex: 1;
   display: flex; flex-direction: column;
   justify-content: center;
 }
 .bc-quote-mark {
   font-family: 'Libre Baskerville', serif;
-  font-size: 56px; line-height: 0.6;
+  font-size: 60px; line-height: 0.5;
   color: var(--gold);
-  opacity: 0.6;
-  margin-bottom: 4px;
+  opacity: 0.5;
+  margin-bottom: 2px;
 }
 .backcover-quote p {
   font-family: 'Libre Baskerville', serif;
-  font-size: 13px; line-height: 1.6;
-  color: rgba(255,255,255,0.85);
+  font-size: 12px; line-height: 1.65;
+  color: rgba(255,255,255,0.8);
   font-style: italic;
   max-width: 90%;
+}
+.backcover-quote .bc-quote-author {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 9px;
+  color: rgba(255,255,255,0.4);
+  margin-top: 6px;
+  letter-spacing: 1px;
+  font-style: normal;
+  text-transform: uppercase;
 }
 .backcover-cards {
   position: relative; z-index:2;
   display: flex; gap: 10px;
-  padding: 0 20px 14px;
+  padding: 0 24px 14px;
 }
 .bc-card {
   flex: 1;
-  padding: 12px;
-  background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.15);
+  padding: 14px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
   border-radius: 8px;
   text-decoration: none;
   display: flex; flex-direction: column;
-  gap: 3px;
-  transition: background 0.2s;
+  gap: 4px;
+  transition: background 0.2s, border-color 0.2s;
 }
-.bc-card:hover { background: rgba(255,255,255,0.18); }
-.bc-card-icon { font-size: 22px; }
+.bc-card:hover { 
+  background: rgba(255,255,255,0.1); 
+  border-color: rgba(201,168,76,0.3);
+}
+.bc-card-icon { font-size: 24px; }
 .bc-card-title {
   font-family: 'Montserrat', sans-serif;
   font-weight: 700; font-size: 10px;
@@ -1793,7 +1866,7 @@ ul.dot-list.compact { column-count: 2; column-gap: 12px; }
   letter-spacing: 0.5px;
 }
 .bc-card-desc {
-  font-size: 9px; color: rgba(255,255,255,0.6);
+  font-size: 9px; color: rgba(255,255,255,0.5);
   line-height: 1.4;
 }
 .bc-card-link {
@@ -1805,25 +1878,25 @@ ul.dot-list.compact { column-count: 2; column-gap: 12px; }
 }
 .backcover-footer {
   position: relative; z-index:2;
-  padding: 0 28px 22px;
+  padding: 0 30px 24px;
   text-align: center;
 }
 .bc-footer-line {
   width: 100%; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
   margin-bottom: 10px;
 }
 .bc-footer-text {
   font-family: 'Montserrat', sans-serif;
   font-weight: 700; font-size: 9px;
-  color: rgba(255,255,255,0.5);
+  color: rgba(255,255,255,0.4);
   letter-spacing: 1px;
   text-transform: uppercase;
 }
 .bc-footer-sub {
   font-size: 8px;
-  color: rgba(255,255,255,0.3);
-  margin-top: 2px;
+  color: rgba(255,255,255,0.25);
+  margin-top: 3px;
 }
 </style>
 </head>
