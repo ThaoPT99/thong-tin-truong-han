@@ -44,7 +44,7 @@
                     <button class="tab-btn" data-school="extra">Tài liệu</button>
                     <button class="tab-btn" data-school="ebook">Cẩm nang D2-6</button>
                     <button class="tab-btn" data-school="cost">Chi phí</button>
-                    <button class="tab-btn application-tab-btn" data-school="application">📝 Đăng ký</button>
+                    <button class="tab-btn application-tab-btn" data-school="application">Đăng ký</button>
                 </div>
             </nav>
 
@@ -274,7 +274,7 @@
 
     <!-- Prefetch API endpoints — trình duyệt tải trước khi JS chạy -->
     <link rel="prefetch" href="/api/schools">
-    <link rel="prefetch" href="/api/extras">
+    <link rel="prefetch" href="/api/schools?include=extras">
 
     <!-- A/B Testing — load sớm nhất để CSS kịp áp dụng variant -->
     <script src="/js/ab-test.js"></script>

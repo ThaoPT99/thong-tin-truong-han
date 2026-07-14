@@ -19,6 +19,7 @@
   let formData = {};
   let documentFiles = {};
   let isSubmitting = false;
+  let selectedSchoolFormUrl = ''; // URL mẫu đơn của trường đã chọn
 
   // ─── Initialize form data with defaults ───
   function getDefaultData() {
@@ -591,8 +592,12 @@
     const school = (window.SCHOOLS_DATA || {})[schoolId];
     if (!school) {
       preview.innerHTML = '';
+      selectedSchoolFormUrl = '';
       return;
     }
+
+    // Lưu URL mẫu đơn của trường
+    selectedSchoolFormUrl = school.applicationFormUrl || '';
 
     const rules = typeof getAdvisorRules === 'function' ? getAdvisorRules(schoolId, school) : {};
     const regionName = rules?.region ? (window.REGION_LABELS?.[rules.region] || rules.region) : '';
@@ -610,16 +615,29 @@
   }
 
   function renderDocumentsStep() {
+    const formLink = selectedSchoolFormUrl 
+      ? `<div class="app-form-download">
+          <a href="${esc(selectedSchoolFormUrl)}" target="_blank" rel="noopener" class="btn btn-primary btn-sm">
+            📥 Tải mẫu đơn của trường
+          </a>
+          <span class="doc-hint">Tải file PDF mẫu, điền đầy đủ thông tin, sau đó upload lại bên dưới.</span>
+         </div>`
+      : `<div class="app-form-download">
+          <span class="doc-hint">⚠️ Chưa có mẫu đơn cho trường này. Vui lòng liên hệ admin để được hỗ trợ hoặc sử dụng mẫu đơn của trường trên website trường.</span>
+         </div>`;
+
     return `
       <div class="app-section">
         <h3>📄 Hồ sơ cần nộp</h3>
         <p class="app-section-desc">Chuẩn bị sẵn các file (PDF, JPG, PNG) để upload. Mỗi file tối đa 10MB.</p>
 
+        ${formLink}
+
         <div class="app-doc-grid">
           <div class="app-doc-item">
-            <label>📝 Đơn đăng ký (theo mẫu trường)</label>
+            <label>📝 Đơn đăng ký (theo mẫu trường) <span class="required">*</span></label>
             <input type="file" accept=".pdf,.jpg,.jpeg,.png" name="docApplicationForm">
-            <span class="doc-hint">PDF hoặc ảnh chụp</span>
+            <span class="doc-hint">Upload file PDF đã điền xong</span>
           </div>
           <div class="app-doc-item">
             <label>📖 Kế hoạch học tập (Study Plan)</label>

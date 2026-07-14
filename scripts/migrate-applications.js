@@ -208,7 +208,7 @@ async function runMigration() {
 
   // Fallback: print SQL for manual execution
   console.log('\n📋 === CHẠY THỦ CÔNG TRONG SUPABASE SQL EDITOR ===');
-  console.log('Link: https://supabase.com/dashboard/project/fhuixmxxmpjpsagqgrnk/sql/new');
+  console.log('Link: https://supabase.com/dashboard/project/lzggxhunbnjrklbkywmb/sql/new');
   console.log('\nCopy và paste đoạn SQL sau:\n');
   console.log(MIGRATION_SQL);
   console.log('\n📋 === HẾT ===');

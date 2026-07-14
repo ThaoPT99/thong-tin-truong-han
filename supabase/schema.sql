@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS schools (
   video_url       VARCHAR(500),
   video_youtube_id VARCHAR(50),
   video_title     VARCHAR(200),
+  application_form_url VARCHAR(500) DEFAULT '',
   image_main       VARCHAR(500) DEFAULT 'images/placeholder.svg',
   image_catalog    VARCHAR(500),
   image_location   VARCHAR(500),

@@ -3651,6 +3651,32 @@ html {
   font-size: 1rem;
 }
 
+/* Application form download template link */
+.app-form-download {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+  border: 2px dashed #2563eb;
+  border-radius: 12px;
+  background: #eff6ff;
+  text-align: center;
+}
+
+.app-form-download .btn {
+  min-height: 2.85rem;
+  padding: 0.65rem 1.5rem;
+  font-size: 1rem;
+}
+
+.app-form-download .doc-hint {
+  font-size: 0.82rem;
+  color: #475569;
+  max-width: 400px;
+}
+
 /* Application tab color */
 .application-tab-btn {
   background: linear-gradient(135deg, #7c3aed, #2563eb) !important;

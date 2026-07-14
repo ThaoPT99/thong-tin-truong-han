@@ -170,13 +170,17 @@
                 <label for="videoYoutubeId">Youtube ID</label>
                 <input type="text" id="videoYoutubeId" placeholder="noj5lFV5Feg">
               </div>
+            </div>              <div class="form-group">
+                <label for="videoTitle">Video Title</label>
+                <input type="text" id="videoTitle">
+              </div>
             </div>
-            <div class="form-group">
-              <label for="videoTitle">Video Title</label>
-              <input type="text" id="videoTitle">
+            <div class="form-group" style="margin-top:10px;">
+              <label for="applicationFormUrl">📝 Mẫu đơn đăng ký (Application Form URL)</label>
+              <input type="text" id="applicationFormUrl" placeholder="https://... hoặc link Google Drive chứa file PDF mẫu của trường">
+              <div class="help-text">Link đến file PDF mẫu đơn đăng ký của trường. Học sinh sẽ tải về để điền và upload lại.</div>
             </div>
           </div>
-        </div>
 
         <!-- Section 3: Details -->
         <div class="form-section" id="section-details">
@@ -492,6 +496,7 @@ function populateForm(school) {
   document.getElementById('videoUrl').value = school.video_url || '';
   document.getElementById('videoYoutubeId').value = school.video_youtube_id || '';
   document.getElementById('videoTitle').value = school.video_title || '';
+  document.getElementById('applicationFormUrl').value = school.application_form_url || '';
 
   // Details
   document.getElementById('intro').value = school.intro || '';
@@ -631,6 +636,7 @@ function collectForm() {
     videoUrl: document.getElementById('videoUrl').value.trim(),
     videoYoutubeId: document.getElementById('videoYoutubeId').value.trim(),
     videoTitle: document.getElementById('videoTitle').value.trim(),
+    applicationFormUrl: document.getElementById('applicationFormUrl').value.trim(),
     intro: document.getElementById('intro').value.trim(),
     tuition: document.getElementById('tuition').value.trim(),
     ktx: document.getElementById('ktx').value.trim(),

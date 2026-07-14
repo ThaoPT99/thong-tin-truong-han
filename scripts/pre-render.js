@@ -264,7 +264,7 @@ function buildSchoolHtml(school, semesterInfo) {
   </button>
 
   <link rel="prefetch" href="/api/schools">
-  <link rel="prefetch" href="/api/extras">
+  <link rel="prefetch" href="/api/schools?include=extras">
 
   <!-- Script: đợi dữ liệu API load xong rồi hiển thị trường -->
   <script>

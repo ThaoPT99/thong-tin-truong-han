@@ -334,6 +334,7 @@ window.REGION_LABELS = {
         youtubeId: school.video_youtube_id || '',
         title: school.video_title || ''
       },
+      applicationFormUrl: school.application_form_url || '',
       location: school.location || '',
       region: school.region || '',
       intro: school.intro || '',

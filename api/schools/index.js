@@ -43,6 +43,28 @@ module.exports = async (req, res) => {
         return res.status(400).json({ error: 'fullName (Họ tên) là bắt buộc' });
       }
 
+      // Resolve school slug to UUID (frontend sends slug)
+      let schoolId = null;
+      if (body.schoolId) {
+        const { data: schoolData } = await supabase
+          .from('schools')
+          .select('id')
+          .or(`slug.eq.${body.schoolId},id.eq.${body.schoolId}`)
+          .maybeSingle();
+        if (schoolData) schoolId = schoolData.id;
+      }
+
+      // Resolve semester name/slug to UUID
+      let semesterId = null;
+      if (body.semesterId) {
+        const { data: semData } = await supabase
+          .from('semesters')
+          .select('id')
+          .or(`id.eq.${body.semesterId}`)
+          .maybeSingle();
+        if (semData) semesterId = semData.id;
+      }
+
       // Check duplicate (email trong 30 ngày)
       if (body.email) {
         const { data: existing } = await supabase.from('school_applications').select('id, status')
@@ -68,7 +90,7 @@ module.exports = async (req, res) => {
         korean_level: body.koreanLevel || 'none', topik_level: body.topikLevel || null, korean_education: body.koreanEducation || '',
         father_name: body.fatherName || '', father_occupation: body.fatherOccupation || '', father_phone: body.fatherPhone || '',
         mother_name: body.motherName || '', mother_occupation: body.motherOccupation || '', mother_phone: body.motherPhone || '',
-        school_id: body.schoolId || null, semester_id: body.semesterId || null,
+        school_id: schoolId, semester_id: semesterId,
         status: 'submitted', source: body.source || 'web',
       }).select('id, full_name, status, created_at').single();
 
