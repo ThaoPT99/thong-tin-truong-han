@@ -17,6 +17,32 @@ module.exports = requireAdmin(async (req, res) => {
   try {
     // ─── GET ───
     if (req.method === 'GET') {
+      // View Applications (quản lý đơn đăng ký nhập học)
+      if (view === 'applications') {
+        const { id, status } = req.query;
+        
+        if (id) {
+          const { data, error } = await supabase
+            .from('school_applications')
+            .select('*, schools(name, name_kr), semesters(ky, nam, title)')
+            .eq('id', id)
+            .maybeSingle();
+          if (error) throw new Error(error.message);
+          if (!data) return res.status(404).json({ error: 'Application not found' });
+          return res.json({ success: true, data });
+        }
+        
+        let query = supabase
+          .from('school_applications')
+          .select('*, schools(name, name_kr), semesters(ky, nam, title)')
+          .order('created_at', { ascending: false });
+        if (status) query = query.eq('status', status);
+        
+        const { data, error } = await query;
+        if (error) throw new Error(error.message);
+        return res.json({ success: true, data: data || [] });
+      }
+
       // View KPI Dashboard
       if (view === 'kpi') {
         // Lấy danh sách sales (director thấy hết, sale chỉ thấy mình)
@@ -214,8 +240,25 @@ module.exports = requireAdmin(async (req, res) => {
       return res.status(201).json({ success: true, data });
     }
 
-    // ─── PUT: cập nhật ───
+    // ─── PUT: cập nhật (student hoặc application) ───
     if (req.method === 'PUT') {
+      const { view } = req.query;
+      
+      // PUT: cập nhật đơn đăng ký (applications)
+      if (view === 'application') {
+        if (!id) return res.status(400).json({ error: 'Application ID is required' });
+        const body = req.body || {};
+        const updateData = { updated_at: new Date().toISOString() };
+        if (body.status !== undefined) updateData.status = body.status;
+        if (body.adminNote !== undefined) updateData.admin_note = body.adminNote;
+        
+        const { data, error } = await supabase
+          .from('school_applications').update(updateData).eq('id', id)
+          .select('*, schools(name), semesters(ky, nam, title)').single();
+        if (error) throw new Error(error.message);
+        return res.json({ success: true, data });
+      }
+      
       if (!id) return res.status(400).json({ error: 'Student ID is required' });
 
       // Kiểm tra quyền sở hữu

@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quản lý đơn đăng ký — Admin</title>
+<link rel="stylesheet" href="admin.css">
+<style>
+.app-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.app-card {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  padding: 14px 16px;
+  border: 1px solid var(--gray-200);
+  border-radius: 10px;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color .15s;
+}
+
+.app-card:hover { border-color: var(--primary); }
+
+.app-card .a-name { font-weight: 700; color: var(--gray-800); font-size: .95rem; }
+.app-card .a-meta { color: var(--gray-500); font-size: .82rem; margin-top: 2px; }
+.app-card .a-meta span+span::before { content: " • "; }
+
+.status-pill {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: .75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.status-draft { background: #f1f5f9; color: #475569; }
+.status-submitted { background: #dbeafe; color: #1d4ed8; }
+.status-reviewing { background: #fef3c7; color: #92400e; }
+.status-approved { background: #d1fae5; color: #065f46; }
+.status-rejected { background: #fee2e2; color: #991b1b; }
+
+.app-card .a-school { font-size: .82rem; color: var(--gray-400); margin-top: 2px; }
+.app-card .a-date { font-size: .78rem; color: var(--gray-400); }
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+  align-items: center;
+}
+
+.filters select { min-height: 2.45rem; padding: 0.45rem 0.7rem; border: 1px solid var(--gray-300); border-radius: 8px; background: #fff; font: inherit; font-size: .88rem; }
+
+.stats-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.stat-box {
+  flex: 1;
+  min-width: 120px;
+  padding: 12px 16px;
+  border: 1px solid var(--gray-200);
+  border-radius: 10px;
+  background: #fff;
+  text-align: center;
+}
+
+.stat-box .num { font-size: 1.5rem; font-weight: 800; color: var(--primary); }
+.stat-box .label { font-size: .8rem; color: var(--gray-500); margin-top: 2px; }
+
+/* Detail modal */
+.modal-overlay { z-index: 999; }
+.detail-grid {
+  display: grid;
+  gap: 12px;
+}
+.detail-section {
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  padding: 12px;
+  background: #f8fafc;
+}
+.detail-section h4 {
+  margin: 0 0 8px;
+  font-size: .88rem;
+  color: var(--gray-500);
+}
+.detail-table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+.detail-table td { padding: 4px 6px; border-bottom: 1px solid var(--gray-100); }
+.detail-table td:first-child { width: 130px; font-weight: 600; color: var(--gray-600); }
+.empty-state { text-align: center; padding: 40px 20px; color: var(--gray-400); }
+</style>
+</head>
+<body>
+<script src="admin.js"></script>
+<script>checkAuth();</script>
+
+<div class="admin-layout">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h2>🏫 Trường Hàn</h2>
+      <div class="sub">Quản lý dữ liệu</div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" class="role-director">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+        Dashboard
+      </a>
+      <a href="editor.html?mode=new" class="role-director">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Thêm trường
+      </a>
+      <a href="applications.html" class="active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        Đơn đăng ký
+      </a>
+      <a href="students.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        Học sinh
+      </a>
+      <a href="checklist.html" class="role-director">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        Checklist Visa
+      </a>
+      <a href="semester.html" class="role-director">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Kỳ tuyển sinh
+      </a>
+      <a href="import.html" class="role-director">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Import Excel
+      </a>
+      <a href="users.html" class="role-director">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        Tài khoản
+      </a>
+      <a href="access-control.html" class="role-director">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg>
+        Quản lý Truy cập
+      </a>
+      <a href="analytics.html" class="role-director">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+        Analytics
+      </a>
+    </nav>
+    <div class="sidebar-footer"><div id="sidebar-user"></div></div>
+  </aside>
+
+  <main class="main-content">
+    <div class="top-bar">
+      <h1>📋 Quản lý đơn đăng ký</h1>
+      <div class="user-info">
+        <span id="user-display"></span>
+        <button class="btn btn-outline btn-sm" onclick="logout()">Đăng xuất</button>
+      </div>
+    </div>
+
+    <div class="content-area">
+      <div class="card">
+        <div class="card-header">
+          <h3>Danh sách đơn đăng ký nhập học</h3>
+          <div class="toolbar">
+            <div class="filters" style="margin:0">
+              <select id="status-filter" onchange="loadApplications()">
+                <option value="">Tất cả trạng thái</option>
+                <option value="draft">Bản nháp</option>
+                <option value="submitted">Đã gửi</option>
+                <option value="reviewing">Đang xem xét</option>
+                <option value="approved">Đã duyệt</option>
+                <option value="rejected">Từ chối</option>
+              </select>
+              <span id="total-count" style="font-size:.82rem;color:var(--gray-400);"></span>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="stats-row" id="stats-row"></div>
+          <div id="app-list" class="app-grid">
+            <div class="loading-state"><div class="spinner"></div> Đang tải...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Detail Modal -->
+<div class="modal-overlay" id="detail-modal">
+  <div class="modal-box" style="max-width:700px;max-height:90vh;overflow-y:auto">
+    <h3 id="detail-title">Chi tiết đơn</h3>
+    <div class="detail-grid" id="detail-content"></div>
+    <div class="modal-actions" style="margin-top:12px">
+      <button class="btn btn-outline" onclick="closeModal('detail-modal')">Đóng</button>
+      <button class="btn btn-primary" id="status-approve-btn" onclick="updateStatus('approved')">✅ Duyệt</button>
+      <button class="btn btn-outline" id="status-review-btn" onclick="updateStatus('reviewing')">🔍 Đang xem xét</button>
+      <button class="btn btn-danger" id="status-reject-btn" onclick="updateStatus('rejected')">❌ Từ chối</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let applications = [];
+let currentDetailId = null;
+
+const user = getUser();
+if (user) {
+  document.getElementById('user-display').textContent = user.displayName || user.email;
+  document.getElementById('sidebar-user').textContent = user.email;
+}
+
+const STATUS_LABELS = {
+  draft: 'Bản nháp', submitted: 'Đã gửi', reviewing: 'Đang xem xét',
+  approved: 'Đã duyệt', rejected: 'Từ chối'
+};
+const STATUS_CLASS = {
+  draft: 'status-draft', submitted: 'status-submitted',
+  reviewing: 'status-reviewing', approved: 'status-approved', rejected: 'status-rejected'
+};
+
+async function loadApplications() {
+  try {
+    const status = document.getElementById('status-filter').value;
+    let url = '/admin/students?view=applications';
+    if (status) url += '&status=' + encodeURIComponent(status);
+    const res = await api('GET', url);
+    applications = res.data || [];
+    renderList();
+    renderStats();
+  } catch (err) {
+    document.getElementById('app-list').innerHTML = 
+      '<div class="empty-state" style="color:var(--danger)">Lỗi: ' + escapeHtml(err.message) + '</div>';
+  }
+}
+
+function renderStats() {
+  const container = document.getElementById('stats-row');
+  const counts = {};
+  applications.forEach(a => { counts[a.status] = (counts[a.status] || 0) + 1; });
+  
+  container.innerHTML = Object.entries(STATUS_LABELS).map(([key, label]) => `
+    <div class="stat-box">
+      <div class="num">${counts[key] || 0}</div>
+      <div class="label">${label}</div>
+    </div>
+  `).join('');
+  
+  document.getElementById('total-count').textContent = applications.length + ' đơn';
+}
+
+function renderList() {
+  const container = document.getElementById('app-list');
+  if (applications.length === 0) {
+    container.innerHTML = '<div class="empty-state"><p>Chưa có đơn đăng ký nào.</p></div>';
+    return;
+  }
+
+  container.innerHTML = applications.map(a => {
+    const schoolName = a.schools ? a.schools.name : '';
+    const date = new Date(a.created_at).toLocaleDateString('vi-VN');
+    return '<div class="app-card" onclick="showDetail(\'' + a.id + '\')">' +
+      '<div>' +
+        '<div class="a-name">' + escapeHtml(a.full_name) + '</div>' +
+        '<div class="a-meta">' +
+          (a.phone ? '<span>' + escapeHtml(a.phone) + '</span>' : '') +
+          (a.email ? '<span>' + escapeHtml(a.email) + '</span>' : '') +
+        '</div>' +
+        (schoolName ? '<div class="a-school">🏫 ' + escapeHtml(schoolName) + '</div>' : '') +
+        '<div class="a-date">📅 ' + date + '</div>' +
+      '</div>' +
+      '<div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:4px">' +
+        '<span class="status-pill ' + (STATUS_CLASS[a.status] || 'status-draft') + '">' + escapeHtml(STATUS_LABELS[a.status] || a.status) + '</span>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+async function showDetail(id) {
+  currentDetailId = id;
+  try {
+    const res = await api('GET', '/admin/students?view=applications&id=' + encodeURIComponent(id));
+    const a = res.data;
+    if (!a) return;
+
+    const schoolName = a.schools ? a.schools.name : '—';
+    const semInfo = a.semesters ? (a.semesters.title || 'Kỳ ' + a.semesters.ky + '/' + a.semesters.nam) : '—';
+
+    document.getElementById('detail-title').textContent = '✏️ ' + escapeHtml(a.full_name);
+    document.getElementById('detail-content').innerHTML = `
+      <div class="detail-section">
+        <h4>👤 Thông tin cá nhân</h4>
+        <table class="detail-table">
+          <tr><td>Họ tên</td><td>${escapeHtml(a.full_name)} ${a.full_name_kr ? '(' + escapeHtml(a.full_name_kr) + ')' : ''}</td></tr>
+          <tr><td>Ngày sinh</td><td>${a.date_of_birth || '—'}</td></tr>
+          <tr><td>Giới tính</td><td>${a.gender === 'male' ? 'Nam' : a.gender === 'female' ? 'Nữ' : '—'}</td></tr>
+          <tr><td>Passport</td><td>${escapeHtml(a.passport_no || '—')}</td></tr>
+          <tr><td>SĐT</td><td>${escapeHtml(a.phone || '—')}</td></tr>
+          <tr><td>Email</td><td>${escapeHtml(a.email || '—')}</td></tr>
+        </table>
+      </div>
+      <div class="detail-section">
+        <h4>🎓 Học vấn</h4>
+        <table class="detail-table">
+          <tr><td>THPT</td><td>${escapeHtml(a.high_school_name || '—')} ${a.high_school_gpa ? '(GPA: ' + a.high_school_gpa + ')' : ''}</td></tr>
+          <tr><td>ĐH</td><td>${escapeHtml(a.university_name || '—')} ${a.university_gpa ? '(GPA: ' + a.university_gpa + ')' : ''}</td></tr>
+        </table>
+      </div>
+      <div class="detail-section">
+        <h4>🇰🇷 Tiếng Hàn</h4>
+        <table class="detail-table">
+          <tr><td>Trình độ</td><td>${escapeHtml(a.korean_level || '—')}</td></tr>
+          <tr><td>TOPIK</td><td>${a.topik_level || '—'}</td></tr>
+        </table>
+      </div>
+      <div class="detail-section">
+        <h4>🏫 Trường đã chọn</h4>
+        <table class="detail-table">
+          <tr><td>Trường</td><td>${escapeHtml(schoolName)}</td></tr>
+          <tr><td>Kỳ</td><td>${escapeHtml(semInfo)}</td></tr>
+        </table>
+      </div>
+      <div class="detail-section">
+        <h4>📄 Trạng thái</h4>
+        <table class="detail-table">
+          <tr><td>Status</td><td><span class="status-pill ${STATUS_CLASS[a.status] || 'status-draft'}">${escapeHtml(STATUS_LABELS[a.status] || a.status)}</span></td></tr>
+          <tr><td>Ngày gửi</td><td>${new Date(a.created_at).toLocaleString('vi-VN')}</td></tr>
+          <tr><td>Ghi chú</td><td>${escapeHtml(a.admin_note || '—')}</td></tr>
+        </table>
+      </div>
+    `;
+    document.getElementById('detail-modal').classList.add('show');
+  } catch (err) {
+    toast('Lỗi: ' + err.message, 'error');
+  }
+}
+
+async function updateStatus(newStatus) {
+  if (!currentDetailId) return;
+  try {
+    await api('PUT', '/admin/students?view=application&id=' + encodeURIComponent(currentDetailId), { status: newStatus });
+    toast('Đã cập nhật trạng thái: ' + STATUS_LABELS[newStatus], 'success');
+    closeModal('detail-modal');
+    loadApplications();
+  } catch (err) {
+    toast('Lỗi: ' + err.message, 'error');
+  }
+}
+
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+document.querySelectorAll('.modal-overlay').forEach(el => {
+  el.addEventListener('click', function(e) { if (e.target === e.currentTarget) closeModal(this.id); });
+});
+
+loadApplications();
+</script>
+</body>
+</html>

@@ -1,20 +1,101 @@
-// GET /api/schools — danh sách trường + chi tiết theo slug
+// GET /api/schools + POST /api/schools (apply) — danh sách trường & gửi đơn đăng ký
 // Query params:
 //   ?slug=xxx         → chi tiết 1 trường (full join child tables)
 //   ?full=false       → list lightweight (chỉ fields cơ bản)
 //   ?semester=id      → lọc theo kỳ tuyển sinh
 const { supabase } = require('../../lib/supabase');
 
+// Rate limiter cho public POST (apply)
+const rateLimitMap = new Map();
+const RATE_LIMIT = 5;
+const RATE_WINDOW = 30 * 60 * 1000;
+function checkRateLimit(ip) {
+  const now = Date.now();
+  const entry = rateLimitMap.get(ip) || { count: 0, resetAt: now + RATE_WINDOW };
+  if (now > entry.resetAt) { entry.count = 1; entry.resetAt = now + RATE_WINDOW; }
+  else { entry.count++; }
+  rateLimitMap.set(ip, entry);
+  if (rateLimitMap.size > 1000) {
+    const cutoff = now - RATE_WINDOW * 2;
+    for (const [key, val] of rateLimitMap) { if (val.resetAt < cutoff) rateLimitMap.delete(key); }
+  }
+  return entry.count <= RATE_LIMIT;
+}
+
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   res.setHeader('Cache-Control', 'no-store, max-age=0');
 
   if (req.method === 'OPTIONS') return res.status(200).end();
-  if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' });
+
+  // ─── POST: Gửi đơn đăng ký từ public ───
+  if (req.method === 'POST') {
+    try {
+      const clientIp = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.headers['x-real-ip'] || 'unknown';
+      if (!checkRateLimit(clientIp)) {
+        return res.status(429).json({ error: 'Bạn đã gửi quá nhiều đơn. Vui lòng thử lại sau 30 phút.', retryAfter: '30 minutes' });
+      }
+
+      const body = typeof req.body === 'object' ? req.body : {};
+      if (!body.fullName) {
+        return res.status(400).json({ error: 'fullName (Họ tên) là bắt buộc' });
+      }
+
+      // Check duplicate (email trong 30 ngày)
+      if (body.email) {
+        const { data: existing } = await supabase.from('school_applications').select('id, status')
+          .eq('email', body.email)
+          .gt('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()).limit(1);
+        if (existing && existing.length > 0) {
+          return res.status(409).json({ error: 'Bạn đã gửi đơn trước đó. Vui lòng kiểm tra email hoặc liên hệ admin.', existingId: existing[0].id });
+        }
+      }
+
+      const { data, error } = await supabase.from('school_applications').insert({
+        full_name: body.fullName || '', full_name_kr: body.fullNameKr || '', full_name_en: body.fullNameEn || '',
+        date_of_birth: body.dateOfBirth || null, gender: body.gender || '', nationality: body.nationality || 'Vietnam',
+        passport_no: body.passportNo || '', passport_expiry: body.passportExpiry || null,
+        phone: body.phone || '', email: body.email || '', address: body.address || '',
+        high_school_name: body.highSchoolName || '', high_school_address: body.highSchoolAddress || '',
+        high_school_start: body.highSchoolStart || null, high_school_end: body.highSchoolEnd || null,
+        high_school_major: body.highSchoolMajor || '', high_school_gpa: body.highSchoolGpa || null,
+        high_school_absences: body.highSchoolAbsences || 0, high_school_status: body.highSchoolStatus || 'graduated',
+        university_name: body.universityName || '', university_major: body.universityMajor || '',
+        university_start: body.universityStart || null, university_end: body.universityEnd || null,
+        university_gpa: body.universityGpa || null, university_degree: body.universityDegree || '',
+        korean_level: body.koreanLevel || 'none', topik_level: body.topikLevel || null, korean_education: body.koreanEducation || '',
+        father_name: body.fatherName || '', father_occupation: body.fatherOccupation || '', father_phone: body.fatherPhone || '',
+        mother_name: body.motherName || '', mother_occupation: body.motherOccupation || '', mother_phone: body.motherPhone || '',
+        school_id: body.schoolId || null, semester_id: body.semesterId || null,
+        status: 'submitted', source: body.source || 'web',
+      }).select('id, full_name, status, created_at').single();
+
+      if (error) throw new Error(error.message);
+
+      // Auto-create student record
+      if (body.phone || body.email) {
+        try {
+          const { data: existingStudent } = await supabase.from('students').select('id').eq('phone', body.phone || 'none').maybeSingle();
+          if (!existingStudent) {
+            await supabase.from('students').insert({
+              name: body.fullName || '', phone: body.phone || '', email: body.email || '',
+              gender: body.gender || '', school_id: body.schoolId || null, semester_id: body.semesterId || null,
+              status: 'applied', note: 'Tự động tạo từ đơn đăng ký online',
+            });
+          }
+        } catch (e) { /* silent */ }
+      }
+
+      return res.status(201).json({ success: true, message: 'Đơn đăng ký đã được gửi thành công!', data });
+    } catch (err) {
+      console.error('POST /api/schools (apply) error:', err);
+      return res.status(500).json({ error: err.message });
+    }
   }
+
+  // ─── GET (original) ───
 
   try {
     const { slug, full, semester, include } = req.query;

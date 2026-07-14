@@ -984,7 +984,7 @@ function getInitialView() {
   const schoolId = params.get("school");
   if (schoolId && getSchoolById(schoolId)) return schoolId;
   const view = params.get("view");
-  if (["advisor", "compare", "map", "extra", "ebook", "schools", "cost"].includes(view)) return view;
+  if (["advisor", "compare", "map", "extra", "ebook", "schools", "cost", "application"].includes(view)) return view;
   return "schools";
 }
 
@@ -1868,6 +1868,7 @@ function showSchool(viewId) {
   const ebook = document.getElementById("ebook-content");
   const advisor = document.getElementById("advisor-content");
   const costEl = document.getElementById("cost-content");
+  const appEl = document.getElementById("application-content");
 
   document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
   document.querySelector(`[data-school="${viewId}"]`)?.classList.add("active");
@@ -1876,7 +1877,7 @@ function showSchool(viewId) {
   updatePageMeta(viewId, getSchoolById(viewId));
 
   const hideAll = () => {
-    [content, schools, compare, extra, map, ebook, advisor, costEl].forEach(el => el?.classList.add("hidden"));
+    [content, schools, compare, extra, map, ebook, advisor, costEl, appEl].forEach(el => el?.classList.add("hidden"));
   };
 
   // Track page views
@@ -1936,6 +1937,14 @@ function showSchool(viewId) {
     costEl.classList.remove("hidden");
     costEl.innerHTML = renderCostCalculator();
     bindCostCalculator(costEl);
+    return;
+  }
+
+  if (viewId === "application") {
+    hideAll();
+    appEl.classList.remove("hidden");
+    if (typeof renderApplicationApp === "function") renderApplicationApp(appEl);
+    else appEl.innerHTML = `<div class="empty"><p>Đang tải form đăng ký...</p></div>`;
     return;
   }
 
