@@ -335,6 +335,7 @@ async function showDetail(id) {
           <tr><td>Ghi chú</td><td>${escapeHtml(a.admin_note || '—')}</td></tr>
         </table>
       </div>
+      ${renderDocsList(a)}
     `;
     document.getElementById('detail-modal').classList.add('show');
   } catch (err) {
@@ -352,6 +353,47 @@ async function updateStatus(newStatus) {
   } catch (err) {
     toast('Lỗi: ' + err.message, 'error');
   }
+}
+
+function renderDocsList(a) {
+  const docFields = [
+    { key: 'doc_application_form', label: '📝 Đơn đăng ký' },
+    { key: 'doc_study_plan', label: '📖 Kế hoạch học tập' },
+    { key: 'doc_self_introduction', label: '📋 Giới thiệu bản thân' },
+    { key: 'doc_high_school_diploma', label: '🎓 Bằng THPT' },
+    { key: 'doc_high_school_transcript', label: '📊 Học bạ THPT' },
+    { key: 'doc_passport_copy', label: '🛂 Hộ chiếu' },
+    { key: 'doc_birth_certificate', label: '👶 Giấy khai sinh' },
+    { key: 'doc_family_register', label: '📑 Sổ hộ khẩu' },
+    { key: 'doc_bank_statement', label: '🏦 Tài chính' },
+    { key: 'doc_health_certificate', label: '🏥 Sức khỏe' },
+    { key: 'doc_photo', label: '📸 Ảnh thẻ' },
+    { key: 'doc_topik_certificate', label: '🏅 TOPIK' },
+    { key: 'doc_other', label: '📎 Giấy tờ khác' },
+  ];
+  
+  // Only include non-empty string values
+  const uploaded = docFields.filter(f => {
+    const val = a[f.key];
+    return val && typeof val === 'string' && val.trim();
+  });
+  if (uploaded.length === 0) return '';
+  
+  return '<div class="detail-section">' +
+    '<h4>📁 File đã upload</h4>' +
+    '<div style="display:flex;flex-direction:column;gap:6px">' +
+    uploaded.map(f => {
+      const url = a[f.key];
+      const isUrl = typeof url === 'string' && (url.startsWith('http://') || url.startsWith('https://'));
+      if (!isUrl) {
+        if (f.key === 'doc_other') {
+          return '<div style="font-size:.85rem;color:var(--gray-600)"><strong>' + f.label + ':</strong> ' + escapeHtml(url) + '</div>';
+        }
+        return '';
+      }
+      return '<div><a href="' + escapeHtml(url) + '" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:4px;padding:6px 12px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:6px;color:#0369a1;font-size:.82rem;text-decoration:none;transition:background .15s" onmouseover="this.style.background=\'#e0f2fe\'" onmouseout="this.style.background=\'#f0f9ff\'">⬇️ ' + escapeHtml(f.label) + '</a></div>';
+    }).join('') +
+    '</div></div>';
 }
 
 function closeModal(id) { document.getElementById(id).classList.remove('show'); }

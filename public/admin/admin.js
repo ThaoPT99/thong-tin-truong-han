@@ -73,7 +73,7 @@ function setupSidebarByRole() {
     
     // Redirect nếu đang ở trang không cho phép
     const currentPage = window.location.pathname.split('/').pop();
-    const allowedPages = ['students.html', 'login.html'];
+    const allowedPages = ['students.html', 'login.html', 'applications.html'];
     if (!allowedPages.includes(currentPage)) {
       window.location.href = '/admin/students.html';
     }

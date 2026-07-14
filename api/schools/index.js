@@ -30,6 +30,53 @@ module.exports = async (req, res) => {
 
   if (req.method === 'OPTIONS') return res.status(200).end();
 
+  // ─── Upload base64 file to Supabase Storage ───
+  async function uploadBase64File(base64DataUri) {
+    if (!base64DataUri || typeof base64DataUri !== 'string') return '';
+    // Not a base64 data URI → return as-is (already a URL)
+    if (!base64DataUri.startsWith('data:')) return base64DataUri;
+    
+    try {
+      const matches = base64DataUri.match(/^data:([^;]+);base64,(.+)$/);
+      if (!matches) return base64DataUri;
+      
+      const mimeType = matches[1];
+      const base64Data = matches[2];
+      const buffer = Buffer.from(base64Data, 'base64');
+      
+      if (buffer.length > 10 * 1024 * 1024) return '';
+      
+      const ext = mimeType.split('/')[1] || 'bin';
+      const timestamp = Date.now();
+      const randomStr = Math.random().toString(36).substring(2, 8);
+      const fileName = `app_${timestamp}_${randomStr}.${ext === 'jpeg' ? 'jpg' : ext}`;
+      
+      const { error: uploadError } = await supabase
+        .storage
+        .from('applications')
+        .upload(fileName, buffer, {
+          contentType: mimeType,
+          cacheControl: '3600',
+          upsert: false,
+        });
+        
+      if (uploadError) {
+        console.error('Storage upload error:', uploadError);
+        return '';
+      }
+      
+      const { data: { publicUrl } } = supabase
+        .storage
+        .from('applications')
+        .getPublicUrl(fileName);
+        
+      return publicUrl;
+    } catch (e) {
+      console.error('uploadBase64File error:', e);
+      return '';
+    }
+  }
+
   // ─── POST: Gửi đơn đăng ký từ public ───
   if (req.method === 'POST') {
     try {
@@ -75,6 +122,21 @@ module.exports = async (req, res) => {
         }
       }
 
+      // Upload base64 files to Storage (parallel)
+      const docFields = [
+        'docApplicationForm', 'docStudyPlan', 'docSelfIntroduction',
+        'docHighSchoolDiploma', 'docHighSchoolTranscript', 'docPassportCopy',
+        'docBirthCertificate', 'docFamilyRegister', 'docBankStatement',
+        'docHealthCertificate', 'docPhoto', 'docTopikCertificate'
+      ];
+      
+      const uploadPromises = docFields.map(async (field) => {
+        if (body[field] && typeof body[field] === 'string' && body[field].startsWith('data:')) {
+          body[field] = await uploadBase64File(body[field]);
+        }
+      });
+      await Promise.all(uploadPromises);
+
       const { data, error } = await supabase.from('school_applications').insert({
         full_name: body.fullName || '', full_name_kr: body.fullNameKr || '', full_name_en: body.fullNameEn || '',
         date_of_birth: body.dateOfBirth || null, gender: body.gender || '', nationality: body.nationality || 'Vietnam',
@@ -91,6 +153,19 @@ module.exports = async (req, res) => {
         father_name: body.fatherName || '', father_occupation: body.fatherOccupation || '', father_phone: body.fatherPhone || '',
         mother_name: body.motherName || '', mother_occupation: body.motherOccupation || '', mother_phone: body.motherPhone || '',
         school_id: schoolId, semester_id: semesterId,
+        doc_application_form: body.docApplicationForm || '',
+        doc_study_plan: body.docStudyPlan || '',
+        doc_self_introduction: body.docSelfIntroduction || '',
+        doc_high_school_diploma: body.docHighSchoolDiploma || '',
+        doc_high_school_transcript: body.docHighSchoolTranscript || '',
+        doc_passport_copy: body.docPassportCopy || '',
+        doc_birth_certificate: body.docBirthCertificate || '',
+        doc_family_register: body.docFamilyRegister || '',
+        doc_bank_statement: body.docBankStatement || '',
+        doc_health_certificate: body.docHealthCertificate || '',
+        doc_photo: body.docPhoto || '',
+        doc_topik_certificate: body.docTopikCertificate || '',
+        doc_other: body.docOther || '',
         status: 'submitted', source: body.source || 'web',
       }).select('id, full_name, status, created_at').single();
 

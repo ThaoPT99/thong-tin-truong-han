@@ -197,7 +197,10 @@
       case 2: content.innerHTML = renderKoreanStep(); break;
       case 3: content.innerHTML = renderFamilyStep(); break;
       case 4: content.innerHTML = renderSchoolStep(); break;
-      case 5: content.innerHTML = renderDocumentsStep(); break;
+      case 5: 
+        content.innerHTML = renderDocumentsStep(); 
+        bindFileInputs();
+        break;
       case 6: content.innerHTML = renderReviewStep(); break;
     }
 
@@ -789,11 +792,10 @@
   }
 
   function renderDocStatus(fieldName, label) {
-    // Check file input - we track via file names in form data
-    const files = documentFiles[fieldName];
-    const hasDoc = files && files.length > 0;
+    const file = documentFiles[fieldName];
+    const hasDoc = file instanceof File;
     return `<li class="${hasDoc ? 'doc-ready' : 'doc-missing'}">
-      ${hasDoc ? '✅' : '⬜'} ${esc(label)}
+      ${hasDoc ? '✅' : '⬜'} ${esc(label)}${hasDoc ? ' <span class="doc-file-name">(' + esc(file.name) + ')</span>' : ''}
     </li>`;
   }
 
@@ -816,6 +818,31 @@
     });
   }
 
+  // ─── Save file objects when user selects files (step 5) ───
+  // Lưu File reference vào documentFiles để dùng khi submit ở bước 6 (file inputs không còn trong DOM)
+  function bindFileInputs() {
+    const fileInputs = document.querySelectorAll('#app-step-content input[type="file"]');
+    fileInputs.forEach(input => {
+      input.addEventListener('change', function() {
+        if (this.files && this.files.length > 0) {
+          documentFiles[this.name] = this.files[0];
+        } else {
+          delete documentFiles[this.name];
+        }
+      });
+    });
+  }
+
+  // ─── Read file as base64 data URI ───
+  function readFileAsBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(new Error('Không thể đọc file'));
+      reader.readAsDataURL(file);
+    });
+  }
+
   async function submitForm() {
     if (isSubmitting) return;
     isSubmitting = true;
@@ -825,26 +852,40 @@
     
     if (submitBtn) {
       submitBtn.disabled = true;
-      submitBtn.textContent = '⏳ Đang gửi...';
+      submitBtn.textContent = '⏳ Đang đọc file...';
     }
     if (errorEl) errorEl.textContent = '';
 
     saveFormData();
 
-    // Build payload - upload files will be done via API
+    // Build payload
     const payload = { ...formData };
 
-    // Handle file uploads - encode as base64 or skip for now
-    // For MVP, we'll send form text data and handle files separately
-    const fileInputs = document.querySelectorAll('#app-step-content input[type="file"]');
-    for (const input of fileInputs) {
-      if (input.files && input.files.length > 0) {
-        // For now, just mark as "uploaded" - actual upload can be added later
-        payload[input.name] = 'uploaded:' + input.files[0].name;
+    // Dùng documentFiles đã lưu từ bước 5 (Hồ sơ) — file inputs không còn trong DOM ở bước 6
+    const fileEntries = Object.entries(documentFiles).filter(([, file]) => file instanceof File);
+    
+    for (let i = 0; i < fileEntries.length; i++) {
+      const [fieldName, file] = fileEntries[i];
+      if (submitBtn) {
+        submitBtn.textContent = `⏳ Đang đọc file ${i+1}/${fileEntries.length}...`;
+      }
+      try {
+        const base64 = await readFileAsBase64(file);
+        payload[fieldName] = base64;
+      } catch (err) {
+        if (errorEl) errorEl.textContent = '❌ Lỗi đọc file ' + file.name + ': ' + err.message;
+        isSubmitting = false;
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = '📨 Gửi đơn đăng ký';
+        }
+        return;
       }
     }
 
     payload.source = 'web';
+
+    if (submitBtn) submitBtn.textContent = '⏳ Đang gửi đơn...';
 
     try {
       const res = await fetch('/api/schools', {
@@ -871,7 +912,7 @@
       if (successId && data.data?.id) {
         successId.innerHTML = `
           <p>Mã đơn: <strong>${data.data.id}</strong></p>
-          <p>Chúng tôi đã ghi nhận đơn của bạn. Admin sẽ liên hệ trong thời gian sớm nhất.</p>
+          <p>Cảm ơn bạn! File hồ sơ đã được tải lên. Admin sẽ xem xét và phản hồi sớm nhất.</p>
         `;
       }
     } catch (err) {

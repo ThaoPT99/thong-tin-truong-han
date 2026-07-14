@@ -1,7 +1,7 @@
 // sw.js — Service Worker: cache API responses & static assets
 // Giúp tải trang nhanh hơn ở lần truy cập sau
 
-const CACHE_NAME = 'd26-cache-v2';
+const CACHE_NAME = 'd26-cache-v3';
 
 // Static assets cần pre-cache ngay khi cài đặt
 const PRECACHE_URLS = [
@@ -12,7 +12,8 @@ const PRECACHE_URLS = [
   '/js/render.js',
   '/js/zalo-popup.js',
   '/images/logo-d26-sidebar.svg',
-  '/images/logo-d26-horizontal.svg'
+  '/images/logo-d26-horizontal.svg',
+  '/js/application.js'
 ];
 
 // Install: pre-cache static assets
