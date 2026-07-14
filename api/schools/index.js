@@ -95,6 +95,64 @@ module.exports = async (req, res) => {
     }
   }
 
+  // ─── GET: migration trigger (temporary — dùng 1 lần để tạo bảng) ───
+  if (req.method === 'GET' && req.query._migrate === 'school_applications') {
+    try {
+      const { Client } = require('pg');
+      const client = new Client({
+        host: 'db.lzggxhunbnjrklbkywmb.supabase.co',
+        port: 5432, database: 'postgres',
+        user: 'postgres',
+        password: process.env.DATABASE_PASSWORD || '',
+        ssl: { rejectUnauthorized: false },
+      });
+      await client.connect();
+      const sql = `
+        CREATE TABLE IF NOT EXISTS school_applications (
+          id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+          student_id UUID REFERENCES students(id) ON DELETE SET NULL,
+          full_name VARCHAR(200) NOT NULL,
+          full_name_kr VARCHAR(200) DEFAULT '',
+          full_name_en VARCHAR(200) DEFAULT '',
+          date_of_birth DATE, gender VARCHAR(10) DEFAULT '',
+          nationality VARCHAR(100) DEFAULT 'Vietnam',
+          passport_no VARCHAR(50) DEFAULT '',
+          passport_expiry DATE, phone VARCHAR(20) DEFAULT '',
+          email VARCHAR(200) DEFAULT '', address TEXT DEFAULT '',
+          high_school_name VARCHAR(200) DEFAULT '',
+          high_school_address TEXT DEFAULT '',
+          high_school_start DATE, high_school_end DATE,
+          high_school_gpa DECIMAL(3,1),
+          high_school_absences INTEGER DEFAULT 0,
+          high_school_status VARCHAR(30) DEFAULT 'graduated',
+          university_name VARCHAR(200) DEFAULT '',
+          university_major VARCHAR(200) DEFAULT '',
+          korean_level VARCHAR(20) DEFAULT 'none',
+          topik_level INTEGER,
+          father_name VARCHAR(200) DEFAULT '',
+          father_occupation VARCHAR(200) DEFAULT '',
+          mother_name VARCHAR(200) DEFAULT '',
+          mother_occupation VARCHAR(200) DEFAULT '',
+          school_id UUID REFERENCES schools(id) ON DELETE SET NULL,
+          semester_id UUID REFERENCES semesters(id) ON DELETE SET NULL,
+          status VARCHAR(30) DEFAULT 'draft',
+          admin_note TEXT DEFAULT '',
+          created_at TIMESTAMPTZ DEFAULT NOW(),
+          updated_at TIMESTAMPTZ DEFAULT NOW()
+        );
+        ALTER TABLE school_applications ENABLE ROW LEVEL SECURITY;
+        CREATE POLICY IF NOT EXISTS "public_insert_applications" ON school_applications FOR INSERT WITH CHECK (true);
+        CREATE POLICY IF NOT EXISTS "public_select_applications" ON school_applications FOR SELECT USING (true);
+      `;
+      await client.query(sql);
+      await client.end();
+      return res.json({ success: true, message: 'Migration completed' });
+    } catch (err) {
+      console.error('Migration error:', err.message);
+      return res.json({ success: false, error: err.message });
+    }
+  }
+
   // ─── GET (original) ───
 
   try {
