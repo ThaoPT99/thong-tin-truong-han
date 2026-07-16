@@ -274,6 +274,23 @@ CREATE INDEX IF NOT EXISTS idx_access_logs_created ON access_logs(created_at DES
 CREATE INDEX IF NOT EXISTS idx_access_logs_ip ON access_logs(ip);
 CREATE INDEX IF NOT EXISTS idx_access_control_type ON access_control(type);
 CREATE INDEX IF NOT EXISTS idx_student_logs_student ON student_logs(student_id);
+-- 9b. Error logs — ghi lại lỗi server để monitoring
+CREATE TABLE IF NOT EXISTS error_logs (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  level           VARCHAR(20) DEFAULT 'error',
+  message         TEXT NOT NULL,
+  stack           TEXT,
+  context         JSONB,
+  ip              VARCHAR(45),
+  user_agent      TEXT,
+  path            TEXT,
+  method          VARCHAR(10),
+  created_at      TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_error_logs_created ON error_logs(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_error_logs_level ON error_logs(level);
+
 ALTER TABLE school_conversions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE school_documents ENABLE ROW LEVEL SECURITY;
 ALTER TABLE school_partners ENABLE ROW LEVEL SECURITY;

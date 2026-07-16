@@ -4,6 +4,7 @@
 //   ?full=false       → list lightweight (chỉ fields cơ bản)
 //   ?semester=id      → lọc theo kỳ tuyển sinh
 const { supabase } = require('../../lib/supabase');
+const { logServerError } = require('../../lib/error-logger');
 
 // Rate limiter cho public POST (apply)
 const rateLimitMap = new Map();
@@ -188,6 +189,7 @@ module.exports = async (req, res) => {
       return res.status(201).json({ success: true, message: 'Đơn đăng ký đã được gửi thành công!', data });
     } catch (err) {
       console.error('POST /api/schools (apply) error:', err);
+      await logServerError(err, { action: 'apply' }, req);
       return res.status(500).json({ error: err.message });
     }
   }
@@ -430,6 +432,7 @@ module.exports = async (req, res) => {
     });
   } catch (err) {
     console.error('GET /api/schools error:', err);
+    await logServerError(err, { action: 'list_schools' }, req);
     return res.status(500).json({ error: 'Internal server error' });
   }
 };

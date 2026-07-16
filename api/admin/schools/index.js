@@ -2,6 +2,7 @@
 // Consolidated: POST /api/admin/schools, GET/PUT/DELETE /api/admin/schools?id=:id
 const { requireAdmin } = require('../../../lib/auth');
 const { supabase } = require('../../../lib/supabase');
+const { logServerError } = require('../../../lib/error-logger');
 const { insertChildTable, replaceChildTable, replacePartners, upsertAdvisorProfile } = require('../../../lib/helpers');
 
 module.exports = requireAdmin(async (req, res) => {
@@ -69,6 +70,9 @@ module.exports = requireAdmin(async (req, res) => {
           quota: body.quota || 0,
           region: body.region || '',
           location: body.location || '',
+          address: body.address || '',
+          phone: body.phone || '',
+          email: body.email || '',
           intro: body.intro || '',
           tuition: body.tuition || '',
           insurance: body.insurance || '',
@@ -153,6 +157,9 @@ module.exports = requireAdmin(async (req, res) => {
         quota: val('quota', existingSchool.quota || 0),
         region: val('region', existingSchool.region || ''),
         location: val('location', existingSchool.location || ''),
+        address: val('address', existingSchool.address || ''),
+        phone: val('phone', existingSchool.phone || ''),
+        email: val('email', existingSchool.email || ''),
         intro: val('intro', existingSchool.intro || ''),
         tuition: val('tuition', existingSchool.tuition || ''),
         insurance: val('insurance', existingSchool.insurance || ''),
@@ -200,6 +207,7 @@ module.exports = requireAdmin(async (req, res) => {
     return res.status(405).json({ error: 'Method not allowed' });
   } catch (err) {
     console.error('/api/admin/schools error:', err);
+    await logServerError(err, { action: req.method, schoolId: req.query.id }, req);
     return res.status(500).json({ error: err.message || 'Internal server error' });
   }
 });
