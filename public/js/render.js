@@ -47,6 +47,14 @@ function listToInline(items, limit = 3) {
   return items.slice(0, limit).map(item => String(item).replace(/\s+/g, " ").trim()).join("; ");
 }
 
+function renderContactInfo(s) {
+  var parts = [];
+  if (s.address) parts.push('<span class="contact-line">📍 ' + escapeHtml(s.address) + '</span>');
+  if (s.phone) parts.push('<span class="contact-line">📞 ' + escapeHtml(s.phone) + '</span>');
+  if (s.email) parts.push('<span class="contact-line">📧 <a href="mailto:' + escapeHtml(s.email) + '">' + escapeHtml(s.email) + '</a></span>');
+  return parts.length > 0 ? parts.join('<br>') : '<span class="muted-empty">Đang cập nhật</span>';
+}
+
 // ─── Semester + Visa type state ───
 let currentSemesterId = null;
 let currentVisaType = 'D2-6'; // 'D2-6' | 'D4-1' | null (null = all)
@@ -202,6 +210,9 @@ function renderSchool(schoolId) {
     ? arr.map(p => `<span class="partner-tag">${escapeHtml(p.code || "")}</span> ${escapeHtml(p.name || "")}`).join("<br>")
     : `<span class="muted-empty">Đang cập nhật</span>`;
 
+  const mainImg = s.images?.main && s.images.main !== 'images/placeholder.svg'
+    ? `<img class="detail-hero-img" src="${escapeHtml(s.images.main)}" alt="${escapeHtml(s.name)}" onerror="this.style.display='none'">`
+    : '';
   const catalogVal = s.links?.catalog
     ? `<a href="${s.links.catalog}" target="_blank" rel="noopener">Mở Catalog</a>`
     : s.images?.catalog ? img(s.images.catalog) : "";
@@ -215,6 +226,7 @@ function renderSchool(schoolId) {
 
   return `
     <section class="school-detail">
+      ${mainImg}
       <div class="detail-hero">
         <div>
           <div class="detail-breadcrumb"><button type="button" class="back-to-schools">Trường</button><span>/</span><span>${escapeHtml(s.name)}</span></div>
@@ -233,6 +245,7 @@ function renderSchool(schoolId) {
       </div>
       <nav class="detail-jump" aria-label="Mục trong trang">
         <a href="#tong-quan">Tổng quan</a>
+        <a href="#lien-he">Liên hệ</a>
         <a href="#dieu-kien">Điều kiện</a>
         <a href="#hoc-phi">Học phí</a>
         <a href="#ho-so">Hồ sơ</a>
@@ -252,6 +265,10 @@ function renderSchool(schoolId) {
         <article class="detail-card">
           <h3>Vị trí</h3>
           <div>${locationVal}</div>
+        </article>
+        <article class="detail-card" id="lien-he">
+          <h3>Liên hệ</h3>
+          <div>${renderContactInfo(s)}</div>
         </article>
         <article class="detail-card" id="dieu-kien">
           <h3>Điều kiện tuyển sinh</h3>

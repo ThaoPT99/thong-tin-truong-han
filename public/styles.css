@@ -2639,6 +2639,19 @@ html[data-ab-header-color="b"] .app-topbar .topbar-stats span {
 }
 
 
+/* ─── SCHOOL DETAIL HERO IMAGE ─── */
+.detail-hero-img {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 16px 16px 0 0;
+  display: block;
+}
+@media (max-width: 768px) {
+  .detail-hero-img { height: 180px; border-radius: 12px 12px 0 0; }
+}
+
 /* Cost Calculator */
 .cost-calc {
   animation: fadeIn 0.35s ease-out;
