@@ -32,6 +32,7 @@ CREATE TABLE IF NOT EXISTS schools (
   image_catalog    VARCHAR(500),
   image_location   VARCHAR(500),
   image_invoice    VARCHAR(500),
+  visa_type        VARCHAR(10) DEFAULT 'D2-6',
   created_at      TIMESTAMPTZ DEFAULT NOW(),
   updated_at      TIMESTAMPTZ DEFAULT NOW()
 );
@@ -195,6 +196,7 @@ CREATE INDEX IF NOT EXISTS idx_documents_school ON school_documents(school_id);
 CREATE INDEX IF NOT EXISTS idx_partners_school ON school_partners(school_id);
 CREATE INDEX IF NOT EXISTS idx_advisor_school ON school_advisor_profiles(school_id);
 CREATE INDEX IF NOT EXISTS idx_schools_region ON schools(region);
+CREATE INDEX IF NOT EXISTS idx_schools_visa_type ON schools(visa_type);
 CREATE INDEX IF NOT EXISTS idx_schools_system ON schools(system);
 CREATE INDEX IF NOT EXISTS idx_students_status ON students(status);
 CREATE INDEX IF NOT EXISTS idx_students_school ON students(school_id);

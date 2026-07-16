@@ -315,6 +315,7 @@ window.REGION_LABELS = {
       name: school.name || '',
       nameKr: school.name_kr || '',
       nameEn: school.name_en || '',
+      visaType: school.visa_type || 'D2-6',
       system: school.system || '',
       quota: school.quota || 0,
       images: {

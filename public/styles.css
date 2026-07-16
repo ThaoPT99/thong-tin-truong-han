@@ -616,6 +616,27 @@ body {
     font-weight: 600;
 }
 
+/* Tab D4-1 */
+.tab-btn[data-school="d4-1"] {
+    background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 100%);
+    border-color: #fecdd3;
+    color: #9f1239;
+    font-weight: 700;
+}
+
+.tab-btn[data-school="d4-1"]:hover {
+    background: linear-gradient(135deg, #ffe4e6 0%, #fecdd3 100%);
+    border-color: #f43f5e;
+    color: #be123c;
+}
+
+.tab-btn[data-school="d4-1"].active {
+    background: linear-gradient(135deg, #e11d48 0%, #be123c 100%);
+    color: #fff;
+    border-color: #be123c;
+    box-shadow: 0 2px 8px rgba(225, 29, 72, 0.3);
+}
+
 .advisor-view {
     background: #fff;
     border: 1px solid rgba(0,0,0,0.06);

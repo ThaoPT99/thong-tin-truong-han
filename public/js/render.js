@@ -47,15 +47,24 @@ function listToInline(items, limit = 3) {
   return items.slice(0, limit).map(item => String(item).replace(/\s+/g, " ").trim()).join("; ");
 }
 
-// ─── Semester state ───
+// ─── Semester + Visa type state ───
 let currentSemesterId = null;
+let currentVisaType = 'D2-6'; // 'D2-6' | 'D4-1' | null (null = all)
 
 function getSemesterSchools() {
   const all = Object.values(SCHOOLS_DATA || {});
-  if (!currentSemesterId) return all;
+  // Filter by visa type first
+  let filtered = all;
+  if (currentVisaType) {
+    filtered = filtered.filter(function(s) {
+      return (s.visaType || 'D2-6') === currentVisaType;
+    });
+  }
+  // Then filter by semester
+  if (!currentSemesterId) return filtered;
   const map = window.SEMESTER_SCHOOLS_MAP || {};
   // map keys là slug (đã convert từ UUID trong api-loader.js), SCHOOLS_DATA key cũng là slug
-  return all.filter(function(s) {
+  return filtered.filter(function(s) {
     const sids = map[s.id] || [];
     return sids.indexOf(currentSemesterId) !== -1;
   });
@@ -63,6 +72,11 @@ function getSemesterSchools() {
 
 function getSchools() {
   return getSemesterSchools();
+}
+
+function getVisaTypeLabel(type) {
+  if (type === 'D4-1') return 'Visa D4-1 (học tiếng Hàn)';
+  return 'Visa D2-6 (trao đổi sinh viên)';
 }
 
 function getSchoolById(schoolId) {
@@ -294,6 +308,8 @@ function renderSchool(schoolId) {
 function renderSemesterSelector() {
   const list = window.SEMESTERS_LIST || [];
   if (list.length <= 1) return '';
+  // Ẩn semester selector khi xem D4-1 (D4-1 không dùng semester filter)
+  if (currentVisaType === 'D4-1') return '';
 
   const activeId = currentSemesterId || window.ACTIVE_SEMESTER_ID;
   const options = list.map(function(s) {
@@ -881,15 +897,17 @@ function showCopyToast(container, message) {
 }
 
 function updatePageMeta(viewId, school) {
+  const visaType = school ? (school.visaType || 'D2-6') : currentVisaType;
+  const visaLabel = getVisaTypeLabel(visaType);
   const semester = typeof SEMESTER_INFO !== "undefined"
     ? `Kỳ tháng ${SEMESTER_INFO.ky || "3"}/${SEMESTER_INFO.nam || "2027"}`
-    : "Visa D2-6";
+    : `Visa ${visaType}`;
   const title = school
     ? `${school.name} - Thông tin trường Hàn`
-    : `Thông tin trường Hàn - ${semester}`;
+    : `Thông tin trường Hàn - ${visaLabel} - ${semester}`;
   const desc = school
-    ? `${school.name}: điều kiện, học phí, ký túc xá, hồ sơ và tài liệu liên quan cho chương trình Visa D2-6.`
-    : `${semester} - Tra cứu danh sách trường Hàn, so sánh lựa chọn và phân tích hồ sơ D2-6.`;
+    ? `${school.name}: điều kiện, học phí, ký túc xá, hồ sơ và tài liệu liên quan cho ${visaLabel}.`
+    : `${semester} - Tra cứu danh sách trường Hàn ${visaLabel.toLowerCase()}, so sánh lựa chọn và phân tích hồ sơ.`;
 
   document.title = title;
   const ogTitle = document.getElementById("og-title");
@@ -901,7 +919,11 @@ function updatePageMeta(viewId, school) {
 function bindSchoolDetail(container, schoolId) {
   const school = getSchoolById(schoolId);
   saveRecentSchool(schoolId);
-  container.querySelector(".back-to-schools")?.addEventListener("click", () => showSchool("schools"));
+  container.querySelector(".back-to-schools")?.addEventListener("click", () => {
+    // Go back to the correct visa type tab
+    const backTo = (school && school.visaType === 'D4-1') ? 'd4-1' : 'schools';
+    showSchool(backTo);
+  });
   container.querySelector(".open-zalo-detail")?.addEventListener("click", () => {
     if (typeof openZaloPopup === "function") openZaloPopup();
   });
@@ -974,7 +996,9 @@ function updateUrlForView(viewId) {
   const url = new URL(window.location.href);
   url.searchParams.delete("school");
   url.searchParams.delete("view");
+  url.searchParams.delete("visa_type");
   if (getSchoolById(viewId)) url.searchParams.set("school", viewId);
+  else if (viewId === "d4-1") url.searchParams.set("visa_type", "D4-1");
   else if (viewId !== "schools") url.searchParams.set("view", viewId);
   window.history.replaceState({}, "", url);
 }
@@ -984,7 +1008,10 @@ function getInitialView() {
   const schoolId = params.get("school");
   if (schoolId && getSchoolById(schoolId)) return schoolId;
   const view = params.get("view");
-  if (["advisor", "compare", "map", "extra", "ebook", "schools", "cost", "application"].includes(view)) return view;
+  if (["advisor", "compare", "map", "extra", "ebook", "schools", "d4-1", "cost", "application"].includes(view)) return view;
+  // Check visa_type param
+  const vt = params.get("visa_type");
+  if (vt === 'D4-1') return 'd4-1';
   return "schools";
 }
 
@@ -1870,9 +1897,37 @@ function showSchool(viewId) {
   const costEl = document.getElementById("cost-content");
   const appEl = document.getElementById("application-content");
 
+  // Set currentVisaType based on view
+  if (viewId === 'd4-1') {
+    currentVisaType = 'D4-1';
+    currentSemesterId = null; // Reset semester filter when switching visa type
+  } else if (viewId === 'schools') {
+    currentVisaType = 'D2-6';
+    currentSemesterId = null;
+  } else if (getSchoolById(viewId)) {
+    // Viewing a specific school — set visa type from school data
+    const school = getSchoolById(viewId);
+    currentVisaType = (school && school.visaType) || 'D2-6';
+  }
+
+  // Update topbar badge to reflect current visa type
+  const topbarBadge = document.querySelector('.topbar-stats span:last-child');
+  if (topbarBadge) topbarBadge.textContent = currentVisaType;
+  const topbarTitle = document.querySelector('.app-topbar h2');
+  if (topbarTitle) {
+    topbarTitle.textContent = currentVisaType === 'D4-1'
+      ? 'Thông tin trường Visa D4-1'
+      : 'Thông tin trường Visa D2-6';
+  }
+
   document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
   document.querySelector(`[data-school="${viewId}"]`)?.classList.add("active");
-  if (getSchoolById(viewId)) document.querySelector(`[data-school="schools"]`)?.classList.add("active");
+  if (getSchoolById(viewId)) {
+    // Activate the correct visa tab based on school's visa type
+    const schoolVisa = (getSchoolById(viewId) && getSchoolById(viewId).visaType) || 'D2-6';
+    const tab = schoolVisa === 'D4-1' ? 'd4-1' : 'schools';
+    document.querySelector(`[data-school="${tab}"]`)?.classList.add("active");
+  }
   updateUrlForView(viewId);
   updatePageMeta(viewId, getSchoolById(viewId));
 
@@ -1887,6 +1942,7 @@ function showSchool(viewId) {
       pageType: pageType,
       schoolSlug: getSchoolById(viewId) ? viewId : null,
       schoolName: getSchoolById(viewId) ? getSchoolById(viewId).name : null,
+      visaType: currentVisaType,
     });
   }
 
@@ -1898,7 +1954,7 @@ function showSchool(viewId) {
     return;
   }
 
-  if (viewId === "schools") {
+  if (viewId === "schools" || viewId === "d4-1") {
     hideAll();
     schools.classList.remove("hidden");
     schools.innerHTML = renderSchoolsDirectory();

@@ -195,8 +195,9 @@ module.exports = async (req, res) => {
   // ─── GET (original) ───
 
   try {
-    const { slug, full, semester, include } = req.query;
+    const { slug, full, semester, include, visa_type } = req.query;
     const semesterFilter = semester || null;
+    const visaTypeFilter = visa_type || null;
 
     // ─── Include extras data (semesters, visa checklist, interviews) ───
     if (include === 'extras') {
@@ -331,7 +332,7 @@ module.exports = async (req, res) => {
       return res.json({ success: true, data: result });
     }
 
-    // ─── List schools (có filter semester) ───
+    // ─── List schools (có filter semester + visa_type) ───
     const fullQuery = full !== 'false';
     const baseQuery = fullQuery ? supabase
       .from('schools')
@@ -344,6 +345,11 @@ module.exports = async (req, res) => {
         school_documents(*),
         school_partners(*)
       `) : supabase.from('schools').select('*');
+
+    // Visa type filter
+    if (visaTypeFilter) {
+      baseQuery.eq('visa_type', visaTypeFilter);
+    }
 
     // Semester filter
     if (semesterFilter) {
@@ -381,6 +387,7 @@ module.exports = async (req, res) => {
         advantages: school.school_advantages || [],
         conversion: school.school_conversions || [],
         documents: school.school_documents || [],
+        visa_type: school.visa_type || 'D2-6',
         partners: school.school_partners || [],
         advisorProfile: advisorMap[school.id] || null,
         semesterIds: semesterSchoolsMap[school.id] || [],
