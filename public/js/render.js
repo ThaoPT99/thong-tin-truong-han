@@ -1025,7 +1025,7 @@ function getInitialView() {
   const schoolId = params.get("school");
   if (schoolId && getSchoolById(schoolId)) return schoolId;
   const view = params.get("view");
-  if (["advisor", "compare", "map", "extra", "ebook", "schools", "d4-1", "cost", "application"].includes(view)) return view;
+  if (["advisor", "compare", "map", "extra", "ebook", "schools", "d4-1", "cost", "application", "checklist"].includes(view)) return view;
   // Check visa_type param
   const vt = params.get("visa_type");
   if (vt === 'D4-1') return 'd4-1';
@@ -1913,6 +1913,7 @@ function showSchool(viewId) {
   const advisor = document.getElementById("advisor-content");
   const costEl = document.getElementById("cost-content");
   const appEl = document.getElementById("application-content");
+  const checklistEl = document.getElementById("checklist-content");
 
   // Set currentVisaType based on view
   if (viewId === 'd4-1') {
@@ -1949,7 +1950,7 @@ function showSchool(viewId) {
   updatePageMeta(viewId, getSchoolById(viewId));
 
   const hideAll = () => {
-    [content, schools, compare, extra, map, ebook, advisor, costEl, appEl].forEach(el => el?.classList.add("hidden"));
+    [content, schools, compare, extra, map, ebook, advisor, costEl, appEl, checklistEl].forEach(el => el?.classList.add("hidden"));
   };
 
   // Track page views
@@ -2021,6 +2022,14 @@ function showSchool(viewId) {
     return;
   }
 
+  if (viewId === "checklist") {
+    hideAll();
+    checklistEl.classList.remove("hidden");
+    if (typeof renderChecklistApp === "function") renderChecklistApp(checklistEl);
+    else checklistEl.innerHTML = `<div class="empty"><p>Đang tải công cụ hồ sơ...</p></div>`;
+    return;
+  }
+
   if (viewId === "ebook") {
     hideAll();
     ebook.classList.remove("hidden");
@@ -2080,6 +2089,32 @@ function init() {
 
   const schoolCount = document.getElementById("topbar-school-count");
   if (schoolCount) schoolCount.textContent = String(getSchools().length);
+
+  // Sidebar toggle: Tiện ích collapsible
+  const toggleBtn = document.querySelector('.sidebar-toggle-btn');
+  if (toggleBtn) {
+    toggleBtn.addEventListener('click', function() {
+      const wrap = this.closest('.sidebar-submenu-wrap');
+      const submenu = wrap?.querySelector('.sidebar-submenu');
+      if (submenu) {
+        submenu.classList.toggle('hidden');
+        this.classList.toggle('is-expanded');
+      }
+    });
+    // Auto-expand nếu view hiện tại nằm trong submenu
+    const submenuItems = document.querySelectorAll('.sidebar-submenu .tab-btn[data-school]');
+    let shouldExpand = false;
+    submenuItems.forEach(function(btn) {
+      if (btn.dataset.school === getInitialView()) shouldExpand = true;
+    });
+    if (shouldExpand) {
+      const submenu = toggleBtn.closest('.sidebar-submenu-wrap')?.querySelector('.sidebar-submenu');
+      if (submenu) {
+        submenu.classList.remove('hidden');
+        toggleBtn.classList.add('is-expanded');
+      }
+    }
+  }
 
   try {
     showSchool(getInitialView());

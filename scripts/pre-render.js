@@ -157,6 +157,7 @@ function buildSchoolHtml(school, semesterInfo) {
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap">
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/checklist.css">
 </head>
 <body>
   <div class="app-shell">
@@ -168,12 +169,27 @@ function buildSchoolHtml(school, semesterInfo) {
       </header>
       <nav class="school-tabs" aria-label="Menu chính">
         <div class="tabs-inner">
-          <button class="tab-btn" data-school="schools">Trường</button>
-          <button class="tab-btn advisor-tab-btn" data-school="advisor">Tư vấn</button>
+          <button class="tab-btn" data-school="schools">D2-6</button>
+          <button class="tab-btn" data-school="d4-1">D4-1</button>
+          <button class="tab-btn" data-school="advisor">Tư vấn</button>
           <button class="tab-btn" data-school="compare">So sánh</button>
-          <button class="tab-btn" data-school="map">Bản đồ</button>
-          <button class="tab-btn" data-school="extra">Tài liệu</button>
-          <button class="tab-btn" data-school="ebook">Cẩm nang D2-6</button>
+          <button class="tab-btn" data-school="checklist">📋 Hồ sơ của tôi</button>
+
+          <div class="sidebar-divider"></div>
+
+          <div class="sidebar-submenu-wrap">
+            <button class="tab-btn sidebar-toggle-btn" type="button">
+              <span>Tiện ích</span>
+              <svg class="sidebar-chevron" viewBox="0 0 20 20" width="16" height="16" fill="currentColor"><path d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"/></svg>
+            </button>
+            <div class="sidebar-submenu hidden">
+              <button class="tab-btn" data-school="map">Bản đồ</button>
+              <button class="tab-btn" data-school="extra">Tài liệu</button>
+              <button class="tab-btn" data-school="ebook">Cẩm nang D2-6</button>
+              <button class="tab-btn" data-school="cost">Chi phí</button>
+              <button class="tab-btn" data-school="application">📨 Gửi đơn</button>
+            </div>
+          </div>
         </div>
       </nav>
       <div class="sidebar-zalo">
@@ -229,6 +245,9 @@ function buildSchoolHtml(school, semesterInfo) {
         <div id="school-content" class="hidden"></div>
         <div id="map-content" class="hidden"></div>
         <div id="extra-content" class="hidden"></div>
+        <div id="cost-content" class="hidden"></div>
+        <div id="application-content" class="hidden"></div>
+        <div id="checklist-content" class="hidden"></div>
         <div id="ebook-content" class="hidden"></div>
       </main>
 
@@ -283,6 +302,8 @@ function buildSchoolHtml(school, semesterInfo) {
   <script src="/js/advisor.js"></script>
   <script src="/js/render.js"></script>
   <script src="/js/zalo-popup.js"></script>
+  <script src="/js/checklist-data.js"></script>
+  <script src="/js/checklist.js"></script>
 
   <script>
   if ('serviceWorker' in navigator) {

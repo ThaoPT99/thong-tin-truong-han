@@ -978,10 +978,107 @@ HƯỚNG DẪN TRẢ LỜI:
       answer: 'Xin lỗi, đã có lỗi xảy ra. Vui lòng thử lại sau!',
     });
   }
-}
+}  // ═══════════════════════════════════════════════════
+  // ─── Action: Generate Checklist (action=generate-checklist)
+  // Soạn Study Plan hoặc giải trình gap year / trượt visa bằng AI
+  // ═══════════════════════════════════════════════════
+  async function handleGenerateChecklist(req, res) {
+    const apiKey = getDeepSeekKey();
+    if (!apiKey) {
+      return res.json({ success: false, error: 'AI chưa được cấu hình.', draft: null });
+    }
 
-// ═══════════════════════════════════════════════════
-// ─── Cron: Daily Report (action=telegram-daily-report)
+    const { type, profile, visaType } = req.body || {};
+    if (!type || !profile) {
+      return res.status(400).json({ success: false, error: 'Missing type or profile', draft: null });
+    }
+
+    const prompts = {
+      study_plan: {
+        system: `Bạn là chuyên viên tư vấn du học Hàn Quốc với 10 năm kinh nghiệm. Viết Study Plan cho học sinh Việt Nam xin visa du học Hàn Quốc.
+
+QUY TẮC:
+- Viết bằng tiếng Hàn hoặc tiếng Anh (tuỳ học sinh chọn)
+- Chi tiết, cụ thể, có mốc thời gian rõ ràng
+- Cá nhân hoá theo thông tin học sinh
+- Độ dài: 500-800 từ
+- Tránh chung chung, phải thể hiện mục đích học thật
+- Kết thúc bằng cam kết tuân thủ luật và về nước đúng hạn`,
+        user: (p) => `Viết Study Plan cho học sinh sau:
+- Họ tên: ${p.fullName || 'Học sinh'}
+- Ngày sinh: ${p.dateOfBirth || 'Không rõ'}
+- Visa: ${visaType || 'D-4-1'}
+- Trình độ học vấn: ${p.educationLevel === 'university' ? 'Đại học' : 'THPT'}
+- GPA: ${p.gpa || 'Không rõ'}
+- Trình độ tiếng Hàn: ${p.koreanLevel || 'Chưa có'}
+- Năm tốt nghiệp: ${p.graduationYear || 'Không rõ'}
+${p.gapYears > 0 ? `- Khoảng trống: ${p.gapYears} năm sau tốt nghiệp` : ''}
+- Bảo lãnh tài chính: ${p.sponsorIsSelf ? 'Tự thân' : 'Cha mẹ/người thân'}
+
+Viết Study Plan chi tiết cho học sinh này.`
+      },
+      gap_explanation: {
+        system: `Bạn là chuyên viên tư vấn du học Hàn Quốc. Viết GIẢI TRÌNH KHOẢNG TRỐNG THỜI GIAN (Gap Year Explanation) cho học sinh Việt Nam.
+
+QUY TẮC:
+- Viết bằng tiếng Hàn hoặc tiếng Anh
+- Giải thích lý do gap (học thêm, đi làm, lý do sức khoẻ, gia đình...)
+- Thể hiện rằng thời gian gap không làm giảm động lực học tập
+- Nếu có đi làm, mô tả công việc đã làm
+- Độ dài: 200-400 từ`,
+        user: (p) => `Viết giải trình khoảng trống thời gian cho học sinh:
+- Họ tên: ${p.fullName || 'Học sinh'}
+- Tốt nghiệp: ${p.graduationYear || 'Không rõ'}
+- Gap: ${p.gapYears || 0} năm
+- Đã đi làm: ${p.hasWorkExperience ? 'Có' : 'Không'}
+${p.hasWorkExperience ? `- Có HĐLĐ/BHXH: ${p.hasLaborContract ? 'Có' : 'Không'}` : ''}
+- Trình độ tiếng Hàn: ${p.koreanLevel || 'Chưa có'}
+- Visa đăng ký: ${visaType || 'D-4-1'}
+
+Viết giải trình cho học sinh này.`
+      },
+      visa_rejection_explanation: {
+        system: `Bạn là chuyên viên tư vấn du học Hàn Quốc. Viết GIẢI TRÌNH LÝ DO TRƯỢT VISA cho học sinh Việt Nam.
+
+QUY TẮC:
+- Viết bằng tiếng Hàn hoặc tiếng Anh
+- Phân tích nguyên nhân trượt (không đổ lỗi, thể hiện hiểu rõ vấn đề)
+- Trình bày cách đã khắc phục (bổ sung giấy tờ, cải thiện học lực, viết lại Study Plan...)
+- Cam kết hồ sơ lần này đã hoàn chỉnh hơn
+- Độ dài: 200-400 từ
+- Thể hiện sự chân thành và thiện chí`,
+        user: (p) => `Viết giải trình lý do trượt visa cho học sinh:
+- Họ tên: ${p.fullName || 'Học sinh'}
+- Lý do trượt: ${p.rejectionReason || 'Không rõ nguyên nhân'}
+- Visa đăng ký: ${visaType || 'D-4-1'}
+- Hồ sơ lần này đã cải thiện: có Study Plan chi tiết hơn, tài chính rõ ràng hơn
+
+Viết giải trình cho học sinh này.`
+      }
+    };
+
+    const promptConfig = prompts[type];
+    if (!promptConfig) {
+      return res.status(400).json({ success: false, error: `Unknown type: ${type}`, draft: null });
+    }
+
+    const draft = await callDeepSeek(
+      [
+        { role: 'system', content: promptConfig.system },
+        { role: 'user', content: promptConfig.user(profile) }
+      ],
+      { temperature: 0.4, maxTokens: 1500, timeout: 30000 }
+    );
+
+    return res.json({
+      success: !!draft,
+      draft: draft || null,
+      error: draft ? null : 'AI không phản hồi, vui lòng thử lại sau.'
+    });
+  }
+
+  // ═══════════════════════════════════════════════════
+  // ─── Cron: Daily Report (action=telegram-daily-report)
 // Gọi endpoint này mỗi sáng bằng cron-job.org để nhận báo cáo tự động
 // ═══════════════════════════════════════════════════
 async function handleTelegramDailyReport(req, res) {
@@ -1103,6 +1200,7 @@ module.exports = async (req, res) => {
       case 'generate-description': return await handleGenerateDescription(req, res);
       case 'telegram-webhook': return await handleTelegramWebhook(req, res);
       case 'chat-web': return await handleChatWeb(req, res);
+      case 'generate-checklist': return await handleGenerateChecklist(req, res);
       case 'telegram-daily-report': return await handleTelegramDailyReport(req, res);
       default:
         return res.status(400).json({ error: `Unknown action: ${action}` });
