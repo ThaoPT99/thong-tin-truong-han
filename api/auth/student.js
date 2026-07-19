@@ -164,6 +164,40 @@ async function handleSaveDocument(req, res) {
   }
 }
 
+// ─── Refresh token ───
+async function handleRefreshToken(req, res) {
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+
+  const { refreshToken } = req.body || {};
+  if (!refreshToken) return res.status(400).json({ error: 'refreshToken is required' });
+
+  try {
+    const refreshRes = await fetch(`${supabaseUrl}/auth/v1/token?grant_type=refresh_token`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': supabaseServiceKey,
+      },
+      body: JSON.stringify({ refresh_token: refreshToken }),
+    });
+
+    const data = await refreshRes.json();
+
+    if (!refreshRes.ok) {
+      return res.status(401).json({ error: data?.msg || 'Refresh token failed', code: 'TOKEN_EXPIRED' });
+    }
+
+    return res.json({
+      access_token: data.access_token,
+      refresh_token: data.refresh_token || refreshToken,
+      user: data.user,
+    });
+  } catch (err) {
+    console.error('Refresh token error:', err);
+    return res.status(500).json({ error: 'Failed to refresh token' });
+  }
+}
+
 // ─── Documents: load all drafts ───
 async function handleLoadDocuments(req, res) {
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
@@ -210,6 +244,7 @@ module.exports = async (req, res) => {
       case 'load-checklist': return await handleLoadChecklist(req, res);
       case 'save-document': return await handleSaveDocument(req, res);
       case 'load-documents': return await handleLoadDocuments(req, res);
+      case 'refresh': return await handleRefreshToken(req, res);
       default:
         return res.status(404).json({ error: 'Unknown action' });
     }

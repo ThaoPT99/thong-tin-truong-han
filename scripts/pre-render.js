@@ -372,7 +372,7 @@ function buildSchoolHtml(school, semesterInfo) {
       });
     }
 
-    // ═══ Auth: restore session ═══
+    // ═══ Auth: restore session + verify/refresh token ═══
     var token = localStorage.getItem('student_token');
     if (token) {
       var user = JSON.parse(localStorage.getItem('student_user') || '{}');
@@ -380,8 +380,89 @@ function buildSchoolHtml(school, semesterInfo) {
         document.getElementById('authBtnText').textContent = user.full_name;
         document.getElementById('authBtn').classList.add('is-logged-in');
       }
+      refreshAccessTokenIfNeeded();
     }
   });
+
+  // ═══ Token refresh helpers ═══
+  async function refreshAccessTokenIfNeeded() {
+    var token = localStorage.getItem('student_token');
+    if (!token) return;
+    try {
+      var refreshToken = localStorage.getItem('student_refresh_token');
+      if (!refreshToken) return;
+      var res = await fetch('/api/auth/student?action=refresh', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refreshToken }),
+      });
+      if (res.ok) {
+        var data = await res.json();
+        localStorage.setItem('student_token', data.access_token);
+        if (data.refresh_token) {
+          localStorage.setItem('student_refresh_token', data.refresh_token);
+        }
+      } else if (res.status === 401) {
+        localStorage.removeItem('student_token');
+        localStorage.removeItem('student_refresh_token');
+        localStorage.removeItem('student_user');
+        var btn = document.getElementById('authBtn');
+        if (btn) btn.classList.remove('is-logged-in');
+        var txt = document.getElementById('authBtnText');
+        if (txt) txt.textContent = 'Đăng nhập';
+      }
+    } catch(e) {}
+  }
+
+  var _refreshPromise = null;
+  async function fetchWithAuth(url, options) {
+    options = options || {};
+    options.headers = options.headers || {};
+    var token = localStorage.getItem('student_token');
+    if (token) {
+      options.headers['Authorization'] = 'Bearer ' + token;
+    }
+    var res = await fetch(url, options);
+    if (res.status === 401 && token) {
+      // Token expired — try to refresh (with in-flight promise guard)
+      if (!_refreshPromise) {
+        _refreshPromise = (async function() {
+          var refreshToken = localStorage.getItem('student_refresh_token');
+          if (!refreshToken) return null;
+          var refreshRes = await fetch('/api/auth/student?action=refresh', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ refreshToken }),
+          });
+          if (refreshRes.ok) {
+            var refreshData = await refreshRes.json();
+            localStorage.setItem('student_token', refreshData.access_token);
+            if (refreshData.refresh_token) {
+              localStorage.setItem('student_refresh_token', refreshData.refresh_token);
+            }
+            return refreshData.access_token;
+          } else {
+            localStorage.removeItem('student_token');
+            localStorage.removeItem('student_refresh_token');
+            localStorage.removeItem('student_user');
+            var btn = document.getElementById('authBtn');
+            if (btn) btn.classList.remove('is-logged-in');
+            var txt = document.getElementById('authBtnText');
+            if (txt) txt.textContent = 'Đăng nhập';
+            return null;
+          }
+        })();
+      }
+      var newToken = await _refreshPromise;
+      _refreshPromise = null;
+      if (newToken) {
+        options.headers['Authorization'] = 'Bearer ' + newToken;
+        return await fetch(url, options);
+      }
+    }
+    return res;
+  }
+  window.fetchWithAuth = fetchWithAuth;
 
   // ═══ Auth Modal ═══
   function openAuthModal() {
@@ -389,6 +470,7 @@ function buildSchoolHtml(school, semesterInfo) {
     if (token) {
       if (confirm('Đăng xuất khỏi tài khoản hiện tại?')) {
         localStorage.removeItem('student_token');
+        localStorage.removeItem('student_refresh_token');
         localStorage.removeItem('student_user');
         location.reload();
       }
@@ -420,14 +502,15 @@ function buildSchoolHtml(school, semesterInfo) {
     btn.disabled = true; btn.querySelector('span').textContent = 'Đang đăng nhập...';
     try {
       var res = await fetch('/api/auth/student?action=login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password }) });
-      var data = await res.json();
-      if (res.ok) {
-        localStorage.setItem('student_token', data.access_token);
-        localStorage.setItem('student_user', JSON.stringify(data.user));
-        document.getElementById('authBtnText').textContent = data.user.full_name || data.user.email;
-        document.getElementById('authBtn').classList.add('is-logged-in');
-        closeAuthModal();
-      } else { errorEl.textContent = data.error || 'Đăng nhập thất bại'; errorEl.classList.add('show'); }
+      var data = await res.json();        if (res.ok) {
+          localStorage.setItem('student_token', data.access_token);
+          if (data.refresh_token) localStorage.setItem('student_refresh_token', data.refresh_token);
+          localStorage.setItem('student_user', JSON.stringify(data.user));
+          document.getElementById('authBtnText').textContent = data.user.full_name || data.user.email;
+          document.getElementById('authBtn').classList.add('is-logged-in');
+          closeAuthModal();
+        } else {
+          errorEl.textContent = data.error || 'Đăng nhập thất bại'; errorEl.classList.add('show'); }
     } catch(err) { errorEl.textContent = 'Lỗi kết nối'; errorEl.classList.add('show'); }
     btn.disabled = false; btn.querySelector('span').textContent = 'Đăng nhập';
   });
@@ -445,14 +528,15 @@ function buildSchoolHtml(school, semesterInfo) {
     btn.disabled = true; btn.querySelector('span').textContent = 'Đang tạo...';
     try {
       var res = await fetch('/api/auth/student?action=register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password, fullName: name, phone }) });
-      var data = await res.json();
-      if (res.ok) {
-        localStorage.setItem('student_token', data.access_token);
-        localStorage.setItem('student_user', JSON.stringify(data.user));
-        document.getElementById('authBtnText').textContent = data.user.full_name || data.user.email;
-        document.getElementById('authBtn').classList.add('is-logged-in');
-        closeAuthModal();
-      } else { errorEl.textContent = data.error || 'Đăng ký thất bại'; errorEl.classList.add('show'); }
+      var data = await res.json();        if (res.ok) {
+          localStorage.setItem('student_token', data.access_token);
+          if (data.refresh_token) localStorage.setItem('student_refresh_token', data.refresh_token);
+          localStorage.setItem('student_user', JSON.stringify(data.user));
+          document.getElementById('authBtnText').textContent = data.user.full_name || data.user.email;
+          document.getElementById('authBtn').classList.add('is-logged-in');
+          closeAuthModal();
+        } else {
+          errorEl.textContent = data.error || 'Đăng ký thất bại'; errorEl.classList.add('show'); }
     } catch(err) { errorEl.textContent = 'Lỗi kết nối'; errorEl.classList.add('show'); }
     btn.disabled = false; btn.querySelector('span').textContent = 'Tạo tài khoản';
   });

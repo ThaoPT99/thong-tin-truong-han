@@ -73,25 +73,26 @@
     if (!token) return;
 
     try {
-      // Save checklist progress steps
-      const steps = [
-        { stepId: 'profile', data: profile, completed: !!profile._completed }
-      ];
+      const fetchFn = window.fetchWithAuth || fetch;
 
-      for (const step of steps) {
-        await fetch('/api/auth/student?action=save-checklist', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-          body: JSON.stringify(step),
-        });
-      }
+      // Save full profile + checklist as one step
+      await fetchFn('/api/auth/student?action=save-checklist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          stepId: 'profile',
+          data: profile,
+          checklist: checklist || {},
+          completed: !!profile._completed
+        }),
+      });
 
       // Save AI drafts if any
       if (checklist && checklist._aiDrafts) {
         for (const [type, draft] of Object.entries(checklist._aiDrafts)) {
-          await fetch('/api/auth/student?action=save-document', {
+          await fetchFn('/api/auth/student?action=save-document', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ docType: type, aiDraft: draft }),
           });
         }
@@ -106,9 +107,11 @@
     if (!token) return;
 
     try {
-      const res = await fetch('/api/auth/student?action=load-checklist', {
-        headers: { 'Authorization': 'Bearer ' + token },
+      const fetchFn = window.fetchWithAuth || fetch;
+      const res = await fetchFn('/api/auth/student?action=load-checklist', {
+        headers: {},
       });
+      if (!res.ok) return false;
       const data = await res.json();
 
       if (data.success && data.steps && data.steps.length > 0) {
