@@ -5,7 +5,6 @@
     { "source": "/truong/([^/]+)$", "destination": "/truong/$1/index.html" },
     { "source": "/(admin/[^/]+\\.html)$", "destination": "/$1" },
     { "source": "/admin/login", "destination": "/admin/login.html" },
-    { "source": "/api/admin/access-logs", "destination": "/api/admin/access-control" },
     { "source": "/api/analytics", "destination": "/api/deepseek?action=analytics" },
     { "source": "/api/admin/analytics", "destination": "/api/deepseek?action=analytics" }
   ]
