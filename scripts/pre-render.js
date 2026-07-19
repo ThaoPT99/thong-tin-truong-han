@@ -192,15 +192,15 @@ function buildSchoolHtml(school, semesterInfo) {
           </div>
         </div>
       </nav>
-      <div class="sidebar-zalo">
-        <h2>Cộng đồng Zalo</h2>
-        <p>Nhận checklist, catalog và tư vấn hồ sơ D2-6.</p>
-        <button type="button" onclick="openZaloPopup()">Mở Zalo</button>
-      </div>
     </aside>
+
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
 
     <div class="app-main">
       <section class="app-topbar">
+        <button type="button" class="sidebar-hamburger" id="sidebarToggle" aria-label="Mở menu">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
         <div>
           <h2>${escapeHtml(school.name)}</h2>
           <p>${escapeHtml(school.name_kr || '')}${school.name_en ? ' · ' + escapeHtml(school.name_en) : ''}</p>
@@ -208,6 +208,12 @@ function buildSchoolHtml(school, semesterInfo) {
         <div class="topbar-stats">
           <span>${escapeHtml(regionLabel(school.region))}</span>
           <span>${escapeHtml(school.system || 'D2-6')}</span>
+        </div>
+        <div class="topbar-actions">
+          <button type="button" class="topbar-auth-btn" id="authBtn" onclick="openAuthModal()">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span id="authBtnText">Đăng nhập</span>
+          </button>
         </div>
       </section>
 
@@ -257,6 +263,56 @@ function buildSchoolHtml(school, semesterInfo) {
     </div>
   </div>
 
+  <div id="auth-modal" class="auth-modal" role="dialog" aria-modal="true">
+    <div class="auth-backdrop" onclick="closeAuthModal()"></div>
+    <div class="auth-card">
+      <button type="button" class="auth-close" onclick="closeAuthModal()" aria-label="Đóng">&times;</button>
+
+      <div class="auth-tabs">
+        <button type="button" class="auth-tab active" data-auth-tab="login" onclick="switchAuthTab('login')">Đăng nhập</button>
+        <button type="button" class="auth-tab" data-auth-tab="register" onclick="switchAuthTab('register')">Tạo tài khoản</button>
+      </div>
+
+      <form class="auth-form" id="loginForm">
+        <h2 class="auth-title">Chào mừng trở lại</h2>
+        <p class="auth-subtitle">Đăng nhập để lưu tiến độ hồ sơ của bạn.</p>
+        <div id="loginError" class="auth-error"></div>
+        <div class="auth-field">
+          <label for="loginEmail">Email</label>
+          <input type="email" id="loginEmail" placeholder="your@email.com" required autocomplete="email">
+        </div>
+        <div class="auth-field">
+          <label for="loginPassword">Mật khẩu</label>
+          <input type="password" id="loginPassword" placeholder="••••••••" required autocomplete="current-password">
+        </div>
+        <button type="submit" class="auth-submit" id="loginSubmitBtn"><span>Đăng nhập</span></button>
+      </form>
+
+      <form class="auth-form hidden" id="registerForm">
+        <h2 class="auth-title">Tạo tài khoản mới</h2>
+        <p class="auth-subtitle">Miễn phí — lưu hồ sơ và theo dõi tiến độ.</p>
+        <div id="registerError" class="auth-error"></div>
+        <div class="auth-field">
+          <label for="regName">Họ tên</label>
+          <input type="text" id="regName" placeholder="Nguyễn Văn A">
+        </div>
+        <div class="auth-field">
+          <label for="regEmail">Email</label>
+          <input type="email" id="regEmail" placeholder="your@email.com" required>
+        </div>
+        <div class="auth-field">
+          <label for="regPassword">Mật khẩu</label>
+          <input type="password" id="regPassword" placeholder="Ít nhất 6 ký tự" required minlength="6">
+        </div>
+        <div class="auth-field">
+          <label for="regPhone">Số điện thoại (tùy chọn)</label>
+          <input type="tel" id="regPhone" placeholder="0978 xxx xxx">
+        </div>
+        <button type="submit" class="auth-submit" id="registerSubmitBtn"><span>Tạo tài khoản</span></button>
+      </form>
+    </div>
+  </div>
+
   <div id="zalo-popup" class="zalo-popup" role="dialog" aria-modal="true" aria-labelledby="zalo-popup-title">
     <div class="zalo-popup-backdrop"></div>
     <div class="zalo-popup-card">
@@ -298,6 +354,109 @@ function buildSchoolHtml(school, semesterInfo) {
   }, { once: true });
   </script>
 
+  <script>
+  // ═══ Sidebar toggle for mobile ═══
+  document.addEventListener('DOMContentLoaded', function() {
+    var toggle = document.getElementById('sidebarToggle');
+    var backdrop = document.getElementById('sidebarBackdrop');
+    var shell = document.querySelector('.app-shell');
+    if (toggle && backdrop) {
+      toggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        shell.classList.toggle('sidebar-open');
+        toggle.setAttribute('aria-label', shell.classList.contains('sidebar-open') ? 'Đóng menu' : 'Mở menu');
+      });
+      backdrop.addEventListener('click', function() {
+        shell.classList.remove('sidebar-open');
+        toggle.setAttribute('aria-label', 'Mở menu');
+      });
+    }
+
+    // ═══ Auth: restore session ═══
+    var token = localStorage.getItem('student_token');
+    if (token) {
+      var user = JSON.parse(localStorage.getItem('student_user') || '{}');
+      if (user.full_name) {
+        document.getElementById('authBtnText').textContent = user.full_name;
+        document.getElementById('authBtn').classList.add('is-logged-in');
+      }
+    }
+  });
+
+  // ═══ Auth Modal ═══
+  function openAuthModal() {
+    var token = localStorage.getItem('student_token');
+    if (token) {
+      if (confirm('Đăng xuất khỏi tài khoản hiện tại?')) {
+        localStorage.removeItem('student_token');
+        localStorage.removeItem('student_user');
+        location.reload();
+      }
+      return;
+    }
+    document.getElementById('auth-modal').classList.add('is-open');
+    document.body.classList.add('zalo-popup-open');
+  }
+
+  function closeAuthModal() {
+    document.getElementById('auth-modal').classList.remove('is-open');
+    document.body.classList.remove('zalo-popup-open');
+  }
+
+  function switchAuthTab(tab) {
+    document.querySelectorAll('.auth-tab').forEach(function(t) { t.classList.toggle('active', t.dataset.authTab === tab); });
+    document.getElementById('loginForm').classList.toggle('hidden', tab !== 'login');
+    document.getElementById('registerForm').classList.toggle('hidden', tab !== 'register');
+    document.querySelectorAll('.auth-error').forEach(function(e) { e.classList.remove('show'); e.textContent = ''; });
+  }
+
+  document.getElementById('loginForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    var email = document.getElementById('loginEmail').value.trim();
+    var password = document.getElementById('loginPassword').value;
+    var errorEl = document.getElementById('loginError');
+    var btn = document.getElementById('loginSubmitBtn');
+    errorEl.classList.remove('show');
+    btn.disabled = true; btn.querySelector('span').textContent = 'Đang đăng nhập...';
+    try {
+      var res = await fetch('/api/auth/student?action=login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password }) });
+      var data = await res.json();
+      if (res.ok) {
+        localStorage.setItem('student_token', data.access_token);
+        localStorage.setItem('student_user', JSON.stringify(data.user));
+        document.getElementById('authBtnText').textContent = data.user.full_name || data.user.email;
+        document.getElementById('authBtn').classList.add('is-logged-in');
+        closeAuthModal();
+      } else { errorEl.textContent = data.error || 'Đăng nhập thất bại'; errorEl.classList.add('show'); }
+    } catch(err) { errorEl.textContent = 'Lỗi kết nối'; errorEl.classList.add('show'); }
+    btn.disabled = false; btn.querySelector('span').textContent = 'Đăng nhập';
+  });
+
+  document.getElementById('registerForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    var name = document.getElementById('regName').value.trim();
+    var email = document.getElementById('regEmail').value.trim();
+    var password = document.getElementById('regPassword').value;
+    var phone = document.getElementById('regPhone').value.trim();
+    var errorEl = document.getElementById('registerError');
+    var btn = document.getElementById('registerSubmitBtn');
+    if (password.length < 6) { errorEl.textContent = 'Mật khẩu phải có ít nhất 6 ký tự'; errorEl.classList.add('show'); return; }
+    errorEl.classList.remove('show');
+    btn.disabled = true; btn.querySelector('span').textContent = 'Đang tạo...';
+    try {
+      var res = await fetch('/api/auth/student?action=register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password, fullName: name, phone }) });
+      var data = await res.json();
+      if (res.ok) {
+        localStorage.setItem('student_token', data.access_token);
+        localStorage.setItem('student_user', JSON.stringify(data.user));
+        document.getElementById('authBtnText').textContent = data.user.full_name || data.user.email;
+        document.getElementById('authBtn').classList.add('is-logged-in');
+        closeAuthModal();
+      } else { errorEl.textContent = data.error || 'Đăng ký thất bại'; errorEl.classList.add('show'); }
+    } catch(err) { errorEl.textContent = 'Lỗi kết nối'; errorEl.classList.add('show'); }
+    btn.disabled = false; btn.querySelector('span').textContent = 'Tạo tài khoản';
+  });
+  </script>
   <script src="/js/api-loader.js"></script>
   <script src="/js/advisor.js"></script>
   <script src="/js/render.js"></script>

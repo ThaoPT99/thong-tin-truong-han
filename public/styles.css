@@ -1701,6 +1701,256 @@ body {
 
 
 
+/* ─── Auth Modal ─── */
+.auth-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 10001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.auth-modal.is-open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.auth-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 47, 79, 0.6);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+}
+
+.auth-card {
+    position: relative;
+    width: min(100%, 400px);
+    max-height: 90vh;
+    overflow-y: auto;
+    background: #fff;
+    border-radius: 20px;
+    padding: 1.5rem 1.5rem 1.25rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+    animation: zaloPopupIn 0.35s ease-out;
+}
+
+.auth-close {
+    position: absolute;
+    top: 0.65rem;
+    right: 0.75rem;
+    width: 2rem;
+    height: 2rem;
+    border: none;
+    background: #f1f5f9;
+    color: #64748b;
+    border-radius: 50%;
+    font-size: 1.35rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    z-index: 1;
+}
+
+.auth-close:hover {
+    background: #e2e8f0;
+    color: #1e293b;
+}
+
+.auth-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.auth-tab {
+    flex: 1;
+    padding: 0.55rem 0.5rem;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    background: #f8fafc;
+    color: #64748b;
+    font: inherit;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.auth-tab.active {
+    background: #2563eb;
+    color: #fff;
+    border-color: #2563eb;
+}
+
+.auth-tab:hover:not(.active) {
+    background: #eef2ff;
+    color: #1d4ed8;
+}
+
+.auth-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 0.15rem;
+}
+
+.auth-subtitle {
+    font-size: 0.83rem;
+    color: #64748b;
+    margin-bottom: 1rem;
+    line-height: 1.45;
+}
+
+.auth-error {
+    display: none;
+    padding: 0.55rem 0.7rem;
+    margin-bottom: 0.75rem;
+    border-radius: 8px;
+    background: #fef2f2;
+    color: #991b1b;
+    font-size: 0.84rem;
+    border: 1px solid #fecaca;
+}
+
+.auth-error.show {
+    display: block;
+}
+
+.auth-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    margin-bottom: 0.85rem;
+}
+
+.auth-field label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #334155;
+}
+
+.auth-field input {
+    width: 100%;
+    min-height: 2.65rem;
+    padding: 0.55rem 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: #f8fafc;
+    color: #1e293b;
+    font: inherit;
+    font-size: 0.9rem;
+    transition: border-color 0.15s, background 0.15s;
+}
+
+.auth-field input:focus {
+    outline: 2px solid #bfdbfe;
+    border-color: #2563eb;
+    background: #fff;
+}
+
+.auth-submit {
+    width: 100%;
+    min-height: 2.7rem;
+    margin-top: 0.5rem;
+    padding: 0.65rem 1rem;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    color: #fff;
+    font: inherit;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: opacity 0.15s;
+}
+
+.auth-submit:hover {
+    opacity: 0.9;
+}
+
+.auth-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.auth-spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.auth-note {
+    margin-top: 0.75rem;
+    font-size: 0.78rem;
+    color: #94a3b8;
+    text-align: center;
+    line-height: 1.45;
+}
+
+.auth-note a {
+    color: #2563eb;
+}
+
+/* Topbar auth button */
+.topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 0 0 auto;
+}
+
+.topbar-auth-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    min-height: 2.3rem;
+    padding: 0.35rem 0.7rem;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 8px;
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+    white-space: nowrap;
+}
+
+.topbar-auth-btn:hover {
+    background: rgba(255,255,255,0.2);
+}
+
+.topbar-auth-btn.is-logged-in {
+    background: rgba(16, 185, 129, 0.2);
+    border-color: rgba(16, 185, 129, 0.4);
+}
+
+@media (max-width: 640px) {
+    .auth-card {
+        padding: 1.25rem 1rem 1rem;
+    }
+    .topbar-auth-btn span {
+        display: none;
+    }
+}
+
 body.zalo-popup-open {
     overflow: hidden;
 }
@@ -2328,7 +2578,6 @@ body.zalo-popup-open {
     .advisor-actions,
     .recent-schools,
     .footer,
-    .sidebar-zalo,
     .detail-breadcrumb,
     .guide-hero-actions,
     .guide-menu,
@@ -2993,41 +3242,6 @@ html {
     opacity: 1;
 }
 
-.sidebar-zalo {
-    position: relative;
-    z-index: 1;
-    margin-top: auto;
-    padding: 1rem;
-    border-radius: 14px;
-    background: #173f66;
-    flex: 0 0 auto;
-}
-
-.sidebar-zalo h2 {
-    margin: 0;
-    font-size: 1rem;
-}
-
-.sidebar-zalo p {
-    margin-top: 0.35rem;
-    color: rgba(255, 255, 255, 0.68);
-    font-size: 0.84rem;
-    line-height: 1.45;
-}
-
-.sidebar-zalo button {
-    width: 100%;
-    min-height: 2.35rem;
-    margin-top: 0.75rem;
-    border: 0;
-    border-radius: 8px;
-    background: #2dd4bf;
-    color: #083344;
-    font: inherit;
-    font-weight: 800;
-    cursor: pointer;
-}
-
 .app-main {
     min-width: 0;
     padding: 2rem;
@@ -3163,42 +3377,87 @@ html {
     background: #f8fafc;
 }
 
+/* ─── Sidebar Hamburger (mobile) ─── */
+.sidebar-hamburger {
+    display: none;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    margin-right: 0.5rem;
+    padding: 0;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 8px;
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.sidebar-hamburger:hover {
+    background: rgba(255,255,255,0.2);
+}
+
+.sidebar-backdrop {
+    display: none;
+}
+
 @media (max-width: 900px) {
-    .app-shell {
+    .sidebar-hamburger {
+        display: flex;
+    }
+
+    .sidebar-backdrop {
         display: block;
-        height: auto;
-        min-height: 100vh;
-        overflow: visible;
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: rgba(15, 47, 79, 0.5);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+        -webkit-backdrop-filter: blur(2px);
+        backdrop-filter: blur(2px);
+    }
+
+    .sidebar-open .sidebar-backdrop {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .sidebar-open .app-sidebar {
+        transform: translateX(0);
     }
 
     .app-sidebar {
-        position: static;
-        width: 100%;
-        min-width: 0;
-        max-width: none;
-        height: auto;
-        min-height: auto;
-        padding: 1rem;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+        width: var(--sidebar-width);
+        min-width: var(--sidebar-width);
+        max-width: var(--sidebar-width);
+        height: 100vh;
+        min-height: 100vh;
+        padding: 1.6rem 1.1rem;
+        transform: translateX(-100%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .app-sidebar .school-tabs {
-        margin-top: 1rem;
+        margin-top: 2rem;
     }
 
     .app-sidebar .tabs-inner {
-        flex-direction: row;
-        overflow-x: auto;
-        padding-bottom: 0.15rem;
+        flex-direction: column;
+        overflow-x: visible;
+        padding: 0;
     }
 
     .app-sidebar .tab-btn {
-        flex: 0 0 auto;
-        width: auto;
-        white-space: nowrap;
-    }
-
-    .sidebar-zalo {
-        display: none;
+        width: 100%;
+        white-space: normal;
     }
 
     .app-sidebar::after {
@@ -3207,13 +3466,15 @@ html {
 
     .app-main {
         height: auto;
+        min-height: 100vh;
         overflow: visible;
         padding: 1rem;
     }
 
     .app-topbar {
         align-items: flex-start;
-        flex-direction: column;
+        flex-direction: row;
+        flex-wrap: wrap;
     }
 
     .topbar-stats {

@@ -32,6 +32,15 @@
         currentStep = 5; // Analysis step
       }
     }
+
+    // Try loading from server if logged in (async, won't block UI)
+    loadFromServer().then(function(loaded) {
+      if (loaded) {
+        // Re-render current step with server data merged
+        renderStep();
+        renderStepIndicator();
+      }
+    });
   }
 
   function loadSavedData() {
@@ -45,14 +54,77 @@
 
   function saveData() {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        profile,
-        checklist,
-        updatedAt: new Date().toISOString()
-      }));
+      const data = { profile, checklist, updatedAt: new Date().toISOString() };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+
+      // Sync to server if logged in
+      syncToServer();
     } catch (e) {
       console.warn('Save failed:', e);
     }
+  }
+
+  function getStudentToken() {
+    try { return localStorage.getItem('student_token'); } catch(e) { return null; }
+  }
+
+  async function syncToServer() {
+    const token = getStudentToken();
+    if (!token) return;
+
+    try {
+      // Save checklist progress steps
+      const steps = [
+        { stepId: 'profile', data: profile, completed: !!profile._completed }
+      ];
+
+      for (const step of steps) {
+        await fetch('/api/auth/student?action=save-checklist', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+          body: JSON.stringify(step),
+        });
+      }
+
+      // Save AI drafts if any
+      if (checklist && checklist._aiDrafts) {
+        for (const [type, draft] of Object.entries(checklist._aiDrafts)) {
+          await fetch('/api/auth/student?action=save-document', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+            body: JSON.stringify({ docType: type, aiDraft: draft }),
+          });
+        }
+      }
+    } catch (e) {
+      console.warn('Server sync failed:', e);
+    }
+  }
+
+  async function loadFromServer() {
+    const token = getStudentToken();
+    if (!token) return;
+
+    try {
+      const res = await fetch('/api/auth/student?action=load-checklist', {
+        headers: { 'Authorization': 'Bearer ' + token },
+      });
+      const data = await res.json();
+
+      if (data.success && data.steps && data.steps.length > 0) {
+        const profileStep = data.steps.find(s => s.step_id === 'profile');
+        if (profileStep && profileStep.data) {
+          // Merge: server data takes precedence over localStorage
+          profile = { ...profile, ...profileStep.data };
+          if (profileStep.checklist) checklist = profileStep.checklist;
+          saveData(); // Sync back to localStorage
+          return true;
+        }
+      }
+    } catch (e) {
+      console.warn('Server load failed:', e);
+    }
+    return false;
   }
 
   // ─── Main Render ───
