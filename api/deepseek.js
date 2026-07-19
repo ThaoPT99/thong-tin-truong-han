@@ -4,6 +4,7 @@ const { supabase } = require('../lib/supabase');
 const { requireAdmin } = require('../lib/auth');
 const { sendTelegramMessage, sendDailyReport, sendNewCityAlert, sendNewStudentAlert } = require('../lib/telegram');
 const http = require('http');
+const { KB_FOR_CHAT, KB_FOR_STUDY_PLAN, KB_FOR_GAP, KB_FOR_REJECTION } = require('../lib/knowledge-base');
 
 const DEEPSEEK_API_URL = 'https://api.deepseek.com/chat/completions';
 
@@ -951,14 +952,20 @@ DỮ LIỆU HIỆN TẠI:
 
 === CÂU HỎI PHỎNG VẤN ===\n${interviewSummary || 'Không có dữ liệu'}
 
+
+=== KIẾN THỨC NỀN TẢNG XỬ LÝ HỒ SƠ ===
+${KB_FOR_CHAT}
+
 HƯỚNG DẪN TRẢ LỜI:
 1. Trả lời bằng tiếng Việt, thân thiện, ngắn gọn (tối đa 3-4 câu)
 2. CHỈ dùng thông tin có trong dữ liệu trên, KHÔNG bịa thêm
 3. Nếu câu hỏi về trường cụ thể → tra trong danh sách và trả lời chi tiết
 4. Nếu câu hỏi về visa/điều kiện/thủ tục → dùng checklist + phỏng vấn
-5. Nếu không có thông tin → nói "Thông tin này chưa có trong dữ liệu hiện tại"
-6. Kết thúc gợi ý: mời vào web xem chi tiết hoặc tham gia group Zalo
-7. Có thể dùng emoji nhẹ nhàng 😊`;
+5. Nếu câu hỏi về quy trình làm hồ sơ → dùng kiến thức nền tảng + module A1-A6 để hướng dẫn từng bước
+6. Nếu câu hỏi về phân tích hồ sơ → dùng framework phân tích 6 nhóm để đánh giá
+7. Nếu không có thông tin → nói "Thông tin này chưa có trong dữ liệu hiện tại"
+8. Kết thúc gợi ý: mời vào web xem chi tiết hoặc tham gia group Zalo
+9. Có thể dùng emoji nhẹ nhàng 😊`;
 
     const answer = await callDeepSeek(
       [
@@ -1000,12 +1007,13 @@ HƯỚNG DẪN TRẢ LỜI:
         system: `Bạn là chuyên viên tư vấn du học Hàn Quốc với 10 năm kinh nghiệm. Viết Study Plan cho học sinh Việt Nam xin visa du học Hàn Quốc.
 
 QUY TẮC:
-- Viết bằng tiếng Hàn hoặc tiếng Anh (tuỳ học sinh chọn)
+- Viết bằng tiếng Hàn nếu học sinh có chứng chỉ/đang học tiếng Hàn, nếu không thì viết bằng tiếng Anh
 - Chi tiết, cụ thể, có mốc thời gian rõ ràng
 - Cá nhân hoá theo thông tin học sinh
 - Độ dài: 500-800 từ
 - Tránh chung chung, phải thể hiện mục đích học thật
-- Kết thúc bằng cam kết tuân thủ luật và về nước đúng hạn`,
+- Kết thúc bằng cam kết tuân thủ luật và về nước đúng hạn
+- TUYỆT ĐỐI KHÔNG đề cập vấn đề tài chính trong Study Plan (tài chính là phần riêng của hồ sơ)`,
         user: (p) => `Viết Study Plan cho học sinh sau:
 - Họ tên: ${p.fullName || 'Học sinh'}
 - Ngày sinh: ${p.dateOfBirth || 'Không rõ'}
@@ -1015,7 +1023,9 @@ QUY TẮC:
 - Trình độ tiếng Hàn: ${p.koreanLevel || 'Chưa có'}
 - Năm tốt nghiệp: ${p.graduationYear || 'Không rõ'}
 ${p.gapYears > 0 ? `- Khoảng trống: ${p.gapYears} năm sau tốt nghiệp` : ''}
-- Bảo lãnh tài chính: ${p.sponsorIsSelf ? 'Tự thân' : 'Cha mẹ/người thân'}
+
+Kiến thức nền tảng:
+${KB_FOR_STUDY_PLAN}
 
 Viết Study Plan chi tiết cho học sinh này.`
       },
@@ -1024,9 +1034,10 @@ Viết Study Plan chi tiết cho học sinh này.`
 
 QUY TẮC:
 - Viết bằng tiếng Hàn hoặc tiếng Anh
-- Giải thích lý do gap (học thêm, đi làm, lý do sức khoẻ, gia đình...)
-- Thể hiện rằng thời gian gap không làm giảm động lực học tập
-- Nếu có đi làm, mô tả công việc đã làm
+- Lý do gap phải hợp lý với hoàn cảnh: học thêm ngoại ngữ/kỹ năng, đi làm tích lũy kinh nghiệm, chờ đủ tuổi/điều kiện, lý do sức khoẻ cá nhân
+- TUYỆT ĐỐI KHÔNG viện lý do tài chính gia đình khó khăn (vì học sinh đã đủ điều kiện tài chính để đi du học)
+- Thể hiện rằng thời gian gap là giai đoạn chuẩn bị cho việc du học, không làm giảm động lực học tập
+- Nếu có đi làm, mô tả công việc đã làm và kinh nghiệm học được
 - Độ dài: 200-400 từ`,
         user: (p) => `Viết giải trình khoảng trống thời gian cho học sinh:
 - Họ tên: ${p.fullName || 'Học sinh'}
@@ -1037,6 +1048,8 @@ ${p.hasWorkExperience ? `- Có HĐLĐ/BHXH: ${p.hasLaborContract ? 'Có' : 'Khô
 - Trình độ tiếng Hàn: ${p.koreanLevel || 'Chưa có'}
 - Visa đăng ký: ${visaType || 'D-4-1'}
 
+${KB_FOR_GAP}
+
 Viết giải trình cho học sinh này.`
       },
       visa_rejection_explanation: {
@@ -1045,7 +1058,8 @@ Viết giải trình cho học sinh này.`
 QUY TẮC:
 - Viết bằng tiếng Hàn hoặc tiếng Anh
 - Phân tích nguyên nhân trượt (không đổ lỗi, thể hiện hiểu rõ vấn đề)
-- Trình bày cách đã khắc phục (bổ sung giấy tờ, cải thiện học lực, viết lại Study Plan...)
+- Dựa vào lý do trượt cụ thể để suy luận cách khắc phục (VD: thiếu giấy tờ → đã bổ sung, Study Plan yếu → đã viết lại chi tiết, tài chính chưa rõ → đã chuẩn bị đầy đủ)
+- TUYỆT ĐỐI KHÔNG dùng mẫu chung chung, phải cá nhân hoá theo lý do trượt thực tế
 - Cam kết hồ sơ lần này đã hoàn chỉnh hơn
 - Độ dài: 200-400 từ
 - Thể hiện sự chân thành và thiện chí`,
@@ -1053,7 +1067,8 @@ QUY TẮC:
 - Họ tên: ${p.fullName || 'Học sinh'}
 - Lý do trượt: ${p.rejectionReason || 'Không rõ nguyên nhân'}
 - Visa đăng ký: ${visaType || 'D-4-1'}
-- Hồ sơ lần này đã cải thiện: có Study Plan chi tiết hơn, tài chính rõ ràng hơn
+
+${KB_FOR_REJECTION}
 
 Viết giải trình cho học sinh này.`
       }
