@@ -3297,14 +3297,7 @@ html {
 }
 
 .sidebar-submenu.hidden {
-    max-height: 0 !important;
-    opacity: 0 !important;
-    margin: 0 !important;
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-    overflow: hidden !important;
-    border: none !important;
-    display: flex !important;
+    display: none !important;
 }
 
 .sidebar-submenu .tab-btn {
