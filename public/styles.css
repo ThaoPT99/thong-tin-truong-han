@@ -3461,16 +3461,19 @@ html {
     height: 38px;
     margin-right: 0.5rem;
     padding: 0;
-    border: 1px solid rgba(255,255,255,0.2);
+    border: 1px solid #dbe3ee;
     border-radius: 8px;
-    background: rgba(255,255,255,0.1);
-    color: #fff;
+    background: #fff;
+    color: #1e293b;
     cursor: pointer;
-    transition: background 0.15s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    transition: background 0.15s, border-color 0.15s;
 }
 
 .sidebar-hamburger:hover {
-    background: rgba(255,255,255,0.2);
+    background: #f1f5f9;
+    border-color: #2563eb;
+    color: #2563eb;
 }
 
 .sidebar-backdrop {
