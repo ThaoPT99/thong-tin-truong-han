@@ -576,7 +576,7 @@ window.CHECKLIST_DATA = {
           { id: 'B1-3', name: 'Ảnh thẻ 3.5x4.5cm', description: 'Nền trắng, chụp trong 6 tháng.', documentType: 'photo', required: true, rule: null },
           { id: 'B1-4', name: 'CCCD/CMND photo', description: 'Photo rõ ràng.', documentType: 'id_card', required: true, rule: null },
           { id: 'B1-5', name: 'Giấy khai sinh', description: 'Bản sao.', documentType: 'birth_certificate', required: true, rule: null },
-          { id: 'B1-6', name: 'Sổ hộ khẩu', description: 'Photo hoặc sao y.', documentType: 'household_registration', required: true, rule: null },
+          { id: 'B1-6', name: 'Sổ hộ khẩu hoặc Giấy xác nhận thông tin cư trú (CT07)', description: 'Photo sổ hộ khẩu hoặc xin CT07 tại Công an phường.', documentType: 'household_registration', required: true, rule: null },
           { id: 'B1-7', name: 'Giấy khám lao phổi (TB test)', description: 'Khám tại bệnh viện ĐSQ chỉ định. Hà Nội: BV Phổi TW. TP.HCM: BV Chợ Rẫy, BV Phạm Ngọc Thạch, BV Thống Nhất. Giá trị 3 tháng.', documentType: 'tb_test', required: true, warning: '⚠️ Chỉ khám tại bệnh viện ĐSQ chỉ định — khám sai sẽ không được chấp nhận!', rule: null },
           { id: 'B1-8', name: 'Bản sao Giấy phép kinh doanh của trường Hàn', description: 'Trường Hàn cấp, có dấu đỏ. Xin sau khi hoàn tất thủ tục.', documentType: 'school_business_registration', required: true, source: 'school', rule: null }
         ]
@@ -614,7 +614,7 @@ window.CHECKLIST_DATA = {
         required: true,
         items: [
           { id: 'B4-1', name: 'Sổ tiết kiệm (tối thiểu $18,000-$20,000)', description: '~450-500 triệu VND. D-2 yêu cầu cao hơn D-4-1. Gửi kỳ hạn 12 tháng, mở trước 3-6 tháng. Chỉ chấp nhận sổ mở tại quầy.', documentType: 'savings_book', required: true, warning: '⚠️ D-2 cần SỔ TIẾT KIỆM TỐI THIỂU $18,000-$20,000 (KHÁC với D-4-1 chỉ $10,000). Gửi trước 3-6 tháng.', rule: null },
-          { id: 'B4-2', name: 'Xác nhận số dư + sao kê ngân hàng 3 tháng', description: 'Bản gốc, cấp trong vòng 30 ngày trước nộp hồ sơ. Xác nhận số dư đủ điều kiện.', documentType: 'bank_statement', required: true, rule: null },
+          { id: 'B4-2', name: 'Xác nhận số dư + sao kê ngân hàng 3 tháng', description: 'Bản gốc, cấp trong 30 ngày. Sao kê phải thể hiện lịch sử ỔN ĐỊNH, không nạp tiền sốc trước khi lấy sao kê.', documentType: 'bank_statement', required: true, warning: '⚠️ Không nạp tiền "sốc" rồi lấy sao kê ngay. Duy trì số dư ổn định 3-6 tháng!', rule: null },
           { id: 'B4-3', name: 'Giấy bảo lãnh tài chính', description: 'Nếu người bảo lãnh không phải tự thân.', documentType: 'sponsorship', required: false, rule: { sponsor_is_self: { eq: false } } },
           { id: 'B4-4', name: 'Giấy tờ chứng minh quan hệ', description: 'Quan hệ với người bảo lãnh.', documentType: 'relationship', required: false, rule: { sponsor_is_self: { eq: false } } },
           { id: 'B4-5', name: 'Chứng minh thu nhập người bảo lãnh', description: 'HĐLĐ, sao kê lương, thu nhập từ kinh doanh.', documentType: 'income_proof', required: true, rule: { sponsor_is_self: { eq: false } } },
@@ -628,7 +628,7 @@ window.CHECKLIST_DATA = {
         icon: '✍️',
         required: true,
         items: [
-          { id: 'B5-1', name: 'Study Plan (Kế hoạch học tập)', description: '800-1200 từ. Chi tiết hơn D-4-1.', documentType: 'study_plan', required: true, hasAiAssist: true, rule: null },
+          { id: 'B5-1', name: 'Study Plan (Kế hoạch học tập)', description: '800-1200 từ tiếng Hàn/Anh. CÁ NHÂN HOÁ: rõ lý do chọn trường, mục tiêu học tập, kế hoạch sau về nước. Study Plan chung chung = trượt visa.', documentType: 'study_plan', required: true, hasAiAssist: true, warning: '🚨 Study Plan chung chung là lý do trượt visa phổ biến! Cần cá nhân hoá rõ ràng.', rule: null },
           { id: 'B5-2', name: 'Personal Statement', description: 'Giới thiệu bản thân, mục tiêu.', documentType: 'personal_statement', required: true, hasAiAssist: true, rule: null }
         ]
       },
@@ -682,7 +682,9 @@ window.CHECKLIST_DATA = {
         required: false,
         items: [
           { id: 'RISK-D2-1', name: 'Giải trình trượt visa', description: 'Nếu đã từng trượt visa Hàn.', documentType: 'rejection_explain', required: true, hasAiAssist: true, rule: { has_visa_rejection: { eq: true } } },
-          { id: 'RISK-D2-2', name: 'Chứng nhận hoàn thành khóa học dự bị', description: 'Nếu cần hoàn thành khóa dự bị trước.', documentType: 'prep_course', required: false, rule: { need_prep_course: { eq: true } } }
+          { id: 'RISK-D2-2', name: 'Chứng nhận hoàn thành khóa học dự bị', description: 'Nếu cần hoàn thành khóa dự bị trước.', documentType: 'prep_course', required: false, rule: { need_prep_course: { eq: true } } },
+          { id: 'RISK-D2-3', name: 'Giải trình người thân cư trú bất hợp pháp', description: 'Cần giải trình nếu có người thân từng ở lại Hàn bất hợp pháp.', documentType: 'illegal_relative', required: true, hasAiAssist: true, rule: { has_illegal_relative: { eq: true } } },
+          { id: 'RISK-D2-4', name: 'Phiếu lý lịch tư pháp', description: 'Xin tại Sở Tư pháp, giá trị 3-6 tháng.', documentType: 'criminal_record', required: false, recommended: true, rule: null }
         ]
       }
     ]
