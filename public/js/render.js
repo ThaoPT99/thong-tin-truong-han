@@ -2043,7 +2043,7 @@ function showSchool(viewId) {
   bindSchoolDetail(content, viewId);
 }
 
-document.querySelectorAll(".tab-btn").forEach(btn => {
+document.querySelectorAll(".tab-btn[data-school]").forEach(btn => {
   btn.addEventListener("click", () => showSchool(btn.dataset.school));
 });
 

@@ -1930,7 +1930,7 @@ body {
         padding: 1.25rem 1rem 1rem;
     }
     .topbar-auth-btn span {
-        display: none;
+        font-size: 0.7rem;
     }
 }
 
