@@ -3620,8 +3620,9 @@ html {
     }
 
     /* Hide main nav tabs in sidebar on mobile — they're in .mobile-tab-bar now */
-    .app-sidebar .school-tabs .tab-btn[data-school]:not(.sidebar-toggle-btn),
-    .app-sidebar .school-tabs .sidebar-divider {
+    /* Only hide DIRECT children of .tabs-inner, not submenu items */
+    .app-sidebar .tabs-inner > .tab-btn[data-school],
+    .app-sidebar .tabs-inner > .sidebar-divider {
         display: none;
     }
     .app-sidebar .school-tabs {
