@@ -501,10 +501,27 @@ window.CHECKLIST_DATA = {
 // Rule Engine — Đánh giá điều kiện của từng item dựa trên profile
 // ════════════════════════════════════════════════════════════════
 window.evaluateChecklistRule = function(rule, profile) {
-  if (!rule) return true; // Không có rule = luôn hiển thị
+  if (!rule) return true;
+
+  // Map snake_case rule field names to camelCase profile keys
+  const fieldMap = {
+    gap_years: 'gapYears',
+    education_level: 'educationLevel',
+    sponsor_is_self: 'sponsorIsSelf',
+    has_visa_rejection: 'hasVisaRejection',
+    has_work_experience: 'hasWorkExperience',
+    has_topik: 'hasTopik',
+    korean_level: 'koreanLevel',
+    has_labor_contract: 'hasLaborContract',
+    has_illegal_relative: 'hasIllegalRelative',
+    savings_amount: 'savingsAmount',
+    gpa: 'gpa',
+  };
 
   for (const [field, condition] of Object.entries(rule)) {
-    const value = profile[field];
+    // Try camelCase mapping first, then direct lookup
+    const profileKey = fieldMap[field] || field;
+    const value = profile[profileKey];
 
     for (const [operator, expected] of Object.entries(condition)) {
       switch (operator) {
@@ -515,16 +532,16 @@ window.evaluateChecklistRule = function(rule, profile) {
           if (value === expected) return false;
           break;
         case 'gt':
-          if (value === undefined || value === null || Number(value) <= expected) return false;
+          if (value === undefined || value === null || Number(value) <= Number(expected)) return false;
           break;
         case 'gte':
-          if (value === undefined || value === null || Number(value) < expected) return false;
+          if (value === undefined || value === null || Number(value) < Number(expected)) return false;
           break;
         case 'lt':
-          if (value === undefined || value === null || Number(value) >= expected) return false;
+          if (value === undefined || value === null || Number(value) >= Number(expected)) return false;
           break;
         case 'lte':
-          if (value === undefined || value === null || Number(value) > expected) return false;
+          if (value === undefined || value === null || Number(value) > Number(expected)) return false;
           break;
         case 'in':
           if (!Array.isArray(expected) || !expected.includes(value)) return false;

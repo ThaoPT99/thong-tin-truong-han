@@ -823,8 +823,13 @@
     const warningHtml = item.warning ? `<div class="cl-item-warning">⚠️ ${escapeHtml(item.warning)}</div>` : '';
     const linkHtml = item.link ? `<a href="${escapeHtml(item.link)}" target="_blank" rel="noopener" class="cl-item-link">🔗 ${escapeHtml(item.link)}</a>` : '';
 
+    // Document status: ready_status: 'not_ready' | 'ready' | 'translated' | 'notarized'
+    const docStatusLabels = { not_ready: 'Chưa có', ready: 'Đã có', translated: 'Đã dịch', notarized: '✅ Sẵn sàng' };
+    const docStatus = item.docStatus || 'not_ready';
+    const hasFile = item.fileUrl ? true : false;
+
     return `
-      <div class="cl-item ${item.status === 'completed' ? 'cl-item-done' : ''}" data-item-id="${item.id}">
+      <div class="cl-item ${item.status === 'completed' ? 'cl-item-done' : ''} ${hasFile ? 'cl-item-has-file' : ''}" data-item-id="${item.id}">
         <div class="cl-item-head">
           <div class="cl-item-icon">${statusIcons[item.status] || '⬜'}</div>
           <div class="cl-item-info">
@@ -832,6 +837,7 @@
             <div class="cl-item-desc">${escapeHtml(item.description)}</div>
             ${warningHtml}
             ${linkHtml}
+            ${item.source === 'school' ? '<div class="cl-item-source">🏫 Trường Hàn cấp — theo dõi trạng thái</div>' : ''}
           </div>
           <div class="cl-item-actions">
             <select class="cl-item-status" data-item-id="${item.id}">
@@ -841,9 +847,30 @@
             </select>
           </div>
         </div>
+        <!-- Document tracking row -->
+        <div class="cl-item-doc-tracking">
+          <div class="cl-doc-status-bar">                ${['not_ready', 'ready', 'translated', 'notarized'].map((s, i) => {
+              const levels = ['not_ready', 'ready', 'translated', 'notarized'];
+              const idx = levels.indexOf(docStatus);
+              const isDone = i <= idx;
+              const isCurrent = i === idx;
+              const clickable = s !== 'not_ready' && !isDone && item.source !== 'school' ? 'clickable' : '';
+              return `<div class="cl-doc-step ${isDone ? 'done' : ''} ${isCurrent ? 'current' : ''} ${clickable}" data-doc-status="${s}">
+                <div class="cl-doc-step-dot"></div>
+                <span>${docStatusLabels[s]}</span>
+              </div>`;
+            }).join('')}
+          </div>
+          <div class="cl-doc-upload-row">
+            <button type="button" class="cl-doc-upload-btn btn btn-sm ${hasFile ? 'btn-outline' : 'btn-primary'}" data-item-id="${item.id}">
+              ${hasFile ? '📎 Đã upload' : '📤 Upload file'}
+            </button>
+            <input type="file" class="cl-doc-file-input" data-item-id="${item.id}" style="display:none" accept="image/*,.pdf,.doc,.docx">
+            ${hasFile ? `<span class="cl-doc-filename">📄 ${escapeHtml(item.fileName || '')}</span>` : ''}
+          </div>
+        </div>
         <div class="cl-item-note">
-          <input type="text" class="cl-item-note-input" data-item-id="${item.id}" 
-                 value="${escapeHtml(item.note || '')}" placeholder="Ghi chú thêm...">
+          <input type="text" class="cl-item-note-input" data-item-id="${item.id}" value="${escapeHtml(item.note || '')}" placeholder="Ghi chú thêm...">
         </div>
       </div>
     `;
@@ -1115,7 +1142,157 @@
         const fields = document.getElementById('cl-work-fields');
         if (fields) fields.style.display = e.target.value === 'true' ? '' : 'none';
       }
+
+      // Doc status select change (kept for backward compat)
+      if (e.target.classList.contains('cl-doc-status-select')) {
+        const itemId = e.target.dataset.itemId;
+        const newStatus = e.target.value;
+        updateDocStatus(itemId, newStatus);
+      }
     });
+
+    // Click doc status step to advance status
+    document.addEventListener('click', function(e) {
+      const step = e.target.closest('.cl-doc-step');
+      if (step) {
+        const itemEl = step.closest('.cl-item');
+        if (!itemEl) return;
+        // Don't allow clicking status steps on school-issued items
+        const itemId = itemEl.dataset.itemId;
+        if (!itemId) return;
+        // Find the item and check if it's school-sourced
+        let isSchoolSource = false;
+        if (checklist) {
+          for (const mod of checklist.modules) {
+            const item = mod.items.find(i => i.id === itemId);
+            if (item) {
+              isSchoolSource = item.source === 'school';
+              break;
+            }
+          }
+        }
+        if (isSchoolSource) return;
+        const targetStatus = step.dataset.docStatus;
+        if (targetStatus) updateDocStatus(itemId, targetStatus);
+      }
+    });
+
+    // File upload button click
+    document.addEventListener('click', function(e) {
+      const uploadBtn = e.target.closest('.cl-doc-upload-btn');
+      if (uploadBtn) {
+        e.preventDefault();
+        const itemId = uploadBtn.dataset.itemId;
+        const fileInput = document.querySelector(`.cl-doc-file-input[data-item-id="${itemId}"]`);
+        if (fileInput) fileInput.click();
+      }
+    });
+
+    // File input change → upload
+    document.addEventListener('change', function(e) {
+      const fileInput = e.target.closest('.cl-doc-file-input');
+      if (!fileInput || !fileInput.files || !fileInput.files[0]) return;
+
+      const itemId = fileInput.dataset.itemId;
+      const file = fileInput.files[0];
+      handleFileUpload(itemId, file, fileInput);
+    });
+  }
+
+  // ══════════════════════════════════════════════
+  // Document Status + Upload
+  // ══════════════════════════════════════════════
+
+  function updateDocStatus(itemId, newStatus) {
+    if (!checklist) return;
+    for (const mod of checklist.modules) {
+      const item = mod.items.find(i => i.id === itemId);
+      if (item) {
+        item.docStatus = newStatus;
+        // Auto-update main status based on doc readiness
+        if (newStatus === 'notarized') item.status = 'completed';
+        else if (newStatus !== 'not_ready' && item.status === 'pending') item.status = 'in_progress';
+        break;
+      }
+    }
+    saveData();
+    renderModule(getCurrentModuleIdx());
+    updateProgressFromDocs();
+  }
+
+  function getCurrentModuleIdx() {
+    const active = document.querySelector('.cl-module-tab.active');
+    return active ? parseInt(active.dataset.moduleIdx) : 0;
+  }
+
+  async function handleFileUpload(itemId, file, fileInputEl) {
+    const token = getStudentToken();
+    if (!token) {
+      toast('Vui lòng đăng nhập để upload file');
+      if (fileInputEl) fileInputEl.value = '';
+      return;
+    }
+
+    // Convert to base64
+    const reader = new FileReader();
+    reader.onload = async function(evt) {
+      const base64 = evt.target.result.split(',')[1];
+      const docType = itemId;
+
+      try {
+        const fetchFn = window.fetchWithAuth || fetch;
+        const res = await fetchFn('/api/auth/student?action=document-upload', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            docType: docType,
+            fileName: file.name,
+            fileBase64: base64,
+          }),
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          // Save file info to checklist item
+          for (const mod of checklist.modules) {
+            const item = mod.items.find(i => i.id === itemId);
+            if (item) {
+              item.fileUrl = data.fileUrl;
+              item.fileName = file.name;
+              item.docStatus = 'ready';
+              if (item.status === 'pending') item.status = 'in_progress';
+              break;
+            }
+          }
+          saveData();
+          renderModule(getCurrentModuleIdx());
+          updateProgressFromDocs();
+          toast('✅ Upload thành công: ' + escapeHtml(file.name));
+        } else {
+          toast('❌ Upload thất bại: ' + (data.error || 'Lỗi không xác định'));
+        }
+        if (fileInputEl) fileInputEl.value = '';
+      } catch (err) {
+        toast('❌ Lỗi kết nối: ' + err.message);
+        if (fileInputEl) fileInputEl.value = '';
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function updateProgressFromDocs() {
+    const progress = window.calculateChecklistProgress(checklist);
+    const circleFill = document.querySelector('.cl-circle-fill');
+    const circleText = document.querySelector('.cl-circle-text');
+    if (circleFill) circleFill.setAttribute('stroke-dasharray', progress + ', 100');
+    if (circleText) circleText.textContent = progress + '%';
+    // Update module tab counts
+    if (checklist) {
+      checklist.modules.forEach(function(mod, i) {
+        const tab = document.querySelector('.cl-module-tab[data-module-idx="' + i + '"] .cl-module-count');
+        if (tab) tab.textContent = mod.items.filter(function(it) { return it.status === 'completed'; }).length + '/' + mod.items.length;
+      });
+    }
   }
 
   // ══════════════════════════════════════════════

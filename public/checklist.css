@@ -844,6 +844,124 @@
 }
 
 /* ─── Resume Bar ─── */
+/* ════════════════════════════════════════════════════════════
+   Document Tracking — trạng thái giấy tờ + upload file
+   ════════════════════════════════════════════════════════════ */
+
+.cl-item-doc-tracking {
+    padding: 0.5rem 0.75rem 0.5rem 2.5rem;
+    border-top: 1px solid #e6edf5;
+    background: #fafbfc;
+}
+
+.cl-doc-status-bar {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 0.5rem;
+}
+
+.cl-doc-step {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.7rem;
+    color: #94a3b8;
+    flex: 1;
+    position: relative;
+}
+
+.cl-doc-step:not(:last-child)::after {
+    content: '';
+    flex: 1;
+    height: 2px;
+    background: #e2e8f0;
+    margin: 0 0.35rem;
+}
+
+.cl-doc-step.done:not(:last-child)::after {
+    background: #22c55e;
+}
+
+.cl-doc-step.done {
+    color: #166534;
+}
+
+.cl-doc-step.current {
+    color: #2563eb;
+    font-weight: 600;
+}
+
+.cl-doc-step-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #e2e8f0;
+    flex: 0 0 auto;
+}
+
+.cl-doc-step.done .cl-doc-step-dot {
+    background: #22c55e;
+}
+
+.cl-doc-step.current .cl-doc-step-dot {
+    background: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+.cl-doc-step span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.cl-doc-upload-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.cl-doc-upload-btn {
+    flex: 0 0 auto;
+}
+
+.cl-doc-filename {
+    font-size: 0.78rem;
+    color: #0f766e;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.cl-item-has-file {
+    border-left: 3px solid #22c55e;
+}
+
+.cl-item-source {
+    font-size: 0.78rem;
+    color: #64748b;
+    margin-top: 0.2rem;
+}
+
+/* Mobile responsive */
+@media (max-width: 640px) {
+    .cl-item-doc-tracking {
+        padding: 0.5rem;
+    }
+    .cl-doc-status-bar {
+        flex-wrap: wrap;
+        gap: 0.25rem;
+    }
+    .cl-doc-step {
+        flex: auto;
+        font-size: 0.65rem;
+    }
+    .cl-doc-step:not(:last-child)::after {
+        flex: 0;
+        display: none;
+    }
+}
+
 .cl-resume-bar {
   display: flex;
   align-items: center;
