@@ -245,6 +245,19 @@ module.exports = async (req, res) => {
       case 'save-document': return await handleSaveDocument(req, res);
       case 'load-documents': return await handleLoadDocuments(req, res);
       case 'refresh': return await handleRefreshToken(req, res);
+      // ═══ Phase 2: Applications ═══
+      case 'applications-create': return await handleAppCreate(req, res);
+      case 'applications-list': return await handleAppList(req, res);
+      case 'applications-get': return await handleAppGet(req, res);
+      case 'applications-update': return await handleAppUpdate(req, res);
+      case 'applications-delete': return await handleAppDelete(req, res);
+      // ═══ Phase 2: Reminders ═══
+      case 'reminders-list': return await handleRemindersList(req, res);
+      case 'reminders-create': return await handleReminderCreate(req, res);
+      case 'reminders-complete': return await handleReminderComplete(req, res);
+      case 'reminders-delete': return await handleReminderDelete(req, res);
+      // ═══ Phase 2: Document upload ═══
+      case 'document-upload': return await handleDocumentUpload(req, res);
       default:
         return res.status(404).json({ error: 'Unknown action' });
     }
@@ -526,5 +539,322 @@ async function handleProfile(req, res) {
   } catch (err) {
     console.error('Profile error:', err);
     return res.status(500).json({ error: 'Failed to get/update profile' });
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// Phase 2: Applications CRUD
+// ════════════════════════════════════════════════════════════
+
+async function getAuthProfile(req) {
+  const auth = req.headers.authorization;
+  if (!auth || !auth.startsWith('Bearer ')) return null;
+  const token = auth.split(' ')[1];
+  const profileId = await getProfileIdFromToken(token);
+  return profileId;
+}
+
+async function handleAppCreate(req, res) {
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+  const profileId = await getAuthProfile(req);
+  if (!profileId) return res.status(401).json({ error: 'Unauthorized' });
+
+  try {
+    const data = req.body || {};
+    const { data: app, error } = await supabase.from('school_applications').insert({
+      student_profile_id: profileId,
+      full_name: data.fullName || '',
+      full_name_kr: data.fullNameKr || '',
+      full_name_en: data.fullNameEn || '',
+      date_of_birth: data.dateOfBirth || null,
+      gender: data.gender || '',
+      phone: data.phone || '',
+      email: data.email || '',
+      address: data.address || '',
+      high_school_name: data.highSchoolName || '',
+      high_school_gpa: data.highSchoolGpa || null,
+      high_school_absences: data.highSchoolAbsences || 0,
+      korean_level: data.koreanLevel || 'none',
+      topik_level: data.topikLevel || null,
+      father_name: data.fatherName || '',
+      father_occupation: data.fatherOccupation || '',
+      mother_name: data.motherName || '',
+      mother_occupation: data.motherOccupation || '',
+      status: 'draft',
+    }).select('*').single();
+
+    if (error) throw error;
+    return res.status(201).json({ success: true, application: app });
+  } catch (err) {
+    console.error('App create error:', err);
+    return res.status(500).json({ error: 'Failed to create application' });
+  }
+}
+
+async function handleAppList(req, res) {
+  if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
+  const profileId = await getAuthProfile(req);
+  if (!profileId) return res.status(401).json({ error: 'Unauthorized' });
+
+  try {
+    const { data: apps, error } = await supabase
+      .from('school_applications')
+      .select('*')
+      .eq('student_profile_id', profileId)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return res.json({ success: true, applications: apps || [] });
+  } catch (err) {
+    console.error('App list error:', err);
+    return res.status(500).json({ error: 'Failed to list applications' });
+  }
+}
+
+async function handleAppGet(req, res) {
+  if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
+  const profileId = await getAuthProfile(req);
+  if (!profileId) return res.status(401).json({ error: 'Unauthorized' });
+
+  const appId = req.query.id;
+  if (!appId) return res.status(400).json({ error: 'id is required' });
+
+  try {
+    const { data: app, error } = await supabase
+      .from('school_applications')
+      .select('*')
+      .eq('id', appId)
+      .eq('student_profile_id', profileId)
+      .single();
+    if (error) throw error;
+    return res.json({ success: true, application: app });
+  } catch (err) {
+    console.error('App get error:', err);
+    return res.status(500).json({ error: 'Failed to get application' });
+  }
+}
+
+async function handleAppUpdate(req, res) {
+  if (req.method !== 'PUT') return res.status(405).json({ error: 'Method not allowed' });
+  const profileId = await getAuthProfile(req);
+  if (!profileId) return res.status(401).json({ error: 'Unauthorized' });
+
+  const { id, ...data } = req.body || {};
+  if (!id) return res.status(400).json({ error: 'id is required' });
+
+  try {
+    const updateData = {};
+    const fields = ['full_name','full_name_kr','full_name_en','date_of_birth','gender','nationality',
+      'passport_no','passport_expiry','phone','email','address',
+      'high_school_name','high_school_address','high_school_start','high_school_end',
+      'high_school_major','high_school_gpa','high_school_absences','high_school_status',
+      'university_name','university_major','university_start','university_end',
+      'university_gpa','university_degree',
+      'korean_level','topik_level','korean_education',
+      'father_name','father_occupation','father_phone',
+      'mother_name','mother_occupation','mother_phone',
+      'school_id','semester_id','status','admin_note'];
+    fields.forEach(f => {
+      if (data[f] !== undefined) updateData[f] = data[f];
+    });
+    // Also check camelCase versions
+    const camelMap = {
+      fullName: 'full_name', fullNameKr: 'full_name_kr', fullNameEn: 'full_name_en',
+      dateOfBirth: 'date_of_birth', highSchoolName: 'high_school_name',
+      highSchoolGpa: 'high_school_gpa', highSchoolAbsences: 'high_school_absences',
+      koreanLevel: 'korean_level', topikLevel: 'topik_level',
+      fatherName: 'father_name', fatherOccupation: 'father_occupation',
+      motherName: 'mother_name', motherOccupation: 'mother_occupation',
+    };
+    Object.entries(camelMap).forEach(([camel, db]) => {
+      if (data[camel] !== undefined) updateData[db] = data[camel];
+    });
+    updateData.updated_at = new Date().toISOString();
+
+    const { data: app, error } = await supabase
+      .from('school_applications')
+      .update(updateData)
+      .eq('id', id)
+      .eq('student_profile_id', profileId)
+      .select('*')
+      .single();
+
+    if (error) throw error;
+    return res.json({ success: true, application: app });
+  } catch (err) {
+    console.error('App update error:', err);
+    return res.status(500).json({ error: 'Failed to update application' });
+  }
+}
+
+async function handleAppDelete(req, res) {
+  if (req.method !== 'DELETE') return res.status(405).json({ error: 'Method not allowed' });
+  const profileId = await getAuthProfile(req);
+  if (!profileId) return res.status(401).json({ error: 'Unauthorized' });
+
+  const appId = req.query.id;
+  if (!appId) return res.status(400).json({ error: 'id is required' });
+
+  try {
+    const { error } = await supabase
+      .from('school_applications')
+      .delete()
+      .eq('id', appId)
+      .eq('student_profile_id', profileId);
+    if (error) throw error;
+    return res.json({ success: true });
+  } catch (err) {
+    console.error('App delete error:', err);
+    return res.status(500).json({ error: 'Failed to delete application' });
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// Phase 2: Reminders
+// ════════════════════════════════════════════════════════════
+
+async function handleRemindersList(req, res) {
+  if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
+  const profileId = await getAuthProfile(req);
+  if (!profileId) return res.json({ success: true, reminders: [] });
+
+  try {
+    const { data: reminders, error } = await supabase
+      .from('reminders')
+      .select('*')
+      .eq('student_id', profileId)
+      .order('due_date', { ascending: true });
+    if (error) throw error;
+    return res.json({ success: true, reminders: reminders || [] });
+  } catch (err) {
+    console.error('Reminders list error:', err);
+    return res.status(500).json({ error: 'Failed to load reminders' });
+  }
+}
+
+async function handleReminderCreate(req, res) {
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+  const profileId = await getAuthProfile(req);
+  if (!profileId) return res.status(401).json({ error: 'Unauthorized' });
+
+  const { title, description, dueDate, reminderType, applicationId } = req.body || {};
+  if (!title || !dueDate) return res.status(400).json({ error: 'title and dueDate are required' });
+
+  try {
+    const { data: reminder, error } = await supabase
+      .from('reminders')
+      .insert({
+        student_id: profileId,
+        title,
+        description: description || '',
+        due_date: dueDate,
+        reminder_type: reminderType || 'other',
+        application_id: applicationId || null,
+      })
+      .select('*')
+      .single();
+    if (error) throw error;
+    return res.status(201).json({ success: true, reminder });
+  } catch (err) {
+    console.error('Reminder create error:', err);
+    return res.status(500).json({ error: 'Failed to create reminder' });
+  }
+}
+
+async function handleReminderComplete(req, res) {
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+  const profileId = await getAuthProfile(req);
+  if (!profileId) return res.status(401).json({ error: 'Unauthorized' });
+
+  const { id, completed } = req.body || {};
+  if (!id) return res.status(400).json({ error: 'id is required' });
+
+  try {
+    const { error } = await supabase
+      .from('reminders')
+      .update({ is_completed: completed !== false, updated_at: new Date().toISOString() })
+      .eq('id', id)
+      .eq('student_id', profileId);
+    if (error) throw error;
+    return res.json({ success: true });
+  } catch (err) {
+    console.error('Reminder complete error:', err);
+    return res.status(500).json({ error: 'Failed to update reminder' });
+  }
+}
+
+async function handleReminderDelete(req, res) {
+  if (req.method !== 'DELETE') return res.status(405).json({ error: 'Method not allowed' });
+  const profileId = await getAuthProfile(req);
+  if (!profileId) return res.status(401).json({ error: 'Unauthorized' });
+
+  const id = req.query.id;
+  if (!id) return res.status(400).json({ error: 'id is required' });
+
+  try {
+    const { error } = await supabase
+      .from('reminders')
+      .delete()
+      .eq('id', id)
+      .eq('student_id', profileId);
+    if (error) throw error;
+    return res.json({ success: true });
+  } catch (err) {
+    console.error('Reminder delete error:', err);
+    return res.status(500).json({ error: 'Failed to delete reminder' });
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// Phase 2: Document upload to Supabase Storage
+// ════════════════════════════════════════════════════════════
+
+async function handleDocumentUpload(req, res) {
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+  const profileId = await getAuthProfile(req);
+  if (!profileId) return res.status(401).json({ error: 'Unauthorized' });
+
+  try {
+    const { docType, fileName, fileBase64 } = req.body || {};
+    if (!docType || !fileBase64) return res.status(400).json({ error: 'docType and fileBase64 are required' });
+
+    const bucketName = 'student-documents';
+    const fileExt = (fileName || 'file').split('.').pop();
+    const filePath = `${profileId}/${docType}_${Date.now()}.${fileExt}`;
+
+    // Decode base64
+    const buffer = Buffer.from(fileBase64, 'base64');
+
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from(bucketName)
+      .upload(filePath, buffer, {
+        contentType: 'application/octet-stream',
+        upsert: true,
+      });
+
+    if (uploadError) throw uploadError;
+
+    // Get public URL
+    const { data: urlData } = supabase.storage.from(bucketName).getPublicUrl(filePath);
+    const fileUrl = urlData?.publicUrl || '';
+
+    // Save to student_documents
+    const { data: doc, error: docError } = await supabase
+      .from('student_documents')
+      .upsert({
+        student_id: profileId,
+        doc_type: docType,
+        file_url: fileUrl,
+        file_name: fileName || '',
+        file_size: buffer.length,
+        status: 'uploaded',
+      }, { onConflict: 'student_id, doc_type' })
+      .select('*')
+      .single();
+
+    if (docError) throw docError;
+    return res.json({ success: true, document: doc, fileUrl });
+  } catch (err) {
+    console.error('Document upload error:', err);
+    return res.status(500).json({ error: 'Failed to upload document' });
   }
 }

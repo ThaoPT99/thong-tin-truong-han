@@ -1,954 +1,291 @@
-// application.js — Application Form multi-step cho du học Hàn Quốc
-// Tích hợp với hệ thống SCHOOLS_DATA hiện có
-
+// application.js — Phase 2: Application CRUD + Dashboard + Reminders + Document Tracking
 (function() {
   'use strict';
 
-  // ─── Steps ───
-  const STEPS = [
-    { id: 'personal', label: 'Cá nhân', icon: '👤' },
-    { id: 'education', label: 'Học vấn', icon: '🎓' },
-    { id: 'korean', label: 'Tiếng Hàn', icon: '🇰🇷' },
-    { id: 'family', label: 'Gia đình', icon: '👨‍👩‍👧‍👦' },
-    { id: 'school', label: 'Trường', icon: '🏫' },
-    { id: 'documents', label: 'Hồ sơ', icon: '📄' },
-    { id: 'review', label: 'Xác nhận', icon: '✅' },
-  ];
+  function getToken() {
+    try { return localStorage.getItem('student_token'); } catch(e) { return null; }
+  }
 
-  let currentStep = 0;
-  let formData = {};
-  let documentFiles = {};
-  let isSubmitting = false;
-  let selectedSchoolFormUrl = ''; // URL mẫu đơn của trường đã chọn
-
-  // ─── Initialize form data with defaults ───
-  function getDefaultData() {
-    return {
-      // Personal
-      fullName: '',
-      fullNameKr: '',
-      fullNameEn: '',
-      dateOfBirth: '',
-      gender: '',
-      nationality: 'Vietnam',
-      passportNo: '',
-      passportExpiry: '',
-      phone: '',
-      email: '',
-      address: '',
-
-      // Education
-      highSchoolName: '',
-      highSchoolAddress: '',
-      highSchoolStart: '',
-      highSchoolEnd: '',
-      highSchoolMajor: '',
-      highSchoolGpa: '',
-      highSchoolAbsences: '0',
-      highSchoolStatus: 'graduated',
-      universityName: '',
-      universityMajor: '',
-      universityStart: '',
-      universityEnd: '',
-      universityGpa: '',
-      universityDegree: '',
-
-      // Korean
-      koreanLevel: 'none',
-      topikLevel: '',
-      koreanEducation: '',
-
-      // Family
-      fatherName: '',
-      fatherOccupation: '',
-      fatherPhone: '',
-      motherName: '',
-      motherOccupation: '',
-      motherPhone: '',
-
-      // School
-      schoolId: '',
-      semesterId: '',
+  async function apiFetch(action, method, body) {
+    const token = getToken();
+    if (!token) return { error: 'Chưa đăng nhập' };
+    const opts = {
+      method: method || 'GET',
+      headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
     };
-  }
-
-  // ─── Render ───
-  function renderApp(container) {
-    if (!container) return;
-    if (container.dataset.applicationReady === 'true') return;
-    container.dataset.applicationReady = 'true';
-
-    formData = getDefaultData();
-
-    container.innerHTML = `
-      <section class="application-view">
-        <div class="application-hero">
-          <div>
-            <p class="advisor-kicker">Visa D2-6</p>
-            <h2>Đơn đăng ký nhập học</h2>
-            <p>Hoàn thành form này để gửi hồ sơ đăng ký nhập học vào trường Hàn Quốc. Thông tin sẽ được admin xem xét và phản hồi.</p>
-          </div>
-        </div>
-
-        <!-- Progress bar -->
-        <div class="application-progress" id="app-progress">
-          <div class="progress-steps" id="progress-steps"></div>
-          <div class="progress-bar-track">
-            <div class="progress-bar-fill" id="progress-fill"></div>
-          </div>
-          <div class="progress-label" id="progress-label">Bước 1 / 7: Thông tin cá nhân</div>
-        </div>
-
-        <!-- Form -->
-        <form id="application-form" class="application-form" novalidate>
-          <div id="app-step-content" class="app-step-content"></div>
-          
-          <!-- Navigation buttons -->
-          <div class="app-nav-buttons">
-            <button type="button" class="btn btn-outline" id="app-prev-btn" onclick="window.appPrevStep()">
-              ← Quay lại
-            </button>
-            <span id="app-step-error" class="app-step-error"></span>
-            <button type="button" class="btn btn-primary btn-lg" id="app-next-btn" onclick="window.appNextStep()">
-              Tiếp theo →
-            </button>
-            <button type="submit" class="btn btn-primary btn-lg" id="app-submit-btn" style="display:none">
-              📨 Gửi đơn đăng ký
-            </button>
-          </div>
-        </form>
-
-        <!-- Success screen (hidden) -->
-        <div id="app-success" class="app-success" style="display:none">
-          <div class="app-success-icon">✅</div>
-          <h2>Đơn đăng ký đã được gửi!</h2>
-          <p>Cảm ơn bạn đã gửi đơn đăng ký. Chúng tôi sẽ xem xét và phản hồi trong thời gian sớm nhất.</p>
-          <div class="app-success-id" id="app-success-id"></div>
-          <button type="button" class="btn btn-primary btn-lg" onclick="window.appResetForm()">
-            📝 Gửi đơn mới
-          </button>
-        </div>
-      </section>
-    `;
-
-    // Expose functions globally
-    window.appNextStep = nextStep;
-    window.appPrevStep = prevStep;
-    window.appResetForm = resetForm;
-    window.appSelectSchool = selectSchool;
-
-    renderStepIndicator();
-    renderStep(0);
-    bindFormEvents(container);
-  }
-
-  function renderStepIndicator() {
-    const container = document.getElementById('progress-steps');
-    if (!container) return;
-
-    const isDone = (idx) => idx < currentStep;
-    container.innerHTML = STEPS.map((step, i) => {
-      const isActive = i === currentStep;
-      const done = isDone(i);
-      const clickable = done || isActive;
-      return `
-        <div class="progress-step ${isActive ? 'active' : ''} ${done ? 'done' : ''} ${clickable ? 'clickable' : ''}" 
-             onclick="${clickable ? 'window.appGoToStep('+i+')' : ''}" data-step="${i}">
-          <div class="step-circle">${done ? '✓' : step.icon}</div>
-          <div class="step-label">${step.label}</div>
-        </div>
-      `;
-    }).join('');
-
-    updateProgress();
-  }
-
-  function updateProgress() {
-    const fill = document.getElementById('progress-fill');
-    const label = document.getElementById('progress-label');
-    if (fill) fill.style.width = ((currentStep + 1) / STEPS.length * 100) + '%';
-    if (label) label.textContent = `Bước ${currentStep + 1} / ${STEPS.length}: ${STEPS[currentStep].label}`;
-    
-    // Update step indicators
-    document.querySelectorAll('.progress-step').forEach(el => {
-      const idx = parseInt(el.dataset.step);
-      el.classList.toggle('active', idx === currentStep);
-      el.classList.toggle('done', idx < currentStep);
-    });
-  }
-
-  function renderStep(stepIndex) {
-    const content = document.getElementById('app-step-content');
-    if (!content) return;
-
-    const prevBtn = document.getElementById('app-prev-btn');
-    const nextBtn = document.getElementById('app-next-btn');
-    const submitBtn = document.getElementById('app-submit-btn');
-    const errorEl = document.getElementById('app-step-error');
-
-    if (prevBtn) prevBtn.style.display = stepIndex === 0 ? 'none' : '';
-    if (nextBtn) nextBtn.style.display = stepIndex === STEPS.length - 1 ? 'none' : '';
-    if (submitBtn) submitBtn.style.display = stepIndex === STEPS.length - 1 ? '' : 'none';
-    if (errorEl) errorEl.textContent = '';
-
-    switch (stepIndex) {
-      case 0: content.innerHTML = renderPersonalStep(); break;
-      case 1: content.innerHTML = renderEducationStep(); break;
-      case 2: content.innerHTML = renderKoreanStep(); break;
-      case 3: content.innerHTML = renderFamilyStep(); break;
-      case 4: content.innerHTML = renderSchoolStep(); break;
-      case 5: 
-        content.innerHTML = renderDocumentsStep(); 
-        bindFileInputs();
-        break;
-      case 6: content.innerHTML = renderReviewStep(); break;
+    if (body) opts.body = JSON.stringify(body);
+    try {
+      const res = await fetch('/api/auth/student?action=' + action, opts);
+      return await res.json();
+    } catch (e) {
+      return { error: 'Lỗi kết nối: ' + e.message };
     }
-
-    // Restore form data
-    restoreFormData();
-    updateProgress();
-    content.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  window.appGoToStep = function goToStep(idx) {
-    if (idx < 0 || idx >= STEPS.length) return;
-    // Chỉ cho phép đi đến step đã hoàn thành hoặc step hiện tại
-    if (idx > currentStep) {
-      // Nếu chưa hoàn thành step hiện tại, không cho nhảy forward
-      return;
-    }
-    currentStep = idx;
-    renderStep(idx);
+  function formatDate(d) {
+    if (!d) return '';
+    return new Date(d).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  }
+
+  function statusLabel(status) {
+    const labels = { draft: 'Nháp', submitted: 'Đã nộp', reviewing: 'Đang xét', approved: 'Đã duyệt', rejected: 'Từ chối' };
+    return labels[status] || status;
+  }
+
+  function reminderTypeLabel(t) {
+    const labels = { document: '📄 Giấy tờ', submission: '📨 Nộp hồ sơ', interview: '🎤 Phỏng vấn', health_check: '🏥 Khám sức khoẻ', visa_appointment: '🛂 Hẹn visa', other: '📌 Khác' };
+    return labels[t] || t;
+  }
+
+  // ─── Init ───
+  window.renderApplicationApp = function(container) {
+    if (!container) return;
+    window.p2ShowView('dashboard');
   };
 
-  function nextStep() {
-    if (!validateStep(currentStep)) return;
-    saveFormData();
-    if (currentStep < STEPS.length - 1) {
-      currentStep++;
-      renderStep(currentStep);
+  window.p2ShowView = function(view, appId) {
+    const container = document.getElementById('application-content');
+    if (!container) return;
+    switch(view) {
+      case 'dashboard': return renderDashboard(container);
+      case 'create': return renderAppForm(container, null);
+      case 'edit': return renderAppForm(container, appId);
+      case 'list': return renderAppList(container);
+      case 'reminders': return renderReminders(container);
+      default: return renderDashboard(container);
     }
-  }
+  };
 
-  function prevStep() {
-    saveFormData();
-    if (currentStep > 0) {
-      currentStep--;
-      renderStep(currentStep);
-    }
-  }
+  window.p2OpenApp = function(appId) { window.p2ShowView('edit', appId); };
 
-  function saveFormData() {
-    const form = document.getElementById('application-form');
-    if (!form) return;
-    const data = new FormData(form);
-    for (const [key, val] of data.entries()) {
-      formData[key] = val;
-    }
-  }
-
-  function restoreFormData() {
-    const form = document.getElementById('application-form');
-    if (!form) return;
-    const elements = form.elements;
-    for (const key of Object.keys(formData)) {
-      const el = elements[key];
-      if (el) {
-        if (el.type === 'checkbox') el.checked = Boolean(formData[key]);
-        else el.value = String(formData[key] || '');
-      }
-    }
-  }
-
-  function validateStep(stepIndex) {
-    const errorEl = document.getElementById('app-step-error');
-    if (!errorEl) return true;
-
-    const getVal = (name) => {
-      const el = document.querySelector(`[name="${name}"]`);
-      return el ? el.value.trim() : '';
-    };
-
-    switch (stepIndex) {
-      case 0: {
-        if (!getVal('fullName')) {
-          errorEl.textContent = 'Vui lòng nhập Họ tên';
-          return false;
-        }
-        break;
-      }
-      case 4: {
-        if (!getVal('schoolId')) {
-          errorEl.textContent = 'Vui lòng chọn trường';
-          return false;
-        }
-        break;
-      }
-    }
-    return true;
-  }
-
-  // ══════════════════════════════════════════
-  // STEP RENDERERS
-  // ══════════════════════════════════════════
-
-  function renderPersonalStep() {
-    return `
-      <div class="app-section">
-        <h3>👤 Thông tin cá nhân</h3>
-        <p class="app-section-desc">Nhập thông tin cơ bản của học sinh.</p>
-        
-        <div class="app-grid-2">
-          <div class="app-field">
-            <label>Họ tên (tiếng Việt) <span class="required">*</span></label>
-            <input type="text" name="fullName" placeholder="Nguyễn Văn A" required>
-          </div>
-          <div class="app-field">
-            <label>Họ tên (tiếng Hàn)</label>
-            <input type="text" name="fullNameKr" placeholder="Nguyen Van A (hoặc tên Hàn)">
-          </div>
-        </div>
-
-        <div class="app-grid-2">
-          <div class="app-field">
-            <label>Họ tên (tiếng Anh - như passport)</label>
-            <input type="text" name="fullNameEn" placeholder="NGUYEN VAN A">
-          </div>
-          <div class="app-field">
-            <label>Ngày sinh</label>
-            <input type="date" name="dateOfBirth">
-          </div>
-        </div>
-
-        <div class="app-grid-3">
-          <div class="app-field">
-            <label>Giới tính</label>
-            <select name="gender">
-              <option value="">— Chọn —</option>
-              <option value="male">Nam</option>
-              <option value="female">Nữ</option>
-            </select>
-          </div>
-          <div class="app-field">
-            <label>Quốc tịch</label>
-            <select name="nationality">
-              <option value="Vietnam" selected>Việt Nam</option>
-              <option value="Other">Khác</option>
-            </select>
-          </div>
-          <div class="app-field">
-            <label>Số hộ chiếu</label>
-            <input type="text" name="passportNo" placeholder="C1234567">
-          </div>
-        </div>
-
-        <div class="app-grid-2">
-          <div class="app-field">
-            <label>Ngày hết hạn passport</label>
-            <input type="date" name="passportExpiry">
-          </div>
-          <div class="app-field">
-            <label>Số điện thoại</label>
-            <input type="tel" name="phone" placeholder="090xxxxxxx">
-          </div>
-        </div>
-
-        <div class="app-grid-2">
-          <div class="app-field">
-            <label>Email</label>
-            <input type="email" name="email" placeholder="email@example.com">
-          </div>
-          <div class="app-field">
-            <label>Địa chỉ</label>
-            <input type="text" name="address" placeholder="Số nhà, đường, phường, quận, tỉnh/thành">
-          </div>
-        </div>
-      </div>
-    `;
-  }
-
-  function renderEducationStep() {
-    return `
-      <div class="app-section">
-        <h3>🎓 Học vấn</h3>
-        <p class="app-section-desc">Thông tin trường THPT và Đại học (nếu có).</p>
-        
-        <div class="app-subsection">
-          <h4>THPT</h4>
-          <div class="app-grid-2">
-            <div class="app-field">
-              <label>Tên trường THPT</label>
-              <input type="text" name="highSchoolName" placeholder="Trường THPT ...">
-            </div>
-            <div class="app-field">
-              <label>Địa chỉ trường</label>
-              <input type="text" name="highSchoolAddress" placeholder="Tỉnh/Thành phố">
-            </div>
-          </div>
-          <div class="app-grid-2">
-            <div class="app-field">
-              <label>Thời gian bắt đầu</label>
-              <input type="date" name="highSchoolStart">
-            </div>
-            <div class="app-field">
-              <label>Thời gian kết thúc</label>
-              <input type="date" name="highSchoolEnd">
-            </div>
-          </div>
-          <div class="app-grid-3">
-            <div class="app-field">
-              <label>Ngành/chọn (nếu có)</label>
-              <input type="text" name="highSchoolMajor" placeholder="Tự nhiên / Xã hội">
-            </div>
-            <div class="app-field">
-              <label>GPA (thang 10)</label>
-              <input type="number" name="highSchoolGpa" min="0" max="10" step="0.1" placeholder="6.5">
-            </div>
-            <div class="app-field">
-              <label>Số buổi nghỉ</label>
-              <input type="number" name="highSchoolAbsences" min="0" max="200" placeholder="10">
-            </div>
-          </div>
-          <div class="app-field">
-            <label>Tình trạng tốt nghiệp</label>
-            <select name="highSchoolStatus">
-              <option value="graduated">Đã tốt nghiệp</option>
-              <option value="expecting">Đang học / Chờ tốt nghiệp</option>
-              <option value="other">Khác</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="app-subsection">
-          <h4>Đại học / Cao đẳng (nếu có)</h4>
-          <p class="app-note">Bỏ qua nếu chưa học Đại học</p>
-          <div class="app-grid-2">
-            <div class="app-field">
-              <label>Tên trường ĐH/CĐ</label>
-              <input type="text" name="universityName" placeholder="Tên trường">
-            </div>
-            <div class="app-field">
-              <label>Chuyên ngành</label>
-              <input type="text" name="universityMajor" placeholder="Ngành học">
-            </div>
-          </div>
-          <div class="app-grid-2">
-            <div class="app-field">
-              <label>Thời gian bắt đầu</label>
-              <input type="date" name="universityStart">
-            </div>
-            <div class="app-field">
-              <label>Thời gian kết thúc</label>
-              <input type="date" name="universityEnd">
-            </div>
-          </div>
-          <div class="app-grid-2">
-            <div class="app-field">
-              <label>GPA Đại học</label>
-              <input type="number" name="universityGpa" min="0" max="10" step="0.1" placeholder="6.5">
-            </div>
-            <div class="app-field">
-              <label>Bằng cấp</label>
-              <input type="text" name="universityDegree" placeholder="Cử nhân / Kỹ sư / ...">
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
-  }
-
-  function renderKoreanStep() {
-    return `
-      <div class="app-section">
-        <h3>🇰🇷 Năng lực tiếng Hàn</h3>
-        <p class="app-section-desc">Trình độ tiếng Hàn hiện tại của học sinh.</p>
-
-        <div class="app-grid-2">
-          <div class="app-field">
-            <label>Trình độ tiếng Hàn</label>
-            <select name="koreanLevel">
-              <option value="none">Chưa có chứng chỉ</option>
-              <option value="sejong2b">Sejong 2B</option>
-              <option value="topik2">TOPIK 2</option>
-              <option value="topik3">TOPIK 3</option>
-              <option value="topik4">TOPIK 4</option>
-              <option value="topik5">TOPIK 5</option>
-              <option value="topik6">TOPIK 6</option>
-            </select>
-          </div>
-          <div class="app-field">
-            <label>Điểm TOPIK (nếu có)</label>
-            <input type="number" name="topikLevel" min="1" max="6" placeholder="VD: 3">
-          </div>
-        </div>
-
-        <div class="app-field">
-          <label>Quá trình học tiếng Hàn</label>
-          <textarea name="koreanEducation" rows="3" placeholder="Đã học ở đâu? Bao lâu? Trung tâm nào?"></textarea>
-        </div>
-
-        <div class="app-info-box">
-          <strong>💡 Gợi ý:</strong> 
-          Hầu hết các trường yêu cầu tối thiểu TOPIK 2-3. Nếu chưa có, bạn có thể đăng ký học tiếng Hàn tại trường.
-        </div>
-      </div>
-    `;
-  }
-
-  function renderFamilyStep() {
-    return `
-      <div class="app-section">
-        <h3>👨‍👩‍👧‍👦 Thông tin gia đình</h3>
-        <p class="app-section-desc">Thông tin phụ huynh phục vụ hồ sơ tài chính và nhân thân.</p>
-
-        <div class="app-subsection">
-          <h4>Thông tin cha</h4>
-          <div class="app-grid-3">
-            <div class="app-field">
-              <label>Họ tên cha</label>
-              <input type="text" name="fatherName" placeholder="Nguyễn Văn ...">
-            </div>
-            <div class="app-field">
-              <label>Nghề nghiệp</label>
-              <input type="text" name="fatherOccupation" placeholder="VD: Kinh doanh">
-            </div>
-            <div class="app-field">
-              <label>Số điện thoại</label>
-              <input type="tel" name="fatherPhone" placeholder="090xxxxxxx">
-            </div>
-          </div>
-        </div>
-
-        <div class="app-subsection">
-          <h4>Thông tin mẹ</h4>
-          <div class="app-grid-3">
-            <div class="app-field">
-              <label>Họ tên mẹ</label>
-              <input type="text" name="motherName" placeholder="Nguyễn Thị ...">
-            </div>
-            <div class="app-field">
-              <label>Nghề nghiệp</label>
-              <input type="text" name="motherOccupation" placeholder="VD: Giáo viên">
-            </div>
-            <div class="app-field">
-              <label>Số điện thoại</label>
-              <input type="tel" name="motherPhone" placeholder="090xxxxxxx">
-            </div>
-          </div>
-        </div>
-
-        <div class="app-info-box">
-          <strong>📌 Lưu ý:</strong> Thông tin gia đình cần chính xác vì sẽ được đối chiếu với sổ hộ khẩu và giấy tờ tài chính khi nộp visa.
-        </div>
-      </div>
-    `;
-  }
-
-  function renderSchoolStep() {
-    const schools = Object.values(window.SCHOOLS_DATA || {});
-    const semesters = window.SEMESTERS_LIST || [];
-
-    const schoolOptions = schools.map(s => 
-      `              <option value="${esc(s.id)}">${esc(s.name)} ${s.nameKr ? '(' + esc(s.nameKr) + ')' : ''} — ${esc(s.system || '')}</option>`
-    ).join('');
-
-    const semesterOptions = semesters.map(s =>
-      `<option value="${esc(s.id)}">${esc(s.title || 'Kỳ tháng ' + s.ky + '/' + s.nam)}</option>`
-    ).join('');
-
-    return `
-      <div class="app-section">
-        <h3>🏫 Chọn trường & kỳ tuyển sinh</h3>
-        <p class="app-section-desc">Chọn trường Hàn Quốc và kỳ nhập học mong muốn.</p>
-
-        <div class="app-grid-2">
-          <div class="app-field">
-            <label>Trường Hàn Quốc <span class="required">*</span></label>
-            <select name="schoolId" id="app-school-select" onchange="window.appSelectSchool(this.value)">
-              <option value="">— Chọn trường —</option>
-              ${schoolOptions}
-            </select>
-            <div id="app-school-preview" class="app-school-preview"></div>
-          </div>
-          <div class="app-field">
-            <label>Kỳ tuyển sinh</label>
-            <select name="semesterId">
-              <option value="">— Chọn kỳ —</option>
-              ${semesterOptions}
-            </select>
-          </div>
-        </div>
-
-        <div class="app-info-box">
-          <strong>🏆 Danh sách trường:</strong> 
-          <span id="app-school-count">${schools.length}</span> trường đang tuyển sinh. 
-          Xem chi tiết từng trường trong tab <strong>Trường</strong>.
-        </div>
-      </div>
-    `;
-  }
-
-  function selectSchool(schoolId) {
-    const preview = document.getElementById('app-school-preview');
-    if (!preview) return;
-
-    const school = (window.SCHOOLS_DATA || {})[schoolId];
-    if (!school) {
-      preview.innerHTML = '';
-      selectedSchoolFormUrl = '';
+  // ─── Dashboard ───
+  async function renderDashboard(container) {
+    const token = getToken();
+    if (!token) {
+      container.innerHTML = '<div class="p2-empty" style="padding:2rem;text-align:center"><p>🔒 Vui lòng <button class="btn btn-primary btn-sm" onclick="openAuthModal()">đăng nhập</button> để xem dashboard hồ sơ.</p></div>';
       return;
     }
+    container.innerHTML = '<div class="p2-loading"><div class="skeleton skeleton-heading" style="width:200px"></div></div>';
 
-    // Lưu URL mẫu đơn của trường
-    selectedSchoolFormUrl = school.applicationFormUrl || '';
+    const [appsRes, remRes] = await Promise.all([
+      apiFetch('applications-list', 'GET'),
+      apiFetch('reminders-list', 'GET'),
+    ]);
+    const apps = appsRes.applications || [];
+    const reminders = remRes.reminders || [];
+    const draftCount = apps.filter(a => a.status === 'draft').length;
+    const submittedCount = apps.filter(a => a.status === 'submitted' || a.status === 'reviewing').length;
+    const pendingReminders = reminders.filter(r => !r.is_completed).length;
+    const upcoming = reminders.filter(r => !r.is_completed).sort((a, b) => new Date(a.due_date) - new Date(b.due_date)).slice(0, 3);
 
-    const rules = typeof getAdvisorRules === 'function' ? getAdvisorRules(schoolId, school) : {};
-    const regionName = rules?.region ? (window.REGION_LABELS?.[rules.region] || rules.region) : '';
-
-    preview.innerHTML = `
-      <div class="app-school-card">
-        <strong>${esc(school.name)}</strong>
-        ${school.nameKr ? `<span class="kr">${esc(school.nameKr)}</span>` : ''}
-        <div class="app-school-meta">
-          ${school.system ? `<span>📚 ${esc(school.system)}</span>` : ''}
-          ${regionName ? `<span>📍 ${esc(regionName)}</span>` : ''}
+    container.innerHTML = `
+      <section class="p2-section">
+        <div class="p2-head">
+          <p class="advisor-kicker">Tổng quan hồ sơ</p>
+          <h2>Dashboard du học</h2>
+          <p>Theo dõi tiến độ hồ sơ, giấy tờ và các mốc quan trọng.</p>
         </div>
-      </div>
-    `;
-  }
-
-  function renderDocumentsStep() {
-    const formLink = selectedSchoolFormUrl 
-      ? `<div class="app-form-download">
-          <a href="${esc(selectedSchoolFormUrl)}" target="_blank" rel="noopener" class="btn btn-primary btn-sm">
-            📥 Tải mẫu đơn của trường
-          </a>
-          <span class="doc-hint">Tải file PDF mẫu, điền đầy đủ thông tin, sau đó upload lại bên dưới.</span>
-         </div>`
-      : `<div class="app-form-download">
-          <span class="doc-hint">⚠️ Chưa có mẫu đơn cho trường này. Vui lòng liên hệ admin để được hỗ trợ hoặc sử dụng mẫu đơn của trường trên website trường.</span>
-         </div>`;
-
-    return `
-      <div class="app-section">
-        <h3>📄 Hồ sơ cần nộp</h3>
-        <p class="app-section-desc">Chuẩn bị sẵn các file (PDF, JPG, PNG) để upload. Mỗi file tối đa 10MB.</p>
-
-        ${formLink}
-
-        <div class="app-doc-grid">
-          <div class="app-doc-item">
-            <label>📝 Đơn đăng ký (theo mẫu trường) <span class="required">*</span></label>
-            <input type="file" accept=".pdf,.jpg,.jpeg,.png" name="docApplicationForm">
-            <span class="doc-hint">Upload file PDF đã điền xong</span>
+        <div class="p2-stat-grid">
+          <div class="p2-stat-card">
+            <span class="p2-stat-icon">📋</span>
+            <span class="p2-stat-num">${apps.length}</span>
+            <span class="p2-stat-label">Hồ sơ</span>
+            ${draftCount > 0 ? '<span class="p2-stat-sub">' + draftCount + ' nháp</span>' : ''}
           </div>
-          <div class="app-doc-item">
-            <label>📖 Kế hoạch học tập (Study Plan)</label>
-            <input type="file" accept=".pdf,.jpg,.jpeg,.png" name="docStudyPlan">
-            <span class="doc-hint">Viết bằng tiếng Hàn hoặc Anh</span>
+          <div class="p2-stat-card">
+            <span class="p2-stat-icon">📨</span>
+            <span class="p2-stat-num">${submittedCount}</span>
+            <span class="p2-stat-label">Đã nộp</span>
           </div>
-          <div class="app-doc-item">
-            <label>📋 Giới thiệu bản thân</label>
-            <input type="file" accept=".pdf,.jpg,.jpeg,.png" name="docSelfIntroduction">
-            <span class="doc-hint">Tự giới thiệu, thành tích</span>
+          <div class="p2-stat-card">
+            <span class="p2-stat-icon">⏰</span>
+            <span class="p2-stat-num">${pendingReminders}</span>
+            <span class="p2-stat-label">Nhắc nhở</span>
           </div>
-          <div class="app-doc-item">
-            <label>🎓 Bằng THPT</label>
-            <input type="file" accept=".pdf,.jpg,.jpeg,.png" name="docHighSchoolDiploma">
-            <span class="doc-hint">Bản sao công chứng</span>
-          </div>
-          <div class="app-doc-item">
-            <label>📊 Học bạ THPT</label>
-            <input type="file" accept=".pdf,.jpg,.jpeg,.png" name="docHighSchoolTranscript">
-            <span class="doc-hint">Bảng điểm 3 năm</span>
-          </div>
-          <div class="app-doc-item">
-            <label>🛂 Hộ chiếu (bản sao)</label>
-            <input type="file" accept=".pdf,.jpg,.jpeg,.png" name="docPassportCopy">
-            <span class="doc-hint">Trang có ảnh + chữ ký</span>
-          </div>
-          <div class="app-doc-item">
-            <label>👶 Giấy khai sinh</label>
-            <input type="file" accept=".pdf,.jpg,.jpeg,.png" name="docBirthCertificate">
-            <span class="doc-hint">Bản sao</span>
-          </div>
-          <div class="app-doc-item">
-            <label>📑 Sổ hộ khẩu</label>
-            <input type="file" accept=".pdf,.jpg,.jpeg,.png" name="docFamilyRegister">
-            <span class="doc-hint">Công chứng + dịch thuật</span>
-          </div>
-          <div class="app-doc-item">
-            <label>🏦 Sổ tiết kiệm / Xác nhận số dư</label>
-            <input type="file" accept=".pdf,.jpg,.jpeg,.png" name="docBankStatement">
-            <span class="doc-hint">Tối thiểu $10,000</span>
-          </div>
-          <div class="app-doc-item">
-            <label>🏥 Giấy khám sức khỏe</label>
-            <input type="file" accept=".pdf,.jpg,.jpeg,.png" name="docHealthCertificate">
-            <span class="doc-hint">Theo mẫu của ĐSQ</span>
-          </div>
-          <div class="app-doc-item">
-            <label>📸 Ảnh thẻ 3.5x4.5</label>
-            <input type="file" accept=".jpg,.jpeg,.png" name="docPhoto">
-            <span class="doc-hint">Nền trắng, mới chụp</span>
-          </div>
-          <div class="app-doc-item">
-            <label>🏅 Chứng chỉ TOPIK (nếu có)</label>
-            <input type="file" accept=".pdf,.jpg,.jpeg,.png" name="docTopikCertificate">
-            <span class="doc-hint">Scan chứng chỉ</span>
+          <div class="p2-stat-card">
+            <span class="p2-stat-icon">📎</span>
+            <span class="p2-stat-num">${apps.length > 0 ? Math.round(apps.filter(a => a.status !== 'draft').length / apps.length * 100) + '%' : '0%'}</span>
+            <span class="p2-stat-label">Hoàn thành</span>
           </div>
         </div>
-
-        <div class="app-doc-other">
-          <label>📎 Giấy tờ khác</label>
-          <textarea name="docOther" rows="2" placeholder="Liệt kê các giấy tờ bổ sung khác..."></textarea>
+        ${apps.length > 0 ? `
+        <div class="p2-section-block">
+          <h3>📝 Hồ sơ gần đây</h3>
+          <div class="p2-app-list">${apps.slice(0, 5).map(a => '<div class="p2-app-item" onclick="window.p2OpenApp(\'' + a.id + '\')"><div><strong>' + escapeHtml(a.full_name || 'Chưa có tên') + '</strong><span class="p2-app-status status-' + a.status + '">' + statusLabel(a.status) + '</span></div><small>' + formatDate(a.created_at) + '</small></div>').join('')}</div>
+          ${apps.length > 5 ? '<button class="btn btn-outline btn-sm" onclick="window.p2ShowView(\'list\')">Xem tất cả (' + apps.length + ')</button>' : ''}
+        </div>` : '<div class="p2-section-block p2-empty-state"><h3>📝 Chưa có hồ sơ nào</h3><p>Tạo hồ sơ du học đầu tiên.</p><button class="btn btn-primary" onclick="window.p2ShowView(\'create\')">+ Tạo hồ sơ mới</button></div>'}
+        ${upcoming.length > 0 ? `
+        <div class="p2-section-block">
+          <h3>⏰ Sắp đến hạn</h3>
+          <div class="p2-reminder-list">${upcoming.map(r => '<div class="p2-reminder-item ' + (new Date(r.due_date) < new Date() ? 'overdue' : '') + '"><div><strong>' + escapeHtml(r.title) + '</strong><small>' + reminderTypeLabel(r.reminder_type) + ' — Hạn: ' + formatDate(r.due_date) + '</small></div><button class="btn btn-sm btn-outline" onclick="window.p2CompleteReminder(\'' + r.id + '\')">✓</button></div>').join('')}</div>
+          <button class="btn btn-outline btn-sm" onclick="window.p2ShowView('reminders')">Quản lý nhắc nhở</button>
+        </div>` : '<div class="p2-section-block"><h3>⏰ Nhắc nhở</h3><p>Chưa có nhắc nhở nào.</p><button class="btn btn-outline btn-sm" onclick="window.p2ShowView(\'reminders\')">+ Thêm nhắc nhở</button></div>'}
+        <div class="p2-actions" style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:1rem">
+          <button class="btn btn-primary" onclick="window.p2ShowView('create')">+ Tạo hồ sơ mới</button>
+          <button class="btn btn-outline" onclick="window.p2ShowView('list')">📋 Danh sách hồ sơ</button>
+          <button class="btn btn-outline" onclick="window.p2ShowView('reminders')">⏰ Nhắc nhở</button>
         </div>
+      </section>`;
+  }
 
-        <div class="app-info-box">
-          <strong>💡 Mẹo:</strong> Nên chuẩn bị sẵn các file PDF đã scan rõ, dung lượng vừa phải. Các giấy tờ tiếng Việt cần dịch công chứng sang tiếng Hàn hoặc tiếng Anh.
+  // ─── Application List ───
+  async function renderAppList(container) {
+    container.innerHTML = '<div class="p2-loading"><div class="skeleton skeleton-heading" style="width:200px"></div></div>';
+    const res = await apiFetch('applications-list', 'GET');
+    const apps = res.applications || [];
+    container.innerHTML = `
+      <section class="p2-section">
+        <div class="p2-head"><p class="advisor-kicker">Hồ sơ của tôi</p><h2>${apps.length} hồ sơ du học</h2></div>
+        <div class="p2-toolbar" style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1rem">
+          <button class="btn btn-primary" onclick="window.p2ShowView('create')">+ Tạo hồ sơ</button>
+          <button class="btn btn-outline" onclick="window.p2ShowView('dashboard')">← Dashboard</button>
         </div>
-      </div>
-    `;
+        ${apps.length === 0 ? '<div class="p2-empty"><p>Chưa có hồ sơ nào.</p></div>' : '<div class="p2-app-list-full">' + apps.map(a => '<div class="p2-app-card" onclick="window.p2OpenApp(\'' + a.id + '\')"><div class="p2-app-card-top"><strong>' + escapeHtml(a.full_name || 'Chưa có tên') + '</strong><span class="p2-app-status status-' + a.status + '">' + statusLabel(a.status) + '</span></div><div class="p2-app-card-meta"><span>📅 ' + formatDate(a.created_at) + '</span>' + (a.korean_level ? '<span>🇰🇷 ' + a.korean_level + '</span>' : '') + (a.high_school_name ? '<span>🎓 ' + escapeHtml(a.high_school_name) + '</span>' : '') + '</div></div>').join('') + '</div>'}
+      </section>`;
   }
 
-  function renderReviewStep() {
-    saveFormData();
-    const d = formData;
-    const school = (window.SCHOOLS_DATA || {})[d.schoolId];
-    const sem = (window.SEMESTERS_LIST || []).find(s => s.id === d.semesterId);
-
-    return `
-      <div class="app-section">
-        <h3>✅ Xác nhận thông tin</h3>
-        <p class="app-section-desc">Vui lòng kiểm tra lại toàn bộ thông tin trước khi gửi.</p>
-
-        <div class="app-review-grid">
-          <div class="app-review-section">
-            <h4>👤 Thông tin cá nhân</h4>
-            <table class="app-review-table">
-              <tr><td>Họ tên</td><td>${esc(d.fullName || '—')}</td></tr>
-              <tr><td>Tên Hàn</td><td>${esc(d.fullNameKr || '—')}</td></tr>
-              <tr><td>Tên Anh</td><td>${esc(d.fullNameEn || '—')}</td></tr>
-              <tr><td>Ngày sinh</td><td>${esc(d.dateOfBirth || '—')}</td></tr>
-              <tr><td>Giới tính</td><td>${d.gender === 'male' ? 'Nam' : d.gender === 'female' ? 'Nữ' : '—'}</td></tr>
-              <tr><td>Passport</td><td>${esc(d.passportNo || '—')}</td></tr>
-              <tr><td>SĐT</td><td>${esc(d.phone || '—')}</td></tr>
-              <tr><td>Email</td><td>${esc(d.email || '—')}</td></tr>
-            </table>
-          </div>
-
-          <div class="app-review-section">
-            <h4>🎓 Học vấn</h4>
-            <table class="app-review-table">
-              <tr><td>Trường THPT</td><td>${esc(d.highSchoolName || '—')}</td></tr>
-              <tr><td>GPA</td><td>${d.highSchoolGpa || '—'}</td></tr>
-              <tr><td>ĐH (nếu có)</td><td>${esc(d.universityName || '—')}</td></tr>
-            </table>
-          </div>
-
-          <div class="app-review-section">
-            <h4>🇰🇷 Tiếng Hàn</h4>
-            <table class="app-review-table">
-              <tr><td>Trình độ</td><td>${esc(d.koreanLevel || '—')}</td></tr>
-              <tr><td>TOPIK</td><td>${d.topikLevel || '—'}</td></tr>
-            </table>
-          </div>
-
-          <div class="app-review-section">
-            <h4>🏫 Trường đã chọn</h4>
-            <table class="app-review-table">
-              <tr><td>Trường</td><td>${school ? esc(school.name) : '—'}</td></tr>
-              <tr><td>Kỳ</td><td>${sem ? esc(sem.title || 'Kỳ ' + sem.ky + '/' + sem.nam) : '—'}</td></tr>
-            </table>
-          </div>
-
-          <div class="app-review-section">
-            <h4>📄 Hồ sơ đã chuẩn bị</h4>
-            <ul class="app-doc-list">
-              ${renderDocStatus('docApplicationForm', 'Đơn đăng ký')}
-              ${renderDocStatus('docStudyPlan', 'Kế hoạch học tập')}
-              ${renderDocStatus('docSelfIntroduction', 'Giới thiệu bản thân')}
-              ${renderDocStatus('docHighSchoolDiploma', 'Bằng THPT')}
-              ${renderDocStatus('docHighSchoolTranscript', 'Học bạ THPT')}
-              ${renderDocStatus('docPassportCopy', 'Hộ chiếu')}
-              ${renderDocStatus('docBirthCertificate', 'Giấy khai sinh')}
-              ${renderDocStatus('docFamilyRegister', 'Sổ hộ khẩu')}
-              ${renderDocStatus('docBankStatement', 'Tài chính')}
-              ${renderDocStatus('docHealthCertificate', 'Sức khỏe')}
-              ${renderDocStatus('docPhoto', 'Ảnh thẻ')}
-              ${renderDocStatus('docTopikCertificate', 'TOPIK')}
-            </ul>
-          </div>
-        </div>
-
-        <div class="app-agree-box">
-          <label class="app-agree-label">
-            <input type="checkbox" id="app-agree" required>
-            <span>Tôi xác nhận thông tin trên là đúng sự thật và chịu trách nhiệm về tính chính xác của dữ liệu đã cung cấp.</span>
-          </label>
-        </div>
-      </div>
-    `;
-  }
-
-  function renderDocStatus(fieldName, label) {
-    const file = documentFiles[fieldName];
-    const hasDoc = file instanceof File;
-    return `<li class="${hasDoc ? 'doc-ready' : 'doc-missing'}">
-      ${hasDoc ? '✅' : '⬜'} ${esc(label)}${hasDoc ? ' <span class="doc-file-name">(' + esc(file.name) + ')</span>' : ''}
-    </li>`;
-  }
-
-  // ══════════════════════════════════════════
-  // FORM SUBMISSION
-  // ══════════════════════════════════════════
-
-  function bindFormEvents(container) {
-    const form = document.getElementById('application-form');
-    if (!form) return;
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      if (!validateStep(currentStep)) return;
-      if (!document.getElementById('app-agree')?.checked) {
-        document.getElementById('app-step-error').textContent = 'Vui lòng xác nhận thông tin trước khi gửi';
-        return;
-      }
-      await submitForm();
-    });
-  }
-
-  // ─── Save file objects when user selects files (step 5) ───
-  // Lưu File reference vào documentFiles để dùng khi submit ở bước 6 (file inputs không còn trong DOM)
-  function bindFileInputs() {
-    const fileInputs = document.querySelectorAll('#app-step-content input[type="file"]');
-    fileInputs.forEach(input => {
-      input.addEventListener('change', function() {
-        if (this.files && this.files.length > 0) {
-          documentFiles[this.name] = this.files[0];
-        } else {
-          delete documentFiles[this.name];
-        }
-      });
-    });
-  }
-
-  // ─── Read file as base64 data URI ───
-  function readFileAsBase64(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = () => reject(new Error('Không thể đọc file'));
-      reader.readAsDataURL(file);
-    });
-  }
-
-  async function submitForm() {
-    if (isSubmitting) return;
-    isSubmitting = true;
-
-    const submitBtn = document.getElementById('app-submit-btn');
-    const errorEl = document.getElementById('app-step-error');
-    
-    if (submitBtn) {
-      submitBtn.disabled = true;
-      submitBtn.textContent = '⏳ Đang đọc file...';
+  // ─── Application Form ───
+  async function renderAppForm(container, appId) {
+    let app = null;
+    if (appId) {
+      const res = await apiFetch('applications-get&id=' + appId, 'GET');
+      app = res.application || null;
     }
-    if (errorEl) errorEl.textContent = '';
+    const d = app || {};
+    const isEdit = !!app;
 
-    saveFormData();
-
-    // Build payload
-    const payload = { ...formData };
-
-    // Dùng documentFiles đã lưu từ bước 5 (Hồ sơ) — file inputs không còn trong DOM ở bước 6
-    const fileEntries = Object.entries(documentFiles).filter(([, file]) => file instanceof File);
-    
-    for (let i = 0; i < fileEntries.length; i++) {
-      const [fieldName, file] = fileEntries[i];
-      if (submitBtn) {
-        submitBtn.textContent = `⏳ Đang đọc file ${i+1}/${fileEntries.length}...`;
-      }
-      try {
-        const base64 = await readFileAsBase64(file);
-        payload[fieldName] = base64;
-      } catch (err) {
-        if (errorEl) errorEl.textContent = '❌ Lỗi đọc file ' + file.name + ': ' + err.message;
-        isSubmitting = false;
-        if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.textContent = '📨 Gửi đơn đăng ký';
-        }
-        return;
-      }
-    }
-
-    payload.source = 'web';
-
-    if (submitBtn) submitBtn.textContent = '⏳ Đang gửi đơn...';
-
-    try {
-      const res = await fetch('/api/schools', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || 'Lỗi gửi đơn');
-      }
-
-      // Show success
-      const form = document.getElementById('application-form');
-      const progress = document.getElementById('app-progress');
-      const success = document.getElementById('app-success');
-      const successId = document.getElementById('app-success-id');
-
-      if (form) form.style.display = 'none';
-      if (progress) progress.style.display = 'none';
-      if (success) success.style.display = 'block';
-      if (successId && data.data?.id) {
-        successId.innerHTML = `
-          <p>Mã đơn: <strong>${data.data.id}</strong></p>
-          <p>Cảm ơn bạn! File hồ sơ đã được tải lên. Admin sẽ xem xét và phản hồi sớm nhất.</p>
-        `;
-      }
-    } catch (err) {
-      if (errorEl) errorEl.textContent = '❌ ' + err.message;
-      if (submitBtn) {
-        submitBtn.disabled = false;
-        submitBtn.textContent = '📨 Gửi đơn đăng ký';
-      }
-    } finally {
-      isSubmitting = false;
-    }
+    container.innerHTML = `
+      <section class="p2-section">
+        <div class="p2-head">
+          <p class="advisor-kicker">${isEdit ? 'Sửa hồ sơ' : 'Tạo hồ sơ mới'}</p>
+          <h2>${isEdit ? escapeHtml(d.full_name || 'Hồ sơ') : 'Điền thông tin hồ sơ du học'}</h2>
+          <p>Thông tin này sẽ được dùng để điền vào đơn đăng ký trường và hồ sơ visa.</p>
+        </div>
+        <div class="p2-form">
+          <div class="p2-form-section">
+            <h3>👤 Thông tin cá nhân</h3>
+            <div class="p2-grid-2">
+              <div class="p2-field"><label>Họ tên (Tiếng Việt)</label><input type="text" id="af-fullname" value="${escapeHtml(d.full_name || '')}" placeholder="Nguyễn Văn A"></div>
+              <div class="p2-field"><label>Họ tên (Tiếng Hàn)</label><input type="text" id="af-namekr" value="${escapeHtml(d.full_name_kr || '')}" placeholder="Kim..."></div>
+            </div>
+            <div class="p2-grid-2">
+              <div class="p2-field"><label>Ngày sinh</label><input type="date" id="af-dob" value="${d.date_of_birth ? d.date_of_birth.substring(0,10) : ''}"></div>
+              <div class="p2-field"><label>Giới tính</label><select id="af-gender"><option value="">— Chọn —</option><option value="male" ${d.gender === 'male' ? 'selected' : ''}>Nam</option><option value="female" ${d.gender === 'female' ? 'selected' : ''}>Nữ</option></select></div>
+            </div>
+            <div class="p2-grid-2">
+              <div class="p2-field"><label>Số điện thoại</label><input type="tel" id="af-phone" value="${escapeHtml(d.phone || '')}" placeholder="090xxxxxxx"></div>
+              <div class="p2-field"><label>Email</label><input type="email" id="af-email" value="${escapeHtml(d.email || '')}" placeholder="your@email.com"></div>
+            </div>
+            <div class="p2-field"><label>Địa chỉ</label><input type="text" id="af-address" value="${escapeHtml(d.address || '')}" placeholder="Số nhà, đường, tỉnh/thành phố"></div>
+          </div>
+          <div class="p2-form-section">
+            <h3>🎓 Học vấn</h3>
+            <div class="p2-grid-2">
+              <div class="p2-field"><label>Trường THPT</label><input type="text" id="af-hsname" value="${escapeHtml(d.high_school_name || '')}" placeholder="Tên trường"></div>
+              <div class="p2-field"><label>GPA (thang 10)</label><input type="number" id="af-gpa" min="0" max="10" step="0.1" value="${d.high_school_gpa || ''}" placeholder="6.5"></div>
+            </div>
+            <div class="p2-grid-2">
+              <div class="p2-field"><label>Số buổi nghỉ</label><input type="number" id="af-absences" min="0" value="${d.high_school_absences || 0}"></div>
+              <div class="p2-field"><label>Tiếng Hàn</label><select id="af-korean"><option value="none">Chưa học</option><option value="beginner" ${d.korean_level === 'beginner' ? 'selected' : ''}>Mới bắt đầu</option><option value="sejong2b" ${d.korean_level === 'sejong2b' ? 'selected' : ''}>Sejong 2B</option><option value="topik1" ${d.korean_level === 'topik1' ? 'selected' : ''}>TOPIK 1</option><option value="topik2" ${d.korean_level === 'topik2' ? 'selected' : ''}>TOPIK 2</option><option value="topik3" ${d.korean_level === 'topik3' ? 'selected' : ''}>TOPIK 3</option><option value="topik4" ${d.korean_level === 'topik4' ? 'selected' : ''}>TOPIK 4+</option></select></div>
+            </div>
+          </div>
+          <div class="p2-form-section">
+            <h3>👪 Gia đình</h3>
+            <div class="p2-grid-2">
+              <div class="p2-field"><label>Cha</label><input type="text" id="af-fname" value="${escapeHtml(d.father_name || '')}" placeholder="Họ tên cha"></div>
+              <div class="p2-field"><label>Nghề nghiệp cha</label><input type="text" id="af-fjob" value="${escapeHtml(d.father_occupation || '')}" placeholder="Kinh doanh"></div>
+            </div>
+            <div class="p2-grid-2">
+              <div class="p2-field"><label>Mẹ</label><input type="text" id="af-mname" value="${escapeHtml(d.mother_name || '')}" placeholder="Họ tên mẹ"></div>
+              <div class="p2-field"><label>Nghề nghiệp mẹ</label><input type="text" id="af-mjob" value="${escapeHtml(d.mother_occupation || '')}" placeholder="Giáo viên"></div>
+            </div>
+          </div>
+          <div class="p2-form-actions" style="display:flex;gap:0.5rem;margin-top:1rem;flex-wrap:wrap">
+            <button class="btn btn-primary btn-lg" id="af-save-btn" onclick="window.p2SaveApp('${appId || ''}')">${isEdit ? '💾 Lưu' : '✨ Tạo hồ sơ'}</button>
+            <button class="btn btn-outline" onclick="window.p2ShowView('list')">← Huỷ</button>
+            ${isEdit ? '<button class="btn btn-danger" onclick="window.p2DeleteApp(\'' + appId + '\')">🗑 Xoá</button>' : ''}
+          </div>
+        </div>
+      </section>`;
   }
 
-  function resetForm() {
-    const form = document.getElementById('application-form');
-    const progress = document.getElementById('app-progress');
-    const success = document.getElementById('app-success');
+  window.p2SaveApp = async function(appId) {
+    const btn = document.getElementById('af-save-btn');
+    if (!btn) return;
+    btn.disabled = true; btn.textContent = '⏳ Đang lưu...';
+    const data = {
+      fullName: document.getElementById('af-fullname').value.trim(),
+      fullNameKr: document.getElementById('af-namekr').value.trim(),
+      dateOfBirth: document.getElementById('af-dob').value || null,
+      gender: document.getElementById('af-gender').value,
+      phone: document.getElementById('af-phone').value.trim(),
+      email: document.getElementById('af-email').value.trim(),
+      address: document.getElementById('af-address').value.trim(),
+      highSchoolName: document.getElementById('af-hsname').value.trim(),
+      highSchoolGpa: parseFloat(document.getElementById('af-gpa').value) || null,
+      highSchoolAbsences: parseInt(document.getElementById('af-absences').value) || 0,
+      koreanLevel: document.getElementById('af-korean').value,
+      fatherName: document.getElementById('af-fname').value.trim(),
+      fatherOccupation: document.getElementById('af-fjob').value.trim(),
+      motherName: document.getElementById('af-mname').value.trim(),
+      motherOccupation: document.getElementById('af-mjob').value.trim(),
+    };
+    let res;
+    if (appId) res = await apiFetch('applications-update', 'PUT', { id: appId, ...data });
+    else res = await apiFetch('applications-create', 'POST', data);
+    btn.disabled = false; btn.textContent = appId ? '💾 Lưu' : '✨ Tạo hồ sơ';
+    if (res.success) window.p2ShowView('list');
+    else alert('Lỗi: ' + (res.error || 'Không thể lưu'));
+  };
 
-    if (form) form.style.display = '';
-    if (progress) progress.style.display = '';
-    if (success) success.style.display = 'none';
+  window.p2DeleteApp = async function(appId) {
+    if (!confirm('Xoá hồ sơ này?')) return;
+    const res = await apiFetch('applications-delete&id=' + appId, 'DELETE');
+    if (res.success) window.p2ShowView('list');
+    else alert('Lỗi: ' + (res.error || 'Không thể xoá'));
+  };
 
-    currentStep = 0;
-    formData = getDefaultData();
-    documentFiles = {};
-    isSubmitting = false;
-    renderStep(0);
+  // ─── Reminders ───
+  async function renderReminders(container) {
+    const res = await apiFetch('reminders-list', 'GET');
+    const reminders = res.reminders || [];
+    const pending = reminders.filter(r => !r.is_completed);
+    const completed = reminders.filter(r => r.is_completed);
+
+    container.innerHTML = `
+      <section class="p2-section">
+        <div class="p2-head"><p class="advisor-kicker">Nhắc nhở</p><h2>⏰ ${pending.length} nhắc nhở đang chờ</h2></div>
+        <div class="p2-toolbar" style="margin-bottom:1rem"><button class="btn btn-outline" onclick="window.p2ShowView('dashboard')">← Dashboard</button></div>
+        <div class="p2-section-block">
+          <h3>+ Thêm nhắc nhở</h3>
+          <div class="p2-reminder-form">
+            <div class="p2-grid-2"><div class="p2-field"><input type="text" id="rm-title" placeholder="Tiêu đề"></div><div class="p2-field"><input type="date" id="rm-date"></div></div>
+            <div class="p2-grid-2"><div class="p2-field"><select id="rm-type"><option value="document">📄 Giấy tờ</option><option value="submission">📨 Nộp hồ sơ</option><option value="interview">🎤 Phỏng vấn</option><option value="health_check">🏥 Khám sức khoẻ</option><option value="visa_appointment">🛂 Hẹn visa</option><option value="other">📌 Khác</option></select></div><button class="btn btn-primary" onclick="window.p2AddReminder()">+ Thêm</button></div>
+          </div>
+        </div>
+        ${pending.length > 0 ? '<div class="p2-section-block"><h3>📌 Đang chờ (' + pending.length + ')</h3><div class="p2-reminder-list">' + pending.map(r => '<div class="p2-reminder-item ' + (new Date(r.due_date) < new Date() ? 'overdue' : '') + '"><div><strong>' + escapeHtml(r.title) + '</strong><small>' + reminderTypeLabel(r.reminder_type) + ' — Hạn: ' + formatDate(r.due_date) + '</small></div><div style="display:flex;gap:0.35rem"><button class="btn btn-sm btn-primary" onclick="window.p2CompleteReminder(\'' + r.id + '\')">✓</button><button class="btn btn-sm btn-danger" onclick="window.p2DeleteReminder(\'' + r.id + '\')">✕</button></div></div>').join('') + '</div></div>' : ''}
+        ${completed.length > 0 ? '<div class="p2-section-block"><h3>✅ Đã hoàn thành (' + completed.length + ')</h3><div class="p2-reminder-list">' + completed.map(r => '<div class="p2-reminder-item completed"><div><strong>' + escapeHtml(r.title) + '</strong><small>' + reminderTypeLabel(r.reminder_type) + '</small></div><button class="btn btn-sm btn-outline" onclick="window.p2DeleteReminder(\'' + r.id + '\')">✕</button></div>').join('') + '</div></div>' : ''}
+      </section>`;
   }
 
-  // ─── Escape HTML helper (dùng global từ api-loader.js) ───
-  function esc(str) {
-    if (typeof window.escapeHtml === 'function') return window.escapeHtml(str);
-    if (typeof str !== 'string') return str ?? '';
-    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-  }
+  window.p2AddReminder = async function() {
+    const title = document.getElementById('rm-title').value.trim();
+    const dueDate = document.getElementById('rm-date').value;
+    const type = document.getElementById('rm-type').value;
+    if (!title || !dueDate) return alert('Vui lòng nhập tiêu đề và ngày hạn.');
+    const res = await apiFetch('reminders-create', 'POST', { title, dueDate, reminderType: type });
+    if (res.success) { document.getElementById('rm-title').value = ''; document.getElementById('rm-date').value = ''; window.p2ShowView('reminders'); }
+    else alert('Lỗi: ' + (res.error || 'Không thể tạo'));
+  };
 
-  // ─── Export ───
-  window.renderApplicationApp = renderApp;
+  window.p2CompleteReminder = async function(id) {
+    const res = await apiFetch('reminders-complete', 'POST', { id, completed: true });
+    if (res.success) window.p2ShowView('reminders');
+  };
+
+  window.p2DeleteReminder = async function(id) {
+    if (!confirm('Xoá nhắc nhở này?')) return;
+    const res = await apiFetch('reminders-delete&id=' + id, 'DELETE');
+    if (res.success) window.p2ShowView('reminders');
+  };
 })();
