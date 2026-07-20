@@ -340,8 +340,8 @@ window.CHECKLIST_DATA = {
       // Module: Lưu ý quan trọng (cảnh báo chung — không có item, chỉ dùng để hiển thị)
       {
         id: 'ALERT',
-        name: '📌 Lưu ý quan trọng về thời hạn & quy định',
-        icon: '⚠️',
+        name: 'Lưu ý quan trọng về thời hạn & quy định',
+        icon: '📌',
         description: 'Những lưu ý sống còn để tránh bị trượt visa.',
         required: true,
         items: [
