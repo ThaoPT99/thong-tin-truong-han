@@ -878,21 +878,31 @@ async function handleDocumentUpload(req, res) {
     }
 
     // Save to student_documents (always save metadata even if Storage fails)
-    const { data: doc, error: docError } = await supabase
+    // Use select-then-insert/update instead of upsert (no unique constraint on student_id+doc_type)
+    const { data: existingDoc } = await supabase
       .from('student_documents')
-      .upsert({
-        student_id: profileId,
-        doc_type: docType,
-        file_url: fileUrl || '',
-        file_name: fileName || '',
-        file_size: buffer.length,
-        status: uploadStatus,
-      })
-      .select('*')
-      .single();
+      .select('id')
+      .eq('student_id', profileId)
+      .eq('doc_type', docType)
+      .maybeSingle();
 
-    if (docError) {
-      // If upsert fails (no unique constraint), do insert instead
+    let doc;
+    if (existingDoc) {
+      const { data: updated, error: updateErr } = await supabase
+        .from('student_documents')
+        .update({
+          file_url: fileUrl || '',
+          file_name: fileName || '',
+          file_size: buffer.length,
+          status: uploadStatus,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', existingDoc.id)
+        .select('*')
+        .single();
+      if (updateErr) throw updateErr;
+      doc = updated;
+    } else {
       const { data: inserted, error: insertErr } = await supabase
         .from('student_documents')
         .insert({
@@ -906,11 +916,8 @@ async function handleDocumentUpload(req, res) {
         .select('*')
         .single();
       if (insertErr) throw insertErr;
-      doc = inserted
-      .select('*')
-      .single();
-
-    if (docError) throw docError;
+      doc = inserted;
+    }
 
     if (uploadStatus === 'no_storage') {
       return res.json({
