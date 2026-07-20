@@ -824,37 +824,60 @@ async function handleDocumentUpload(req, res) {
     // Decode base64
     const buffer = Buffer.from(fileBase64, 'base64');
 
-    const { data: uploadData, error: uploadError } = await supabase.storage
-      .from(bucketName)
-      .upload(filePath, buffer, {
-        contentType: 'application/octet-stream',
-        upsert: true,
-      });
+    let fileUrl = '';
+    let uploadStatus = 'pending';
 
-    if (uploadError) throw uploadError;
+    try {
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from(bucketName)
+        .upload(filePath, buffer, {
+          contentType: 'application/octet-stream',
+          upsert: true,
+        });
 
-    // Get public URL
-    const { data: urlData } = supabase.storage.from(bucketName).getPublicUrl(filePath);
-    const fileUrl = urlData?.publicUrl || '';
+      if (uploadError) {
+        // Bucket might not exist yet
+        console.warn('Storage upload failed (bucket may not exist):', uploadError.message);
+        uploadStatus = 'no_storage';
+      } else {
+        // Get public URL
+        const { data: urlData } = supabase.storage.from(bucketName).getPublicUrl(filePath);
+        fileUrl = urlData?.publicUrl || '';
+        uploadStatus = 'uploaded';
+      }
+    } catch (storageErr) {
+      console.warn('Storage error (create bucket "student-documents" in Supabase Dashboard):', storageErr.message);
+      uploadStatus = 'no_storage';
+    }
 
-    // Save to student_documents
+    // Save to student_documents (always save metadata even if Storage fails)
     const { data: doc, error: docError } = await supabase
       .from('student_documents')
       .upsert({
         student_id: profileId,
         doc_type: docType,
-        file_url: fileUrl,
+        file_url: fileUrl || '',
         file_name: fileName || '',
         file_size: buffer.length,
-        status: 'uploaded',
+        status: uploadStatus,
       }, { onConflict: 'student_id, doc_type' })
       .select('*')
       .single();
 
     if (docError) throw docError;
+
+    if (uploadStatus === 'no_storage') {
+      return res.json({
+        success: true,
+        document: doc,
+        fileUrl: '',
+        warning: 'File đã được lưu thông tin nhưng chưa upload lên Storage. Vào Supabase Dashboard > Storage > tạo bucket "student-documents" (public) để upload hoạt động.'
+      });
+    }
+
     return res.json({ success: true, document: doc, fileUrl });
   } catch (err) {
     console.error('Document upload error:', err);
-    return res.status(500).json({ error: 'Failed to upload document' });
+    return res.status(500).json({ error: 'Upload thất bại: ' + (err.message || 'Lỗi không xác định') });
   }
 }

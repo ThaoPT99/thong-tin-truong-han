@@ -1441,17 +1441,21 @@
           for (const mod of checklist.modules) {
             const item = mod.items.find(i => i.id === itemId);
             if (item) {
-              item.fileUrl = data.fileUrl;
+              item.fileUrl = data.fileUrl || '';
               item.fileName = file.name;
-              item.docStatus = 'ready';
-              if (item.status === 'pending') item.status = 'in_progress';
+              item.docStatus = data.fileUrl ? 'ready' : 'not_ready';
+              if (item.status === 'pending' && data.fileUrl) item.status = 'in_progress';
               break;
             }
           }
           saveData();
           renderModule(getCurrentModuleIdx());
           updateProgressFromDocs();
-          toast('✅ Upload thành công: ' + escapeHtml(file.name));
+          if (data.warning) {
+            toast('⚠️ ' + data.warning);
+          } else {
+            toast('✅ Upload thành công: ' + escapeHtml(file.name));
+          }
         } else {
           toast('❌ Upload thất bại: ' + (data.error || 'Lỗi không xác định'));
         }
