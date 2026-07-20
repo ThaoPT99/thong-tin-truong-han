@@ -66,6 +66,24 @@ window.CHECKLIST_DATA = {
             documentType: 'birth_certificate',
             required: true,
             rule: null
+          },
+          {
+            id: 'A1-7',
+            name: 'Giấy khám lao phổi (TB test)',
+            description: 'Khám tại bệnh viện ĐSQ chỉ định. Hà Nội: BV Phổi Trung ương. TP.HCM: BV Chợ Rẫy, BV Phạm Ngọc Thạch, BV Thống Nhất. Giấy có giá trị 3 tháng.',
+            documentType: 'tb_test',
+            required: true,
+            warning: '⚠️ Chỉ khám tại bệnh viện được Đại sứ quán chỉ định. Khám sai bệnh viện sẽ không được chấp nhận!',
+            rule: null
+          },
+          {
+            id: 'A1-8',
+            name: 'Bản sao Giấy phép kinh doanh / Chứng nhận đăng ký của trường Hàn',
+            description: 'Trường Hàn Quốc cấp — có dấu đỏ. Cần xin từ trường sau khi hoàn tất thủ tục nhập học.',
+            documentType: 'school_business_registration',
+            required: true,
+            source: 'school',
+            rule: null
           }
         ]
       },
@@ -159,16 +177,16 @@ window.CHECKLIST_DATA = {
           {
             id: 'A4-1',
             name: 'Sổ tiết kiệm',
-            description: 'Tối thiểu 10,000 USD (~250 triệu VND). Kỳ hạn tối thiểu 1 tháng trước ngày nộp.',
+            description: 'Tối thiểu 10,000 USD (~250 triệu VND). Gửi kỳ hạn 12 tháng, mở trước 3-6 tháng (khuyến nghị: 6 tháng). Chỉ chấp nhận sổ mở tại quầy giao dịch, không chấp nhận sổ online.',
             documentType: 'savings_book',
             required: true,
             rule: null,
-            warning: 'Sổ tiết kiệm cần được mở trước ngày nộp hồ sơ ít nhất 1 tháng.'
+            warning: '⚠️ Sổ tiết kiệm cần mở TRƯỚC 3-6 THÁNG (không phải 1 tháng!). Không dùng sổ online — chỉ chấp nhận sổ mở tại quầy. Kèm Giấy xác nhận số dư cấp trong vòng 30 ngày.'
           },
           {
             id: 'A4-2',
             name: 'Xác nhận số dư tài khoản ngân hàng',
-            description: 'Sao kê 3 tháng gần nhất, có dấu ngân hàng.',
+            description: 'Sao kê 3 tháng gần nhất, có dấu ngân hàng. Phải được cấp trong vòng 30 ngày trước ngày nộp hồ sơ.',
             documentType: 'bank_statement',
             required: true,
             rule: null
@@ -222,6 +240,16 @@ window.CHECKLIST_DATA = {
             documentType: 'notarized_translation',
             required: true,
             rule: null
+          },
+          {
+            id: 'A4-9',
+            name: 'Sổ đóng băng K-Study (ngân hàng Hàn Quốc tại Việt Nam)',
+            description: 'Nhiều trường yêu cầu mở sổ đóng băng tại Shinhan hoặc Woori Bank Việt Nam, số tiền 8,000-10,000 USD. Làm tăng tỉ lệ đậu visa đáng kể.',
+            documentType: 'k_study_account',
+            required: false,
+            rule: null,
+            recommended: true,
+            warning: '💡 Sổ đóng băng K-Study là điểm cộng lớn cho hồ sơ. Nếu trường bạn yêu cầu, đây là bắt buộc.'
           }
         ]
       },
@@ -273,10 +301,11 @@ window.CHECKLIST_DATA = {
           },
           {
             id: 'A6-2',
-            name: 'Giấy khám sức khỏe',
-            description: 'Khám lao phổi tại bệnh viện được ĐSQ/LSQ chỉ định.',
+            name: 'Giấy khám lao phổi (TB test)',
+            description: 'Bắt buộc khám tại bệnh viện ĐSQ chỉ định. Hà Nội: BV Phổi Trung ương. TP.HCM: BV Chợ Rẫy, BV Phạm Ngọc Thạch, BV Thống Nhất. Có giá trị 3 tháng. Mang theo CCCD gốc khi đi khám.',
             documentType: 'health_check',
             required: true,
+            warning: '⚠️ Khám SAI bệnh viện → giấy khám KHÔNG được chấp nhận. Kiểm tra danh sách mới nhất trên website KVAC trước khi đi.',
             rule: null
           },
           {
@@ -303,6 +332,59 @@ window.CHECKLIST_DATA = {
             required: true,
             rule: null
           }
+        ]
+      },
+
+      // Module: Lưu ý quan trọng (cảnh báo chung — không có item, chỉ dùng để hiển thị)
+      {
+        id: 'ALERT',
+        name: '📌 Lưu ý quan trọng về thời hạn & quy định',
+        icon: '⚠️',
+        description: 'Những lưu ý sống còn để tránh bị trượt visa.',
+        required: true,
+        items: [
+          {
+            id: 'ALERT-1',
+            name: '⏳ Thời hạn giấy tờ 3 tháng',
+            description: 'Hầu hết giấy tờ (sổ TK, giấy khám sức khỏe, giấy nhập học, dịch công chứng) chỉ có giá trị 3 tháng kể từ ngày cấp. Kiểm tra kỹ trước khi nộp!',
+            documentType: 'general_warning',
+            required: true,
+            rule: null
+          },
+          {
+            id: 'ALERT-2',
+            name: '🏦 Sổ tiết kiệm phải mở tại quầy',
+            description: 'Đại sứ quán KHÔNG chấp nhận sổ tiết kiệm online. Bắt buộc mở trực tiếp tại quầy giao dịch ngân hàng. Yêu cầu sổ gốc + giấy xác nhận số dư cấp trong vòng 30 ngày.',
+            documentType: 'general_warning',
+            required: true,
+            rule: null
+          },
+          {
+            id: 'ALERT-3',
+            name: '📍 Không chạy vùng miền',
+            description: 'Nếu chuyển hộ khẩu giữa Hà Nội và TP.HCM dưới 6 tháng để xin visa — rất dễ bị từ chối. Cần chứng minh cư trú thực tế.',
+            documentType: 'general_warning',
+            required: true,
+            rule: null
+          },
+          {
+            id: 'ALERT-4',
+            name: '⏸️ Trượt visa: đợi tối thiểu 3 tháng',
+            description: 'Nếu đã từng trượt visa Hàn — phải đợi ít nhất 3 tháng kể từ ngày bị từ chối mới được nộp lại. Khắc phục triệt để lý do trượt trước khi nộp mới.',
+            documentType: 'general_warning',
+            required: true,
+            rule: null
+          },
+          {
+            id: 'ALERT-5',
+            name: '🔍 Tính xác thực của hồ sơ',
+            description: 'Giả mạo giấy tờ (bằng cấp, sổ tiết kiệm, chứng minh thu nhập) là nguyên nhân hàng đầu bị cấm nhập cảnh Hàn Quốc trong thời gian dài. Mọi giấy tờ đều được ĐSQ xác minh.',
+            documentType: 'general_warning',
+            required: true,
+            rule: null
+          }
+        ]
+      }
         ]
       },
 
@@ -392,7 +474,9 @@ window.CHECKLIST_DATA = {
           { id: 'B1-3', name: 'Ảnh thẻ 3.5x4.5cm', description: 'Nền trắng, chụp trong 6 tháng.', documentType: 'photo', required: true, rule: null },
           { id: 'B1-4', name: 'CCCD/CMND photo', description: 'Photo rõ ràng.', documentType: 'id_card', required: true, rule: null },
           { id: 'B1-5', name: 'Giấy khai sinh', description: 'Bản sao.', documentType: 'birth_certificate', required: true, rule: null },
-          { id: 'B1-6', name: 'Sổ hộ khẩu', description: 'Photo hoặc sao y.', documentType: 'household_registration', required: true, rule: null }
+          { id: 'B1-6', name: 'Sổ hộ khẩu', description: 'Photo hoặc sao y.', documentType: 'household_registration', required: true, rule: null },
+          { id: 'B1-7', name: 'Giấy khám lao phổi (TB test)', description: 'Khám tại bệnh viện ĐSQ chỉ định. Hà Nội: BV Phổi TW. TP.HCM: BV Chợ Rẫy, BV Phạm Ngọc Thạch, BV Thống Nhất. Giá trị 3 tháng.', documentType: 'tb_test', required: true, warning: '⚠️ Chỉ khám tại bệnh viện ĐSQ chỉ định — khám sai sẽ không được chấp nhận!', rule: null },
+          { id: 'B1-8', name: 'Bản sao Giấy phép kinh doanh của trường Hàn', description: 'Trường Hàn cấp, có dấu đỏ. Xin sau khi hoàn tất thủ tục.', documentType: 'school_business_registration', required: true, source: 'school', rule: null }
         ]
       },
       {
@@ -427,12 +511,13 @@ window.CHECKLIST_DATA = {
         icon: '💰',
         required: true,
         items: [
-          { id: 'B4-1', name: 'Sổ tiết kiệm (tối thiểu $10,000)', description: 'Tương đương ~250 triệu VND.', documentType: 'savings_book', required: true, rule: null },
-          { id: 'B4-2', name: 'Sao kê ngân hàng 3 tháng', description: 'Xác nhận số dư tài khoản.', documentType: 'bank_statement', required: true, rule: null },
+          { id: 'B4-1', name: 'Sổ tiết kiệm (tối thiểu $18,000-$20,000)', description: '~450-500 triệu VND. D-2 yêu cầu cao hơn D-4-1. Gửi kỳ hạn 12 tháng, mở trước 3-6 tháng. Chỉ chấp nhận sổ mở tại quầy.', documentType: 'savings_book', required: true, warning: '⚠️ D-2 cần SỔ TIẾT KIỆM TỐI THIỂU $18,000-$20,000 (KHÁC với D-4-1 chỉ $10,000). Gửi trước 3-6 tháng.', rule: null },
+          { id: 'B4-2', name: 'Xác nhận số dư + sao kê ngân hàng 3 tháng', description: 'Bản gốc, cấp trong vòng 30 ngày trước nộp hồ sơ. Xác nhận số dư đủ điều kiện.', documentType: 'bank_statement', required: true, rule: null },
           { id: 'B4-3', name: 'Giấy bảo lãnh tài chính', description: 'Nếu người bảo lãnh không phải tự thân.', documentType: 'sponsorship', required: false, rule: { sponsor_is_self: { eq: false } } },
           { id: 'B4-4', name: 'Giấy tờ chứng minh quan hệ', description: 'Quan hệ với người bảo lãnh.', documentType: 'relationship', required: false, rule: { sponsor_is_self: { eq: false } } },
           { id: 'B4-5', name: 'Chứng minh thu nhập người bảo lãnh', description: 'HĐLĐ, sao kê lương, thu nhập từ kinh doanh.', documentType: 'income_proof', required: true, rule: { sponsor_is_self: { eq: false } } },
-          { id: 'B4-6', name: 'Dịch công chứng toàn bộ', description: 'Tất cả giấy tờ tài chính.', documentType: 'notarized', required: true, rule: null }
+          { id: 'B4-6', name: 'Dịch công chứng toàn bộ', description: 'Tất cả giấy tờ tài chính.', documentType: 'notarized', required: true, rule: null },
+          { id: 'B4-7', name: 'Sổ đóng băng K-Study (ngân hàng Hàn tại Việt Nam)', description: 'Mở tại Shinhan/Woori Bank, 8,000-10,000 USD. Tăng tỉ lệ đậu visa.', documentType: 'k_study_account', required: false, recommended: true, warning: '💡 Sổ đóng băng K-Study giúp tăng tỉ lệ đậu visa D-2.', rule: null }
         ]
       },
       {
@@ -452,10 +537,25 @@ window.CHECKLIST_DATA = {
         required: true,
         items: [
           { id: 'B6-1', name: 'Đặt lịch hẹn KVAC', description: 'Đặt lịch sớm.', documentType: 'kvac', required: true, rule: null },
-          { id: 'B6-2', name: 'Khám sức khỏe', description: 'Theo mẫu ĐSQ yêu cầu.', documentType: 'health', required: true, rule: null },
+          { id: 'B6-2', name: 'Giấy khám lao phổi (TB test) - bệnh viện chỉ định', description: 'Bắt buộc. Hà Nội: BV Phổi TW. TP.HCM: BV Chợ Rẫy, BV Phạm Ngọc Thạch, BV Thống Nhất. Giá trị 3 tháng.', documentType: 'health', required: true, warning: '⚠️ Chỉ khám tại bệnh viện ĐSQ chỉ định!', rule: null },
           { id: 'B6-3', name: 'Bảo hiểm du học', description: 'Bắt buộc.', documentType: 'insurance', required: true, rule: null },
           { id: 'B6-4', name: 'Nộp và theo dõi kết quả', description: 'Theo dõi online.', documentType: 'tracking', required: true, rule: null }
         ]
+      },
+      // Module: Lưu ý quan trọng D-2
+      {
+        id: 'ALERT-D2',
+        name: '📌 Lưu ý quan trọng về thời hạn & quy định',
+        icon: '⚠️',
+        description: 'Những lưu ý sống còn để tránh bị trượt visa D-2.',
+        required: true,
+        items: [
+          { id: 'ALERT-D2-1', name: '⏳ Thời hạn giấy tờ 3 tháng', description: 'Hầu hết giấy tờ (sổ TK, giấy khám, giấy nhập học, dịch công chứng) chỉ có giá trị 3 tháng. Kiểm tra kỹ trước nộp!', documentType: 'general_warning', required: true, rule: null },
+          { id: 'ALERT-D2-2', name: '🏦 Sổ tiết kiệm mở tại quầy', description: 'KHÔNG chấp nhận sổ online. Mở trực tiếp tại quầy giao dịch. Kèm xác nhận số dư trong 30 ngày.', documentType: 'general_warning', required: true, rule: null },
+          { id: 'ALERT-D2-3', name: '💵 D-2 cần $18,000-$20,000', description: 'Sổ tiết kiệm cho D-2 cao hơn D-4-1. Không nộp sổ $10,000 cho visa D-2 vì sẽ bị từ chối ngay.', documentType: 'general_warning', required: true, rule: null },
+          { id: 'ALERT-D2-4', name: '🔍 Tính xác thực', description: 'Giả mạo giấy tờ sẽ bị cấm nhập cảnh Hàn Quốc. Mọi giấy tờ đều được xác minh.', documentType: 'general_warning', required: true, rule: null }
+        ]
+      }
       },
       // Module rủi ro đặc thù D-2
       {
