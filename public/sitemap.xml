@@ -6,7 +6,17 @@
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>https://thongtintruonghan.vercel.app/truong/ajou-korean/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://thongtintruonghan.vercel.app/truong/cd-suncheon-jeil/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://thongtintruonghan.vercel.app/truong/chung-ang-ile/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -92,6 +102,56 @@
   </url>
   <url>
     <loc>https://thongtintruonghan.vercel.app/truong/dh-yeonsung/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://thongtintruonghan.vercel.app/truong/inha-ltc/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://thongtintruonghan.vercel.app/truong/joongbu-klc/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://thongtintruonghan.vercel.app/truong/konyang-klc/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://thongtintruonghan.vercel.app/truong/korea-university-klc/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://thongtintruonghan.vercel.app/truong/kyungsung-klc/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://thongtintruonghan.vercel.app/truong/sejong-language/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://thongtintruonghan.vercel.app/truong/seoul-women-klc/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://thongtintruonghan.vercel.app/truong/skku-sli/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://thongtintruonghan.vercel.app/truong/sungshin-women/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://thongtintruonghan.vercel.app/truong/sunmoon-kli/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
