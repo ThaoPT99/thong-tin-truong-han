@@ -3448,6 +3448,38 @@ html {
     background: #f8fafc;
 }
 
+/* ─── Mobile Tab Bar (visible only on mobile, shows tabs directly) ─── */
+.mobile-tab-bar {
+    display: none;
+}
+
+@media (max-width: 900px) {
+    .mobile-tab-bar {
+        display: flex;
+        flex: 0 0 auto;
+        gap: 6px;
+        padding: 0.5rem 0.75rem;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        background: #fff;
+        border-bottom: 1px solid #e2e8f0;
+        position: sticky;
+        top: 0;
+        z-index: 50;
+    }
+    .mobile-tab-bar::-webkit-scrollbar {
+        display: none;
+    }
+    .mobile-tab-bar .tab-btn {
+        flex: 0 0 auto;
+        white-space: nowrap;
+        font-size: 0.82rem;
+        padding: 0.45rem 0.75rem;
+    }
+}
+
 /* ─── Sidebar Hamburger (mobile) ─── */
 .sidebar-hamburger {
     display: none;
@@ -3550,7 +3582,7 @@ html {
     }
 
     .app-sidebar .school-tabs {
-        margin-top: 0;
+        margin-top: 1rem;
     }
 
     .app-sidebar .tabs-inner {
@@ -3563,13 +3595,17 @@ html {
     }
 
     .main {
-        padding: 0.85rem;
+        padding: 0.75rem;
     }
 
     .app-topbar {
-        padding: 0.65rem 0.85rem;
-        margin-bottom: 0.65rem;
-        border-radius: 10px;
+        padding: 0.6rem 0.75rem;
+        margin: 0;
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+        border-top: none;
+        gap: 0.5rem;
     }
 
     .app-sidebar::after {
@@ -3580,7 +3616,16 @@ html {
         height: auto;
         min-height: 100vh;
         overflow: visible;
-        padding: 1rem;
+        padding: 0;
+    }
+
+    /* Hide main nav tabs in sidebar on mobile — they're in .mobile-tab-bar now */
+    .app-sidebar .school-tabs .tab-btn[data-school]:not(.sidebar-toggle-btn),
+    .app-sidebar .school-tabs .sidebar-divider {
+        display: none;
+    }
+    .app-sidebar .school-tabs {
+        margin-top: 1rem;
     }
 
     .app-topbar {
@@ -3591,11 +3636,25 @@ html {
     }
 
     .app-topbar h2 {
-        font-size: 1.1rem;
+        font-size: 1rem;
     }
 
-    .app-topbar p {
+    .app-topbar p,
+    .topbar-desc {
         font-size: 0.8rem;
+    }
+
+    .topbar-text {
+        min-width: 0;
+        flex: 1 1 auto;
+    }
+
+    .topbar-text .topbar-desc {
+        display: none;
+    }
+
+    .topbar-text p.advisor-kicker {
+        font-size: 0.7rem;
     }
 
     .topbar-stats {
@@ -3629,21 +3688,21 @@ html {
 
 @media (max-width: 640px) {
     .app-topbar {
-        padding: 0.55rem 0.7rem;
-        gap: 0.4rem;
-        border-radius: 8px;
+        padding: 0.5rem 0.6rem;
+        gap: 0.35rem;
     }
 
     .app-topbar h2 {
-        font-size: 1rem;
+        font-size: 0.95rem;
+        line-height: 1.3;
     }
 
-    .app-topbar p {
+    .topbar-text p.advisor-kicker {
+        font-size: 0.65rem;
+    }
+
+    .topbar-text .topbar-desc {
         display: none;
-    }
-
-    .app-topbar .advisor-kicker {
-        font-size: 0.7rem;
     }
 
     .topbar-stats span {

@@ -73,11 +73,11 @@
                     <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
                     <span class="hamburger-label">Menu</span>
                 </button>
-                <div>
+                <div class="topbar-text">
                     <p class="advisor-kicker">Danh sách trường Hàn</p>
                     <h2>Thông tin trường Visa D2-6</h2>
                     <p class="subtitle"></p>
-                    <p>Tra cứu danh sách trường, xem thông tin chi tiết và so sánh các lựa chọn phù hợp theo từng kỳ tuyển sinh.</p>
+                    <p class="topbar-desc">Tra cứu danh sách trường, xem thông tin chi tiết và so sánh các lựa chọn phù hợp theo từng kỳ tuyển sinh.</p>
                 </div>
                 <div class="topbar-stats" aria-label="Thông tin nhanh">
                     <span><strong id="topbar-school-count">--</strong> trường</span>
@@ -91,6 +91,15 @@
                     </button>
                 </div>
             </section>
+
+            <!-- Mobile tab bar — visible only on mobile -->
+            <nav class="mobile-tab-bar" aria-label="Menu chính">
+                <button class="tab-btn active" data-school="schools">D2-6</button>
+                <button class="tab-btn" data-school="d4-1">D4-1</button>
+                <button class="tab-btn" data-school="advisor">Tư vấn</button>
+                <button class="tab-btn" data-school="compare">So sánh</button>
+                <button class="tab-btn" data-school="checklist">📋 Hồ sơ</button>
+            </nav>
 
             <main class="main">
                 <!-- Skeleton loading — hiển thị ngay, tự động ẩn khi dữ liệu tải xong -->
