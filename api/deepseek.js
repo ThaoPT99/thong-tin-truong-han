@@ -938,9 +938,31 @@ HƯỚNG DẪN TRẢ LỜI:
       return res.json({ success: false, error: 'AI chưa được cấu hình.', draft: null });
     }
 
-    const { type, profile, visaType } = req.body || {};
+    const { type, profile, visaType, extraData } = req.body || {};
     if (!type || !profile) {
       return res.status(400).json({ success: false, error: 'Missing type or profile', draft: null });
+    }
+
+    // Build extra context from study plan answers
+    let extraContext = '';
+    if (extraData) {
+      if (extraData.studyPlanAnswers) {
+        const a = extraData.studyPlanAnswers;
+        extraContext = `
+THONG TIN BO SUNG TU HOC SINH:
+- Ly do chon Han Quoc: ${a.reasonKorea || 'Khong co'}
+- Ly do chon truong: ${a.reasonSchool || 'Khong co'}
+- Ke hoach hoc tap: ${a.studyPlan || 'Khong co'}
+- Ke hoach tuong lai: ${a.futurePlan || 'Khong co'}
+- Dinh huong nghe nghiep: ${a.careerGoal || 'Khong co'}
+- Hoat dong gap year: ${a.gapActivity || 'Khong co'}
+- Gia dinh/bao lanh: ${a.familyFinance || 'Khong co'}
+- Trinh do ngon ngu: ${a.languageLevel || 'Khong co'}
+`;
+      }
+      if (extraData.extraInfo) {
+        extraContext += `\nTHONG TIN BO SUNG: ${extraData.extraInfo}`;
+      }
     }
 
     const prompts = {
@@ -1020,10 +1042,16 @@ Viết giải trình cho học sinh này.`
       return res.status(400).json({ success: false, error: `Unknown type: ${type}`, draft: null });
     }
 
+    // Build user message with profile data + extra context
+    let userMessage = promptConfig.user(profile);
+    if (extraContext) {
+      userMessage += `\n\n${extraContext}`;
+    }
+
     const draft = await callDeepSeek(
       [
         { role: 'system', content: promptConfig.system },
-        { role: 'user', content: promptConfig.user(profile) }
+        { role: 'user', content: userMessage }
       ],
       { temperature: 0.4, maxTokens: 1500, timeout: 30000 }
     );

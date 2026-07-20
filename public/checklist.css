@@ -985,6 +985,111 @@
   font-size: .95rem;
 }
 
+/* ════════════════════════════════════════════════════════════
+   Study Plan Form — 8 câu hỏi AI
+   ════════════════════════════════════════════════════════════ */
+
+.cl-ai-modal-wide {
+  max-width: 700px !important;
+}
+
+.sp-form {
+  padding: 0.5rem 0;
+}
+
+.sp-form h4 {
+  font-size: 1.15rem;
+  color: var(--gray-900);
+  margin-bottom: 0.3rem;
+}
+
+.sp-progress {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1rem 0 1.5rem;
+  padding: 12px 16px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 10px;
+}
+
+.sp-progress-text {
+  font-size: .85rem;
+  font-weight: 600;
+  color: #166534;
+  white-space: nowrap;
+}
+
+.sp-progress-bar {
+  flex: 1;
+  height: 8px;
+  background: #dcfce7;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.sp-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #22c55e, #16a34a);
+  border-radius: 999px;
+  transition: width .3s ease;
+}
+
+.sp-question {
+  margin-bottom: 1.25rem;
+  padding: 16px;
+  background: #f8fafc;
+  border: 1px solid var(--gray-200);
+  border-radius: 10px;
+  transition: border-color .2s;
+}
+
+.sp-question:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(30,58,95,0.08);
+}
+
+.sp-question-label {
+  display: block;
+  font-weight: 700;
+  font-size: .88rem;
+  color: var(--gray-800);
+  margin-bottom: .35rem;
+}
+
+.sp-question-hint {
+  font-size: .78rem;
+  color: var(--gray-400);
+  margin-bottom: .5rem;
+  line-height: 1.4;
+}
+
+.sp-question-input {
+  width: 100%;
+  padding: .65rem .75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font: inherit;
+  font-size: .88rem;
+  background: #fff;
+  resize: vertical;
+  min-height: 70px;
+  transition: border-color .2s;
+}
+
+.sp-question-input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.sp-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
 /* ─── Animations ─── */
 @keyframes clFadeIn {
   from { opacity: 0; }

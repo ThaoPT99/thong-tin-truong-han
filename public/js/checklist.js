@@ -952,8 +952,21 @@
   }
 
   // ══════════════════════════════════════════════
-  // AI Assist Modal
+  // AI Assist Modal — NÂNG CẤP: 8 câu hỏi Study Plan
   // ══════════════════════════════════════════════
+  
+  // ─── 8 câu hỏi cho Study Plan (từ Knowledge Base) ───
+  const STUDY_PLAN_QUESTIONS = [
+    { id: 'q1', label: '1. Vì sao bạn chọn du học Hàn Quốc, không phải nước khác?', hint: 'VD: Văn hoá Hàn Quốc, chất lượng giáo dục, gần Việt Nam, cơ hội việc làm...', key: 'reasonKorea' },
+    { id: 'q2', label: '2. Vì sao bạn chọn trường này / thành phố này?', hint: 'VD: Chương trình đào tạo phù hợp, vị trí thuận lợi, có người quen...', key: 'reasonSchool' },
+    { id: 'q3', label: '3. Bạn có kế hoạch học tập cụ thể theo từng giai đoạn không? (6 tháng, 1 năm, 2 năm...)', hint: 'VD: 6 tháng đầu học tiếng để đạt TOPIK 2, 6 tháng sau thi TOPIK 3...', key: 'studyPlan' },
+    { id: 'q4', label: '4. Bạn có kế hoạch gì sau khi tốt nghiệp / hoàn thành khóa học?', hint: 'VD: Về Việt Nam làm việc cho công ty Hàn Quốc, mở trung tâm tiếng Hàn...', key: 'futurePlan' },
+    { id: 'q5', label: '5. Ngành học / khóa học này liên quan gì đến định hướng nghề nghiệp của bạn?', hint: 'VD: Học tiếng Hàn để làm hướng dẫn viên du lịch, phiên dịch...', key: 'careerGoal' },
+    { id: 'q6', label: '6. Nếu có khoảng trống thời gian (gap year), bạn đã làm gì trong thời gian đó?', hint: 'VD: Đi làm, học thêm ngoại ngữ, tham gia hoạt động ngoại khóa...', key: 'gapActivity' },
+    { id: 'q7', label: '7. Gia đình / người bảo lãnh của bạn có nghề nghiệp và thu nhập ổn định không?', hint: 'VD: Cha mẹ làm kinh doanh / công chức, thu nhập ổn định...', key: 'familyFinance' },
+    { id: 'q8', label: '8. Bạn đã học tiếng Hàn / Anh đến trình độ nào? Có chứng chỉ gì không?', hint: 'VD: Đã học Sejong 2B, có TOPIK 2 hoặc đang ôn thi...', key: 'languageLevel' },
+  ];
+
   window.clOpenAIAssist = function() {
     if (!checklist || !checklist._aiSuggestions || checklist._aiSuggestions.length === 0) {
       alert('Chưa có gợi ý AI nào cho hồ sơ của bạn. Hãy hoàn thành bước khai báo trước.');
@@ -962,36 +975,50 @@
 
     const suggestions = checklist._aiSuggestions;
 
-    // Simple modal-style overlay
     const overlay = document.createElement('div');
     overlay.className = 'cl-ai-overlay';
     overlay.innerHTML = `
-      <div class="cl-ai-modal">
+      <div class="cl-ai-modal cl-ai-modal-wide">
         <div class="cl-ai-modal-header">
           <h3>🤖 AI hỗ trợ soạn thảo</h3>
           <button type="button" class="cl-ai-close" onclick="this.closest('.cl-ai-overlay').remove()">&times;</button>
         </div>
         <div class="cl-ai-modal-body">
-          <p>Chọn loại giấy tờ bạn muốn AI hỗ trợ soạn thảo:</p>
-          <div class="cl-ai-options">
-            ${suggestions.map((s, i) => `
-              <div class="cl-ai-option" onclick="window.clRequestAIDraft(${i}, this)">
-                <div class="cl-ai-option-title">${escapeHtml(s.title)}</div>
-                <div class="cl-ai-option-desc">${escapeHtml(s.description)}</div>
-                <div class="cl-ai-option-action">Soạn ngay →</div>
-              </div>
-            `).join('')}
-          </div>
-          <div id="cl-ai-result" class="cl-ai-result" style="display:none">
-            <h4>Kết quả:</h4>
-            <div id="cl-ai-result-text" class="cl-ai-result-text"></div>
-            <div class="cl-ai-result-actions">
-              <button type="button" class="btn btn-primary btn-sm" onclick="window.clCopyAIDraft()">📋 Copy</button>
-              <button type="button" class="btn btn-outline btn-sm" onclick="window.clCloseAIDraft()">Đóng</button>
+          <!-- Step 1: Choose type -->
+          <div id="cl-ai-step-choose">
+            <p>Chọn loại giấy tờ bạn muốn AI hỗ trợ soạn thảo:</p>
+            <div class="cl-ai-options">
+              ${suggestions.map((s, i) => `
+                <div class="cl-ai-option" onclick="window.clOpenAIForm(${i})">
+                  <div class="cl-ai-option-title">${escapeHtml(s.title)}</div>
+                  <div class="cl-ai-option-desc">${escapeHtml(s.description)}</div>
+                  <div class="cl-ai-option-action">Bắt đầu →</div>
+                </div>
+              `).join('')}
             </div>
           </div>
+
+          <!-- Step 2: Form (hidden initially, shown by clOpenAIForm) -->
+          <div id="cl-ai-step-form" style="display:none">
+            <div id="cl-ai-form-content"></div>
+          </div>
+
+          <!-- Step 3: Loading -->
           <div id="cl-ai-loading" class="cl-ai-loading" style="display:none">
-            <div class="spinner"></div> AI đang soạn thảo...
+            <div class="spinner"></div> <span id="cl-ai-loading-text">AI đang soạn thảo...</span>
+          </div>
+
+          <!-- Step 4: Result -->
+          <div id="cl-ai-result" class="cl-ai-result" style="display:none">
+            <h4>📝 Kết quả:</h4>
+            <div id="cl-ai-result-text" class="cl-ai-result-text" contenteditable="true"></div>
+            <div class="cl-ai-result-actions">
+              <button type="button" class="btn btn-primary btn-sm" onclick="window.clCopyAIDraft()">📋 Copy</button>
+              <button type="button" class="btn btn-outline btn-sm" onclick="window.clDownloadAIDraft()">📥 Tải xuống</button>
+              <button type="button" class="btn btn-outline btn-sm" onclick="window.clRegenerateAIDraft()">🔄 Tạo lại</button>
+              <button type="button" class="btn btn-outline btn-sm" onclick="window.clSaveAIDraft()">💾 Lưu</button>
+              <button type="button" class="btn btn-outline btn-sm" onclick="window.clCloseAIDraft()">Đóng</button>
+            </div>
           </div>
         </div>
       </div>
@@ -1002,20 +1029,138 @@
     });
 
     window._clCurrentDraft = '';
+    window._clCurrentType = '';
+    window._clFormAnswers = {};
   };
 
-  window.clRequestAIDraft = async function(idx, el) {
+  // ─── Mở form nhập liệu theo loại ───
+  window.clOpenAIForm = function(idx) {
     const suggestions = checklist._aiSuggestions;
     if (!suggestions || !suggestions[idx]) return;
-
     const s = suggestions[idx];
+    window._clCurrentType = s.type;
+
+    document.getElementById('cl-ai-step-choose').style.display = 'none';
+    document.getElementById('cl-ai-step-form').style.display = '';
+    document.getElementById('cl-ai-result').style.display = 'none';
+    document.getElementById('cl-ai-loading').style.display = 'none';
+
+    const formContent = document.getElementById('cl-ai-form-content');
+
+    if (s.type === 'study_plan') {
+      // Study Plan: show 8 questions form
+      const saved = window._clFormAnswers[s.type] || {};
+      formContent.innerHTML = `
+        <div class="sp-form">
+          <h4>📝 Soạn Study Plan cá nhân hoá</h4>
+          <p class="cl-form-desc">Trả lời 8 câu hỏi sau để AI có đủ thông tin viết Study Plan thuyết phục. 
+          Study Plan càng chi tiết, càng dễ đậu visa!</p>
+          
+          <div class="sp-progress">
+            <div class="sp-progress-text">Đã trả lời: <span id="sp-answered-count">0</span>/8</div>
+            <div class="sp-progress-bar">
+              <div id="sp-answered-fill" class="sp-progress-fill" style="width:0%"></div>
+            </div>
+          </div>
+
+          ${STUDY_PLAN_QUESTIONS.map((q, i) => `
+            <div class="sp-question" data-qid="${q.id}">
+              <label class="sp-question-label">${q.label}</label>
+              <p class="sp-question-hint">💡 ${escapeHtml(q.hint)}</p>
+              <textarea class="sp-question-input" id="sp-${q.id}" data-key="${q.key}" rows="3" 
+                placeholder="Nhập câu trả lời của bạn..."
+                oninput="window.clTrackSPAnswer()">${escapeHtml(saved[q.key] || '')}</textarea>
+            </div>
+          `).join('')}
+
+          <div class="sp-actions">
+            <button type="button" class="btn btn-primary btn-lg" onclick="window.clSubmitStudyPlan()">
+              🤖 Tạo Study Plan từ câu trả lời
+            </button>
+            <button type="button" class="btn btn-outline" onclick="window.clQuickGenerate()">
+              ⚡ Tạo nhanh (bỏ qua câu hỏi)
+            </button>
+          </div>
+        </div>
+      `;
+      window.clTrackSPAnswer();
+    } else {
+      // Gap or Rejection: show simple form
+      formContent.innerHTML = `
+        <div class="sp-form">
+          <h4>📝 ${escapeHtml(s.title)}</h4>
+          <p class="cl-form-desc">${escapeHtml(s.description)}</p>
+          
+          <div class="sp-question">
+            <label class="sp-question-label">Bạn có muốn bổ sung thêm thông tin gì không?</label>
+            <textarea id="cl-ai-extra-info" rows="4" style="width:100%;padding:.65rem .75rem;border:1.5px solid #d1d5db;border-radius:8px;font:inherit;font-size:.9rem;"
+              placeholder="Nhập thêm thông tin chi tiết... (tuỳ chọn)"></textarea>
+          </div>
+
+          <div class="sp-actions">
+            <button type="button" class="btn btn-primary btn-lg" onclick="window.clSubmitSimple()">
+              🤖 Soạn ngay
+            </button>
+          </div>
+        </div>
+      `;
+    }
+  };
+
+  // ─── Theo dõi số câu hỏi đã trả lời ───
+  window.clTrackSPAnswer = function() {
+    let answered = 0;
+    const answers = {};
+    STUDY_PLAN_QUESTIONS.forEach(function(q) {
+      const input = document.getElementById('sp-' + q.id);
+      if (input && input.value.trim()) {
+        answered++;
+        answers[q.key] = input.value.trim();
+      }
+    });
+    const count = document.getElementById('sp-answered-count');
+    const fill = document.getElementById('sp-answered-fill');
+    if (count) count.textContent = String(answered);
+    if (fill) fill.style.width = Math.round(answered / 8 * 100) + '%';
+    window._clFormAnswers[window._clCurrentType] = answers;
+  };
+
+  // ─── Gửi Study Plan (với câu trả lời) ───
+  window.clSubmitStudyPlan = function() {
+    window.clTrackSPAnswer();
+    const answers = window._clFormAnswers[window._clCurrentType] || {};
+    const answeredCount = Object.keys(answers).length;
+    
+    if (answeredCount < 3) {
+      if (!confirm('Bạn mới trả lời ' + answeredCount + '/8 câu hỏi. Study Plan sẽ thiếu thông tin. Vẫn tạo?')) return;
+    }
+    window._clFormAnswers['_studyPlanAnswers'] = answers;
+    window.clCallAIGenerate('study_plan', { studyPlanAnswers: answers });
+  };
+
+  // ─── Tạo nhanh (không cần trả lời) ───
+  window.clQuickGenerate = function() {
+    window.clCallAIGenerate('study_plan', {});
+  };
+
+  // ─── Gửi đơn giản (gap / rejection) ───
+  window.clSubmitSimple = function() {
+    const extra = document.getElementById('cl-ai-extra-info');
+    const extraText = extra ? extra.value.trim() : '';
+    window.clCallAIGenerate(window._clCurrentType, { extraInfo: extraText });
+  };
+
+  // ─── Gọi API AI ───
+  window.clCallAIGenerate = async function(type, extraData) {
+    const formEl = document.getElementById('cl-ai-step-form');
     const loading = document.getElementById('cl-ai-loading');
+    const loadingText = document.getElementById('cl-ai-loading-text');
     const result = document.getElementById('cl-ai-result');
     const resultText = document.getElementById('cl-ai-result-text');
-    const options = document.querySelector('.cl-ai-options');
-    if (options) options.style.display = 'none';
 
+    if (formEl) formEl.style.display = 'none';
     if (loading) loading.style.display = '';
+    if (loadingText) loadingText.textContent = 'AI đang soạn ' + (type === 'study_plan' ? 'Study Plan' : type === 'gap_explanation' ? 'giải trình' : 'giải trình visa') + '...';
     if (result) result.style.display = 'none';
 
     try {
@@ -1023,13 +1168,13 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          type: s.type,
+          type: type,
           profile: profile,
-          visaType: profile.visaType || 'D-4-1'
+          visaType: profile.visaType || 'D-4-1',
+          extraData: extraData || {}
         }),
       });
 
-      // Kiểm tra response có phải JSON không (nếu không → backend chưa hoạt động)
       const ct = res.headers.get('content-type') || '';
       if (!ct.includes('application/json')) {
         throw new Error('Backend API chưa khả dụng. Tính năng AI yêu cầu chạy trên Vercel hoặc cấu hình DEEPSEEK_API_KEY.');
@@ -1044,6 +1189,16 @@
         const formatted = (data.draft || '').replace(/\n/g, '<br>');
         if (resultText) resultText.innerHTML = formatted;
         window._clCurrentDraft = data.draft;
+        window._clCurrentType = type;
+        
+        // Auto-save draft to checklist
+        if (checklist) {
+          if (!checklist._aiDrafts) checklist._aiDrafts = {};
+          checklist._aiDrafts[type] = data.draft;
+          saveData();
+        }
+        
+        toast('✅ Đã tạo ' + (type === 'study_plan' ? 'Study Plan' : 'bản giải trình') + ' thành công!');
       } else {
         if (resultText) resultText.textContent = '❌ ' + (data.error || 'Lỗi kết nối AI, vui lòng thử lại sau.');
       }
@@ -1057,8 +1212,37 @@
   window.clCopyAIDraft = function() {
     if (window._clCurrentDraft) {
       navigator.clipboard.writeText(window._clCurrentDraft);
-      toast('Đã copy bản nháp vào clipboard!');
+      toast('📋 Đã copy vào clipboard!');
     }
+  };
+
+  window.clDownloadAIDraft = function() {
+    if (!window._clCurrentDraft) return;
+    const type = window._clCurrentType || 'draft';
+    const blob = new Blob([window._clCurrentDraft], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = type + '-' + new Date().toISOString().split('T')[0] + '.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+    toast('📥 Đã tải file!');
+  };
+
+  window.clSaveAIDraft = function() {
+    if (!window._clCurrentDraft) return;
+    // Save to checklist data
+    if (checklist) {
+      if (!checklist._aiDrafts) checklist._aiDrafts = {};
+      checklist._aiDrafts[window._clCurrentType] = window._clCurrentDraft;
+      saveData();
+      toast('💾 Đã lưu bản nháp!');
+    }
+  };
+
+  window.clRegenerateAIDraft = function() {
+    const type = window._clCurrentType || 'study_plan';
+    window.clCallAIGenerate(type, window._clFormAnswers['_studyPlanAnswers'] ? { studyPlanAnswers: window._clFormAnswers['_studyPlanAnswers'] } : {});
   };
 
   window.clCloseAIDraft = function() {
