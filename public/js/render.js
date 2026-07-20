@@ -2017,7 +2017,7 @@ function showSchool(viewId) {
   if (viewId === "application") {
     hideAll();
     appEl.classList.remove("hidden");
-    if (typeof renderApplicationApp === "function") renderApplicationApp(appEl);
+    if (typeof window.renderApplicationApp === "function") window.renderApplicationApp(appEl);
     else appEl.innerHTML = `<div class="empty"><p>Đang tải form đăng ký...</p></div>`;
     return;
   }
@@ -2025,7 +2025,7 @@ function showSchool(viewId) {
   if (viewId === "checklist") {
     hideAll();
     checklistEl.classList.remove("hidden");
-    if (typeof renderChecklistApp === "function") renderChecklistApp(checklistEl);
+    if (typeof window.renderChecklistApp === "function") window.renderChecklistApp(checklistEl);
     else checklistEl.innerHTML = `<div class="empty"><p>Đang tải công cụ hồ sơ...</p></div>`;
     return;
   }
