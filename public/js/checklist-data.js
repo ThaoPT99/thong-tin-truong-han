@@ -53,8 +53,8 @@ window.CHECKLIST_DATA = {
           },
           {
             id: 'A1-5',
-            name: 'Sổ hộ khẩu (bản photo)',
-            description: 'Photo tất cả các trang, có thể cần dịch thuật.',
+            name: 'Sổ hộ khẩu (bản photo) hoặc Giấy xác nhận thông tin cư trú (CT07)',
+            description: 'Photo tất cả các trang sổ hộ khẩu, có thể cần dịch thuật. Nếu không có sổ hộ khẩu thì xin Giấy xác nhận thông tin cư trú (mẫu CT07) tại Công an phường/xã.',
             documentType: 'household_registration',
             required: true,
             rule: null
@@ -185,11 +185,12 @@ window.CHECKLIST_DATA = {
           },
           {
             id: 'A4-2',
-            name: 'Xác nhận số dư tài khoản ngân hàng',
-            description: 'Sao kê 3 tháng gần nhất, có dấu ngân hàng. Phải được cấp trong vòng 30 ngày trước ngày nộp hồ sơ.',
+            name: 'Xác nhận số dư + sao kê ngân hàng 3 tháng',
+            description: 'Bản gốc, cấp trong vòng 30 ngày. QUAN TRỌNG: sao kê phải thể hiện lịch sử giao dịch ỔN ĐỊNH, không có biến động bất thường. Tránh nạp tiền "sốc" ngay trước khi lấy sao kê.',
             documentType: 'bank_statement',
             required: true,
-            rule: null
+            rule: null,
+            warning: '⚠️ Tuyệt đối tránh: nạp 1 lần lớn vào tài khoản rồi lấy sao kê ngay. ĐSQ sẽ nghi ngờ tiền đi mượn. Duy trì số dư ổn định ít nhất 3-6 tháng!'
           },
           {
             id: 'A4-3',
@@ -264,10 +265,11 @@ window.CHECKLIST_DATA = {
           {
             id: 'A5-1',
             name: 'Kế hoạch học tập (Study Plan)',
-            description: '500-800 từ, viết bằng tiếng Hàn hoặc Anh. Trình bày rõ mục tiêu, lộ trình, kế hoạch tương lai.',
+            description: '500-800 từ viết bằng tiếng Hàn hoặc Anh. CÁ NHÂN HOÁ — không viết chung chung. Bắt buộc có: (1) Lý do chọn Hàn Quốc và trường cụ thể, (2) Mục tiêu học tiếng/lộ trình, (3) Kế hoạch sau khi về Việt Nam. Study Plan chung chung = lý do trượt visa hàng đầu.',
             documentType: 'study_plan',
             required: true,
             hasAiAssist: true,
+            warning: '🚨 Study Plan CHUNG CHUNG là 1 trong những lý do trượt visa phổ biến nhất! Phải nêu rõ: tại sao chọn trường này? Học xong định làm gì tại Việt Nam?',
             rule: null
           },
           {
@@ -382,9 +384,82 @@ window.CHECKLIST_DATA = {
             documentType: 'general_warning',
             required: true,
             rule: null
+          },
+          {
+            id: 'ALERT-6',
+            name: '📄 Tất cả giấy tờ phải nhất quán',
+            description: 'Kiểm tra kỹ: tên trên tất cả giấy tờ (hộ chiếu, bằng cấp, sổ TK, giấy khai sinh) phải GIỐNG NHAU tuyệt đối. Sai dù chỉ 1 ký tự cũng có thể bị từ chối. Đặc biệt kiểm tra tên đệm, dấu câu.',
+            documentType: 'general_warning',
+            required: true,
+            rule: null
+          },
+          {
+            id: 'ALERT-7',
+            name: '🏦 Sao kê ngân hàng phải thể hiện lịch sử ổn định',
+            description: 'KHÔNG nạp tiền "sốc" vào tài khoản ngay trước khi lấy sao kê. Giao dịch bất thường (tiền vào rồi ra ngay, nạp một lần lớn không rõ nguồn gốc) là "cờ đỏ" cho nhân viên xét duyệt. Cần duy trì số dư ổn định ít nhất 3-6 tháng.',
+            documentType: 'general_warning',
+            required: true,
+            rule: null
+          },
+          {
+            id: 'ALERT-8',
+            name: '📝 Study Plan KHÔNG được viết chung chung',
+            description: 'Study Plan chung chung, sao chép mẫu, không thể hiện được mục đích du học thực sự là lý do hàng đầu bị trượt visa. Study Plan phải: (1) Cá nhân hoá, (2) Chỉ rõ lý do chọn trường này, (3) Kế hoạch sau khi về nước, (4) Viết bằng tiếng Hàn hoặc Anh.',
+            documentType: 'general_warning',
+            required: true,
+            rule: null
+          },
+          {
+            id: 'ALERT-9',
+            name: '📜 Hợp pháp hóa lãnh sự bắt buộc (trước 11/09/2026)',
+            description: 'Giấy tờ Việt Nam dùng cho Hàn Quốc cần 3 bước: (1) Công chứng tại Phòng Công chứng, (2) Chứng nhận tại Sở Tư pháp/Bộ Ngoại giao, (3) Hợp pháp hóa tại ĐSQ Hàn Quốc. Từ 11/09/2026, Việt Nam tham gia Công ước Apostille, quy trình sẽ đơn giản hơn.',
+            documentType: 'general_warning',
+            required: true,
+            rule: null
           }
         ]
-      }
+      },
+
+      // Module: Dịch thuật, Công chứng & Hợp pháp hóa lãnh sự
+      {
+        id: 'A7',
+        name: '📜 Dịch thuật, Công chứng & Hợp pháp hóa',
+        icon: '📜',
+        description: 'QUAN TRỌNG: Giấy tờ tiếng Việt cần qua quy trình này mới có giá trị tại Hàn Quốc. Thiếu bước này → hồ sơ không hợp lệ.',
+        required: true,
+        items: [
+          {
+            id: 'A7-1',
+            name: 'Dịch thuật tất cả giấy tờ sang tiếng Hàn hoặc Anh',
+            description: 'Tất cả giấy tờ tiếng Việt (bằng cấp, học bạ, sổ TK, giấy khai sinh, sổ hộ khẩu...) cần dịch sang tiếng Hàn (ưu tiên) hoặc tiếng Anh. Dịch tại Phòng Công chứng hoặc công ty dịch thuật được cấp phép.',
+            documentType: 'translate_all',
+            required: true,
+            rule: null
+          },
+          {
+            id: 'A7-2',
+            name: 'Công chứng bản dịch tại Phòng Công chứng Nhà nước',
+            description: 'Sau khi dịch, mang bản gốc + bản dịch đến Phòng Công chứng (quận/huyện) để công chứng. Công chứng xác nhận chữ ký người dịch và bản dịch đúng với bản gốc.',
+            documentType: 'notarize_translation',
+            required: true,
+            rule: null
+          },
+          {
+            id: 'A7-3',
+            name: 'Chứng nhận tại Sở Tư pháp hoặc Bộ Ngoại giao (MOFA)',
+            description: 'Sau công chứng, mang đến Sở Tư pháp (Hà Nội/TP.HCM) hoặc Cục Lãnh sự - Bộ Ngoại giao (Hà Nội) để chứng nhận con dấu của Phòng Công chứng. Thời gian: 1-3 ngày làm việc.',
+            documentType: 'mofa_certification',
+            required: true,
+            rule: null
+          },
+          {
+            id: 'A7-4',
+            name: 'Hợp pháp hóa lãnh sự tại Đại sứ quán/Lãnh sự quán Hàn Quốc',
+            description: 'Bước CUỐI CÙNG: sau khi có dấu của Bộ Ngoại giao, mang đến ĐSQ Hàn Quốc (Hà Nội) hoặc LSQ (TP.HCM) để hợp pháp hóa. Từ 11/09/2026: có thể thay thế bằng Apostille (đơn giản hơn). Thời gian: 3-5 ngày.',
+            documentType: 'consular_legalization',
+            required: true,
+            rule: null
+          }
         ]
       },
 
@@ -448,6 +523,33 @@ window.CHECKLIST_DATA = {
             documentType: 'korean_certificate',
             required: false,
             rule: { korean_level: { neq: 'none' } },
+            recommended: true
+          },
+          {
+            id: 'RISK-7',
+            name: 'Giải trình người thân cư trú bất hợp pháp tại Hàn',
+            description: 'Nếu có người thân từng ở lại Hàn Quốc bất hợp pháp — hồ sơ sẽ bị soi kỹ hơn. Cần giải trình rõ: mối quan hệ, thời gian, lý do và cam kết không tái phạm. Nên nhờ tư vấn viên chuyên nghiệp hỗ trợ.',
+            documentType: 'illegal_relative_explanation',
+            required: true,
+            hasAiAssist: true,
+            rule: { has_illegal_relative: { eq: true } }
+          },
+          {
+            id: 'RISK-8',
+            name: 'Giấy tờ chứng minh không có tiền án tiền sự',
+            description: 'Phiếu lý lịch tư pháp số 1 hoặc số 2 (theo yêu cầu). Xin tại Sở Tư pháp nơi cư trú. Có giá trị 3-6 tháng. Nếu có tiền án — cần giải trình chi tiết.',
+            documentType: 'criminal_record_check',
+            required: false,
+            rule: null,
+            recommended: true
+          },
+          {
+            id: 'RISK-9',
+            name: 'Chứng chỉ TOPIK để tăng cơ hội đậu',
+            description: 'Dù visa D-4-1 không yêu cầu TOPIK bắt buộc, có TOPIK 2+ giúp tăng tỉ lệ đậu visa đáng kể. Nếu bạn chưa chọn có TOPIK trong profile — cân nhắc thi lấy chứng chỉ.',
+            documentType: 'topik_optional',
+            required: false,
+            rule: { has_topik: { neq: true }, korean_level: { neq: 'none' } },
             recommended: true
           }
         ]
@@ -553,9 +655,24 @@ window.CHECKLIST_DATA = {
           { id: 'ALERT-D2-1', name: '⏳ Thời hạn giấy tờ 3 tháng', description: 'Hầu hết giấy tờ (sổ TK, giấy khám, giấy nhập học, dịch công chứng) chỉ có giá trị 3 tháng. Kiểm tra kỹ trước nộp!', documentType: 'general_warning', required: true, rule: null },
           { id: 'ALERT-D2-2', name: '🏦 Sổ tiết kiệm mở tại quầy', description: 'KHÔNG chấp nhận sổ online. Mở trực tiếp tại quầy giao dịch. Kèm xác nhận số dư trong 30 ngày.', documentType: 'general_warning', required: true, rule: null },
           { id: 'ALERT-D2-3', name: '💵 D-2 cần $18,000-$20,000', description: 'Sổ tiết kiệm cho D-2 cao hơn D-4-1. Không nộp sổ $10,000 cho visa D-2 vì sẽ bị từ chối ngay.', documentType: 'general_warning', required: true, rule: null },
-          { id: 'ALERT-D2-4', name: '🔍 Tính xác thực', description: 'Giả mạo giấy tờ sẽ bị cấm nhập cảnh Hàn Quốc. Mọi giấy tờ đều được xác minh.', documentType: 'general_warning', required: true, rule: null }
+          { id: 'ALERT-D2-4', name: '🔍 Tính xác thực', description: 'Giả mạo giấy tờ sẽ bị cấm nhập cảnh Hàn Quốc. Mọi giấy tờ đều được xác minh.', documentType: 'general_warning', required: true, rule: null },
+          { id: 'ALERT-D2-5', name: '📄 Giấy tờ phải nhất quán', description: 'Tên trên tất cả giấy tờ phải GIỐNG NHAU tuyệt đối. Sai 1 ký tự = từ chối.', documentType: 'general_warning', required: true, rule: null },
+          { id: 'ALERT-D2-6', name: '📝 Study Plan phải cá nhân hóa', description: 'Không viết chung chung. Chỉ rõ mục tiêu, lý do chọn trường, kế hoạch tương lai.', documentType: 'general_warning', required: true, rule: null },
+          { id: 'ALERT-D2-7', name: '📜 Hợp pháp hóa lãnh sự (trước 11/09/2026)', description: 'Bắt buộc 3 bước: Công chứng → Bộ Ngoại giao → ĐSQ Hàn. Từ 11/09/2026: Apostille.', documentType: 'general_warning', required: true, rule: null }
         ]
-      }
+      },
+      // Module: Dịch thuật, Công chứng & Hợp pháp hóa D-2
+      {
+        id: 'B7',
+        name: '📜 Dịch thuật, Công chứng & Hợp pháp hóa',
+        icon: '📜',
+        required: true,
+        items: [
+          { id: 'B7-1', name: 'Dịch thuật tất cả giấy tờ sang tiếng Hàn/Anh', description: 'Bằng cấp, học bạ, sổ TK, giấy khai sinh, sổ hộ khẩu... Dịch tại Phòng Công chứng.', documentType: 'translate_all', required: true, rule: null },
+          { id: 'B7-2', name: 'Công chứng bản dịch', description: 'Mang bản gốc + bản dịch đến Phòng Công chứng Nhà nước để công chứng.', documentType: 'notarize_translation', required: true, rule: null },
+          { id: 'B7-3', name: 'Chứng nhận tại Bộ Ngoại giao (MOFA)', description: 'Sau công chứng → Sở Tư pháp hoặc Cục Lãnh sự để chứng nhận. 1-3 ngày.', documentType: 'mofa_certification', required: true, rule: null },
+          { id: 'B7-4', name: 'Hợp pháp hóa tại ĐSQ/LSQ Hàn Quốc', description: 'Bước cuối cùng. Từ 11/09/2026: thay bằng Apostille. 3-5 ngày.', documentType: 'consular_legalization', required: true, rule: null }
+        ]
       },
       // Module rủi ro đặc thù D-2
       {
