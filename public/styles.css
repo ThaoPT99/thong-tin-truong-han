@@ -4812,8 +4812,572 @@ html {
 /* Quick profile input for advisor */
 .advisor-quick-input {
   animation: fadeIn 0.2s ease-out;
+}.advisor-quick-input input:focus {
+    outline: 2px solid #bfdbfe;
+    border-color: #2563eb !important;
 }
-.advisor-quick-input input:focus {
-  outline: 2px solid #bfdbfe;
-  border-color: #2563eb !important;
+
+/* ═══════════════════════════════════════════════════════════════
+   MOBILE COMPREHENSIVE OVERRIDE
+   Tất cả style cho mobile tập trung tại đây
+   Ghi đè (override) toàn bộ các media query rải rác ở trên
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+    /* ─── Layout ─── */
+    .app-shell {
+        grid-template-columns: 1fr;
+    }
+    .app-main {
+        height: auto;
+        min-height: 100vh;
+        overflow: visible;
+        padding: 0;
+    }
+    .main {
+        max-width: 100% !important;
+        padding: 0.65rem !important;
+    }
+
+    /* ─── Topbar ─── */
+    .app-topbar {
+        padding: 0.5rem 0.6rem;
+        margin: 0;
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+        border-top: none;
+        gap: 0.4rem;
+        flex-wrap: wrap;
+    }
+    .app-topbar h2 {
+        font-size: 0.95rem;
+        line-height: 1.3;
+    }
+    .topbar-text {
+        min-width: 0;
+        flex: 1 1 auto;
+    }
+    .topbar-text p.advisor-kicker {
+        font-size: 0.65rem;
+        margin-bottom: 0.1rem;
+    }
+    .topbar-text .topbar-desc,
+    .app-topbar .topbar-desc {
+        display: none !important;
+    }
+
+    /* ─── Topbar Stats ─── */
+    .topbar-stats {
+        flex-wrap: wrap;
+        gap: 0.3rem;
+    }
+    .topbar-stats span {
+        min-height: 1.75rem;
+        padding: 0.2rem 0.45rem;
+        font-size: 0.72rem;
+    }
+    .topbar-stats strong {
+        font-size: 0.85rem;
+    }
+
+    /* ─── Topbar Actions ─── */
+    .topbar-actions {
+        gap: 0.3rem;
+    }
+    .topbar-action {
+        padding: 0.3rem 0.5rem;
+        font-size: 0.75rem;
+        min-height: 1.75rem;
+        border-radius: 8px;
+    }
+    .topbar-auth-btn {
+        min-height: 1.75rem;
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+    }
+
+    /* ─── Sidebar ─── */
+    .sidebar-hamburger {
+        display: flex;
+        min-width: 44px;
+        min-height: 44px;
+        padding: 0.35rem 0.65rem;
+        gap: 0.35rem;
+        font-size: 0.82rem;
+        font-weight: 700;
+    }
+    .hamburger-label {
+        display: inline;
+    }
+    .sidebar-backdrop {
+        display: block;
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: rgba(15, 47, 79, 0.5);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+        -webkit-backdrop-filter: blur(2px);
+        backdrop-filter: blur(2px);
+    }
+    .sidebar-open .sidebar-backdrop {
+        opacity: 1;
+        visibility: visible;
+    }
+    .sidebar-open .app-sidebar {
+        transform: translateX(0);
+    }
+    .app-sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 10000;
+        width: 260px;
+        max-width: 85vw;
+        height: 100vh;
+        padding: 1.5rem 1rem;
+        transform: translateX(-100%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow-y: auto;
+    }
+    .app-sidebar::after {
+        display: none;
+    }
+    /* Hide main tabs in sidebar on mobile */
+    .app-sidebar .tabs-inner > .tab-btn[data-school],
+    .app-sidebar .tabs-inner > .sidebar-divider {
+        display: none;
+    }
+    .app-sidebar .school-tabs {
+        margin-top: 0.5rem;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        position: static !important;
+    }
+    .app-sidebar .tabs-inner {
+        flex-direction: column;
+        padding: 0;
+    }
+    .app-sidebar .tab-btn {
+        width: 100%;
+        text-align: left;
+        background: rgba(255,255,255,0.06);
+        color: rgba(255,255,255,0.85);
+        border-color: transparent;
+        padding: 0.5rem 0.7rem;
+        font-size: 0.85rem;
+    }
+    .app-sidebar .tab-btn:hover {
+        background: rgba(255,255,255,0.12);
+        color: #fff;
+    }
+    .sidebar-submenu {
+        padding-left: 0.5rem;
+    }
+    .sidebar-submenu .tab-btn {
+        font-size: 0.82rem !important;
+        padding: 0.4rem 0.6rem !important;
+        min-height: 2.2rem !important;
+    }
+
+    /* ─── Mobile Tab Bar ─── */
+    .mobile-tab-bar {
+        display: flex !important;
+        flex: 0 0 auto;
+        gap: 6px;
+        padding: 0.5rem 0.65rem;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        background: #fff;
+        border-bottom: 1px solid #e2e8f0;
+        position: sticky;
+        top: 0;
+        z-index: 50;
+    }
+    .mobile-tab-bar::-webkit-scrollbar {
+        display: none;
+    }
+    .mobile-tab-bar .tab-btn {
+        flex: 0 0 auto;
+        white-space: nowrap;
+        font-size: 0.82rem;
+        padding: 0.4rem 0.7rem;
+        min-height: 2.2rem;
+        border-radius: 8px;
+    }
+
+    /* ─── School Grid ─── */
+    .school-name-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.5rem;
+        padding: 0.65rem;
+    }
+    .school-name-item {
+        min-height: 2.6rem;
+        padding: 0.5rem 0.65rem;
+        font-size: 0.88rem;
+        word-break: break-word;
+        hyphens: auto;
+        line-height: 1.35;
+    }
+    .directory-head {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5rem;
+        padding: 0.65rem;
+    }
+    .directory-head h2 {
+        font-size: 0.95rem;
+    }
+    .directory-head p {
+        font-size: 0.8rem;
+    }
+    .directory-tools {
+        grid-template-columns: 1fr;
+        width: 100%;
+    }
+    .directory-tools input,
+    .directory-tools select {
+        min-height: 2.4rem;
+        font-size: 0.85rem;
+    }
+    .quick-filter-bar {
+        gap: 0.3rem;
+        padding: 0.4rem 0;
+    }
+    .quick-filter-bar button {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+        min-height: 1.8rem;
+    }
+    .recent-schools {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.4rem;
+        padding: 0.6rem;
+    }
+    .semester-selector {
+        padding: 0.4rem 0.65rem;
+    }
+    .semester-selector select {
+        font-size: 0.85rem;
+    }
+
+    /* ─── Advisor ─── */
+    .advisor-head {
+        flex-direction: column;
+        padding: 1rem;
+    }
+    .advisor-head h2 {
+        font-size: 1.15rem;
+    }
+    .advisor-form {
+        padding: 0.85rem;
+    }
+    .advisor-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+    }
+    .advisor-priorities {
+        padding: 0.65rem;
+    }
+    .advisor-priorities label {
+        font-size: 0.8rem;
+        padding: 0.25rem 0.55rem;
+    }
+    .advisor-actions {
+        gap: 0.5rem;
+    }
+    .advisor-ai-btn,
+    .advisor-submit,
+    .advisor-reset {
+        min-height: 2.4rem;
+        padding: 0.5rem 0.8rem;
+        font-size: 0.85rem;
+    }
+    .advisor-results {
+        padding: 0 0.85rem 0.85rem;
+    }
+    .advisor-summary {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5rem;
+        padding: 0.75rem;
+    }
+    .advisor-columns {
+        grid-template-columns: 1fr;
+    }
+    .advisor-result-list {
+        gap: 0.65rem;
+    }
+    .advisor-card {
+        padding: 0.75rem;
+    }
+    .advisor-card-top {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    /* ─── Compare ─── */
+    .compare-picker {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+        padding: 0.65rem;
+    }
+    .compare-picker select {
+        min-height: 2.4rem;
+        font-size: 0.85rem;
+    }
+    .compare-actions {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    .compare-actions .btn {
+        flex: 1;
+        min-width: 120px;
+    }
+    .compare-table {
+        min-width: 100%;
+        font-size: 0.82rem;
+    }
+    .compare-table th,
+    .compare-table td {
+        padding: 0.5rem 0.6rem;
+    }
+
+    /* ─── School Detail ─── */
+    .detail-hero {
+        flex-direction: column;
+        padding: 1rem;
+        border-radius: 0;
+    }
+    .detail-hero h2 {
+        font-size: 1.2rem;
+    }
+    .detail-hero-img {
+        height: 180px;
+        border-radius: 12px 12px 0 0;
+        width: 100%;
+        object-fit: cover;
+    }
+    .detail-actions {
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        width: 100%;
+    }
+    .detail-actions button,
+    .detail-actions a {
+        flex: 1;
+        min-width: 80px;
+        font-size: 0.78rem;
+        padding: 0.4rem 0.6rem;
+        min-height: 2.2rem;
+    }
+    .detail-jump {
+        gap: 0.3rem;
+        padding: 0.5rem 0.65rem;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+    }
+    .detail-jump a {
+        font-size: 0.78rem;
+        padding: 0.3rem 0.5rem;
+        white-space: nowrap;
+        flex: 0 0 auto;
+    }
+    .detail-grid {
+        grid-template-columns: 1fr;
+        gap: 0.65rem;
+        padding: 0.65rem;
+    }
+    .detail-card {
+        padding: 0.75rem;
+    }
+    .detail-card h3 {
+        font-size: 0.95rem;
+    }
+    .detail-overview {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+        padding: 0.65rem;
+    }
+    .detail-overview div {
+        padding: 0.5rem;
+    }
+    .detail-overview strong {
+        font-size: 0.88rem;
+    }
+    .detail-breadcrumb {
+        font-size: 0.78rem;
+    }
+
+    /* ─── Guide (Ebook) ─── */
+    .guide-hero {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 1rem;
+    }
+    .guide-hero h2 {
+        font-size: 1.2rem;
+    }
+    .guide-hero-actions {
+        flex-direction: column;
+    }
+    .guide-hero-actions .topbar-action,
+    .guide-zalo-btn {
+        width: 100%;
+    }
+    .guide-menu-layout {
+        grid-template-columns: 1fr;
+    }
+    .guide-menu {
+        position: static;
+        display: flex;
+        flex-direction: row;
+        overflow-x: auto;
+        gap: 0.3rem;
+        padding: 0.5rem;
+    }
+    .guide-menu button {
+        white-space: nowrap;
+        flex: 0 0 auto;
+        font-size: 0.8rem;
+        padding: 0.4rem 0.6rem;
+        min-height: 2.2rem;
+    }
+    .guide-highlight-grid {
+        grid-template-columns: 1fr;
+    }
+    .guide-list-grid,
+    .guide-doc-groups {
+        grid-template-columns: 1fr;
+    }
+    .guide-warning-list {
+        grid-template-columns: 1fr;
+    }
+    .guide-section {
+        padding: 0.85rem;
+    }
+    .guide-section h2 {
+        font-size: 1.15rem;
+    }
+
+    /* ─── Cost Calculator ─── */
+    .cost-calc-body {
+        grid-template-columns: 1fr;
+    }
+
+    /* ─── Extra / Docs ─── */
+    .extra-table {
+        border-radius: 8px;
+        margin-bottom: 0.75rem;
+    }
+    .extra-table .table-header {
+        padding: 0.65rem 0.85rem !important;
+        font-size: 0.9rem;
+    }
+    .data-table {
+        font-size: 0.85rem;
+    }
+    .data-table th,
+    .data-table td {
+        padding: 0.5rem 0.65rem;
+    }
+    .col-label {
+        width: 120px;
+        min-width: 100px;
+    }
+    .sheet-title {
+        padding: 0.85rem;
+        font-size: 1.05rem;
+    }
+
+    /* ─── Checklist ─── */
+    .checklist-head {
+        flex-direction: column;
+        padding: 0.85rem;
+    }
+    .checklist-head h2 {
+        font-size: 1.1rem;
+    }
+    .checklist-groups {
+        grid-template-columns: 1fr;
+        padding: 0.65rem;
+    }
+    .checklist-item {
+        grid-template-columns: auto minmax(0, 1fr);
+        padding: 0.55rem 0.75rem;
+        min-height: 3.2rem;
+    }
+    .checklist-level {
+        grid-column: 2;
+        justify-self: start;
+    }
+    .checklist-main strong {
+        font-size: 0.85rem;
+    }
+    .checklist-main small {
+        font-size: 0.75rem;
+    }
+
+    /* ─── Footer ─── */
+    .footer {
+        padding: 1rem;
+        font-size: 0.78rem;
+        margin-top: 1rem;
+    }
+
+    /* ─── Skeleton ─── */
+    .skeleton-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .skeleton-loader {
+        padding: 1rem 0.65rem;
+    }
 }
+
+/* ─── Mobile extra small (≤480px) ─── */
+@media (max-width: 480px) {
+    .school-name-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.4rem;
+        padding: 0.5rem;
+    }
+    .school-name-item {
+        font-size: 0.82rem;
+        padding: 0.4rem 0.5rem;
+        min-height: 2.4rem;
+    }
+    .app-topbar h2 {
+        font-size: 0.88rem;
+    }
+    .topbar-stats span {
+        font-size: 0.68rem;
+        padding: 0.15rem 0.35rem;
+        min-height: 1.5rem;
+    }
+    .advisor-grid {
+        grid-template-columns: 1fr;
+    }
+    .detail-overview {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* ─── Hide mobile tab bar on desktop (≥901px) ─── */
+@media (min-width: 901px) {
+    .mobile-tab-bar {
+        display: none !important;
+    }
+    .sidebar-hamburger {
+        display: none !important;
+    }
+    .sidebar-backdrop {
+        display: none !important;
+    }
+}
+
