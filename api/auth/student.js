@@ -143,20 +143,47 @@ async function handleSaveDocument(req, res) {
     const { docType, aiDraft, userEdit, finalVersion, status } = req.body || {};
     if (!docType) return res.status(400).json({ error: 'docType is required' });
 
-    const { data: result, error } = await supabase
+    // Try update first, then insert
+    const { data: existing } = await supabase
       .from('student_documents')
-      .upsert({
-        student_id: profileId,
-        doc_type: docType,
-        ai_draft: aiDraft || '',
-        user_edit: userEdit || '',
-        final_version: finalVersion || '',
-        status: status || 'draft',
-      }, { onConflict: 'student_id, doc_type' })
-      .select('*')
-      .single();
+      .select('id')
+      .eq('student_id', profileId)
+      .eq('doc_type', docType)
+      .maybeSingle();
 
-    if (error) throw error;
+    let result;
+    if (existing) {
+      const { data: updated, error: updateErr } = await supabase
+        .from('student_documents')
+        .update({
+          ai_draft: aiDraft || '',
+          user_edit: userEdit || '',
+          final_version: finalVersion || '',
+          status: status || 'draft',
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', existing.id)
+        .select('*')
+        .single();
+      if (updateErr) throw updateErr;
+      result = updated;
+    } else {
+      const { data: inserted, error: insertErr } = await supabase
+        .from('student_documents')
+        .insert({
+          student_id: profileId,
+          doc_type: docType,
+          ai_draft: aiDraft || '',
+          user_edit: userEdit || '',
+          final_version: finalVersion || '',
+          status: status || 'draft',
+        })
+        .select('*')
+        .single();
+      if (insertErr) throw insertErr;
+      result = inserted;
+    }
+
     return res.json({ success: true, saved: result });
   } catch (err) {
     console.error('Save document error:', err);
@@ -860,7 +887,26 @@ async function handleDocumentUpload(req, res) {
         file_name: fileName || '',
         file_size: buffer.length,
         status: uploadStatus,
-      }, { onConflict: 'student_id, doc_type' })
+      })
+      .select('*')
+      .single();
+
+    if (docError) {
+      // If upsert fails (no unique constraint), do insert instead
+      const { data: inserted, error: insertErr } = await supabase
+        .from('student_documents')
+        .insert({
+          student_id: profileId,
+          doc_type: docType,
+          file_url: fileUrl || '',
+          file_name: fileName || '',
+          file_size: buffer.length,
+          status: uploadStatus,
+        })
+        .select('*')
+        .single();
+      if (insertErr) throw insertErr;
+      doc = inserted
       .select('*')
       .single();
 
