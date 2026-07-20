@@ -1921,25 +1921,29 @@ body {
     gap: 0.35rem;
     min-height: 2.3rem;
     padding: 0.35rem 0.7rem;
-    border: 1px solid rgba(255,255,255,0.2);
+    border: 1px solid #dbe3ee;
     border-radius: 8px;
-    background: rgba(255,255,255,0.1);
-    color: #fff;
+    background: #fff;
+    color: #1e293b;
     font: inherit;
     font-size: 0.82rem;
     font-weight: 600;
     cursor: pointer;
-    transition: background 0.15s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
     white-space: nowrap;
 }
 
 .topbar-auth-btn:hover {
-    background: rgba(255,255,255,0.2);
+    background: #f1f5f9;
+    border-color: #2563eb;
+    color: #2563eb;
 }
 
 .topbar-auth-btn.is-logged-in {
-    background: rgba(16, 185, 129, 0.2);
-    border-color: rgba(16, 185, 129, 0.4);
+    background: #f0fdf4;
+    border-color: #86efac;
+    color: #166534;
 }
 
 @media (max-width: 640px) {
