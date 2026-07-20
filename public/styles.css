@@ -4826,6 +4826,9 @@ html {
     /* ─── Layout ─── */
     .app-shell {
         grid-template-columns: 1fr;
+        height: auto;
+        min-height: 100vh;
+        overflow: visible;
     }
     .app-main {
         height: auto;
