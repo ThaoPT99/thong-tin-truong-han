@@ -4857,9 +4857,10 @@ html {
         min-width: 0;
         flex: 1 1 auto;
     }
-    .topbar-text p.advisor-kicker {
+    .topbar-text .advisor-kicker {
         font-size: 0.65rem;
         margin-bottom: 0.1rem;
+        color: #0f766e !important;
     }
     .topbar-text .topbar-desc,
     .app-topbar .topbar-desc {
