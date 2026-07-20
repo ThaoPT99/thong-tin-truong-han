@@ -375,7 +375,7 @@ window.CHECKLIST_DATA = {
             description: 'Nếu đã từng trượt visa Hàn — phải đợi ít nhất 3 tháng kể từ ngày bị từ chối mới được nộp lại. Khắc phục triệt để lý do trượt trước khi nộp mới.',
             documentType: 'general_warning',
             required: true,
-            rule: null
+            rule: { has_visa_rejection: { eq: true } }
           },
           {
             id: 'ALERT-5',
@@ -647,8 +647,8 @@ window.CHECKLIST_DATA = {
       // Module: Lưu ý quan trọng D-2
       {
         id: 'ALERT-D2',
-        name: '📌 Lưu ý quan trọng về thời hạn & quy định',
-        icon: '⚠️',
+        name: 'Lưu ý quan trọng về thời hạn & quy định',
+        icon: '📌',
         description: 'Những lưu ý sống còn để tránh bị trượt visa D-2.',
         required: true,
         items: [
