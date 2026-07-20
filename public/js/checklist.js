@@ -867,6 +867,19 @@
             </button>
             <input type="file" class="cl-doc-file-input" data-item-id="${item.id}" style="display:none" accept="image/*,.pdf,.doc,.docx">
             ${hasFile ? `<span class="cl-doc-filename">📄 ${escapeHtml(item.fileName || '')}</span>` : ''}
+            ${hasFile && docStatus === 'ready' ? `
+              <button type="button" class="cl-doc-quick-btn btn btn-sm btn-outline" onclick="window.clMarkTranslated('${item.id}')">
+                🔄 Đã dịch thuật xong
+              </button>
+              <button type="button" class="cl-doc-quick-btn btn btn-sm btn-success" onclick="window.clMarkReady('${item.id}')">
+                ✅ Sẵn sàng luôn
+              </button>
+            ` : ''}
+            ${hasFile && docStatus === 'translated' ? `
+              <button type="button" class="cl-doc-quick-btn btn btn-sm btn-success" onclick="window.clMarkReady('${item.id}')">
+                ✅ Đánh dấu sẵn sàng
+              </button>
+            ` : ''}
           </div>
         </div>
         <div class="cl-item-note">
@@ -1403,6 +1416,43 @@
     renderModule(getCurrentModuleIdx());
     updateProgressFromDocs();
   }
+
+  // ─── Quick-action: đánh dấu đã dịch thuật ───
+  window.clMarkTranslated = function(itemId) {
+    if (!checklist) return false;
+    for (const mod of checklist.modules) {
+      const item = mod.items.find(i => i.id === itemId);
+      if (item) {
+        item.docStatus = 'translated';
+        if (item.status === 'pending') item.status = 'in_progress';
+        break;
+      }
+    }
+    saveData();
+    renderModule(getCurrentModuleIdx());
+    updateProgressFromDocs();
+    toast('📄 Đã đánh dấu "Đã dịch thuật" ✓');
+    return true;
+  };
+
+  // ─── Quick-action: đánh dấu sẵn sàng ngay (bỏ qua bước dịch) ───
+  window.clMarkReady = function(itemId) {
+    if (!checklist) return false;
+    // Cập nhật trực tiếp cả docStatus + status
+    for (const mod of checklist.modules) {
+      const item = mod.items.find(i => i.id === itemId);
+      if (item) {
+        item.docStatus = 'notarized';
+        item.status = 'completed';
+        break;
+      }
+    }
+    saveData();
+    renderModule(getCurrentModuleIdx());
+    updateProgressFromDocs();
+    toast('✅ Giấy tờ đã hoàn thành (Sẵn sàng)!');
+    return true;
+  };
 
   function getCurrentModuleIdx() {
     const active = document.querySelector('.cl-module-tab.active');

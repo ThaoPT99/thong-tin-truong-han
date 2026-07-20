@@ -933,6 +933,24 @@
     white-space: nowrap;
 }
 
+/* ─── Quick-action buttons ─── */
+.cl-doc-quick-btn {
+    font-size: 0.7rem !important;
+    padding: 2px 10px !important;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.btn-success {
+    background: #16a34a !important;
+    color: #fff !important;
+    border-color: #16a34a !important;
+}
+
+.btn-success:hover {
+    background: #15803d !important;
+}
+
 .cl-item-has-file {
     border-left: 3px solid #22c55e;
 }
