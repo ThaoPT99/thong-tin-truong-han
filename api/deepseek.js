@@ -1044,6 +1044,168 @@ HƯỚNG DẪN TRẢ LỜI:
     });
   }
 }  // ═══════════════════════════════════════════════════
+// ─── Action: Student Agent (action=student-agent)
+// Personal AI Agent cho học sinh đã đăng nhập — chat + thao tác dữ liệu
+// ═══════════════════════════════════════════════════
+async function handleStudentAgent(req, res) {
+  const apiKey = getDeepSeekKey();
+  if (!apiKey) {
+    return res.json({ success: false, reply: 'AI chưa được cấu hình. Vui lòng thử lại sau!' });
+  }
+
+  const { message, studentProfile, conversation } = req.body || {};
+  if (!message || message.trim().length < 2) {
+    return res.json({ success: false, reply: 'Vui lòng nhập câu hỏi hoặc yêu cầu.' });
+  }
+
+  try {
+    const query = message.trim();
+
+    // ─── Load schools + visa data for context ───
+    const [schoolsRes, apRes] = await Promise.all([
+      supabase.from('schools').select('slug, name, name_kr, system, location, region, tuition, ktx').order('slug'),
+      supabase.from('school_advisor_profiles').select('school_id, gender, cost_level, visa_chance, job_opportunity, region, tags'),
+    ]);
+
+    const schools = schoolsRes.data || [];
+    const advisorProfiles = apRes.data || [];
+
+    // ─── Student profile summary ───
+    var profileSummary = '';
+    if (studentProfile && Object.keys(studentProfile).length > 0) {
+      var p = studentProfile;
+      profileSummary = [
+        '=== HỒ SƠ CỦA BẠN ===',
+        'Tên: ' + (p.fullName || 'Chưa nhập'),
+        'SĐT: ' + (p.phone || 'Chưa nhập'),
+        'Email: ' + (p.email || 'Chưa nhập'),
+        'Giới tính: ' + (p.gender === 'female' ? 'Nữ' : p.gender === 'male' ? 'Nam' : 'Chưa nhập'),
+        'Tuổi: ' + (p.age || (p.dateOfBirth ? calculateAge(p.dateOfBirth) + 't' : 'Chưa nhập')),
+        'GPA: ' + (p.gpa || 'Chưa nhập'),
+        'Tiếng Hàn: ' + (p.koreanLevel || 'Chưa nhập'),
+        'TOPIK: ' + (p.hasTopik ? 'Có (Topik ' + (p.topikGrade || '') + ')' : 'Chưa có'),
+        'IELTS: ' + (p.ieltsScore || 'Chưa có'),
+        'Loại visa: ' + (p.visaType || 'Chưa chọn'),
+        'Gap year: ' + (p.gapYears ? p.gapYears + ' năm' : 'Không có'),
+        'Trượt visa: ' + (p.hasVisaRejection ? 'Có' : 'Không'),
+        'Trường dự định: ' + (p.chosenSchool || 'Chưa chọn'),
+        'Ngành dự định: ' + (p.chosenMajor || 'Chưa chọn'),
+        'Người bảo lãnh: ' + (p.sponsorIsSelf ? 'Tự thân' : p.sponsorRelation === 'parent' ? 'Cha/Mẹ' : 'Người thân'),
+        'Sổ tiết kiệm: ' + (p.savingsAmount ? p.savingsAmount.toLocaleString() + ' USD' : 'Chưa nhập'),
+        'Đã đi làm: ' + (p.hasWorkExperience ? 'Có' : 'Chưa'),
+        'Người thân bất hợp pháp: ' + (p.hasIllegalRelative ? 'Có' : 'Không'),
+      ].join('\n');
+    }
+
+    // ─── School summary ───
+    var schoolSummary = '';
+    if (schools.length > 0) {
+      var apMap = {};
+      for (var i = 0; i < advisorProfiles.length; i++) {
+        apMap[advisorProfiles[i].school_id] = advisorProfiles[i];
+      }
+      schoolSummary = '\n=== DANH SÁCH TRƯỜNG ===\n' + schools.map(function(s) {
+        var ap = apMap[s.id] || {};
+        return '• ' + s.name + ' (' + s.name_kr + ') | KV: ' + (ap.region || s.region) + ' | Học phí: ' + (s.tuition || 'Chưa rõ') + ' | KTX: ' + (s.ktx || 'Chưa rõ');
+      }).join('\n');
+    }
+
+    // ─── Conversation history (last 6 exchanges) ───
+    var convHistory = '';
+    if (conversation && conversation.length > 0) {
+      var recent = conversation.slice(-6);
+      convHistory = '\n=== LỊCH SỬ TRÒ CHUYỆN ===\n' + recent.map(function(m) {
+        return (m.role === 'user' ? 'Học sinh: ' : 'Trợ lý: ') + m.content.replace(/<[^>]+>/g, '');
+      }).join('\n');
+    }
+
+    const systemPrompt = `Bạn là Trợ lý AI Cá nhân cho học sinh làm hồ sơ du học Hàn Quốc.
+
+NHIỆM VỤ CỦA BẠN:
+Bạn là trợ lý cá nhân, có thể:
+1. Trả lời câu hỏi về trường, visa, thủ tục (dùng dữ liệu trường bên dưới)
+2. XEM và SỬA thông tin hồ sơ của học sinh (dùng hồ sơ bên dưới)
+3. HƯỚNG DẪN học sinh từng bước làm hồ sơ
+4. GỢI Ý trường phù hợp dựa trên hồ sơ
+
+QUY TẮC:
+- Trả lời bằng tiếng Việt, thân thiện, ngắn gọn
+- Nếu học sinh muốn SỬA thông tin, hãy trả lời xác nhận và kèm JSON action ở cuối:
+  ---ACTION:update_profile---
+  { "gpa": 7.5, "phone": "0901234567" }
+  ---END ACTION---
+  (Chỉ gửi các field cần cập nhật, gửi dưới dạng JSON hợp lệ)
+- Nếu học sinh muốn cập nhật CHECKLIST, dùng:
+  ---ACTION:update_checklist---
+  { "moduleIdx": 0, "itemIdx": 2, "status": "completed" }
+  ---END ACTION---
+- Nếu chỉ hỏi đáp thông thường, KHÔNG cần gửi action
+- Dùng emoji nhẹ nhàng
+- LUÔN xưng hô "bạn" - "tôi"
+${profileSummary}
+${schoolSummary}
+${convHistory}`;
+
+    const answer = await callDeepSeek(
+      [{ role: 'system', content: systemPrompt }, { role: 'user', content: query }],
+      { temperature: 0.3, maxTokens: 1000, timeout: 20000 }
+    );
+
+    if (!answer) {
+      return res.json({ success: false, reply: 'Xin lỗi, tôi chưa có câu trả lời. Vui lòng thử lại!' });
+    }
+
+    // ─── Parse action from response ───
+    var reply = answer;
+    var updatedProfile = null;
+    var updatedChecklist = null;
+
+    var profileMatch = answer.match(/---ACTION:update_profile---([\s\S]*?)---END ACTION---/);
+    if (profileMatch) {
+      try {
+        updatedProfile = JSON.parse(profileMatch[1].trim());
+        reply = reply.replace(profileMatch[0], '').trim();
+      } catch (e) {
+        console.error('Parse profile action error:', e.message);
+      }
+    }
+
+    var checklistMatch = answer.match(/---ACTION:update_checklist---([\s\S]*?)---END ACTION---/);
+    if (checklistMatch) {
+      try {
+        updatedChecklist = JSON.parse(checklistMatch[1].trim());
+        reply = reply.replace(checklistMatch[0], '').trim();
+      } catch (e) {
+        console.error('Parse checklist action error:', e.message);
+      }
+    }
+
+    return res.json({
+      success: true,
+      reply: reply || '✅ Đã xử lý yêu cầu của bạn!',
+      updatedProfile: updatedProfile,
+      updatedChecklist: updatedChecklist,
+    });
+  } catch (err) {
+    console.error('Student agent error:', err);
+    return res.json({
+      success: false,
+      reply: '❌ Đã có lỗi xảy ra. Vui lòng thử lại sau!',
+    });
+  }
+}
+
+function calculateAge(dateOfBirth) {
+  if (!dateOfBirth) return 0;
+  var birth = new Date(dateOfBirth);
+  var today = new Date();
+  var age = today.getFullYear() - birth.getFullYear();
+  var m = today.getMonth() - birth.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+  return age;
+}
+
+// ═══════════════════════════════════════════════════
   // ─── Action: Generate Checklist (action=generate-checklist)
   // Soạn Study Plan hoặc giải trình gap year / trượt visa bằng AI
   // ═══════════════════════════════════════════════════
@@ -1954,6 +2116,7 @@ module.exports = async (req, res) => {
       case 'generate-checklist': return await handleGenerateChecklist(req, res);
       case 'review-study-plan': return await handleReviewStudyPlan(req, res);
       case 'interview-simulator': return await handleInterviewSimulator(req, res);
+      case 'student-agent': return await handleStudentAgent(req, res);
       case 'analytics': return await handleAnalytics(req, res);
       case 'telegram-daily-report': return await handleTelegramDailyReport(req, res);
       default:
