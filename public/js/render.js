@@ -713,8 +713,12 @@ function bindSchoolsDirectory(container) {
   }
 }
 
+function getAllSchools() {
+  return Object.values(SCHOOLS_DATA || {});
+}
+
 function renderCompare() {
-  const schools = getSchools();
+  const schools = getAllSchools();
   const options = schools.map(s => `<option value="${escapeHtml(s.id)}">${escapeHtml(s.name)}</option>`).join("");
   // Parse URL for pre-selected schools
   const urlParams = new URLSearchParams(window.location.search);
@@ -750,12 +754,12 @@ function bindCompare(container) {
   const selects = Array.from(container.querySelectorAll(".compare-select"));
   const urlParams = new URLSearchParams(window.location.search);
   const compareParam = urlParams.get("compare");
-  const defaults = getSchools().slice(0, 3).map(s => s.id);
+  const defaults = getAllSchools().slice(0, 3).map(s => s.id);
   
   if (compareParam) {
     const preselected = compareParam.split(",").map(s => decodeURIComponent(s.trim())).filter(Boolean);
     preselected.forEach((slug, index) => {
-      const school = getSchools().find(s => s.slug === slug);
+      const school = getAllSchools().find(s => s.slug === slug);
       if (school) defaults[index] = school.id;
     });
   }
@@ -1233,7 +1237,7 @@ function formatVND(amount) {
 }
 
 function renderCostCalculator() {
-  const schools = getSchools();
+  const schools = getAllSchools();
   const options = schools.map(function(s) {
     return '<option value="' + escapeHtml(s.id) + '">' + escapeHtml(s.name) + '</option>';
   }).join('');
