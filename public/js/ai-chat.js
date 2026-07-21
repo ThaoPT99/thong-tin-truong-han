@@ -83,7 +83,8 @@
           <div class="ai-chat-suggestions">
             <button type="button" data-quick="Trường Osan học phí bao nhiêu?">🏫 Osan</button>
             <button type="button" data-quick="Checklist visa D2-6 gồm những gì?">📝 Checklist</button>
-            <button type="button" data-quick="Điều kiện để xin visa D2-6?">📋 Điều kiện</button>
+            <button type="button" data-quick="Chứng minh tài chính du học Hàn cần bao nhiêu tiền?">💰 Tài chính</button>
+            <button type="button" data-quick="Quy trình xin visa du học Hàn Quốc như thế nào?">📋 Quy trình</button>
           </div>
         </div>
       </div>

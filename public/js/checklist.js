@@ -130,6 +130,9 @@
     return false;
   }
 
+  // Export profile for other modules (interview.js, etc.)
+  window.clGetProfile = function() { return profile; };
+
   // ─── Main Render ───
   function renderApp(container) {
     if (!container) return;
@@ -749,6 +752,12 @@
           <button type="button" class="btn btn-outline" onclick="window.clAutoReminders()">
             ⏰ Tạo nhắc nhở
           </button>
+          <button type="button" class="btn btn-outline" onclick="window.clOpenStudyPlanReviewer()">
+            📝 Đánh giá Study Plan
+          </button>
+          <button type="button" class="btn btn-outline" onclick="window.clOpenInterviewSimulator()">
+            🎤 Luyện phỏng vấn
+          </button>
         </div>
       </div>
     `;
@@ -1266,6 +1275,364 @@
 
   window.clCloseAIDraft = function() {
     const overlay = document.querySelector('.cl-ai-overlay');
+    if (overlay) overlay.remove();
+  };
+
+  // ══════════════════════════════════════════════
+  // Study Plan Reviewer — cham diem va goi y cai thien
+  // ══════════════════════════════════════════════
+
+  var _spReviewerData = null;
+
+  window.clOpenStudyPlanReviewer = function() {
+    var overlay = document.createElement('div');
+    overlay.className = 'cl-ai-overlay';
+    overlay.innerHTML = `
+      <div class="cl-ai-modal cl-ai-modal-wide" style="max-height:90vh">
+        <div class="cl-ai-modal-header">
+          <h3>📝 Đánh giá Study Plan</h3>
+          <button type="button" class="cl-ai-close" onclick="this.closest('.cl-ai-overlay').remove()">&times;</button>
+        </div>
+        <div class="cl-ai-modal-body">
+          <!-- Input step -->
+          <div id="spr-step-input">
+            <p class="cl-form-desc">Dán Study Plan bạn đã viết (hoặc AI đã tạo) vào đây. Hệ thống sẽ chấm điểm và gợi ý cải thiện.</p>
+            <div class="spr-field">
+              <label class="spr-label">📄 Study Plan của bạn</label>
+              <textarea id="spr-text" class="spr-textarea" rows="10" placeholder="Paste Study Plan của bạn vào đây... (tối thiểu 50 ký tự)"></textarea>
+            </div>
+            <div class="spr-field">
+              <label class="spr-label">🛂 Loại visa</label>
+              <select id="spr-visa-type" class="spr-select">
+                <option value="D-4-1">D-4-1 (Học tiếng Hàn)</option>
+                <option value="D-2">D-2 (Đại học chính quy)</option>
+              </select>
+            </div>
+            <div class="spr-info-box">
+              <strong>💡 Mẹo:</strong> Nếu bạn đã khai báo hồ sơ ở bước trước, thông tin cá nhân sẽ được tự động đính kèm
+              để AI đánh giá chính xác hơn. Kết quả sẽ bao gồm điểm số, nhận xét và gợi ý cải thiện.
+            </div>
+            <div class="spr-actions">
+              <button type="button" class="btn btn-primary btn-lg" onclick="window.clSubmitReview()">
+                🤖 Đánh giá ngay
+              </button>
+              <button type="button" class="btn btn-outline" onclick="window.clLoadSavedStudyPlan()">
+                📂 Dùng Study Plan đã lưu
+              </button>
+            </div>
+          </div>
+
+          <!-- Loading step -->
+          <div id="spr-loading" class="cl-ai-loading" style="display:none">
+            <div class="spinner"></div> <span>🧠 AI đang phân tích Study Plan...</span>
+          </div>
+
+          <!-- Result step -->
+          <div id="spr-result" style="display:none">
+            <div class="spr-result-header">
+              <div class="spr-score-ring">
+                <svg viewBox="0 0 36 36" class="spr-circular">
+                  <path class="spr-circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                  <path class="spr-circle-fill" id="spr-circle-fill" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                  <text x="18" y="20.5" class="spr-circle-text" id="spr-circle-text">-</text>
+                </svg>
+              </div>
+              <div class="spr-summary">
+                <h3 id="spr-overall-label">Đang phân tích...</h3>
+                <p id="spr-overall-desc"></p>
+              </div>
+            </div>
+
+            <!-- Criteria scores -->
+            <div class="spr-criteria" id="spr-criteria"></div>
+
+            <!-- Strengths & Weaknesses -->
+            <div class="spr-grid-2">
+              <div class="spr-section spr-strengths">
+                <h4>✅ Điểm mạnh</h4>
+                <ul id="spr-strengths"></ul>
+              </div>
+              <div class="spr-section spr-weaknesses">
+                <h4>⚠️ Điểm yếu</h4>
+                <ul id="spr-weaknesses"></ul>
+              </div>
+            </div>
+
+            <!-- Suggestions -->
+            <div class="spr-section spr-suggestions">
+              <h4>💡 Gợi ý cải thiện</h4>
+              <ol id="spr-suggestions"></ol>
+            </div>
+
+            <!-- Actions -->
+            <div class="spr-result-actions">
+              <button type="button" class="btn btn-outline" onclick="window.clRegenerateStudyPlan()">
+                🔄 Tạo lại từ góp ý
+              </button>
+              <button type="button" class="btn btn-outline" onclick="window.clCopyReviewResult()">
+                📋 Copy kết quả
+              </button>
+              <button type="button" class="btn btn-outline" onclick="window.clCloseReviewer(this)">
+                Đóng
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    overlay.addEventListener('click', function(e) {
+      if (e.target === this) this.querySelector('.cl-ai-close')?.click();
+    });
+
+    // Set default visa type from profile
+    if (profile && profile.visaType) {
+      var visaSel = document.getElementById('spr-visa-type');
+      if (visaSel) visaSel.value = profile.visaType;
+    }
+  };
+
+  window.clLoadSavedStudyPlan = function() {
+    if (!checklist || !checklist._aiDrafts || !checklist._aiDrafts.study_plan) {
+      toast('⚠️ Chưa có Study Plan nào được lưu. Hãy dùng AI để tạo Study Plan trước.');
+      return;
+    }
+    var textarea = document.getElementById('spr-text');
+    if (textarea) {
+      textarea.value = checklist._aiDrafts.study_plan;
+      toast('📄 Đã load Study Plan đã lưu!');
+    }
+  };
+
+  window.clSubmitReview = async function() {
+    var textEl = document.getElementById('spr-text');
+    var studyPlan = textEl ? textEl.value.trim() : '';
+    var visaTypeEl = document.getElementById('spr-visa-type');
+    var visaType = visaTypeEl ? visaTypeEl.value : 'D-4-1';
+
+    if (!studyPlan || studyPlan.length < 50) {
+      toast('⚠️ Vui lòng nhập Study Plan (tối thiểu 50 ký tự).');
+      return;
+    }
+
+    var inputStep = document.getElementById('spr-step-input');
+    var loadingEl = document.getElementById('spr-loading');
+    var resultEl = document.getElementById('spr-result');
+    if (inputStep) inputStep.style.display = 'none';
+    if (loadingEl) loadingEl.style.display = '';
+    if (resultEl) resultEl.style.display = 'none';
+
+    try {
+      var token = getStudentToken();
+      var fetchFn = window.fetchWithAuth || fetch;
+
+      var res = await fetchFn('/api/deepseek?action=review-study-plan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          studyPlan: studyPlan,
+          visaType: visaType,
+          profile: profile || {}
+        }),
+      });
+
+      var data = await res.json();
+
+      if (loadingEl) loadingEl.style.display = 'none';
+
+      if (data.success && data.review) {
+        _spReviewerData = {
+          studyPlan: studyPlan,
+          review: data.review
+        };
+        renderReviewResult(data.review);
+      } else {
+        if (inputStep) inputStep.style.display = '';
+        toast('❌ ' + (data.error || 'Lỗi kết nối AI, vui lòng thử lại sau.'));
+      }
+    } catch (err) {
+      if (loadingEl) loadingEl.style.display = 'none';
+      if (inputStep) inputStep.style.display = '';
+      toast('❌ Lỗi: ' + err.message);
+    }
+  };
+
+  function renderReviewResult(review) {
+    var resultEl = document.getElementById('spr-result');
+    if (!resultEl) return;
+    resultEl.style.display = '';
+
+    var circleFill = document.getElementById('spr-circle-fill');
+    var circleText = document.getElementById('spr-circle-text');
+    var overallLabel = document.getElementById('spr-overall-label');
+    var overallDesc = document.getElementById('spr-overall-desc');
+
+    // Round score to 1 decimal
+    var score = Math.round((review.overallScore || 0) * 10) / 10;
+    var dashArray = Math.min(score * 10, 100);
+    if (circleFill) circleFill.setAttribute('stroke-dasharray', dashArray + ', 100');
+    if (circleText) circleText.textContent = score.toString();
+
+    // Color based on score
+    var color = '#dc2626'; // < 4: red
+    if (score >= 7) color = '#059669'; // >= 7: green
+    else if (score >= 5) color = '#d97706'; // >= 5: amber
+    if (circleFill) circleFill.setAttribute('stroke', color);
+
+    if (overallLabel) {
+      if (score >= 8) overallLabel.textContent = '🌟 Tuyệt vời!';
+      else if (score >= 6) overallLabel.textContent = '👍 Khá tốt, có thể cải thiện thêm';
+      else if (score >= 4) overallLabel.textContent = '📝 Cần cải thiện nhiều';
+      else overallLabel.textContent = '🔴 Cần viết lại';
+    }
+    if (overallDesc) {
+      overallDesc.textContent = 'Study Plan của bạn đạt ' + score + '/10 điểm. Dưới đây là chi tiết từng tiêu chí và gợi ý cải thiện.';
+    }
+
+    // Criteria
+    var criteriaEl = document.getElementById('spr-criteria');
+    if (criteriaEl && review.criteria) {
+      criteriaEl.innerHTML = review.criteria.map(function(c) {
+        var cScore = Math.min(Math.max(c.score || 0, 0), 10);
+        var cPercent = cScore * 10;
+        var cColor = '#dc2626';
+        if (cScore >= 7) cColor = '#059669';
+        else if (cScore >= 5) cColor = '#d97706';
+        return `
+          <div class="spr-criterion">
+            <div class="spr-criterion-head">
+              <span class="spr-criterion-name">${escapeHtml(c.name)}</span>
+              <span class="spr-criterion-score" style="color:${cColor}">${cScore}/10</span>
+            </div>
+            <div class="spr-criterion-bar">
+              <div class="spr-criterion-fill" style="width:${cPercent}%;background:${cColor}"></div>
+            </div>
+            <p class="spr-criterion-comment">${escapeHtml(c.comment || '')}</p>
+            ${c.suggestion ? '<div class="spr-criterion-suggestion">💡 <strong>Gợi ý:</strong> ' + escapeHtml(c.suggestion) + '</div>' : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Strengths
+    var strengthsEl = document.getElementById('spr-strengths');
+    if (strengthsEl && review.strengths) {
+      strengthsEl.innerHTML = review.strengths.map(function(s) {
+        return '<li>' + escapeHtml(s) + '</li>';
+      }).join('') || '<li>Chưa có đánh giá</li>';
+    }
+
+    // Weaknesses
+    var weaknessesEl = document.getElementById('spr-weaknesses');
+    if (weaknessesEl && review.weaknesses) {
+      weaknessesEl.innerHTML = review.weaknesses.map(function(w) {
+        return '<li>' + escapeHtml(w) + '</li>';
+      }).join('') || '<li>Chưa có đánh giá</li>';
+    }
+
+    // Suggestions
+    var suggestionsEl = document.getElementById('spr-suggestions');
+    if (suggestionsEl && review.suggestions) {
+      suggestionsEl.innerHTML = review.suggestions.map(function(s) {
+        return '<li>' + escapeHtml(s) + '</li>';
+      }).join('') || '<li>Chưa có gợi ý</li>';
+    }
+
+    resultEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  window.clRegenerateStudyPlan = async function() {
+    if (!_spReviewerData || !_spReviewerData.studyPlan || !_spReviewerData.review) {
+      toast('⚠️ Chưa có kết quả đánh giá. Hãy đánh giá trước.');
+      return;
+    }
+
+    var resultEl = document.getElementById('spr-result');
+    var loadingEl = document.getElementById('spr-loading');
+    if (resultEl) resultEl.style.display = 'none';
+    if (loadingEl) loadingEl.style.display = '';
+
+    try {
+      var suggestions = (_spReviewerData.review.suggestions || []).join('\n- ');
+      var prompt = 'Day la Study Plan can cai thien:\n\n' + _spReviewerData.studyPlan + '\n\nCac goi y cai thien:\n- ' + suggestions + '\n\nHay viet LAI Study Plan nay, khac phuc tat ca nhung diem yeu tren. Giu nguyen thong tin ca nhan, nhung viet tot hon.';
+
+      // Use existing AI assist to regenerate
+      var fetchFn = window.fetchWithAuth || fetch;
+      var res = await fetchFn('/api/deepseek?action=generate-checklist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'study_plan',
+          profile: profile || {},
+          visaType: (profile && profile.visaType) || 'D-4-1',
+          extraData: { extraInfo: prompt }
+        }),
+      });
+      var data = await res.json();
+
+      if (loadingEl) loadingEl.style.display = 'none';
+
+      if (data.success && data.draft) {
+        // Save draft
+        if (checklist) {
+          if (!checklist._aiDrafts) checklist._aiDrafts = {};
+          checklist._aiDrafts['study_plan'] = data.draft;
+          saveData();
+        }
+
+        // Show the new draft in a sub-modal
+        var overlay = document.querySelector('.cl-ai-overlay');
+        var draftHtml = document.createElement('div');
+        draftHtml.style.cssText = 'margin-top:1rem;padding:1rem;border:2px solid #059669;border-radius:12px;background:#f0fdf4;';
+        draftHtml.innerHTML = '<h4 style="color:#059669;margin:0 0 0.5rem">✅ Study Plan da duoc cai thien!</h4>' +
+          '<div style="font-size:.9rem;line-height:1.6;white-space:pre-wrap;max-height:400px;overflow-y:auto;margin-bottom:0.75rem">' + escapeHtml(data.draft) + '</div>' +
+          '<div style="display:flex;gap:0.5rem">' +
+          '<button type="button" class="btn btn-primary btn-sm" onclick="var t=this.parentElement.previousElementSibling.textContent;navigator.clipboard.writeText(t);toast(\'Da copy!\')">📋 Copy</button>' +
+          '<button type="button" class="btn btn-outline btn-sm" onclick="this.closest(\'[style]\').remove()">Đóng</button>' +
+          '</div>';
+
+        var targetEl = document.querySelector('#spr-result .spr-result-actions');
+        if (targetEl) {
+          targetEl.parentElement.insertBefore(draftHtml, targetEl);
+          toast('✅ Da tao Study Plan cai thien!');
+        }
+      } else {
+        toast('❌ ' + (data.error || 'Khong the tao lai.'));
+        if (resultEl) resultEl.style.display = '';
+      }
+    } catch (err) {
+      if (loadingEl) loadingEl.style.display = 'none';
+      if (resultEl) resultEl.style.display = '';
+      toast('❌ Loi: ' + err.message);
+    }
+  };
+
+  window.clCopyReviewResult = function() {
+    if (!_spReviewerData || !_spReviewerData.review) {
+      toast('⚠️ Chua co ket qua.');
+      return;
+    }
+    var r = _spReviewerData.review;
+    var text = '=== DANH GIA STUDY PLAN ===\n' +
+      'Diem tong: ' + (r.overallScore || '?') + '/10\n\n';
+    if (r.criteria) {
+      r.criteria.forEach(function(c) {
+        text += '• ' + c.name + ': ' + (c.score || '?') + '/10\n  ' + (c.comment || '') + '\n';
+      });
+    }
+    text += '\n=== DIEM MANH ===\n';
+    if (r.strengths) r.strengths.forEach(function(s) { text += '• ' + s + '\n'; });
+    text += '\n=== DIEM YEU ===\n';
+    if (r.weaknesses) r.weaknesses.forEach(function(w) { text += '• ' + w + '\n'; });
+    text += '\n=== GOI Y CAI THIEN ===\n';
+    if (r.suggestions) r.suggestions.forEach(function(s) { text += '• ' + s + '\n'; });
+
+    navigator.clipboard.writeText(text);
+    toast('📋 Da copy ket qua danh gia!');
+  };
+
+  window.clCloseReviewer = function(btn) {
+    var overlay = btn.closest('.cl-ai-overlay');
     if (overlay) overlay.remove();
   };
 

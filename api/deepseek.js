@@ -1064,8 +1064,356 @@ Viết giải trình cho học sinh này.`
   }
 
   // ═══════════════════════════════════════════════════
+  // ─── Action: Interview Simulator (action=interview-simulator)
+  // Mo phong phong van visa KVAC bang AI
+  // ═══════════════════════════════════════════════════
+  async function handleInterviewSimulator(req, res) {
+    const apiKey = getDeepSeekKey();
+    if (!apiKey) {
+      return res.json({ success: false, error: 'AI chua duoc cau hinh.' });
+    }
+
+    var { action_type, history, profile, answer, visaType } = req.body || {};
+
+    var defaultProfile = {
+      fullName: 'Hoc sinh',
+      visaType: visaType || 'D-4-1',
+      educationLevel: 'THPT',
+      koreanLevel: 'none',
+      gpa: null,
+      hasVisaRejection: false,
+      gapYears: 0,
+      sponsorIsSelf: true
+    };
+    profile = Object.assign({}, defaultProfile, profile || {});
+
+    if (action_type === 'next') {
+      // Generate first question based on profile
+      var systemPrompt = `Ban la nhan vien phong van visa Han Quoc tai KVAC. Ban can phong van hoc sinh xin visa ${profile.visaType || 'D-4-1'}.
+
+THONG TIN HOC SINH:
+- Ho ten: ${profile.fullName}
+- Visa: ${profile.visaType || 'D-4-1'}
+- Hoc van: ${profile.educationLevel === 'university' ? 'Dai hoc' : 'THPT'}${profile.gpa ? '\n- GPA: ' + profile.gpa : ''}
+- Tieng Han: ${profile.koreanLevel || 'Chua co'}${profile.gapYears > 0 ? '\n- Gap year: ' + profile.gapYears + ' nam' : ''}${profile.hasVisaRejection ? '\n- Da tuong truot visa: Co' : ''}
+
+NHIEM VU:
+Ban se phong van hoc sinh bang tieng Viet. Moi lan hoi 1 cau hoi. Tong cong 5-7 cau hoi.
+
+CAC CHU DE CAN HOI (theo thu tu):
+1. Gioi thieu ban than & muc dich du hoc
+2. Ly do chon Han Quoc (khong phai nuoc khac)
+3. Ly do chon truong & nganh hoc
+4. Ke hoach hoc tap cu the (theo giai doan)
+5. Ke hoach sau khi tot nghiep (ve nuoc lam gi)
+6. Tai chinh & nguoi bao lanh
+7. (Neu co gap year) Giai thich khoang trong thoi gian
+8. (Neu truot visa) Nguyen nhan truot va cach khac phuc
+
+QUY TAC:
+- Hoi bang tieng Viet, than thien nhung chuyen nghiep
+- KHONG hoi qua nhieu cung luc (chi 1 cau)
+- Dieu chinh do kho cau hoi dua tren ho so hoc sinh
+- Khi hoc sinh tra loi xong, ban danh gia va hoi cau tiep theo
+
+Tra ve KET QUA DUOI DANG JSON, KHONG co text khac:
+{
+  "question": "Cau hoi phong van...",
+  "questionNumber": 1,
+  "totalQuestions": 6,
+  "category": "gioi-thieu",
+  "hint": "Goi y tra loi..."
+}`;
+
+      var result = await callDeepSeek(
+        [{ role: 'system', content: systemPrompt }, { role: 'user', content: 'Hay bat dau phong van hoc sinh. Hay hoi cau hoi DAU TIEN.' }],
+        { temperature: 0.5, maxTokens: 500, timeout: 15000 }
+      );
+
+      if (result) {
+        try {
+          var jsonStr = result.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+          var parsed = JSON.parse(jsonStr);
+          return res.json({ success: true, interview: {
+            question: parsed.question || 'Hay gioi thieu ve ban than va muc dich du hoc Han Quoc?',
+            questionNumber: parsed.questionNumber || 1,
+            totalQuestions: parsed.totalQuestions || 6,
+            category: parsed.category || 'gioi-thieu',
+            hint: parsed.hint || 'Hay tra loi tu nhien, trung thuc'
+          }});
+        } catch (e) {
+          return res.json({ success: true, interview: {
+            question: result || 'Hay gioi thieu ve ban than va muc dich du hoc Han Quoc?',
+            questionNumber: 1, totalQuestions: 6, category: 'gioi-thieu', hint: ''
+          }});
+        }
+      }
+      return res.json({ success: false, error: 'AI khong phan hoi' });
+    }
+
+    if (action_type === 'answer') {
+      var qNum = 1;
+      var totalQ = 6;
+      if (history && history.length > 0) {
+        // Find the last question number from history
+        for (var i = history.length - 1; i >= 0; i--) {
+          if (history[i].role === 'assistant' && history[i].questionNumber) {
+            qNum = history[i].questionNumber;
+            break;
+          }
+        }
+      }
+
+      var historyText = '';
+      if (history && history.length > 0) {
+        historyText = history.map(function(h) {
+          if (h.role === 'assistant') return 'KVAC: ' + h.content;
+          if (h.role === 'user') return 'Hoc sinh: ' + h.content;
+          return '';
+        }).join('\n');
+      }
+
+      var systemPrompt = `Ban la nhan vien phong van visa Han Quoc tai KVAC. Danh gia cau tra loi cua hoc sinh.
+
+THONG TIN HOC SINH:
+- Ho ten: ${profile.fullName}
+- Visa: ${profile.visaType || 'D-4-1'}
+- Hoc van: ${profile.educationLevel === 'university' ? 'Dai hoc' : 'THPT'}${profile.gpa ? '\n- GPA: ' + profile.gpa : ''}
+- Tieng Han: ${profile.koreanLevel || 'Chua co'}${profile.gapYears > 0 ? '\n- Gap year: ' + profile.gapYears + ' nam' : ''}${profile.hasVisaRejection ? '\n- Da tuong truot visa: Co' : ''}
+
+LICH SU PHONG VAN:\n${historyText || 'Chua co'}
+
+CAU TRA LOI MOI: "${answer}"
+
+NHIEM VU:
+1. Danh gia cau tra loi cua hoc sinh (2-3 cau, bang tieng Viet)
+2. Cho diem tu 1-10
+3. Hoi cau tiep theo (chi 1 cau)
+
+Tra ve KET QUA DUOI DANG JSON:
+{
+  "feedback": "Nhan xet ve cau tra loi... (2-3 cau, tinh than xay dung)",
+  "score": <1-10>,
+  "nextQuestion": "Cau hoi tiep theo...",
+  "questionNumber": ${qNum + 1},
+  "totalQuestions": ${totalQ},
+  "category": "...",
+  "hint": "Goi y tra loi..."
+}`;
+
+      var result = await callDeepSeek(
+        [{ role: 'system', content: systemPrompt }, { role: 'user', content: 'Hay danh gia cau tra loi va hoi cau tiep theo.' }],
+        { temperature: 0.4, maxTokens: 600, timeout: 15000 }
+      );
+
+      if (result) {
+        try {
+          var jsonStr = result.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+          var parsed = JSON.parse(jsonStr);
+          return res.json({ success: true, interview: {
+            feedback: parsed.feedback || 'Cam on cau tra loi cua ban.',
+            score: parsed.score || 5,
+            nextQuestion: parsed.nextQuestion || 'Cam on ban. Toi khong co them cau hoi nao khac.',
+            questionNumber: parsed.questionNumber || qNum + 1,
+            totalQuestions: parsed.totalQuestions || 6,
+            category: parsed.category || 'khac',
+            hint: parsed.hint || ''
+          }});
+        } catch (e) {
+          return res.json({ success: true, interview: {
+            feedback: result || 'Cam on cau tra loi.',
+            score: 5,
+            nextQuestion: 'Cam on ban. Con cau hoi nao ban muon hoi them khong?',
+            questionNumber: qNum + 1, totalQuestions: 6, category: 'khac', hint: ''
+          }});
+        }
+      }
+      return res.json({ success: false, error: 'AI khong phan hoi' });
+    }
+
+    if (action_type === 'complete') {
+      var historyText = '';
+      if (history && history.length > 0) {
+        historyText = history.map(function(h) {
+          if (h.role === 'assistant') return 'KVAC: ' + (h.content || '');
+          if (h.role === 'user') return 'Hoc sinh: ' + (h.content || '');
+          return '';
+        }).join('\n');
+      }
+
+      var systemPrompt = `Ban la nhan vien phong van visa Han Quoc tai KVAC. Tong ket buoi phong van.
+
+THONG TIN HOC SINH:
+- Ho ten: ${profile.fullName}
+- Visa: ${profile.visaType || 'D-4-1'}
+
+TOAN BO BUOI PHONG VAN:\n${historyText}
+
+NHIEM VU:
+Tong ket buoi phong van, danh gia tong the va dua ra loi khuyen.
+
+Tra ve JSON:
+{
+  "overallScore": <1-10>,
+  "overallFeedback": "Nhan xet tong the... (2-3 cau)",
+  "strengths": ["Diem manh 1", "Diem manh 2", "Diem manh 3"],
+  "weaknesses": ["Diem yeu 1", "Diem yeu 2"],
+  "tips": ["Loi khuyen 1", "Loi khuyen 2", "Loi khuyen 3"]
+}`;
+
+      var result = await callDeepSeek(
+        [{ role: 'system', content: systemPrompt }, { role: 'user', content: 'Hay tong ket buoi phong van va cho loi khuyen.' }],
+        { temperature: 0.4, maxTokens: 1000, timeout: 20000 }
+      );
+
+      if (result) {
+        try {
+          var jsonStr = result.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+          var parsed = JSON.parse(jsonStr);
+          return res.json({ success: true, summary: {
+            overallScore: parsed.overallScore || 5,
+            overallFeedback: parsed.overallFeedback || 'Cam on ban da tham gia buoi phong van.',
+            strengths: parsed.strengths || [],
+            weaknesses: parsed.weaknesses || [],
+            tips: parsed.tips || []
+          }});
+        } catch (e) {
+          return res.json({ success: true, summary: {
+            overallScore: 5,
+            overallFeedback: result || 'Cam on ban.',
+            strengths: [], weaknesses: [], tips: [result || 'Cam on ban da tham gia.']
+          }});
+        }
+      }
+      return res.json({ success: false, error: 'AI khong phan hoi' });
+    }
+
+    return res.status(400).json({ success: false, error: 'Unknown action_type' });
+  }
+
+  // ═══════════════════════════════════════════════════
+  // ─── Action: Review Study Plan (action=review-study-plan)
+  // Check diem va goi y cai thien Study Plan bang AI
+  // ═══════════════════════════════════════════════════
+  async function handleReviewStudyPlan(req, res) {
+    const apiKey = getDeepSeekKey();
+    if (!apiKey) {
+      return res.json({ success: false, error: 'AI chua duoc cau hinh.', review: null });
+    }
+
+    const { studyPlan, visaType, profile } = req.body || {};
+    if (!studyPlan || studyPlan.trim().length < 50) {
+      return res.status(400).json({
+        success: false,
+        error: 'Study Plan qua ngan. Vui long nhap it nhat 50 ky tu.',
+        review: null
+      });
+    }
+
+    const profileInfo = profile ? `
+THONG TIN HOC SINH:
+- Ho ten: ${profile.fullName || 'Khong ro'}
+- Visa: ${visaType || profile.visaType || 'D-4-1'}
+- Hoc van: ${profile.educationLevel === 'university' ? 'Dai hoc' : 'THPT'}
+- GPA: ${profile.gpa || 'Khong ro'}
+- Tieng Han: ${profile.koreanLevel || 'Chua co'}
+- Nam tot nghiep: ${profile.graduationYear || 'Khong ro'}${profile.gapYears > 0 ? `\n- Khoang trong hoc tap: ${profile.gapYears} nam` : ''}${profile.hasVisaRejection ? '\n- Da tuong truot visa: Co' : ''}${profile.sponsorIsSelf === false ? '\n- Bao lanh tai chinh: Nguoi than' : '\n- Bao lanh tai chinh: Tu than'}` : '
+(Khong co thong tin ho so)';
+
+    const systemPrompt = `Ban la chuyen vien tu van du hoc Han Quoc voi 15 nam kinh nghiem, chuyen danh gia Study Plan xin visa du hoc.
+
+NHIEM VU:
+Doc va danh gia Study Plan cua hoc sinh. Cham diem tren 6 tieu chi, moi tieu chi tu 1-10.
+
+6 TIEU CHI DANH GIA:
+1. **Cau truc** — Study Plan co du cac phan: gioi thieu ban than, ly do chon Han Quoc, ly do chon truong, ke hoach hoc tap cu the, ke hoach sau khi tot nghiep, cam ket tuan thu luat va ve nuoc dung han khong?
+2. **Ca nhan hoa** — Noi dung co cu the cho hoan canh ca nhan cua hoc sinh khong? Hay chi la ban sao chep tu template?
+3. **Tinh thuyet phuc** — Ly do chon Han Quoc, chon truong co thuyet phuc khong? Co the hien duoc dong luc hoc tap that khong?
+4. **Ngon ngu** — Ngon ngu phu hop (tieng Han neu co TOPIK, tieng Anh neu chua)? Chinh ta, ngu phap co tot khong?
+5. **Day du** — Co de cap den nhung yeu to quan trong: muc dich hoc tap ro rang, ke hoach cu the, ket noi voi dinh huong tuong lai, cam quyet ve nuoc khong?
+6. **Tuan thu quy dinh visa** — Co vi pham nhung quy tac cua Study Plan visa Han Quoc khong? (VD: khong duoc de cap tai chinh, khong duoc the hien y dinh dinh cu, khong duoc noi se di lam them...)
+
+QUY TAC DANH GIA:
+- Cham diem cong bang, khong qua khen hoac qua che
+- Nhan xet cu the, chi ra doan nao yeu va tai sao
+- Goi y cai thien ro rang, co the ap dung duoc
+- Tinh than xay dung, giup hoc sinh viet Study Plan tot hon
+
+Tra ve KET QUA DUOI DANG JSON, KHONG co text khac ngoai JSON:
+{
+  "overallScore": <so tu 1-10, 2 so le>,
+  "criteria": [
+    {
+      "name": "Cau truc",
+      "score": <1-10>,
+      "comment": "Nhan xet ngan ve tieu chi nay...",
+      "suggestion": "Goi y cai thien cu the..."
+    },
+    ...(6 tieu chi)
+  ],
+  "strengths": ["Diem manh 1", "Diem manh 2", "Diem manh 3"],
+  "weaknesses": ["Diem yeu 1", "Diem yeu 2", "Diem yeu 3"],
+  "suggestions": ["Goi y cai thien 1", "Goi y cai thien 2", "Goi y cai thien 3", "Goi y cai thien 4", "Goi y cai thien 5"]
+}`;
+
+    const userMessage = `${profileInfo}
+
+STUDY PLAN CAN DANH GIA:
+---
+${studyPlan}
+---
+
+Hay danh gia Study Plan tren va tra ve JSON theo dung format quy dinh.`;
+
+    const result = await callDeepSeek(
+      [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userMessage }
+      ],
+      { temperature: 0.3, maxTokens: 2500, timeout: 30000 }
+    );
+
+    if (result) {
+      try {
+        const jsonStr = result.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+        const parsed = JSON.parse(jsonStr);
+        return res.json({
+          success: true,
+          review: {
+            overallScore: parsed.overallScore || 5,
+            criteria: parsed.criteria || [],
+            strengths: parsed.strengths || [],
+            weaknesses: parsed.weaknesses || [],
+            suggestions: parsed.suggestions || []
+          }
+        });
+      } catch (e) {
+        // Neu AI khong tra ve JSON dung, tra ve text thay the
+        return res.json({
+          success: true,
+          review: {
+            overallScore: 5,
+            criteria: [
+              { name: 'Tong quan', score: 5, comment: 'Khong the phan tich du lieu JSON tu AI.', suggestion: 'Vui long thu lai.' }
+            ],
+            strengths: [],
+            weaknesses: [],
+            suggestions: [result || 'AI khong phan hoi.']
+          }
+        });
+      }
+    }
+
+    return res.json({
+      success: false,
+      error: 'AI khong phan hoi, vui long thu lai sau.',
+      review: null
+    });
+  }
+
+  // ═══════════════════════════════════════════════════
   // ─── Cron: Daily Report (action=telegram-daily-report)
-// Gọi endpoint này mỗi sáng bằng cron-job.org để nhận báo cáo tự động
+// Goi endpoint nay moi sang bang cron-job.org de nhan bao cao tu dong
 // ═══════════════════════════════════════════════════
 async function handleTelegramDailyReport(req, res) {
   // Chỉ cho phép GET (để cron-job.org dễ gọi)
@@ -1386,6 +1734,8 @@ module.exports = async (req, res) => {
       case 'telegram-webhook': return await handleTelegramWebhook(req, res);
       case 'chat-web': return await handleChatWeb(req, res);
       case 'generate-checklist': return await handleGenerateChecklist(req, res);
+      case 'review-study-plan': return await handleReviewStudyPlan(req, res);
+      case 'interview-simulator': return await handleInterviewSimulator(req, res);
       case 'analytics': return await handleAnalytics(req, res);
       case 'telegram-daily-report': return await handleTelegramDailyReport(req, res);
       default:
