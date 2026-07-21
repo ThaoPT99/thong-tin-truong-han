@@ -984,9 +984,13 @@ QUY TẮC:
 - Trình độ học vấn: ${p.educationLevel === 'university' ? 'Đại học' : 'THPT'}
 - GPA: ${p.gpa || 'Không rõ'}
 - Trình độ tiếng Hàn: ${p.koreanLevel || 'Chưa có'}
-- Năm tốt nghiệp: ${p.graduationYear || 'Không rõ'}
-${p.gapYears > 0 ? `- Khoảng trống: ${p.gapYears} năm sau tốt nghiệp` : ''}
-
+${p.hasTopik && p.topikGrade ? `- Chứng chỉ TOPIK: Topik ${p.topikGrade}
+` : ''}${p.ieltsScore ? `- IELTS: ${p.ieltsScore}
+` : ''}- Năm tốt nghiệp: ${p.graduationYear || 'Không rõ'}
+${p.gapYears > 0 ? `- Khoảng trống: ${p.gapYears} năm sau tốt nghiệp
+` : ''}${p.chosenSchool ? `- Trường dự định: ${p.chosenSchool}
+` : ''}${p.chosenMajor ? `- Ngành dự định: ${p.chosenMajor}
+` : ''}
 Kiến thức nền tảng:
 ${KB_FOR_STUDY_PLAN}
 
@@ -1007,8 +1011,11 @@ QUY TẮC:
 - Tốt nghiệp: ${p.graduationYear || 'Không rõ'}
 - Gap: ${p.gapYears || 0} năm
 - Đã đi làm: ${p.hasWorkExperience ? 'Có' : 'Không'}
-${p.hasWorkExperience ? `- Có HĐLĐ/BHXH: ${p.hasLaborContract ? 'Có' : 'Không'}` : ''}
-- Trình độ tiếng Hàn: ${p.koreanLevel || 'Chưa có'}
+${p.hasWorkExperience ? `- Có HĐLĐ/BHXH: ${p.hasLaborContract ? 'Có' : 'Không'}
+` : ''}${p.hasWorkExperience && p.workCompany ? `- Công ty: ${p.workCompany}
+- Vị trí: ${p.workPosition || 'Không rõ'}
+- Thời gian làm: ${p.workDuration ? p.workDuration + ' năm' : 'Không rõ'}
+` : ''}- Trình độ tiếng Hàn: ${p.koreanLevel || 'Chưa có'}
 - Visa đăng ký: ${visaType || 'D-4-1'}
 
 ${KB_FOR_GAP}
@@ -1095,7 +1102,7 @@ THONG TIN HOC SINH:
 - Ho ten: ${profile.fullName}
 - Visa: ${profile.visaType || 'D-4-1'}
 - Hoc van: ${profile.educationLevel === 'university' ? 'Dai hoc' : 'THPT'}${profile.gpa ? '\n- GPA: ' + profile.gpa : ''}
-- Tieng Han: ${profile.koreanLevel || 'Chua co'}${profile.gapYears > 0 ? '\n- Gap year: ' + profile.gapYears + ' nam' : ''}${profile.hasVisaRejection ? '\n- Da tuong truot visa: Co' : ''}
+- Tieng Han: ${profile.koreanLevel || 'Chua co'}${profile.gapYears > 0 ? '\n- Gap year: ' + profile.gapYears + ' nam' : ''}${profile.hasVisaRejection ? '\n- Da tuong truot visa: Co' : ''}${profile.chosenSchool ? '\n- Truong du dinh: ' + profile.chosenSchool : ''}${profile.chosenMajor ? '\n- Nganh du dinh: ' + profile.chosenMajor : ''}
 
 NHIEM VU:
 Ban se phong van hoc sinh bang tieng Viet. Moi lan hoi 1 cau hoi. Tong cong 5-7 cau hoi.

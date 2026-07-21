@@ -419,8 +419,38 @@
         <div class="cl-field">
           <label>Bạn đã có chứng chỉ TOPIK chưa?</label>
           <div class="cl-radio-group">
-            <label><input type="radio" name="cl-has-topik" value="true" ${d.hasTopik ? 'checked' : ''} onchange="profile.hasTopik = true"> Có</label>
-            <label><input type="radio" name="cl-has-topik" value="false" ${d.hasTopik === false ? 'checked' : ''} onchange="profile.hasTopik = false"> Chưa</label>
+            <label><input type="radio" name="cl-has-topik" value="true" ${d.hasTopik ? 'checked' : ''} onchange="profile.hasTopik = true; document.getElementById('cl-topik-score').style.display=''"> Có</label>
+            <label><input type="radio" name="cl-has-topik" value="false" ${d.hasTopik === false ? 'checked' : ''} onchange="profile.hasTopik = false; document.getElementById('cl-topik-score').style.display='none'"> Chưa</label>
+          </div>
+        </div>
+
+        <div id="cl-topik-score" style="${d.hasTopik ? '' : 'display:none'}" class="cl-grid-2">
+          <div class="cl-field">
+            <label>Điểm TOPIK</label>
+            <select id="cl-topik-grade">
+              <option value="">— Chọn —</option>
+              <option value="1" ${d.topikGrade === '1' ? 'selected' : ''}>TOPIK 1</option>
+              <option value="2" ${d.topikGrade === '2' ? 'selected' : ''}>TOPIK 2</option>
+              <option value="3" ${d.topikGrade === '3' ? 'selected' : ''}>TOPIK 3</option>
+              <option value="4" ${d.topikGrade === '4' ? 'selected' : ''}>TOPIK 4</option>
+              <option value="5" ${d.topikGrade === '5' ? 'selected' : ''}>TOPIK 5</option>
+              <option value="6" ${d.topikGrade === '6' ? 'selected' : ''}>TOPIK 6</option>
+            </select>
+          </div>
+          <div class="cl-field">
+            <label>Điểm IELTS (nếu có)</label>
+            <input type="number" id="cl-ielts" min="0" max="9" step="0.5" value="${d.ieltsScore || ''}" placeholder="VD: 5.5">
+          </div>
+        </div>
+
+        <div class="cl-grid-2">
+          <div class="cl-field">
+            <label>Trường Hàn Quốc dự định</label>
+            <input type="text" id="cl-chosen-school" value="${escapeHtml(d.chosenSchool || '')}" placeholder="VD: Osan University">
+          </div>
+          <div class="cl-field">
+            <label>Ngành học dự định</label>
+            <input type="text" id="cl-chosen-major" value="${escapeHtml(d.chosenMajor || '')}" placeholder="VD: Quản trị kinh doanh">
           </div>
         </div>
 
@@ -443,6 +473,11 @@
     profile.gpa = parseFloat(document.getElementById('cl-gpa').value) || null;
     profile.graduationYear = parseInt(document.getElementById('cl-grad-year').value) || null;
     profile.koreanLevel = document.getElementById('cl-korean').value;
+    profile.hasTopik = document.querySelector('input[name="cl-has-topik"]:checked')?.value === 'true';
+    profile.topikGrade = profile.hasTopik ? document.getElementById('cl-topik-grade')?.value || '' : '';
+    profile.ieltsScore = parseFloat(document.getElementById('cl-ielts')?.value) || null;
+    profile.chosenSchool = document.getElementById('cl-chosen-school')?.value?.trim() || '';
+    profile.chosenMajor = document.getElementById('cl-chosen-major')?.value?.trim() || '';
 
     // Calculate gap years
     if (profile.graduationYear) {
@@ -579,6 +614,20 @@
               <label><input type="radio" name="cl-contract" value="false" ${d.hasLaborContract === false ? 'checked' : ''} onchange="profile.hasLaborContract = false"> Không / Không chính thức</label>
             </div>
           </div>
+          <div class="cl-grid-2">
+            <div class="cl-field">
+              <label>Tên công ty</label>
+              <input type="text" id="cl-work-company" value="${escapeHtml(d.workCompany || '')}" placeholder="VD: Công ty ABC">
+            </div>
+            <div class="cl-field">
+              <label>Vị trí công việc</label>
+              <input type="text" id="cl-work-position" value="${escapeHtml(d.workPosition || '')}" placeholder="VD: Nhân viên văn phòng">
+            </div>
+          </div>
+          <div class="cl-field">
+            <label>Thời gian làm việc (năm)</label>
+            <input type="number" id="cl-work-duration" min="0" max="30" step="0.5" value="${d.workDuration || ''}" placeholder="VD: 1.5">
+          </div>
         </div>
 
         <div class="cl-info-box" style="background:#fef2f2;border-color:#ef4444">
@@ -613,6 +662,9 @@
     profile.hasLaborContract = profile.hasWorkExperience
       ? document.querySelector('input[name="cl-contract"]:checked')?.value === 'true'
       : false;
+    profile.workCompany = profile.hasWorkExperience ? document.getElementById('cl-work-company')?.value?.trim() || '' : '';
+    profile.workPosition = profile.hasWorkExperience ? document.getElementById('cl-work-position')?.value?.trim() || '' : '';
+    profile.workDuration = profile.hasWorkExperience ? parseFloat(document.getElementById('cl-work-duration')?.value) || null : null;
     profile._completed = true;
 
     // Generate checklist locally (fast)
@@ -660,6 +712,11 @@
             <tr><td>Đã từng trượt visa</td><td>${profile.hasVisaRejection ? '⚠️ Có' : 'Không'}</td></tr>
             <tr><td>Bảo lãnh tài chính</td><td>${profile.sponsorIsSelf ? 'Tự thân' : profile.sponsorRelation === 'parent' ? 'Cha/Mẹ' : 'Người thân khác'}</td></tr>
             <tr><td>Tiếng Hàn</td><td>${profile.koreanLevel || 'Chưa có'}</td></tr>
+            ${profile.chosenSchool ? '<tr><td>Trường dự định</td><td>' + escapeHtml(profile.chosenSchool) + '</td></tr>' : ''}
+            ${profile.chosenMajor ? '<tr><td>Ngành dự định</td><td>' + escapeHtml(profile.chosenMajor) + '</td></tr>' : ''}
+            ${profile.hasTopik && profile.topikGrade ? '<tr><td>TOPIK</td><td>Topik ' + profile.topikGrade + '</td></tr>' : ''}
+            ${profile.ieltsScore ? '<tr><td>IELTS</td><td>' + profile.ieltsScore + '</td></tr>' : ''}
+            ${profile.hasWorkExperience && profile.workCompany ? '<tr><td>Kinh nghiệm làm việc</td><td>' + escapeHtml(profile.workCompany) + (profile.workPosition ? ' - ' + escapeHtml(profile.workPosition) : '') + '</td></tr>' : ''}
           </table>
         </div>
 
@@ -958,10 +1015,18 @@
   function buildAISuggestions(profile) {
     const suggestions = [];
     if (profile.gapYears > 0.5) {
+      var gapDesc = 'Bạn đã tốt nghiệp ' + (profile.graduationYear || 'cách đây') + ' ' + profile.gapYears + ' năm. ';
+      if (profile.hasWorkExperience && profile.workCompany) {
+        gapDesc += 'Trong thời gian này, bạn đã làm việc tại ' + profile.workCompany;
+        if (profile.workPosition) gapDesc += ' với vị trí ' + profile.workPosition;
+        if (profile.workDuration) gapDesc += ' trong ' + profile.workDuration + ' năm';
+        gapDesc += '. ';
+      }
+      gapDesc += 'Cần giải trình rõ: đã làm gì trong thời gian này, tại sao chưa đi du học sớm hơn.';
       suggestions.push({
         type: 'gap_explanation',
         title: 'Viết giải trình khoảng trống thời gian',
-        description: `Bạn đã tốt nghiệp ${profile.graduationYear || 'cách đây'} ${profile.gapYears} năm. Cần giải trình rõ: đã làm gì trong thời gian này, tại sao chưa đi du học sớm hơn.`
+        description: gapDesc
       });
     }
     if (profile.hasVisaRejection) {
