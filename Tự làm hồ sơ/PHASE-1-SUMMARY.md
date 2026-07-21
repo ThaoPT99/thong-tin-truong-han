@@ -1,6 +1,6 @@
 # 📋 Phase 1 & 2 — Tổng kết
 
-> Cập nhật lần cuối: 20/07/2026
+> Cập nhật lần cuối: 21/07/2026
 > 
 > File này tổng hợp toàn bộ thay đổi đã thực hiện và các việc còn tồn đọng.
 
@@ -68,7 +68,7 @@
 
 ## 🚀 PHASE 2 — Core Features (CRUD hồ sơ, Document Tracking, AI)
 
-> Cập nhật: 20/07/2026
+> Cập nhật: 20/07/2026 (bổ sung 21/07/2026)
 
 ### ✅ ĐÃ HOÀN THÀNH
 
@@ -166,16 +166,38 @@ Mỗi giấy tờ trong checklist có thanh trạng thái:
 | **ALERT-4 hiện cho cả người không trượt visa** | Thêm `rule: { has_visa_rejection: { eq: true } }` | `e44f042` |
 | **extraContext không được đưa vào prompt AI** | Append extraContext vào user message | `095b8a9` |
 
-### 🔴 CHƯA LÀM / TỒN ĐỌNG
+#### 8. ✅ Export checklist ra PDF (21/07/2026)
 
-| # | Việc | Mức độ | Ghi chú |
-|:---:|------|:------:|---------|
-| 1 | **Tạo bucket `student-documents` trên Supabase** | 🔥 Cần gấp | Vào Supabase Dashboard > Storage > Create bucket (Public) |
-| 2 | **Chạy SQL migration files** | 🔥 Cần gấp | `supabase/migration-phase2-*.sql` — copy vào SQL Editor |
-| 3 | **Export checklist ra PDF** | 🟡 Nên làm | Có branding, danh sách giấy tờ |
-| 4 | **Ẩn document tracking cho warning items** | 🟡 Nên làm | ALERT items không cần upload file |
-| 5 | **Auto reminder từ checklist** | 🟢 Có thể sau | Tự tạo reminder khi đến hạn |
-| 6 | **Kết nối progress → Dashboard** | 🟢 Có thể sau | Hiển thị tiến độ checklist trong tab Gửi đơn |
+- **Nâng cấp nút "📤 Xuất checklist"** — từ copy text → xuất PDF chuyên nghiệp
+- **Tự động tải html2pdf.js từ CDN** — chỉ tải khi cần
+- **Giao diện PDF đẹp:** header gradient xanh, badge BẮT BUỘC/KK, progress pill, thông tin hồ sơ + footer thương hiệu
+- **Xử lý lỗi thông minh:** fallback → clipboard → .txt file, guard chống click nhiều lần (`_pdfLoading`), dọn DOM sạch (`finally` block)
+
+#### 9. 🎯 Ẩn document tracking cho ALERT items (21/07/2026)
+
+- **Kiểm tra** `documentType === 'general_warning'` → ẩn toàn bộ `.cl-item-doc-tracking` (thanh trạng thái giấy tờ + upload file)
+- **Giữ nguyên:** status dropdown (đánh dấu đã đọc) và note input
+- Ảnh hưởng: 9 items ALERT (D-4-1) + 7 items ALERT-D2 (D-2)
+
+#### 10. ⏰ Auto reminder từ checklist (21/07/2026)
+
+- **Quét checklist:** lọc items cần nhắc (bỏ qua `general_warning` + đã hoàn thành)
+- **Map thông minh:** `documentType` → `reminder_type` (document, health_check, visa_appointment, submission...)
+- **Ngày hạn gợi ý:** KVAC booking → 7 ngày, sổ TK → 60 ngày, sức khỏe → 14 ngày, mặc định 30 ngày
+- **Modal checkbox + date picker:** chọn/bỏ chọn từng mục, bulk-create qua API
+- **Hỗ trợ cả D-4-1 và D-2:** đầy đủ aliases cho mọi documentType
+- **Yêu cầu đăng nhập** — nhắc nhở hiển thị trong tab "📨 Gửi đơn"
+
+### 🟢 ĐÃ HOÀN THÀNH — Không còn tồn đọng Phase 2
+
+| # | Việc | Trạng thái |
+|:---:|------|:----------:|
+| 1 | Tạo bucket `student-documents` trên Supabase | ✅ Đã làm |
+| 2 | Chạy SQL migration files | ✅ Đã chạy |
+| 3 | Export checklist ra PDF | ✅ Hoàn thành |
+| 4 | Ẩn document tracking cho warning items | ✅ Hoàn thành |
+| 5 | Auto reminder từ checklist | ✅ Hoàn thành |
+| 6 | Kết nối progress → Dashboard | ❌ Bỏ (không cần) |
 
 ### 📋 Commits Phase 2
 
@@ -189,6 +211,7 @@ f67d6ad — feat: deep research - legalization, financial stability, personalize
 14214a9 — feat: document tracking UI + Rule Engine fix (snake_case → camelCase)
 6091080 — feat: TB test, Business Registration, K-Study, ALERT module
 e44f042 — fix: ALERT-D2 icon, ALERT-4 conditional rule
+feca9ac — feat: Phase 2 final - PDF export, hide doc tracking for ALERT, auto reminders
 ```
 
 ---
@@ -204,7 +227,6 @@ e44f042 — fix: ALERT-D2 icon, ALERT-4 conditional rule
 
 ## 🚀 Kế hoạch tới
 
-1. Tạo bucket `student-documents` trên Supabase Dashboard
-2. Chạy SQL migration files
-3. Test upload file → verify quick-action buttons
-4. Thảo luận Phase 3
+1. Kiểm tra deploy Vercel cho commit `feca9ac`
+2. Test các tính năng mới trên môi trường thật (PDF, auto reminder)
+3. Thảo luận Phase 3
