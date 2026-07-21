@@ -10,13 +10,13 @@
 
   // ─── Steps ───
   const STEPS = [
-    { id: 'welcome', label: 'Bắt đầu', icon: '👋' },
-    { id: 'personal', label: 'Cá nhân', icon: '👤' },
-    { id: 'education', label: 'Học vấn', icon: '🎓' },
-    { id: 'finance', label: 'Tài chính', icon: '💰' },
-    { id: 'risk', label: 'Rủi ro', icon: '⚠️' },
-    { id: 'analysis', label: 'Phân tích', icon: '🤖' },
-    { id: 'checklist', label: 'Checklist', icon: '✅' },
+    { id: 'welcome', label: 'Bắt đầu', icon: '' },
+    { id: 'personal', label: 'Cá nhân', icon: '' },
+    { id: 'education', label: 'Học vấn', icon: '' },
+    { id: 'finance', label: 'Tài chính', icon: '' },
+    { id: 'risk', label: 'Rủi ro', icon: '⚠' },
+    { id: 'analysis', label: 'Phân tích', icon: '' },
+    { id: 'checklist', label: 'Checklist', icon: '' },
   ];
 
   // ─── Init ───
@@ -168,7 +168,7 @@
 
         <!-- Resume / Restore -->
         <div id="cl-resume-bar" class="cl-resume-bar" style="display:none">
-          <span>📂 Bạn đang tiếp tục hồ sơ đã lưu trước đó.</span>
+          <span> Bạn đang tiếp tục hồ sơ đã lưu trước đó.</span>
           <button type="button" class="btn btn-sm btn-outline" onclick="window.clStartFresh()">Bắt đầu lại</button>
         </div>
       </section>
@@ -259,21 +259,21 @@
   function renderWelcome(container) {
     container.innerHTML = `
       <div class="cl-welcome">
-        <div class="cl-welcome-icon">📋</div>
+        <div class="cl-welcome-icon"></div>
         <h3>Chào mừng bạn đến với hệ thống tự làm hồ sơ!</h3>
         <p>Chúng tôi sẽ giúp bạn tạo một checklist cá nhân hoá — chỉ gồm những giấy tờ bạn thực sự cần, dựa trên hoàn cảnh cụ thể của bạn.</p>
 
         <div class="cl-benefits">
           <div class="cl-benefit">
-            <span>🎯</span>
+            <span></span>
             <div><strong>Checklist theo hoàn cảnh</strong><br>Bạn gap year? Trượt visa? Tài chính tự thân? Checklist sẽ khác.</div>
           </div>
           <div class="cl-benefit">
-            <span>🤖</span>
+            <span></span>
             <div><strong>AI hỗ trợ soạn thảo</strong><br>Study Plan, giải trình gap, giải trình trượt visa — AI giúp bạn viết.</div>
           </div>
           <div class="cl-benefit">
-            <span>📊</span>
+            <span></span>
             <div><strong>Theo dõi tiến độ</strong><br>Biết bạn đã hoàn thành bao nhiêu %, còn thiếu gì, sắp tới hạn gì.</div>
           </div>
         </div>
@@ -281,9 +281,9 @@
         <div class="cl-visa-select">
           <label for="cl-visa-type">Loại visa bạn muốn xin:</label>
           <select id="cl-visa-type" onchange="window.clSelectVisa(this.value)">
-            <option value="D-4-1">🗣️ D-4-1: Visa học tiếng Hàn</option>
-            <option value="D-2">🎓 D-2: Visa đại học chính quy</option>
-            <option value="D4-to-D2">🔄 D4 → D2: Chuyển đổi visa</option>
+            <option value="D-4-1"> D-4-1: Visa học tiếng Hàn</option>
+            <option value="D-2"> D-2: Visa đại học chính quy</option>
+            <option value="D4-to-D2"> D4 → D2: Chuyển đổi visa</option>
           </select>
           <p class="cl-hint">Chọn loại visa bạn định xin. Bạn có thể thay đổi sau.</p>
         </div>
@@ -316,15 +316,15 @@
         <div class="cl-field">
           <label>Bạn đang ở đâu?</label>
           <div class="cl-radio-group">
-            <label><input type="radio" name="cl-location" value="vietnam" ${d.currentLocation === 'vietnam' ? 'checked' : ''} onchange="profile.currentLocation = 'vietnam'"> 🇻🇳 Việt Nam</label>
-            <label><input type="radio" name="cl-location" value="korea" ${d.currentLocation === 'korea' ? 'checked' : ''} onchange="profile.currentLocation = 'korea'"> 🇰🇷 Hàn Quốc (đang học tiếng)</label>
+            <label><input type="radio" name="cl-location" value="vietnam" ${d.currentLocation === 'vietnam' ? 'checked' : ''} onchange="profile.currentLocation = 'vietnam'">  Việt Nam</label>
+            <label><input type="radio" name="cl-location" value="korea" ${d.currentLocation === 'korea' ? 'checked' : ''} onchange="profile.currentLocation = 'korea'">  Hàn Quốc (đang học tiếng)</label>
           </div>
           <p class="cl-hint">Dành cho hồ sơ chuyển đổi D4→D2 — thủ tục khác nhau tuỳ bạn đang ở đâu.</p>
         </div>` : '';
 
     container.innerHTML = `
       <div class="cl-form-section">
-        <h3>👤 Thông tin cá nhân</h3>
+        <h3> Thông tin cá nhân</h3>
         <p class="cl-form-desc">Thông tin cơ bản để xác định hồ sơ của bạn.</p>
 
         <div class="cl-grid-2">
@@ -415,7 +415,7 @@
         <div class="cl-field">
           <label>Bạn đã có thư giới thiệu từ giáo viên chưa? (D-2 cần 2 thư)</label>
           <div class="cl-radio-group">
-            <label><input type="radio" name="cl-has-rec" value="true" ${d.hasRecommendation ? 'checked' : ''} onchange="profile.hasRecommendation = true"> ✅ Có rồi</label>
+            <label><input type="radio" name="cl-has-rec" value="true" ${d.hasRecommendation ? 'checked' : ''} onchange="profile.hasRecommendation = true">  Có rồi</label>
             <label><input type="radio" name="cl-has-rec" value="false" ${d.hasRecommendation === false ? 'checked' : ''} onchange="profile.hasRecommendation = false"> Chưa có</label>
           </div>
         </div>` : '';
@@ -445,7 +445,7 @@
 
     container.innerHTML = `
       <div class="cl-form-section">
-        <h3>🎓 Thông tin học vấn</h3>
+        <h3> Thông tin học vấn</h3>
         <p class="cl-form-desc">Giúp hệ thống đánh giá hồ sơ học tập của bạn.</p>
 
         <div class="cl-grid-2">
@@ -520,7 +520,7 @@
         </div>
 
         <div class="cl-info-box">
-          <strong>💡 Tại sao cần thông tin này?</strong><br>
+          <strong> Tại sao cần thông tin này?</strong><br>
           GPA thấp, gap year dài, học lực yếu — mỗi yếu tố sẽ thêm giấy tờ bổ sung vào checklist của bạn.
         </div>
 
@@ -593,7 +593,7 @@
     const savingsHint = getVisaSavingsHint();
     container.innerHTML = `
       <div class="cl-form-section">
-        <h3>💰 Thông tin tài chính</h3>
+        <h3> Thông tin tài chính</h3>
         <p class="cl-form-desc">Giúp xác định hồ sơ tài chính bạn cần chuẩn bị.</p>
 
         <div class="cl-field">
@@ -625,7 +625,7 @@
         </div>
 
         <div class="cl-info-box" style="background:#fef3c7;border-color:#f59e0b">
-          <strong>📌 Lưu ý quan trọng:</strong><br>
+          <strong> Lưu ý quan trọng:</strong><br>
           Hồ sơ tài chính là một trong những phần dễ bị từ chối nhất. 
           Nếu người bảo lãnh không phải tự thân, bạn cần thêm giấy tờ chứng minh quan hệ 
           và chứng minh thu nhập của người bảo lãnh.
@@ -669,7 +669,7 @@
     const d = profile;
     container.innerHTML = `
       <div class="cl-form-section">
-        <h3>⚠️ Đánh giá rủi ro</h3>
+        <h3>⚠ Đánh giá rủi ro</h3>
         <p class="cl-form-desc">Các yếu tố có thể ảnh hưởng đến hồ sơ visa của bạn.</p>
 
         <div class="cl-field">
@@ -728,7 +728,7 @@
         </div>
 
         <div class="cl-info-box" style="background:#fef2f2;border-color:#ef4444">
-          <strong>🔴 Lưu ý:</strong><br>
+          <strong> Lưu ý:</strong><br>
           Các yếu tố rủi ro (trượt visa, gap year, người thân bất hợp pháp) 
           sẽ làm hồ sơ của bạn cần nhiều giấy tờ bổ sung hơn. 
           Đừng lo — hệ thống sẽ hướng dẫn bạn từng bước.
@@ -736,7 +736,7 @@
 
         <div class="cl-nav">
           <button type="button" class="btn btn-primary btn-lg" onclick="window.clSaveStep4()">
-            ⚡ Phân tích hồ sơ →
+             Phân tích hồ sơ →
           </button>
         </div>
       </div>
@@ -782,7 +782,7 @@
 
     container.innerHTML = `
       <div class="cl-analysis">
-        <h3>🤖 Phân tích hồ sơ của bạn</h3>
+        <h3> Phân tích hồ sơ của bạn</h3>
         <p class="cl-form-desc">Dựa trên thông tin bạn đã cung cấp, đây là tổng quan:</p>
 
         <div class="cl-analysis-summary">
@@ -801,12 +801,12 @@
         </div>
 
         <div class="cl-analysis-detail">
-          <h4>📋 Hồ sơ của bạn:</h4>
+          <h4> Hồ sơ của bạn:</h4>
           <table class="cl-analysis-table">
             <tr><td>Loại visa</td><td>${visaType}</td></tr>
             <tr><td>Học vấn</td><td>${profile.educationLevel === 'university' ? 'Đại học' : 'THPT'}</td></tr>
             <tr><td>Gap year</td><td>${profile.gapYears ? profile.gapYears + ' năm' : 'Không có'}</td></tr>
-            <tr><td>Đã từng trượt visa</td><td>${profile.hasVisaRejection ? '⚠️ Có' : 'Không'}</td></tr>
+            <tr><td>Đã từng trượt visa</td><td>${profile.hasVisaRejection ? '⚠ Có' : 'Không'}</td></tr>
             <tr><td>Bảo lãnh tài chính</td><td>${profile.sponsorIsSelf ? 'Tự thân' : profile.sponsorRelation === 'parent' ? 'Cha/Mẹ' : 'Người thân khác'}</td></tr>
             <tr><td>Tiếng Hàn</td><td>${profile.koreanLevel || 'Chưa có'}</td></tr>
             ${profile.chosenSchool ? '<tr><td>Trường dự định</td><td>' + escapeHtml(profile.chosenSchool) + '</td></tr>' : ''}
@@ -818,29 +818,29 @@
         </div>
 
         <div class="cl-analysis-risk">
-          <h4>⚠️ Rủi ro phát hiện:</h4>
+          <h4>⚠ Rủi ro phát hiện:</h4>
           <ul>
-            ${profile.gapYears > 0.5 ? '<li>📌 Bạn có gap year — cần giải trình khoảng trống thời gian</li>' : ''}
-            ${profile.hasVisaRejection ? '<li>🔴 Đã từng trượt visa — cần giải trình + nộp lại hồ sơ cũ</li>' : ''}
-            ${!profile.sponsorIsSelf ? '<li>📌 Người bảo lãnh không phải tự thân — cần chứng minh quan hệ + thu nhập</li>' : ''}
-            ${(!profile.gpa || profile.gpa < 5) ? '<li>🟡 GPA thấp — có thể cần thư giới thiệu bổ sung</li>' : ''}
-            ${(profile.koreanLevel === 'none') ? '<li>🟡 Chưa có tiếng Hàn — nên học Sejong 2B hoặc TOPIK 1 trước</li>' : ''}
-            ${(profile.savingsAmount < getVisaMinSavings()) ? '<li>🔴 Sổ tiết kiệm dưới ' + getVisaMinSavings().toLocaleString() + ' USD — cần tăng lên mức tối thiểu cho ' + visaType + '</li>' : ''}
-            ${!profile.hasLaborContract && profile.hasWorkExperience ? '<li>🟡 Đã đi làm nhưng không có HĐLĐ — cần giấy xác nhận khác</li>' : ''}
-            ${(profile.gpa && profile.gpa >= 7) ? '<li>✅ GPA tốt — điểm mạnh trong hồ sơ</li>' : ''}
-            ${(profile.koreanLevel && profile.koreanLevel !== 'none') ? '<li>✅ Đã có nền tảng tiếng Hàn — lợi thế</li>' : ''}
-            ${profile.hasIllegalRelative ? '<li>🔴 Người thân cư trú bất hợp pháp — rủi ro cao, cần tư vấn riêng</li>' : ''}
-            ${visaType === 'D-2' && profile.koreanLevel !== 'topik3' && profile.koreanLevel !== 'topik4' ? '<li>🔴 D-2 thường yêu cầu TOPIK 3+ — nếu chưa đạt, cần kiểm tra kỹ điều kiện đầu vào của trường</li>' : ''}
-            ${visaType === 'D-2' && !profile.hasRecommendation ? '<li>🟡 D-2 cần 2 thư giới thiệu từ giáo viên — chuẩn bị sớm</li>' : ''}
-            ${visaType === 'D4-to-D2' && !profile.currentKoreanSchool ? '<li>📌 Bạn chưa nhập trường tiếng đang học — cần bổ sung để xác nhận quá trình học</li>' : ''}
-            ${visaType === 'D4-to-D2' && profile.currentLocation === 'korea' ? '<li>📌 Bạn đang ở Hàn — cần kiểm tra hạn visa D-4-1 hiện tại và thủ tục chuyển đổi tại Immigration</li>' : ''}
-            ${!profile.hasVisaRejection && profile.gapYears <= 0.5 && profile.sponsorIsSelf && (profile.gpa || 0) >= 5 ? '<li>✅ Hồ sơ cơ bản ổn — không có rủi ro đặc biệt</li>' : ''}
+            ${profile.gapYears > 0.5 ? '<li> Bạn có gap year — cần giải trình khoảng trống thời gian</li>' : ''}
+            ${profile.hasVisaRejection ? '<li> Đã từng trượt visa — cần giải trình + nộp lại hồ sơ cũ</li>' : ''}
+            ${!profile.sponsorIsSelf ? '<li> Người bảo lãnh không phải tự thân — cần chứng minh quan hệ + thu nhập</li>' : ''}
+            ${(!profile.gpa || profile.gpa < 5) ? '<li> GPA thấp — có thể cần thư giới thiệu bổ sung</li>' : ''}
+            ${(profile.koreanLevel === 'none') ? '<li> Chưa có tiếng Hàn — nên học Sejong 2B hoặc TOPIK 1 trước</li>' : ''}
+            ${(profile.savingsAmount < getVisaMinSavings()) ? '<li> Sổ tiết kiệm dưới ' + getVisaMinSavings().toLocaleString() + ' USD — cần tăng lên mức tối thiểu cho ' + visaType + '</li>' : ''}
+            ${!profile.hasLaborContract && profile.hasWorkExperience ? '<li> Đã đi làm nhưng không có HĐLĐ — cần giấy xác nhận khác</li>' : ''}
+            ${(profile.gpa && profile.gpa >= 7) ? '<li> GPA tốt — điểm mạnh trong hồ sơ</li>' : ''}
+            ${(profile.koreanLevel && profile.koreanLevel !== 'none') ? '<li> Đã có nền tảng tiếng Hàn — lợi thế</li>' : ''}
+            ${profile.hasIllegalRelative ? '<li> Người thân cư trú bất hợp pháp — rủi ro cao, cần tư vấn riêng</li>' : ''}
+            ${visaType === 'D-2' && profile.koreanLevel !== 'topik3' && profile.koreanLevel !== 'topik4' ? '<li> D-2 thường yêu cầu TOPIK 3+ — nếu chưa đạt, cần kiểm tra kỹ điều kiện đầu vào của trường</li>' : ''}
+            ${visaType === 'D-2' && !profile.hasRecommendation ? '<li> D-2 cần 2 thư giới thiệu từ giáo viên — chuẩn bị sớm</li>' : ''}
+            ${visaType === 'D4-to-D2' && !profile.currentKoreanSchool ? '<li> Bạn chưa nhập trường tiếng đang học — cần bổ sung để xác nhận quá trình học</li>' : ''}
+            ${visaType === 'D4-to-D2' && profile.currentLocation === 'korea' ? '<li> Bạn đang ở Hàn — cần kiểm tra hạn visa D-4-1 hiện tại và thủ tục chuyển đổi tại Immigration</li>' : ''}
+            ${!profile.hasVisaRejection && profile.gapYears <= 0.5 && profile.sponsorIsSelf && (profile.gpa || 0) >= 5 ? '<li> Hồ sơ cơ bản ổn — không có rủi ro đặc biệt</li>' : ''}
           </ul>
         </div>
 
         <div class="cl-nav">
           <button type="button" class="btn btn-primary btn-lg" onclick="window.clNextStep()">
-            📋 Xem checklist cá nhân →
+             Xem checklist cá nhân →
           </button>
         </div>
       </div>
@@ -871,7 +871,7 @@
     container.innerHTML = `
       <div class="cl-checklist">
         <div class="cl-checklist-header">
-          <h3>✅ Checklist cá nhân hoá của bạn</h3>
+          <h3> Checklist cá nhân hoá của bạn</h3>
           <p class="cl-form-desc">Dành cho <strong>${checklist.name}</strong> — chỉ hiển thị giấy tờ phù hợp với hoàn cảnh của bạn.</p>
         </div>
 
@@ -886,8 +886,8 @@
           </div>
           <div class="cl-progress-info">
             <div><strong>${checklist.totalItems}</strong> giấy tờ cần chuẩn bị</div>
-            <div>📌 <strong>${checklist.requiredItems}</strong> bắt buộc + <strong>${checklist.recommendedItems}</strong> khuyến khích</div>
-            <div>🏁 <strong>${moduleCount}</strong> nhóm thủ tục</div>
+            <div> <strong>${checklist.requiredItems}</strong> bắt buộc + <strong>${checklist.recommendedItems}</strong> khuyến khích</div>
+            <div> <strong>${moduleCount}</strong> nhóm thủ tục</div>
           </div>
         </div>
 
@@ -902,19 +902,19 @@
         <!-- AI Assist Button -->
         <div class="cl-ai-bar">
           <button type="button" class="btn btn-primary" onclick="window.clOpenAIAssist()">
-            🤖 AI hỗ trợ viết Study Plan / Giải trình
+             AI hỗ trợ viết Study Plan / Giải trình
           </button>
           <button type="button" class="btn btn-outline" onclick="window.clExportChecklist()">
-            📤 Xuất checklist
+             Xuất checklist
           </button>
           <button type="button" class="btn btn-outline" onclick="window.clAutoReminders()">
-            ⏰ Tạo nhắc nhở
+             Tạo nhắc nhở
           </button>
           <button type="button" class="btn btn-outline" onclick="window.clOpenStudyPlanReviewer()">
-            📝 Đánh giá Study Plan
+             Đánh giá Study Plan
           </button>
           <button type="button" class="btn btn-outline" onclick="window.clOpenInterviewSimulator()">
-            🎤 Luyện phỏng vấn
+             Luyện phỏng vấn
           </button>
         </div>
       </div>
@@ -928,7 +928,7 @@
     // Update title/desc
     const title = document.getElementById('checklist-title');
     const desc = document.getElementById('checklist-desc');
-    if (title) title.textContent = '✅ Checklist cá nhân hoá';
+    if (title) title.textContent = ' Checklist cá nhân hoá';
     if (desc) desc.textContent = `Hệ thống đã phân tích hồ sơ và tạo checklist gồm ${checklist.totalItems} giấy tờ dành riêng cho bạn.`;
   }
 
@@ -975,9 +975,9 @@
 
   function renderItem(item) {
     const statusIcons = {
-      pending: '⬜',
-      in_progress: '🔄',
-      completed: '✅',
+      pending: '',
+      in_progress: '',
+      completed: '',
       not_applicable: '➖'
     };
     const statusLabels = {
@@ -989,12 +989,12 @@
     const badge = item.required
       ? '<span class="cl-badge cl-badge-required">Bắt buộc</span>'
       : '<span class="cl-badge cl-badge-recommended">Khuyến khích</span>';
-    const aiBadge = item.hasAiAssist ? '<span class="cl-badge cl-badge-ai">🤖 AI</span>' : '';
-    const warningHtml = item.warning ? `<div class="cl-item-warning">⚠️ ${escapeHtml(item.warning)}</div>` : '';
-    const linkHtml = item.link ? `<a href="${escapeHtml(item.link)}" target="_blank" rel="noopener" class="cl-item-link">🔗 ${escapeHtml(item.link)}</a>` : '';
+    const aiBadge = item.hasAiAssist ? '<span class="cl-badge cl-badge-ai"> AI</span>' : '';
+    const warningHtml = item.warning ? `<div class="cl-item-warning">⚠ ${escapeHtml(item.warning)}</div>` : '';
+    const linkHtml = item.link ? `<a href="${escapeHtml(item.link)}" target="_blank" rel="noopener" class="cl-item-link"> ${escapeHtml(item.link)}</a>` : '';
 
     // Document status: ready_status: 'not_ready' | 'ready' | 'translated' | 'notarized'
-    const docStatusLabels = { not_ready: 'Chưa có', ready: 'Đã có', translated: 'Đã dịch', notarized: '✅ Sẵn sàng' };
+    const docStatusLabels = { not_ready: 'Chưa có', ready: 'Đã có', translated: 'Đã dịch', notarized: ' Sẵn sàng' };
     const docStatus = item.docStatus || 'not_ready';
     const hasFile = item.fileUrl ? true : false;
     const isWarning = item.documentType === 'general_warning'; // ALERT items — không cần document tracking
@@ -1015,21 +1015,21 @@
           </div>
           <div class="cl-doc-upload-row">
             <button type="button" class="cl-doc-upload-btn btn btn-sm ${hasFile ? 'btn-outline' : 'btn-primary'}" data-item-id="${item.id}">
-              ${hasFile ? '📎 Đã upload' : '📤 Upload file'}
+              ${hasFile ? ' Đã upload' : ' Upload file'}
             </button>
             <input type="file" class="cl-doc-file-input" data-item-id="${item.id}" style="display:none" accept="image/*,.pdf,.doc,.docx">
-            ${hasFile ? `<span class="cl-doc-filename">📄 ${escapeHtml(item.fileName || '')}</span>` : ''}
+            ${hasFile ? `<span class="cl-doc-filename"> ${escapeHtml(item.fileName || '')}</span>` : ''}
             ${hasFile && docStatus === 'ready' ? `
               <button type="button" class="cl-doc-quick-btn btn btn-sm btn-outline" onclick="window.clMarkTranslated('${item.id}')">
-                🔄 Đã dịch thuật xong
+                 Đã dịch thuật xong
               </button>
               <button type="button" class="cl-doc-quick-btn btn btn-sm btn-success" onclick="window.clMarkReady('${item.id}')">
-                ✅ Sẵn sàng luôn
+                 Sẵn sàng luôn
               </button>
             ` : ''}
             ${hasFile && docStatus === 'translated' ? `
               <button type="button" class="cl-doc-quick-btn btn btn-sm btn-success" onclick="window.clMarkReady('${item.id}')">
-                ✅ Đánh dấu sẵn sàng
+                 Đánh dấu sẵn sàng
               </button>
             ` : ''}
           </div>
@@ -1038,13 +1038,13 @@
     return `
       <div class="cl-item ${item.status === 'completed' ? 'cl-item-done' : ''} ${hasFile ? 'cl-item-has-file' : ''}" data-item-id="${item.id}">
         <div class="cl-item-head">
-          <div class="cl-item-icon">${statusIcons[item.status] || '⬜'}</div>
+          <div class="cl-item-icon">${statusIcons[item.status] || ''}</div>
           <div class="cl-item-info">
             <div class="cl-item-name">${escapeHtml(item.name)} ${badge} ${aiBadge}</div>
             <div class="cl-item-desc">${escapeHtml(item.description)}</div>
             ${warningHtml}
             ${linkHtml}
-            ${item.source === 'school' ? '<div class="cl-item-source">🏫 Trường Hàn cấp — theo dõi trạng thái</div>' : ''}
+            ${item.source === 'school' ? '<div class="cl-item-source"> Trường Hàn cấp — theo dõi trạng thái</div>' : ''}
           </div>
           <div class="cl-item-actions">
             <select class="cl-item-status" data-item-id="${item.id}">
@@ -1202,7 +1202,7 @@
     overlay.innerHTML = `
       <div class="cl-ai-modal cl-ai-modal-wide">
         <div class="cl-ai-modal-header">
-          <h3>🤖 AI hỗ trợ soạn thảo</h3>
+          <h3> AI hỗ trợ soạn thảo</h3>
           <button type="button" class="cl-ai-close" onclick="this.closest('.cl-ai-overlay').remove()">&times;</button>
         </div>
         <div class="cl-ai-modal-body">
@@ -1232,13 +1232,13 @@
 
           <!-- Step 4: Result -->
           <div id="cl-ai-result" class="cl-ai-result" style="display:none">
-            <h4>📝 Kết quả:</h4>
+            <h4> Kết quả:</h4>
             <div id="cl-ai-result-text" class="cl-ai-result-text" contenteditable="true"></div>
             <div class="cl-ai-result-actions">
-              <button type="button" class="btn btn-primary btn-sm" onclick="window.clCopyAIDraft()">📋 Copy</button>
-              <button type="button" class="btn btn-outline btn-sm" onclick="window.clDownloadAIDraft()">📥 Tải xuống</button>
-              <button type="button" class="btn btn-outline btn-sm" onclick="window.clRegenerateAIDraft()">🔄 Tạo lại</button>
-              <button type="button" class="btn btn-outline btn-sm" onclick="window.clSaveAIDraft()">💾 Lưu</button>
+              <button type="button" class="btn btn-primary btn-sm" onclick="window.clCopyAIDraft()"> Copy</button>
+              <button type="button" class="btn btn-outline btn-sm" onclick="window.clDownloadAIDraft()"> Tải xuống</button>
+              <button type="button" class="btn btn-outline btn-sm" onclick="window.clRegenerateAIDraft()"> Tạo lại</button>
+              <button type="button" class="btn btn-outline btn-sm" onclick="window.clSaveAIDraft()"> Lưu</button>
               <button type="button" class="btn btn-outline btn-sm" onclick="window.clCloseAIDraft()">Đóng</button>
             </div>
           </div>
@@ -1276,7 +1276,7 @@
       const saved = window._clFormAnswers[s.type] || {};
       formContent.innerHTML = `
         <div class="sp-form">
-          <h4>📝 Soạn Study Plan cá nhân hoá</h4>
+          <h4> Soạn Study Plan cá nhân hoá</h4>
           <p class="cl-form-desc">Trả lời ${totalQ} câu hỏi để AI có đủ thông tin viết Study Plan thuyết phục. 
           Study Plan càng chi tiết, càng dễ đậu visa!</p>
           
@@ -1290,7 +1290,7 @@
           ${questions.map((q, i) => `
             <div class="sp-question" data-qid="${q.id}">
               <label class="sp-question-label">${q.label}</label>
-              <p class="sp-question-hint">💡 ${escapeHtml(q.hint)}</p>
+              <p class="sp-question-hint"> ${escapeHtml(q.hint)}</p>
               <textarea class="sp-question-input" id="sp-${q.id}" data-key="${q.key}" rows="3" 
                 placeholder="Nhập câu trả lời của bạn..."
                 oninput="window.clTrackSPAnswer()">${escapeHtml(saved[q.key] || '')}</textarea>
@@ -1299,10 +1299,10 @@
 
           <div class="sp-actions">
             <button type="button" class="btn btn-primary btn-lg" onclick="window.clSubmitStudyPlan()">
-              🤖 Tạo Study Plan từ câu trả lời
+               Tạo Study Plan từ câu trả lời
             </button>
             <button type="button" class="btn btn-outline" onclick="window.clQuickGenerate()">
-              ⚡ Tạo nhanh (bỏ qua câu hỏi)
+               Tạo nhanh (bỏ qua câu hỏi)
             </button>
           </div>
         </div>
@@ -1312,7 +1312,7 @@
       // Gap or Rejection: show simple form
       formContent.innerHTML = `
         <div class="sp-form">
-          <h4>📝 ${escapeHtml(s.title)}</h4>
+          <h4> ${escapeHtml(s.title)}</h4>
           <p class="cl-form-desc">${escapeHtml(s.description)}</p>
           
           <div class="sp-question">
@@ -1323,7 +1323,7 @@
 
           <div class="sp-actions">
             <button type="button" class="btn btn-primary btn-lg" onclick="window.clSubmitSimple()">
-              🤖 Soạn ngay
+               Soạn ngay
             </button>
           </div>
         </div>
@@ -1427,7 +1427,7 @@
           saveData();
         }
         
-        toast('✅ Đã tạo ' + (type === 'study_plan' ? 'Study Plan' : 'bản giải trình') + ' thành công!');
+        toast(' Đã tạo ' + (type === 'study_plan' ? 'Study Plan' : 'bản giải trình') + ' thành công!');
       } else {
         if (resultText) resultText.textContent = '❌ ' + (data.error || 'Lỗi kết nối AI, vui lòng thử lại sau.');
       }
@@ -1441,7 +1441,7 @@
   window.clCopyAIDraft = function() {
     if (window._clCurrentDraft) {
       navigator.clipboard.writeText(window._clCurrentDraft);
-      toast('📋 Đã copy vào clipboard!');
+      toast(' Đã copy vào clipboard!');
     }
   };
 
@@ -1455,7 +1455,7 @@
     a.download = type + '-' + new Date().toISOString().split('T')[0] + '.txt';
     a.click();
     URL.revokeObjectURL(url);
-    toast('📥 Đã tải file!');
+    toast(' Đã tải file!');
   };
 
   window.clSaveAIDraft = function() {
@@ -1465,7 +1465,7 @@
       if (!checklist._aiDrafts) checklist._aiDrafts = {};
       checklist._aiDrafts[window._clCurrentType] = window._clCurrentDraft;
       saveData();
-      toast('💾 Đã lưu bản nháp!');
+      toast(' Đã lưu bản nháp!');
     }
   };
 
@@ -1491,7 +1491,7 @@
     overlay.innerHTML = `
       <div class="cl-ai-modal cl-ai-modal-wide" style="max-height:90vh">
         <div class="cl-ai-modal-header">
-          <h3>📝 Đánh giá Study Plan</h3>
+          <h3> Đánh giá Study Plan</h3>
           <button type="button" class="cl-ai-close" onclick="this.closest('.cl-ai-overlay').remove()">&times;</button>
         </div>
         <div class="cl-ai-modal-body">
@@ -1499,33 +1499,33 @@
           <div id="spr-step-input">
             <p class="cl-form-desc">Dán Study Plan bạn đã viết (hoặc AI đã tạo) vào đây. Hệ thống sẽ chấm điểm và gợi ý cải thiện.</p>
             <div class="spr-field">
-              <label class="spr-label">📄 Study Plan của bạn</label>
+              <label class="spr-label"> Study Plan của bạn</label>
               <textarea id="spr-text" class="spr-textarea" rows="10" placeholder="Paste Study Plan của bạn vào đây... (tối thiểu 50 ký tự)"></textarea>
             </div>
             <div class="spr-field">
-              <label class="spr-label">🛂 Loại visa</label>
+              <label class="spr-label"> Loại visa</label>
               <select id="spr-visa-type" class="spr-select">
                 <option value="D-4-1">D-4-1 (Học tiếng Hàn)</option>
                 <option value="D-2">D-2 (Đại học chính quy)</option>
               </select>
             </div>
             <div class="spr-info-box">
-              <strong>💡 Mẹo:</strong> Nếu bạn đã khai báo hồ sơ ở bước trước, thông tin cá nhân sẽ được tự động đính kèm
+              <strong> Mẹo:</strong> Nếu bạn đã khai báo hồ sơ ở bước trước, thông tin cá nhân sẽ được tự động đính kèm
               để AI đánh giá chính xác hơn. Kết quả sẽ bao gồm điểm số, nhận xét và gợi ý cải thiện.
             </div>
             <div class="spr-actions">
               <button type="button" class="btn btn-primary btn-lg" onclick="window.clSubmitReview()">
-                🤖 Đánh giá ngay
+                 Đánh giá ngay
               </button>
               <button type="button" class="btn btn-outline" onclick="window.clLoadSavedStudyPlan()">
-                📂 Dùng Study Plan đã lưu
+                 Dùng Study Plan đã lưu
               </button>
             </div>
           </div>
 
           <!-- Loading step -->
           <div id="spr-loading" class="cl-ai-loading" style="display:none">
-            <div class="spinner"></div> <span>🧠 AI đang phân tích Study Plan...</span>
+            <div class="spinner"></div> <span> AI đang phân tích Study Plan...</span>
           </div>
 
           <!-- Result step -->
@@ -1550,28 +1550,28 @@
             <!-- Strengths & Weaknesses -->
             <div class="spr-grid-2">
               <div class="spr-section spr-strengths">
-                <h4>✅ Điểm mạnh</h4>
+                <h4> Điểm mạnh</h4>
                 <ul id="spr-strengths"></ul>
               </div>
               <div class="spr-section spr-weaknesses">
-                <h4>⚠️ Điểm yếu</h4>
+                <h4>⚠ Điểm yếu</h4>
                 <ul id="spr-weaknesses"></ul>
               </div>
             </div>
 
             <!-- Suggestions -->
             <div class="spr-section spr-suggestions">
-              <h4>💡 Gợi ý cải thiện</h4>
+              <h4> Gợi ý cải thiện</h4>
               <ol id="spr-suggestions"></ol>
             </div>
 
             <!-- Actions -->
             <div class="spr-result-actions">
               <button type="button" class="btn btn-outline" onclick="window.clRegenerateStudyPlan()">
-                🔄 Tạo lại từ góp ý
+                 Tạo lại từ góp ý
               </button>
               <button type="button" class="btn btn-outline" onclick="window.clCopyReviewResult()">
-                📋 Copy kết quả
+                 Copy kết quả
               </button>
               <button type="button" class="btn btn-outline" onclick="window.clCloseReviewer(this)">
                 Đóng
@@ -1595,13 +1595,13 @@
 
   window.clLoadSavedStudyPlan = function() {
     if (!checklist || !checklist._aiDrafts || !checklist._aiDrafts.study_plan) {
-      toast('⚠️ Chưa có Study Plan nào được lưu. Hãy dùng AI để tạo Study Plan trước.');
+      toast('⚠ Chưa có Study Plan nào được lưu. Hãy dùng AI để tạo Study Plan trước.');
       return;
     }
     var textarea = document.getElementById('spr-text');
     if (textarea) {
       textarea.value = checklist._aiDrafts.study_plan;
-      toast('📄 Đã load Study Plan đã lưu!');
+      toast(' Đã load Study Plan đã lưu!');
     }
   };
 
@@ -1612,7 +1612,7 @@
     var visaType = visaTypeEl ? visaTypeEl.value : 'D-4-1';
 
     if (!studyPlan || studyPlan.length < 50) {
-      toast('⚠️ Vui lòng nhập Study Plan (tối thiểu 50 ký tự).');
+      toast('⚠ Vui lòng nhập Study Plan (tối thiểu 50 ký tự).');
       return;
     }
 
@@ -1681,10 +1681,10 @@
     if (circleFill) circleFill.setAttribute('stroke', color);
 
     if (overallLabel) {
-      if (score >= 8) overallLabel.textContent = '🌟 Tuyệt vời!';
-      else if (score >= 6) overallLabel.textContent = '👍 Khá tốt, có thể cải thiện thêm';
-      else if (score >= 4) overallLabel.textContent = '📝 Cần cải thiện nhiều';
-      else overallLabel.textContent = '🔴 Cần viết lại';
+      if (score >= 8) overallLabel.textContent = ' Tuyệt vời!';
+      else if (score >= 6) overallLabel.textContent = ' Khá tốt, có thể cải thiện thêm';
+      else if (score >= 4) overallLabel.textContent = ' Cần cải thiện nhiều';
+      else overallLabel.textContent = ' Cần viết lại';
     }
     if (overallDesc) {
       overallDesc.textContent = 'Study Plan của bạn đạt ' + score + '/10 điểm. Dưới đây là chi tiết từng tiêu chí và gợi ý cải thiện.';
@@ -1709,7 +1709,7 @@
               <div class="spr-criterion-fill" style="width:${cPercent}%;background:${cColor}"></div>
             </div>
             <p class="spr-criterion-comment">${escapeHtml(c.comment || '')}</p>
-            ${c.suggestion ? '<div class="spr-criterion-suggestion">💡 <strong>Gợi ý:</strong> ' + escapeHtml(c.suggestion) + '</div>' : ''}
+            ${c.suggestion ? '<div class="spr-criterion-suggestion"> <strong>Gợi ý:</strong> ' + escapeHtml(c.suggestion) + '</div>' : ''}
           </div>
         `;
       }).join('');
@@ -1744,7 +1744,7 @@
 
   window.clRegenerateStudyPlan = async function() {
     if (!_spReviewerData || !_spReviewerData.studyPlan || !_spReviewerData.review) {
-      toast('⚠️ Chưa có kết quả đánh giá. Hãy đánh giá trước.');
+      toast('⚠ Chưa có kết quả đánh giá. Hãy đánh giá trước.');
       return;
     }
 
@@ -1785,17 +1785,17 @@
         var overlay = document.querySelector('.cl-ai-overlay');
         var draftHtml = document.createElement('div');
         draftHtml.style.cssText = 'margin-top:1rem;padding:1rem;border:2px solid #059669;border-radius:12px;background:#f0fdf4;';
-        draftHtml.innerHTML = '<h4 style="color:#059669;margin:0 0 0.5rem">✅ Study Plan da duoc cai thien!</h4>' +
+        draftHtml.innerHTML = '<h4 style="color:#059669;margin:0 0 0.5rem"> Study Plan da duoc cai thien!</h4>' +
           '<div style="font-size:.9rem;line-height:1.6;white-space:pre-wrap;max-height:400px;overflow-y:auto;margin-bottom:0.75rem">' + escapeHtml(data.draft) + '</div>' +
           '<div style="display:flex;gap:0.5rem">' +
-          '<button type="button" class="btn btn-primary btn-sm" onclick="var t=this.parentElement.previousElementSibling.textContent;navigator.clipboard.writeText(t);toast(\'Da copy!\')">📋 Copy</button>' +
+          '<button type="button" class="btn btn-primary btn-sm" onclick="var t=this.parentElement.previousElementSibling.textContent;navigator.clipboard.writeText(t);toast(\'Da copy!\')"> Copy</button>' +
           '<button type="button" class="btn btn-outline btn-sm" onclick="this.closest(\'[style]\').remove()">Đóng</button>' +
           '</div>';
 
         var targetEl = document.querySelector('#spr-result .spr-result-actions');
         if (targetEl) {
           targetEl.parentElement.insertBefore(draftHtml, targetEl);
-          toast('✅ Da tao Study Plan cai thien!');
+          toast(' Da tao Study Plan cai thien!');
         }
       } else {
         toast('❌ ' + (data.error || 'Khong the tao lai.'));
@@ -1810,7 +1810,7 @@
 
   window.clCopyReviewResult = function() {
     if (!_spReviewerData || !_spReviewerData.review) {
-      toast('⚠️ Chua co ket qua.');
+      toast('⚠ Chua co ket qua.');
       return;
     }
     var r = _spReviewerData.review;
@@ -1829,7 +1829,7 @@
     if (r.suggestions) r.suggestions.forEach(function(s) { text += '• ' + s + '\n'; });
 
     navigator.clipboard.writeText(text);
-    toast('📋 Da copy ket qua danh gia!');
+    toast(' Da copy ket qua danh gia!');
   };
 
   window.clCloseReviewer = function(btn) {
@@ -1873,7 +1873,7 @@
     });
 
     const statusColors = { pending: '#94a3b8', in_progress: '#f59e0b', completed: '#22c55e', not_applicable: '#94a3b8' };
-    const statusLabels = { pending: '⬜ Chưa làm', in_progress: '🔄 Đang làm', completed: '✅ Hoàn thành', not_applicable: '➖ Không áp dụng' };
+    const statusLabels = { pending: ' Chưa làm', in_progress: ' Đang làm', completed: ' Hoàn thành', not_applicable: '➖ Không áp dụng' };
 
     let modulesHtml = '';
     for (let mi = 0; mi < checklist.modules.length; mi++) {
@@ -1882,15 +1882,15 @@
       for (let ii = 0; ii < mod.items.length; ii++) {
         const item = mod.items[ii];
         const statusColor = statusColors[item.status] || '#94a3b8';
-        const statusLabel = statusLabels[item.status] || '⬜ Chưa làm';
+        const statusLabel = statusLabels[item.status] || ' Chưa làm';
         const badgeHtml = item.required
           ? '<span style="display:inline-block;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:700;background:#fee2e2;color:#991b1b;margin-right:6px;">BẮT BUỘC</span>'
           : '<span style="display:inline-block;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:700;background:#fef3c7;color:#92400e;margin-right:6px;">KK</span>';
         const noteHtml = item.note
-          ? '<div style="font-size:10px;color:#64748b;margin-top:3px;padding-left:20px;">📝 ' + escapeHtml(item.note) + '</div>'
+          ? '<div style="font-size:10px;color:#64748b;margin-top:3px;padding-left:20px;"> ' + escapeHtml(item.note) + '</div>'
           : '';
         const warningHtml = item.warning
-          ? '<div style="font-size:10px;color:#92400e;background:#fef3c7;padding:4px 8px;border-radius:6px;margin-top:4px;">⚠️ ' + escapeHtml(item.warning) + '</div>'
+          ? '<div style="font-size:10px;color:#92400e;background:#fef3c7;padding:4px 8px;border-radius:6px;margin-top:4px;">⚠ ' + escapeHtml(item.warning) + '</div>'
           : '';
         itemsHtml += '<tr style="border-bottom:1px solid #e2e8f0;">' +
           '<td style="padding:7px 10px;vertical-align:top;width:24px;text-align:center;">' +
@@ -1907,7 +1907,7 @@
       }
       modulesHtml += '<div style="margin-bottom:16px;">' +
         '<div style="background:linear-gradient(135deg,#1e3a5f,#2d5a87);color:#fff;padding:10px 14px;border-radius:8px 8px 0 0;font-size:13px;font-weight:700;">' +
-          (mod.icon || '📄') + ' ' + escapeHtml(mod.name) +
+          (mod.icon || '') + ' ' + escapeHtml(mod.name) +
           ' <span style="font-weight:400;opacity:0.8;font-size:11px;">(' + mod.items.filter(function(it) { return it.status === 'completed'; }).length + '/' + mod.items.length + ')</span>' +
         '</div>' +
         '<table style="width:100%;border-collapse:collapse;background:#fff;border:1px solid #e2e8f0;border-top:0;border-radius:0 0 8px 8px;">' +
@@ -1920,7 +1920,7 @@
     let profileHtml = '';
     if (profile.fullName || profile.phone || profile.email) {
       profileHtml = '<div style="margin-bottom:16px;padding:12px 14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;">' +
-        '<div style="font-size:11px;font-weight:700;color:#475569;margin-bottom:6px;">👤 Hồ sơ</div>' +
+        '<div style="font-size:11px;font-weight:700;color:#475569;margin-bottom:6px;"> Hồ sơ</div>' +
         '<table style="width:100%;border-collapse:collapse;font-size:11px;">';
       if (profile.fullName) profileHtml += '<tr><td style="padding:2px 8px;color:#64748b;width:100px;">Họ tên</td><td style="padding:2px 8px;font-weight:600;">' + escapeHtml(profile.fullName) + '</td></tr>';
       if (profile.phone) profileHtml += '<tr><td style="padding:2px 8px;color:#64748b;">Điện thoại</td><td style="padding:2px 8px;">' + escapeHtml(profile.phone) + '</td></tr>';
@@ -1942,7 +1942,7 @@
       '</style>' +
       '</head><body>' +
       '<div class="pdf-header">' +
-        '<h1>📋 Checklist cá nhân hoá</h1>' +
+        '<h1> Checklist cá nhân hoá</h1>' +
         '<p>' + escapeHtml(visaType) + ' — ' + dateStr + '</p>' +
         '<div class="progress-pill">' +
           completedItems + '/' + totalItems + ' hoàn thành · ' + progress + '%' +
@@ -1968,7 +1968,7 @@
     _pdfLoading = true;
 
     const progress = window.calculateChecklistProgress(checklist);
-    toast('🔄 Đang tạo PDF...');
+    toast(' Đang tạo PDF...');
     let container = null;
 
     try {
@@ -1994,13 +1994,13 @@
       };
 
       await window.html2pdf().set(opt).from(container).save();
-      toast('✅ Đã tải PDF — ' + opt.filename);
+      toast(' Đã tải PDF — ' + opt.filename);
     } catch (err) {
       console.error('PDF export error:', err);
       toast('❌ Lỗi tạo PDF: ' + (err.message || 'Không xác định'));
 
       // Fallback: copy text to clipboard
-      let fallbackText = '📋 CHECKLIST CÁ NHÂN HOÁ\n';
+      let fallbackText = ' CHECKLIST CÁ NHÂN HOÁ\n';
       fallbackText += '━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
       fallbackText += 'Loại visa: ' + checklist.name + '\n';
       fallbackText += 'Tổng tiến độ: ' + progress + '%\n';
@@ -2011,9 +2011,9 @@
         fallbackText += '─'.repeat(30) + '\n';
         for (let ii = 0; ii < mod.items.length; ii++) {
           const item = mod.items[ii];
-          const sMap = { pending: '⬜', in_progress: '🔄', completed: '✅', not_applicable: '➖' };
-          fallbackText += (sMap[item.status] || '⬜') + ' ' + (item.required ? '[BẮT BUỘC]' : '[KK]') + ' ' + item.name + '\n';
-          if (item.note) fallbackText += '   📝 ' + item.note + '\n';
+          const sMap = { pending: '', in_progress: '', completed: '', not_applicable: '➖' };
+          fallbackText += (sMap[item.status] || '') + ' ' + (item.required ? '[BẮT BUỘC]' : '[KK]') + ' ' + item.name + '\n';
+          if (item.note) fallbackText += '    ' + item.note + '\n';
         }
       }
       fallbackText += '\n━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
@@ -2022,7 +2022,7 @@
 
       try {
         await navigator.clipboard.writeText(fallbackText);
-        toast('📋 Đã copy nội dung vào clipboard (thay thế PDF)');
+        toast(' Đã copy nội dung vào clipboard (thay thế PDF)');
       } catch (e) {
         const blob = new Blob([fallbackText], { type: 'text/plain;charset=utf-8' });
         const url = URL.createObjectURL(blob);
@@ -2031,7 +2031,7 @@
         a.download = 'checklist-' + (profile.visaType || 'visa') + '.txt';
         a.click();
         URL.revokeObjectURL(url);
-        toast('📋 Đã tải file text thay thế');
+        toast(' Đã tải file text thay thế');
       }
     } finally {
       // Clean up off-screen container
@@ -2160,7 +2160,7 @@
     // Check login
     var token = getStudentToken();
     if (!token) {
-      toast('🔒 Vui lòng đăng nhập để sử dụng nhắc nhở!');
+      toast(' Vui lòng đăng nhập để sử dụng nhắc nhở!');
       return;
     }
 
@@ -2193,7 +2193,7 @@
     }
 
     if (reminderItems.length === 0) {
-      toast('✅ Không có mục nào cần tạo nhắc nhở!');
+      toast(' Không có mục nào cần tạo nhắc nhở!');
       return;
     }
 
@@ -2203,7 +2203,7 @@
     overlay.innerHTML = `
       <div class="cl-ai-modal cl-ai-modal-wide">
         <div class="cl-ai-modal-header">
-          <h3>⏰ Tạo nhắc nhở từ checklist</h3>
+          <h3> Tạo nhắc nhở từ checklist</h3>
           <button type="button" class="cl-ai-close" onclick="this.closest('.cl-ai-overlay').remove()">&times;</button>
         </div>
         <div class="cl-ai-modal-body">
@@ -2216,7 +2216,7 @@
           </div>
           <div id="rm-item-list" style="max-height:350px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;">
             ${reminderItems.map(function(item, idx) {
-              var remLabels = { document: '📄 Giấy tờ', submission: '📨 Nộp hồ sơ', interview: '🎤 Phỏng vấn', health_check: '🏥 Khám sức khoẻ', visa_appointment: '🛂 Hẹn visa', other: '📌 Khác' };
+              var remLabels = { document: ' Giấy tờ', submission: ' Nộp hồ sơ', interview: ' Phỏng vấn', health_check: ' Khám sức khoẻ', visa_appointment: ' Hẹn visa', other: ' Khác' };
               var label = remLabels[item.remType] || item.remType;
               return '<div class="rm-item" data-idx="' + idx + '" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;background:#f8fafc;">' +
                 '<input type="checkbox" class="rm-checkbox" checked data-idx="' + idx + '" style="width:18px;height:18px;accent-color:#1e3a5f;">' +
@@ -2230,7 +2230,7 @@
           </div>
           <div style="display:flex;gap:10px;margin-top:1rem;">
             <button type="button" class="btn btn-primary btn-lg" id="rm-create-btn" onclick="window._rmCreateAll()">
-              ✨ Tạo ${reminderItems.length} nhắc nhở
+               Tạo ${reminderItems.length} nhắc nhở
             </button>
             <button type="button" class="btn btn-outline" onclick="this.closest('.cl-ai-overlay').remove()">Huỷ</button>
           </div>
@@ -2277,9 +2277,9 @@
     });
 
     if (selected.length === 0) {
-      toast('⚠️ Chưa chọn mục nào.');
+      toast('⚠ Chưa chọn mục nào.');
       btn.disabled = false;
-      btn.textContent = '✨ Tạo nhắc nhở';
+      btn.textContent = ' Tạo nhắc nhở';
       return;
     }
 
@@ -2321,7 +2321,7 @@
     var overlay = document.querySelector('.cl-ai-overlay');
     if (overlay) overlay.remove();
 
-    toast('✅ Đã tạo ' + success + '/' + selected.length + ' nhắc nhở' + (failed > 0 ? ' (' + failed + ' lỗi)' : ''));
+    toast(' Đã tạo ' + success + '/' + selected.length + ' nhắc nhở' + (failed > 0 ? ' (' + failed + ' lỗi)' : ''));
   };
 
   // ══════════════════════════════════════════════
@@ -2449,7 +2449,7 @@
     saveData();
     renderModule(getCurrentModuleIdx());
     updateProgressFromDocs();
-    toast('📄 Đã đánh dấu "Đã dịch thuật" ✓');
+    toast(' Đã đánh dấu "Đã dịch thuật" ✓');
     return true;
   };
 
@@ -2468,7 +2468,7 @@
     saveData();
     renderModule(getCurrentModuleIdx());
     updateProgressFromDocs();
-    toast('✅ Giấy tờ đã hoàn thành (Sẵn sàng)!');
+    toast(' Giấy tờ đã hoàn thành (Sẵn sàng)!');
     return true;
   };
 
@@ -2520,9 +2520,9 @@
           renderModule(getCurrentModuleIdx());
           updateProgressFromDocs();
           if (data.warning) {
-            toast('⚠️ ' + data.warning);
+            toast('⚠ ' + data.warning);
           } else {
-            toast('✅ Upload thành công: ' + escapeHtml(file.name));
+            toast(' Upload thành công: ' + escapeHtml(file.name));
           }
         } else {
           toast('❌ Upload thất bại: ' + (data.error || 'Lỗi không xác định'));

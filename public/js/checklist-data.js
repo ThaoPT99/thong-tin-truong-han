@@ -15,7 +15,7 @@ window.CHECKLIST_DATA = {
       {
         id: 'A1',
         name: 'Giấy tờ hành chính cá nhân',
-        icon: '🪪',
+        icon: '',
         description: 'Giấy tờ tùy thân cơ bản — ai cũng cần chuẩn bị.',
         required: true,
         items: [
@@ -73,7 +73,7 @@ window.CHECKLIST_DATA = {
             description: 'Khám tại bệnh viện ĐSQ chỉ định. Hà Nội: BV Phổi Trung ương. TP.HCM: BV Chợ Rẫy, BV Phạm Ngọc Thạch, BV Thống Nhất. Giấy có giá trị 3 tháng.',
             documentType: 'tb_test',
             required: true,
-            warning: '⚠️ Chỉ khám tại bệnh viện được Đại sứ quán chỉ định. Khám sai bệnh viện sẽ không được chấp nhận!',
+            warning: '⚠ Chỉ khám tại bệnh viện được Đại sứ quán chỉ định. Khám sai bệnh viện sẽ không được chấp nhận!',
             rule: null
           },
           {
@@ -91,7 +91,7 @@ window.CHECKLIST_DATA = {
       {
         id: 'A2',
         name: 'Giấy tờ học vấn',
-        icon: '🎓',
+        icon: '',
         description: 'Chuẩn bị theo trình độ học vấn cao nhất của bạn.',
         required: true,
         items: [
@@ -142,7 +142,7 @@ window.CHECKLIST_DATA = {
       {
         id: 'A3',
         name: 'Giấy tờ từ trường Hàn Quốc',
-        icon: '🏫',
+        icon: '',
         description: 'Những giấy tờ này do trường Hàn Quốc cấp — bạn chỉ cần theo dõi trạng thái.',
         required: true,
         items: [
@@ -170,7 +170,7 @@ window.CHECKLIST_DATA = {
       {
         id: 'A4',
         name: 'Chứng minh tài chính',
-        icon: '💰',
+        icon: '',
         description: 'Quan trọng nhất trong bộ hồ sơ — cần chuẩn bị kỹ.',
         required: true,
         items: [
@@ -181,7 +181,7 @@ window.CHECKLIST_DATA = {
             documentType: 'savings_book',
             required: true,
             rule: null,
-            warning: '⚠️ Sổ tiết kiệm cần mở TRƯỚC 3-6 THÁNG (không phải 1 tháng!). Không dùng sổ online — chỉ chấp nhận sổ mở tại quầy. Kèm Giấy xác nhận số dư cấp trong vòng 30 ngày.'
+            warning: '⚠ Sổ tiết kiệm cần mở TRƯỚC 3-6 THÁNG (không phải 1 tháng!). Không dùng sổ online — chỉ chấp nhận sổ mở tại quầy. Kèm Giấy xác nhận số dư cấp trong vòng 30 ngày.'
           },
           {
             id: 'A4-2',
@@ -190,7 +190,7 @@ window.CHECKLIST_DATA = {
             documentType: 'bank_statement',
             required: true,
             rule: null,
-            warning: '⚠️ Tuyệt đối tránh: nạp 1 lần lớn vào tài khoản rồi lấy sao kê ngay. ĐSQ sẽ nghi ngờ tiền đi mượn. Duy trì số dư ổn định ít nhất 3-6 tháng!'
+            warning: '⚠ Tuyệt đối tránh: nạp 1 lần lớn vào tài khoản rồi lấy sao kê ngay. ĐSQ sẽ nghi ngờ tiền đi mượn. Duy trì số dư ổn định ít nhất 3-6 tháng!'
           },
           {
             id: 'A4-3',
@@ -250,7 +250,7 @@ window.CHECKLIST_DATA = {
             required: false,
             rule: null,
             recommended: true,
-            warning: '💡 Sổ đóng băng K-Study là điểm cộng lớn cho hồ sơ. Nếu trường bạn yêu cầu, đây là bắt buộc.'
+            warning: ' Sổ đóng băng K-Study là điểm cộng lớn cho hồ sơ. Nếu trường bạn yêu cầu, đây là bắt buộc.'
           }
         ]
       },
@@ -258,7 +258,7 @@ window.CHECKLIST_DATA = {
       {
         id: 'A5',
         name: 'Study Plan / Personal Statement',
-        icon: '✍️',
+        icon: '✍',
         description: 'Phần quan trọng nhất để thể hiện mục đích du học thật.',
         required: true,
         items: [
@@ -269,7 +269,7 @@ window.CHECKLIST_DATA = {
             documentType: 'study_plan',
             required: true,
             hasAiAssist: true,
-            warning: '🚨 Study Plan CHUNG CHUNG là 1 trong những lý do trượt visa phổ biến nhất! Phải nêu rõ: tại sao chọn trường này? Học xong định làm gì tại Việt Nam?',
+            warning: ' Study Plan CHUNG CHUNG là 1 trong những lý do trượt visa phổ biến nhất! Phải nêu rõ: tại sao chọn trường này? Học xong định làm gì tại Việt Nam?',
             rule: null
           },
           {
@@ -288,7 +288,7 @@ window.CHECKLIST_DATA = {
       {
         id: 'A6',
         name: 'Nộp hồ sơ & Theo dõi',
-        icon: '📬',
+        icon: '',
         description: 'Bước cuối cùng — nộp hồ sơ tại ĐSQ/LSQ và theo dõi kết quả.',
         required: true,
         items: [
@@ -307,7 +307,7 @@ window.CHECKLIST_DATA = {
             description: 'Bắt buộc khám tại bệnh viện ĐSQ chỉ định. Hà Nội: BV Phổi Trung ương. TP.HCM: BV Chợ Rẫy, BV Phạm Ngọc Thạch, BV Thống Nhất. Có giá trị 3 tháng. Mang theo CCCD gốc khi đi khám.',
             documentType: 'health_check',
             required: true,
-            warning: '⚠️ Khám SAI bệnh viện → giấy khám KHÔNG được chấp nhận. Kiểm tra danh sách mới nhất trên website KVAC trước khi đi.',
+            warning: '⚠ Khám SAI bệnh viện → giấy khám KHÔNG được chấp nhận. Kiểm tra danh sách mới nhất trên website KVAC trước khi đi.',
             rule: null
           },
           {
@@ -341,7 +341,7 @@ window.CHECKLIST_DATA = {
       {
         id: 'ALERT',
         name: 'Lưu ý quan trọng về thời hạn & quy định',
-        icon: '📌',
+        icon: '',
         description: 'Những lưu ý sống còn để tránh bị trượt visa.',
         required: true,
         items: [
@@ -355,7 +355,7 @@ window.CHECKLIST_DATA = {
           },
           {
             id: 'ALERT-2',
-            name: '🏦 Sổ tiết kiệm phải mở tại quầy',
+            name: ' Sổ tiết kiệm phải mở tại quầy',
             description: 'Đại sứ quán KHÔNG chấp nhận sổ tiết kiệm online. Bắt buộc mở trực tiếp tại quầy giao dịch ngân hàng. Yêu cầu sổ gốc + giấy xác nhận số dư cấp trong vòng 30 ngày.',
             documentType: 'general_warning',
             required: true,
@@ -363,7 +363,7 @@ window.CHECKLIST_DATA = {
           },
           {
             id: 'ALERT-3',
-            name: '📍 Không chạy vùng miền',
+            name: ' Không chạy vùng miền',
             description: 'Nếu chuyển hộ khẩu giữa Hà Nội và TP.HCM dưới 6 tháng để xin visa — rất dễ bị từ chối. Cần chứng minh cư trú thực tế.',
             documentType: 'general_warning',
             required: true,
@@ -371,7 +371,7 @@ window.CHECKLIST_DATA = {
           },
           {
             id: 'ALERT-4',
-            name: '⏸️ Trượt visa: đợi tối thiểu 3 tháng',
+            name: '⏸ Trượt visa: đợi tối thiểu 3 tháng',
             description: 'Nếu đã từng trượt visa Hàn — phải đợi ít nhất 3 tháng kể từ ngày bị từ chối mới được nộp lại. Khắc phục triệt để lý do trượt trước khi nộp mới.',
             documentType: 'general_warning',
             required: true,
@@ -379,7 +379,7 @@ window.CHECKLIST_DATA = {
           },
           {
             id: 'ALERT-5',
-            name: '🔍 Tính xác thực của hồ sơ',
+            name: ' Tính xác thực của hồ sơ',
             description: 'Giả mạo giấy tờ (bằng cấp, sổ tiết kiệm, chứng minh thu nhập) là nguyên nhân hàng đầu bị cấm nhập cảnh Hàn Quốc trong thời gian dài. Mọi giấy tờ đều được ĐSQ xác minh.',
             documentType: 'general_warning',
             required: true,
@@ -387,7 +387,7 @@ window.CHECKLIST_DATA = {
           },
           {
             id: 'ALERT-6',
-            name: '📄 Tất cả giấy tờ phải nhất quán',
+            name: ' Tất cả giấy tờ phải nhất quán',
             description: 'Kiểm tra kỹ: tên trên tất cả giấy tờ (hộ chiếu, bằng cấp, sổ TK, giấy khai sinh) phải GIỐNG NHAU tuyệt đối. Sai dù chỉ 1 ký tự cũng có thể bị từ chối. Đặc biệt kiểm tra tên đệm, dấu câu.',
             documentType: 'general_warning',
             required: true,
@@ -395,7 +395,7 @@ window.CHECKLIST_DATA = {
           },
           {
             id: 'ALERT-7',
-            name: '🏦 Sao kê ngân hàng phải thể hiện lịch sử ổn định',
+            name: ' Sao kê ngân hàng phải thể hiện lịch sử ổn định',
             description: 'KHÔNG nạp tiền "sốc" vào tài khoản ngay trước khi lấy sao kê. Giao dịch bất thường (tiền vào rồi ra ngay, nạp một lần lớn không rõ nguồn gốc) là "cờ đỏ" cho nhân viên xét duyệt. Cần duy trì số dư ổn định ít nhất 3-6 tháng.',
             documentType: 'general_warning',
             required: true,
@@ -403,7 +403,7 @@ window.CHECKLIST_DATA = {
           },
           {
             id: 'ALERT-8',
-            name: '📝 Study Plan KHÔNG được viết chung chung',
+            name: ' Study Plan KHÔNG được viết chung chung',
             description: 'Study Plan chung chung, sao chép mẫu, không thể hiện được mục đích du học thực sự là lý do hàng đầu bị trượt visa. Study Plan phải: (1) Cá nhân hoá, (2) Chỉ rõ lý do chọn trường này, (3) Kế hoạch sau khi về nước, (4) Viết bằng tiếng Hàn hoặc Anh.',
             documentType: 'general_warning',
             required: true,
@@ -411,7 +411,7 @@ window.CHECKLIST_DATA = {
           },
           {
             id: 'ALERT-9',
-            name: '📜 Hợp pháp hóa lãnh sự bắt buộc (trước 11/09/2026)',
+            name: ' Hợp pháp hóa lãnh sự bắt buộc (trước 11/09/2026)',
             description: 'Giấy tờ Việt Nam dùng cho Hàn Quốc cần 3 bước: (1) Công chứng tại Phòng Công chứng, (2) Chứng nhận tại Sở Tư pháp/Bộ Ngoại giao, (3) Hợp pháp hóa tại ĐSQ Hàn Quốc. Từ 11/09/2026, Việt Nam tham gia Công ước Apostille, quy trình sẽ đơn giản hơn.',
             documentType: 'general_warning',
             required: true,
@@ -423,8 +423,8 @@ window.CHECKLIST_DATA = {
       // Module: Dịch thuật, Công chứng & Hợp pháp hóa lãnh sự
       {
         id: 'A7',
-        name: '📜 Dịch thuật, Công chứng & Hợp pháp hóa',
-        icon: '📜',
+        name: ' Dịch thuật, Công chứng & Hợp pháp hóa',
+        icon: '',
         description: 'QUAN TRỌNG: Giấy tờ tiếng Việt cần qua quy trình này mới có giá trị tại Hàn Quốc. Thiếu bước này → hồ sơ không hợp lệ.',
         required: true,
         items: [
@@ -467,7 +467,7 @@ window.CHECKLIST_DATA = {
       {
         id: 'RISK',
         name: 'Xử lý rủi ro đặc thù',
-        icon: '⚠️',
+        icon: '⚠',
         description: 'Các giấy tờ bổ sung dựa trên tình huống cá nhân của bạn.',
         required: false, // Module chỉ hiển thị khi có ít nhất 1 item phù hợp
         items: [
@@ -568,7 +568,7 @@ window.CHECKLIST_DATA = {
       {
         id: 'B1',
         name: 'Giấy tờ hành chính',
-        icon: '🪪',
+        icon: '',
         required: true,
         items: [
           { id: 'B1-1', name: 'Đơn xin visa mẫu KSD0-2014', description: 'Tải mẫu từ website ĐSQ/LSQ.', documentType: 'visa_form', required: true, rule: null },
@@ -577,14 +577,14 @@ window.CHECKLIST_DATA = {
           { id: 'B1-4', name: 'CCCD/CMND photo', description: 'Photo rõ ràng.', documentType: 'id_card', required: true, rule: null },
           { id: 'B1-5', name: 'Giấy khai sinh', description: 'Bản sao.', documentType: 'birth_certificate', required: true, rule: null },
           { id: 'B1-6', name: 'Sổ hộ khẩu hoặc Giấy xác nhận thông tin cư trú (CT07)', description: 'Photo sổ hộ khẩu hoặc xin CT07 tại Công an phường.', documentType: 'household_registration', required: true, rule: null },
-          { id: 'B1-7', name: 'Giấy khám lao phổi (TB test)', description: 'Khám tại bệnh viện ĐSQ chỉ định. Hà Nội: BV Phổi TW. TP.HCM: BV Chợ Rẫy, BV Phạm Ngọc Thạch, BV Thống Nhất. Giá trị 3 tháng.', documentType: 'tb_test', required: true, warning: '⚠️ Chỉ khám tại bệnh viện ĐSQ chỉ định — khám sai sẽ không được chấp nhận!', rule: null },
+          { id: 'B1-7', name: 'Giấy khám lao phổi (TB test)', description: 'Khám tại bệnh viện ĐSQ chỉ định. Hà Nội: BV Phổi TW. TP.HCM: BV Chợ Rẫy, BV Phạm Ngọc Thạch, BV Thống Nhất. Giá trị 3 tháng.', documentType: 'tb_test', required: true, warning: '⚠ Chỉ khám tại bệnh viện ĐSQ chỉ định — khám sai sẽ không được chấp nhận!', rule: null },
           { id: 'B1-8', name: 'Bản sao Giấy phép kinh doanh của trường Hàn', description: 'Trường Hàn cấp, có dấu đỏ. Xin sau khi hoàn tất thủ tục.', documentType: 'school_business_registration', required: true, source: 'school', rule: null }
         ]
       },
       {
         id: 'B2',
         name: 'Giấy tờ học vấn',
-        icon: '🎓',
+        icon: '',
         required: true,
         items: [
           { id: 'B2-1', name: 'Bằng tốt nghiệp THPT', description: 'Bản gốc + dịch công chứng.', documentType: 'diploma', required: true, rule: null },
@@ -599,7 +599,7 @@ window.CHECKLIST_DATA = {
       {
         id: 'B3',
         name: 'Giấy tờ trường Hàn',
-        icon: '🏫',
+        icon: '',
         required: true,
         items: [
           { id: 'B3-1', name: 'Admission Letter / Offer Letter', description: 'Thư nhập học chính thức.', documentType: 'admission_letter', required: true, rule: null },
@@ -610,36 +610,36 @@ window.CHECKLIST_DATA = {
       {
         id: 'B4',
         name: 'Chứng minh tài chính',
-        icon: '💰',
+        icon: '',
         required: true,
         items: [
-          { id: 'B4-1', name: 'Sổ tiết kiệm (tối thiểu $18,000-$20,000)', description: '~450-500 triệu VND. D-2 yêu cầu cao hơn D-4-1. Gửi kỳ hạn 12 tháng, mở trước 3-6 tháng. Chỉ chấp nhận sổ mở tại quầy.', documentType: 'savings_book', required: true, warning: '⚠️ D-2 cần SỔ TIẾT KIỆM TỐI THIỂU $18,000-$20,000 (KHÁC với D-4-1 chỉ $10,000). Gửi trước 3-6 tháng.', rule: null },
-          { id: 'B4-2', name: 'Xác nhận số dư + sao kê ngân hàng 3 tháng', description: 'Bản gốc, cấp trong 30 ngày. Sao kê phải thể hiện lịch sử ỔN ĐỊNH, không nạp tiền sốc trước khi lấy sao kê.', documentType: 'bank_statement', required: true, warning: '⚠️ Không nạp tiền "sốc" rồi lấy sao kê ngay. Duy trì số dư ổn định 3-6 tháng!', rule: null },
+          { id: 'B4-1', name: 'Sổ tiết kiệm (tối thiểu $18,000-$20,000)', description: '~450-500 triệu VND. D-2 yêu cầu cao hơn D-4-1. Gửi kỳ hạn 12 tháng, mở trước 3-6 tháng. Chỉ chấp nhận sổ mở tại quầy.', documentType: 'savings_book', required: true, warning: '⚠ D-2 cần SỔ TIẾT KIỆM TỐI THIỂU $18,000-$20,000 (KHÁC với D-4-1 chỉ $10,000). Gửi trước 3-6 tháng.', rule: null },
+          { id: 'B4-2', name: 'Xác nhận số dư + sao kê ngân hàng 3 tháng', description: 'Bản gốc, cấp trong 30 ngày. Sao kê phải thể hiện lịch sử ỔN ĐỊNH, không nạp tiền sốc trước khi lấy sao kê.', documentType: 'bank_statement', required: true, warning: '⚠ Không nạp tiền "sốc" rồi lấy sao kê ngay. Duy trì số dư ổn định 3-6 tháng!', rule: null },
           { id: 'B4-3', name: 'Giấy bảo lãnh tài chính', description: 'Nếu người bảo lãnh không phải tự thân.', documentType: 'sponsorship', required: false, rule: { sponsor_is_self: { eq: false } } },
           { id: 'B4-4', name: 'Giấy tờ chứng minh quan hệ', description: 'Quan hệ với người bảo lãnh.', documentType: 'relationship', required: false, rule: { sponsor_is_self: { eq: false } } },
           { id: 'B4-5', name: 'Chứng minh thu nhập người bảo lãnh', description: 'HĐLĐ, sao kê lương, thu nhập từ kinh doanh.', documentType: 'income_proof', required: true, rule: { sponsor_is_self: { eq: false } } },
           { id: 'B4-6', name: 'Dịch công chứng toàn bộ', description: 'Tất cả giấy tờ tài chính.', documentType: 'notarized', required: true, rule: null },
-          { id: 'B4-7', name: 'Sổ đóng băng K-Study (ngân hàng Hàn tại Việt Nam)', description: 'Mở tại Shinhan/Woori Bank, 8,000-10,000 USD. Tăng tỉ lệ đậu visa.', documentType: 'k_study_account', required: false, recommended: true, warning: '💡 Sổ đóng băng K-Study giúp tăng tỉ lệ đậu visa D-2.', rule: null }
+          { id: 'B4-7', name: 'Sổ đóng băng K-Study (ngân hàng Hàn tại Việt Nam)', description: 'Mở tại Shinhan/Woori Bank, 8,000-10,000 USD. Tăng tỉ lệ đậu visa.', documentType: 'k_study_account', required: false, recommended: true, warning: ' Sổ đóng băng K-Study giúp tăng tỉ lệ đậu visa D-2.', rule: null }
         ]
       },
       {
         id: 'B5',
         name: 'Study Plan / Personal Statement',
-        icon: '✍️',
+        icon: '✍',
         required: true,
         items: [
-          { id: 'B5-1', name: 'Study Plan (Kế hoạch học tập)', description: '800-1200 từ tiếng Hàn/Anh. CÁ NHÂN HOÁ: rõ lý do chọn trường, mục tiêu học tập, kế hoạch sau về nước. Study Plan chung chung = trượt visa.', documentType: 'study_plan', required: true, hasAiAssist: true, warning: '🚨 Study Plan chung chung là lý do trượt visa phổ biến! Cần cá nhân hoá rõ ràng.', rule: null },
+          { id: 'B5-1', name: 'Study Plan (Kế hoạch học tập)', description: '800-1200 từ tiếng Hàn/Anh. CÁ NHÂN HOÁ: rõ lý do chọn trường, mục tiêu học tập, kế hoạch sau về nước. Study Plan chung chung = trượt visa.', documentType: 'study_plan', required: true, hasAiAssist: true, warning: ' Study Plan chung chung là lý do trượt visa phổ biến! Cần cá nhân hoá rõ ràng.', rule: null },
           { id: 'B5-2', name: 'Personal Statement', description: 'Giới thiệu bản thân, mục tiêu.', documentType: 'personal_statement', required: true, hasAiAssist: true, rule: null }
         ]
       },
       {
         id: 'B6',
         name: 'Nộp hồ sơ & Theo dõi',
-        icon: '📬',
+        icon: '',
         required: true,
         items: [
           { id: 'B6-1', name: 'Đặt lịch hẹn KVAC', description: 'Đặt lịch sớm.', documentType: 'kvac', required: true, rule: null },
-          { id: 'B6-2', name: 'Giấy khám lao phổi (TB test) - bệnh viện chỉ định', description: 'Bắt buộc. Hà Nội: BV Phổi TW. TP.HCM: BV Chợ Rẫy, BV Phạm Ngọc Thạch, BV Thống Nhất. Giá trị 3 tháng.', documentType: 'health', required: true, warning: '⚠️ Chỉ khám tại bệnh viện ĐSQ chỉ định!', rule: null },
+          { id: 'B6-2', name: 'Giấy khám lao phổi (TB test) - bệnh viện chỉ định', description: 'Bắt buộc. Hà Nội: BV Phổi TW. TP.HCM: BV Chợ Rẫy, BV Phạm Ngọc Thạch, BV Thống Nhất. Giá trị 3 tháng.', documentType: 'health', required: true, warning: '⚠ Chỉ khám tại bệnh viện ĐSQ chỉ định!', rule: null },
           { id: 'B6-3', name: 'Bảo hiểm du học', description: 'Bắt buộc.', documentType: 'insurance', required: true, rule: null },
           { id: 'B6-4', name: 'Nộp và theo dõi kết quả', description: 'Theo dõi online.', documentType: 'tracking', required: true, rule: null }
         ]
@@ -648,24 +648,24 @@ window.CHECKLIST_DATA = {
       {
         id: 'ALERT-D2',
         name: 'Lưu ý quan trọng về thời hạn & quy định',
-        icon: '📌',
+        icon: '',
         description: 'Những lưu ý sống còn để tránh bị trượt visa D-2.',
         required: true,
         items: [
           { id: 'ALERT-D2-1', name: '⏳ Thời hạn giấy tờ 3 tháng', description: 'Hầu hết giấy tờ (sổ TK, giấy khám, giấy nhập học, dịch công chứng) chỉ có giá trị 3 tháng. Kiểm tra kỹ trước nộp!', documentType: 'general_warning', required: true, rule: null },
-          { id: 'ALERT-D2-2', name: '🏦 Sổ tiết kiệm mở tại quầy', description: 'KHÔNG chấp nhận sổ online. Mở trực tiếp tại quầy giao dịch. Kèm xác nhận số dư trong 30 ngày.', documentType: 'general_warning', required: true, rule: null },
-          { id: 'ALERT-D2-3', name: '💵 D-2 cần $18,000-$20,000', description: 'Sổ tiết kiệm cho D-2 cao hơn D-4-1. Không nộp sổ $10,000 cho visa D-2 vì sẽ bị từ chối ngay.', documentType: 'general_warning', required: true, rule: null },
-          { id: 'ALERT-D2-4', name: '🔍 Tính xác thực', description: 'Giả mạo giấy tờ sẽ bị cấm nhập cảnh Hàn Quốc. Mọi giấy tờ đều được xác minh.', documentType: 'general_warning', required: true, rule: null },
-          { id: 'ALERT-D2-5', name: '📄 Giấy tờ phải nhất quán', description: 'Tên trên tất cả giấy tờ phải GIỐNG NHAU tuyệt đối. Sai 1 ký tự = từ chối.', documentType: 'general_warning', required: true, rule: null },
-          { id: 'ALERT-D2-6', name: '📝 Study Plan phải cá nhân hóa', description: 'Không viết chung chung. Chỉ rõ mục tiêu, lý do chọn trường, kế hoạch tương lai.', documentType: 'general_warning', required: true, rule: null },
-          { id: 'ALERT-D2-7', name: '📜 Hợp pháp hóa lãnh sự (trước 11/09/2026)', description: 'Bắt buộc 3 bước: Công chứng → Bộ Ngoại giao → ĐSQ Hàn. Từ 11/09/2026: Apostille.', documentType: 'general_warning', required: true, rule: null }
+          { id: 'ALERT-D2-2', name: ' Sổ tiết kiệm mở tại quầy', description: 'KHÔNG chấp nhận sổ online. Mở trực tiếp tại quầy giao dịch. Kèm xác nhận số dư trong 30 ngày.', documentType: 'general_warning', required: true, rule: null },
+          { id: 'ALERT-D2-3', name: ' D-2 cần $18,000-$20,000', description: 'Sổ tiết kiệm cho D-2 cao hơn D-4-1. Không nộp sổ $10,000 cho visa D-2 vì sẽ bị từ chối ngay.', documentType: 'general_warning', required: true, rule: null },
+          { id: 'ALERT-D2-4', name: ' Tính xác thực', description: 'Giả mạo giấy tờ sẽ bị cấm nhập cảnh Hàn Quốc. Mọi giấy tờ đều được xác minh.', documentType: 'general_warning', required: true, rule: null },
+          { id: 'ALERT-D2-5', name: ' Giấy tờ phải nhất quán', description: 'Tên trên tất cả giấy tờ phải GIỐNG NHAU tuyệt đối. Sai 1 ký tự = từ chối.', documentType: 'general_warning', required: true, rule: null },
+          { id: 'ALERT-D2-6', name: ' Study Plan phải cá nhân hóa', description: 'Không viết chung chung. Chỉ rõ mục tiêu, lý do chọn trường, kế hoạch tương lai.', documentType: 'general_warning', required: true, rule: null },
+          { id: 'ALERT-D2-7', name: ' Hợp pháp hóa lãnh sự (trước 11/09/2026)', description: 'Bắt buộc 3 bước: Công chứng → Bộ Ngoại giao → ĐSQ Hàn. Từ 11/09/2026: Apostille.', documentType: 'general_warning', required: true, rule: null }
         ]
       },
       // Module: Dịch thuật, Công chứng & Hợp pháp hóa D-2
       {
         id: 'B7',
-        name: '📜 Dịch thuật, Công chứng & Hợp pháp hóa',
-        icon: '📜',
+        name: ' Dịch thuật, Công chứng & Hợp pháp hóa',
+        icon: '',
         required: true,
         items: [
           { id: 'B7-1', name: 'Dịch thuật tất cả giấy tờ sang tiếng Hàn/Anh', description: 'Bằng cấp, học bạ, sổ TK, giấy khai sinh, sổ hộ khẩu... Dịch tại Phòng Công chứng.', documentType: 'translate_all', required: true, rule: null },
@@ -678,7 +678,7 @@ window.CHECKLIST_DATA = {
       {
         id: 'RISK-D2',
         name: 'Xử lý rủi ro đặc thù D-2',
-        icon: '⚠️',
+        icon: '⚠',
         required: false,
         items: [
           { id: 'RISK-D2-1', name: 'Giải trình trượt visa', description: 'Nếu đã từng trượt visa Hàn.', documentType: 'rejection_explain', required: true, hasAiAssist: true, rule: { has_visa_rejection: { eq: true } } },
@@ -705,7 +705,7 @@ window.CHECKLIST_DATA = {
       {
         id: 'C1',
         name: 'Giấy tờ hành chính tại Hàn Quốc',
-        icon: '🏛️',
+        icon: '',
         description: 'Giấy tờ cư trú và nhân thân — học sinh đang ở Hàn nên cần chuẩn bị các giấy tờ này.',
         required: true,
         items: [
@@ -731,7 +731,7 @@ window.CHECKLIST_DATA = {
             description: 'Mẫu đơn xin thay đổi tư cách lưu trú (Change of Status of Sojourn). Tải từ Hi Korea (www.hikorea.go.kr), điền thông tin cá nhân, visa hiện tại, visa muốn chuyển đổi.',
             documentType: 'status_change_form',
             required: true,
-            warning: '⚠️ Điền CHÍNH XÁC thông tin — sai sót sẽ bị trả hồ sơ. Có thể nhờ trường ĐH hỗ trợ điền.',
+            warning: '⚠ Điền CHÍNH XÁC thông tin — sai sót sẽ bị trả hồ sơ. Có thể nhờ trường ĐH hỗ trợ điền.',
             rule: null
           },
           {
@@ -772,7 +772,7 @@ window.CHECKLIST_DATA = {
             description: 'Khám tại bệnh viện Hàn Quốc — xin Giấy chứng nhận sức khỏe (Health Certificate). Có giá trị 3 tháng. Một số trường ĐH yêu cầu giấy khám riêng.',
             documentType: 'health_certificate',
             required: true,
-            warning: '💡 Nên khám tại bệnh viện được Immigration chấp nhận. Hỏi trường ĐH để biết mẫu khám cụ thể.',
+            warning: ' Nên khám tại bệnh viện được Immigration chấp nhận. Hỏi trường ĐH để biết mẫu khám cụ thể.',
             rule: null
           },
           {
@@ -791,7 +791,7 @@ window.CHECKLIST_DATA = {
       {
         id: 'C2',
         name: 'Giấy tờ học vấn',
-        icon: '🎓',
+        icon: '',
         description: 'Bao gồm kết quả học tiếng tại Hàn + học vấn từ Việt Nam.',
         required: true,
         items: [
@@ -801,7 +801,7 @@ window.CHECKLIST_DATA = {
             description: 'Từ trường tiếng Hàn bạn đang theo học. Xác nhận bạn đã hoàn thành khóa học (hoặc đang học kỳ cuối). Đây là giấy tờ BẮT BUỘC để chuyển đổi visa.',
             documentType: 'korean_completion_cert',
             required: true,
-            warning: '🚨 Không có giấy chứng nhận hoàn thành khóa tiếng = KHÔNG thể chuyển đổi visa. Nếu chưa hoàn thành, cần xin xác nhận đang theo học và cam kết hoàn thành.',
+            warning: ' Không có giấy chứng nhận hoàn thành khóa tiếng = KHÔNG thể chuyển đổi visa. Nếu chưa hoàn thành, cần xin xác nhận đang theo học và cam kết hoàn thành.',
             rule: null
           },
           {
@@ -810,7 +810,7 @@ window.CHECKLIST_DATA = {
             description: 'Điểm tổng kết tất cả các kỳ đã học. Immigration xem xét điểm số để đánh giá khả năng học tập. Điểm trung bình nên từ C (70/100) trở lên — dưới C sẽ bị từ chối.',
             documentType: 'korean_transcript',
             required: true,
-            warning: '⚠️ Điểm tiếng Hàn dưới C (70/100) là lý do phổ biến bị từ chối chuyển đổi visa. Nếu điểm thấp, cần giải trình kèm chứng chỉ TOPIK để bù.',
+            warning: '⚠ Điểm tiếng Hàn dưới C (70/100) là lý do phổ biến bị từ chối chuyển đổi visa. Nếu điểm thấp, cần giải trình kèm chứng chỉ TOPIK để bù.',
             rule: null
           },
           {
@@ -819,7 +819,7 @@ window.CHECKLIST_DATA = {
             description: 'Hầu hết trường ĐH Hàn Quốc yêu cầu TOPIK 3+ để nhập học. Immigration cũng xem TOPIK như bằng chứng năng lực tiếng Hàn để học ĐH. Nếu chưa có — cần thi gấp.',
             documentType: 'topik_certificate',
             required: true,
-            warning: '🚨 TOPIK 3+ gần như là BẮT BUỘC cho chuyển đổi D4→D2. Không có TOPIK = tỉ lệ đậu rất thấp. Một số trường chấp nhận TOPIK 2 nhưng rất hiếm.',
+            warning: ' TOPIK 3+ gần như là BẮT BUỘC cho chuyển đổi D4→D2. Không có TOPIK = tỉ lệ đậu rất thấp. Một số trường chấp nhận TOPIK 2 nhưng rất hiếm.',
             rule: { has_topik: { eq: true } }
           },
           {
@@ -830,7 +830,7 @@ window.CHECKLIST_DATA = {
             required: false,
             recommended: true,
             rule: { has_topik: { neq: true } },
-            warning: '💡 Nếu bạn chưa có TOPIK — hãy đăng ký thi ngay kỳ TOPIK gần nhất. Việc có chứng chỉ (dù chỉ TOPIK 2) giúp hồ sơ mạnh hơn nhiều.'
+            warning: ' Nếu bạn chưa có TOPIK — hãy đăng ký thi ngay kỳ TOPIK gần nhất. Việc có chứng chỉ (dù chỉ TOPIK 2) giúp hồ sơ mạnh hơn nhiều.'
           },
           {
             id: 'C2-5',
@@ -879,7 +879,7 @@ window.CHECKLIST_DATA = {
             description: 'Xin từ trường tiếng Hàn — xác nhận tỉ lệ đi học. Tỉ lệ chuyên cần >= 80% là yêu cầu cơ bản. Dưới 70% có thể bị từ chối chuyển đổi.',
             documentType: 'attendance_cert',
             required: true,
-            warning: '⚠️ Tỉ lệ chuyên cần < 80% là "cờ đỏ" cho Immigration. Nếu thấp, chuẩn bị giải trình lý do vắng học.',
+            warning: '⚠ Tỉ lệ chuyên cần < 80% là "cờ đỏ" cho Immigration. Nếu thấp, chuẩn bị giải trình lý do vắng học.',
             rule: null
           }
         ]
@@ -889,7 +889,7 @@ window.CHECKLIST_DATA = {
       {
         id: 'C3',
         name: 'Giấy tờ từ trường Đại học Hàn Quốc',
-        icon: '🏫',
+        icon: '',
         description: 'Giấy tờ do trường ĐH cấp sau khi bạn trúng tuyển.',
         required: true,
         items: [
@@ -934,7 +934,7 @@ window.CHECKLIST_DATA = {
       {
         id: 'C4',
         name: 'Chứng minh tài chính',
-        icon: '💰',
+        icon: '',
         description: 'Chứng minh khả năng chi trả học phí ĐH + sinh hoạt tại Hàn. Quan trọng: có thể dùng tài khoản ngân hàng Hàn Quốc.',
         required: true,
         items: [
@@ -944,7 +944,7 @@ window.CHECKLIST_DATA = {
             description: 'Tối thiểu $10,000-$18,000 USD tùy trường ĐH. Có thể mở sổ tại Hàn Quốc (ngân hàng Hàn) hoặc Việt Nam. Gửi kỳ hạn tối thiểu 6 tháng, mở trước 1-3 tháng.',
             documentType: 'savings_book',
             required: true,
-            warning: '⚠️ Mức tiền tối thiểu tùy trường ĐH. Có trường yêu cầu $18,000, có trường chỉ $10,000. Kiểm tra với văn phòng quốc tế của trường trước khi chuẩn bị.',
+            warning: '⚠ Mức tiền tối thiểu tùy trường ĐH. Có trường yêu cầu $18,000, có trường chỉ $10,000. Kiểm tra với văn phòng quốc tế của trường trước khi chuẩn bị.',
             rule: null
           },
           {
@@ -953,7 +953,7 @@ window.CHECKLIST_DATA = {
             description: 'Bản gốc cấp trong vòng 30 ngày. Có thể dùng sao kê từ tài khoản Hàn Quốc (thể hiện lịch sử sinh hoạt tại Hàn). Sao kê phải ổn định, không biến động bất thường.',
             documentType: 'bank_statement',
             required: true,
-            warning: '⚠️ Nếu đang ở Hàn, nên dùng sao kê tài khoản Hàn Quốc để thể hiện lịch sử tài chính và sinh hoạt thực tế tại Hàn.',
+            warning: '⚠ Nếu đang ở Hàn, nên dùng sao kê tài khoản Hàn Quốc để thể hiện lịch sử tài chính và sinh hoạt thực tế tại Hàn.',
             rule: null
           },
           {
@@ -1022,7 +1022,7 @@ window.CHECKLIST_DATA = {
       {
         id: 'C5',
         name: 'Study Plan & Personal Statement',
-        icon: '✍️',
+        icon: '✍',
         description: 'QUAN TRỌNG: Immigration muốn thấy lý do chuyển đổi rõ ràng và kế hoạch học tập thuyết phục.',
         required: true,
         items: [
@@ -1033,7 +1033,7 @@ window.CHECKLIST_DATA = {
             documentType: 'change_of_status_statement',
             required: true,
             hasAiAssist: true,
-            warning: '🚨 Study Plan CHUYỂN ĐỔI khác với Study Plan xin visa lần đầu! Phải tập trung vào: Kết quả học tiếng → Lý do chuyển ĐH → Kế hoạch tương lai. Không copy từ Study Plan cũ!',
+            warning: ' Study Plan CHUYỂN ĐỔI khác với Study Plan xin visa lần đầu! Phải tập trung vào: Kết quả học tiếng → Lý do chuyển ĐH → Kế hoạch tương lai. Không copy từ Study Plan cũ!',
             rule: null
           },
           {
@@ -1053,7 +1053,7 @@ window.CHECKLIST_DATA = {
       {
         id: 'C6',
         name: 'Nộp hồ sơ tại Immigration Hàn Quốc',
-        icon: '📬',
+        icon: '',
         description: 'Khác với visa lần đầu — nộp tại Immigration Hàn Quốc (Hi Korea), không phải KVAC.',
         required: true,
         items: [
@@ -1121,7 +1121,7 @@ window.CHECKLIST_DATA = {
       {
         id: 'ALERT-D4D2',
         name: 'Lưu ý sống còn khi chuyển đổi visa D4→D2',
-        icon: '📌',
+        icon: '',
         description: 'Những lưu ý cực kỳ quan trọng — học sinh đang ở Hàn cần biết!',
         required: true,
         items: [
@@ -1135,7 +1135,7 @@ window.CHECKLIST_DATA = {
           },
           {
             id: 'ALERT-D4D2-2',
-            name: '📅 Nộp hồ sơ ít nhất 1 tháng trước khi visa hết hạn',
+            name: ' Nộp hồ sơ ít nhất 1 tháng trước khi visa hết hạn',
             description: 'Immigration cần thời gian xử lý 2-8 tuần. Nếu nộp sát ngày hết hạn, bạn có thể rơi vào trạng thái "quá hạn" trong thời gian chờ. Nên nộp sớm — đừng đợi đến phút cuối!',
             documentType: 'general_warning',
             required: true,
@@ -1143,7 +1143,7 @@ window.CHECKLIST_DATA = {
           },
           {
             id: 'ALERT-D4D2-3',
-            name: '📝 Chuyên cần học tiếng >= 80%',
+            name: ' Chuyên cần học tiếng >= 80%',
             description: 'Tỉ lệ đi học dưới 80% là "cờ đỏ" cho Immigration. Nghỉ nhiều = không có thiện chí học tập = từ chối chuyển đổi.',
             documentType: 'general_warning',
             required: true,
@@ -1151,7 +1151,7 @@ window.CHECKLIST_DATA = {
           },
           {
             id: 'ALERT-D4D2-4',
-            name: '🎯 TOPIK 3+ là bắt buộc',
+            name: ' TOPIK 3+ là bắt buộc',
             description: 'Gần như 100% trường ĐH và Immigration yêu cầu TOPIK 3+ cho chuyển đổi D4→D2. Nếu chưa có — đăng ký thi gấp kỳ TOPIK gần nhất. Không có TOPIK = tỉ lệ đậu cực thấp.',
             documentType: 'general_warning',
             required: true,
@@ -1159,7 +1159,7 @@ window.CHECKLIST_DATA = {
           },
           {
             id: 'ALERT-D4D2-5',
-            name: '📍 Không được đi làm thêm khi chưa được phép',
+            name: ' Không được đi làm thêm khi chưa được phép',
             description: 'Visa D-4-1 KHÔNG cho phép đi làm thêm (trừ chương trình thực tập được trường cho phép). Đi làm trái phép = bị trục xuất và cấm nhập cảnh. Sau khi có D-2 mới được xin giấy phép làm thêm.',
             documentType: 'general_warning',
             required: true,
@@ -1167,7 +1167,7 @@ window.CHECKLIST_DATA = {
           },
           {
             id: 'ALERT-D4D2-6',
-            name: '📄 Hồ sơ phải nhất quán giữa các lần nộp',
+            name: ' Hồ sơ phải nhất quán giữa các lần nộp',
             description: 'Thông tin trong hồ sơ chuyển đổi phải KHỚP với hồ sơ đã nộp xin D-4-1 trước đó. Sai lệch = bị nghi ngờ gian lận = từ chối.',
             documentType: 'general_warning',
             required: true,
@@ -1175,7 +1175,7 @@ window.CHECKLIST_DATA = {
           },
           {
             id: 'ALERT-D4D2-7',
-            name: '🔍 Trượt chuyển đổi: hậu quả nghiêm trọng',
+            name: ' Trượt chuyển đổi: hậu quả nghiêm trọng',
             description: 'Nếu bị từ chối chuyển đổi, bạn có thể phải về nước ngay lập tức. Cần chuẩn bị hồ sơ cực kỳ cẩn thận ngay từ lần đầu. Nếu cần — nhờ luật sư di trú Hàn Quốc tư vấn.',
             documentType: 'general_warning',
             required: true,
@@ -1183,7 +1183,7 @@ window.CHECKLIST_DATA = {
           },
           {
             id: 'ALERT-D4D2-8',
-            name: '📜 Hợp pháp hóa giấy tờ từ Việt Nam',
+            name: ' Hợp pháp hóa giấy tờ từ Việt Nam',
             description: 'Giấy tờ gửi từ Việt Nam sang (bằng cấp, sổ hộ khẩu...) cần được dịch công chứng và hợp pháp hóa lãnh sự. Có thể nhờ người nhà làm thủ tục tại Việt Nam rồi chuyển phát nhanh sang.',
             documentType: 'general_warning',
             required: true,
@@ -1191,7 +1191,7 @@ window.CHECKLIST_DATA = {
           },
           {
             id: 'ALERT-D4D2-9',
-            name: '⏸️ Trượt visa lần trước: cần giải trình',
+            name: '⏸ Trượt visa lần trước: cần giải trình',
             description: 'Nếu đã từng trượt visa D-4-1 hoặc bất kỳ visa Hàn nào — cần khai báo và giải trình trong hồ sơ chuyển đổi. Không khai = bị phát hiện và từ chối ngay.',
             documentType: 'general_warning',
             required: true,
@@ -1204,7 +1204,7 @@ window.CHECKLIST_DATA = {
       {
         id: 'C7',
         name: 'Dịch thuật, Công chứng & Hợp pháp hóa',
-        icon: '📜',
+        icon: '',
         description: 'Giấy tờ từ Việt Nam cần dịch công chứng trước khi nộp tại Immigration Hàn Quốc.',
         required: true,
         items: [
@@ -1247,7 +1247,7 @@ window.CHECKLIST_DATA = {
       {
         id: 'RISK-D4D2',
         name: 'Xử lý rủi ro đặc thù D4→D2',
-        icon: '⚠️',
+        icon: '⚠',
         description: 'Các tình huống rủi ro khi chuyển đổi visa — cần xử lý cẩn thận.',
         required: false,
         items: [
@@ -1259,7 +1259,7 @@ window.CHECKLIST_DATA = {
             required: true,
             hasAiAssist: true,
             rule: { korean_grade: { lt: 70 } },
-            warning: '⚠️ Điểm tiếng dưới C là lý do trượt chuyển đổi phổ biến. Cần giải trình THUYẾT PHỤC kèm bằng chứng cải thiện (TOPIK, chứng chỉ khác).'
+            warning: '⚠ Điểm tiếng dưới C là lý do trượt chuyển đổi phổ biến. Cần giải trình THUYẾT PHỤC kèm bằng chứng cải thiện (TOPIK, chứng chỉ khác).'
           },
           {
             id: 'RISK-D4D2-2',
@@ -1269,7 +1269,7 @@ window.CHECKLIST_DATA = {
             required: true,
             hasAiAssist: true,
             rule: { attendance_rate: { lt: 80 } },
-            warning: '⚠️ Tỉ lệ đi học thấp là "cờ đỏ" cho Immigration. Giải trình không thuyết phục = từ chối.'
+            warning: '⚠ Tỉ lệ đi học thấp là "cờ đỏ" cho Immigration. Giải trình không thuyết phục = từ chối.'
           },
           {
             id: 'RISK-D4D2-3',
