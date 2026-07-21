@@ -379,9 +379,8 @@
     <link rel="prefetch" href="/api/schools">
     <link rel="prefetch" href="/api/schools?include=extras">
 
-    <!-- A/B Testing — load sớm nhất để CSS kịp áp dụng variant -->
+    <!-- ═══ Sidebar toggle for mobile ═══ -->
     <script>
-    // ═══ Sidebar toggle for mobile ═══
     document.addEventListener('DOMContentLoaded', function() {
       var toggle = document.getElementById('sidebarToggle');
       var backdrop = document.getElementById('sidebarBackdrop');
@@ -611,7 +610,6 @@
       btn.querySelector('span').textContent = 'Tạo tài khoản';
     });
     </script>
-    <script src="/js/ab-test.js"></script>
     <script src="/js/api-loader.js"></script>
     <script src="/js/advisor.js"></script>
     <script src="/js/render.js"></script>

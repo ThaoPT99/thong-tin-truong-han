@@ -25,14 +25,12 @@ function renderValue(val) {
 
 function renderTuitionWithVND(val) {
   var html = renderValue(val);
-  // A/B test: tuition-display — nếu variant B, thêm VND
-  if (window.__AB && window.__AB['tuition-display'] === 'b') {
-    var krwVal = extractKRWValue(val);
-    if (krwVal) {
-      var rate = typeof DEFAULT_EXCHANGE_RATE !== 'undefined' ? DEFAULT_EXCHANGE_RATE : 20;
-      var vnd = krwVal * rate;
-      html += '<br><span style="font-size:0.85rem;color:#0f766e;font-weight:700;">≈ ' + vnd.toLocaleString('vi-VN') + ' ₫</span>';
-    }
+  // Thêm VND để tiện so sánh
+  var krwVal = extractKRWValue(val);
+  if (krwVal) {
+    var rate = typeof DEFAULT_EXCHANGE_RATE !== 'undefined' ? DEFAULT_EXCHANGE_RATE : 20;
+    var vnd = krwVal * rate;
+    html += '<br><span style="font-size:0.85rem;color:#0f766e;font-weight:700;">≈ ' + vnd.toLocaleString('vi-VN') + ' ₫</span>';
   }
   return html;
 }
