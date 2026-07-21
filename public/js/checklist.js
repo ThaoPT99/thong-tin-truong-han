@@ -746,6 +746,9 @@
           <button type="button" class="btn btn-outline" onclick="window.clExportChecklist()">
             📤 Xuất checklist
           </button>
+          <button type="button" class="btn btn-outline" onclick="window.clAutoReminders()">
+            ⏰ Tạo nhắc nhở
+          </button>
         </div>
       </div>
     `;
@@ -827,29 +830,11 @@
     const docStatusLabels = { not_ready: 'Chưa có', ready: 'Đã có', translated: 'Đã dịch', notarized: '✅ Sẵn sàng' };
     const docStatus = item.docStatus || 'not_ready';
     const hasFile = item.fileUrl ? true : false;
+    const isWarning = item.documentType === 'general_warning'; // ALERT items — không cần document tracking
 
-    return `
-      <div class="cl-item ${item.status === 'completed' ? 'cl-item-done' : ''} ${hasFile ? 'cl-item-has-file' : ''}" data-item-id="${item.id}">
-        <div class="cl-item-head">
-          <div class="cl-item-icon">${statusIcons[item.status] || '⬜'}</div>
-          <div class="cl-item-info">
-            <div class="cl-item-name">${escapeHtml(item.name)} ${badge} ${aiBadge}</div>
-            <div class="cl-item-desc">${escapeHtml(item.description)}</div>
-            ${warningHtml}
-            ${linkHtml}
-            ${item.source === 'school' ? '<div class="cl-item-source">🏫 Trường Hàn cấp — theo dõi trạng thái</div>' : ''}
-          </div>
-          <div class="cl-item-actions">
-            <select class="cl-item-status" data-item-id="${item.id}">
-              ${Object.entries(statusLabels).map(([val, label]) =>
-                `<option value="${val}" ${item.status === val ? 'selected' : ''}>${label}</option>`
-              ).join('')}
-            </select>
-          </div>
-        </div>
-        <!-- Document tracking row -->
+    const docTrackingHtml = isWarning ? '' : `
         <div class="cl-item-doc-tracking">
-          <div class="cl-doc-status-bar">                ${['not_ready', 'ready', 'translated', 'notarized'].map((s, i) => {
+          <div class="cl-doc-status-bar">${['not_ready', 'ready', 'translated', 'notarized'].map((s, i) => {
               const levels = ['not_ready', 'ready', 'translated', 'notarized'];
               const idx = levels.indexOf(docStatus);
               const isDone = i <= idx;
@@ -881,7 +866,28 @@
               </button>
             ` : ''}
           </div>
+        </div>`;
+
+    return `
+      <div class="cl-item ${item.status === 'completed' ? 'cl-item-done' : ''} ${hasFile ? 'cl-item-has-file' : ''}" data-item-id="${item.id}">
+        <div class="cl-item-head">
+          <div class="cl-item-icon">${statusIcons[item.status] || '⬜'}</div>
+          <div class="cl-item-info">
+            <div class="cl-item-name">${escapeHtml(item.name)} ${badge} ${aiBadge}</div>
+            <div class="cl-item-desc">${escapeHtml(item.description)}</div>
+            ${warningHtml}
+            ${linkHtml}
+            ${item.source === 'school' ? '<div class="cl-item-source">🏫 Trường Hàn cấp — theo dõi trạng thái</div>' : ''}
+          </div>
+          <div class="cl-item-actions">
+            <select class="cl-item-status" data-item-id="${item.id}">
+              ${Object.entries(statusLabels).map(([val, label]) =>
+                `<option value="${val}" ${item.status === val ? 'selected' : ''}>${label}</option>`
+              ).join('')}
+            </select>
+          </div>
         </div>
+        ${docTrackingHtml}
         <div class="cl-item-note">
           <input type="text" class="cl-item-note-input" data-item-id="${item.id}" value="${escapeHtml(item.note || '')}" placeholder="Ghi chú thêm...">
         </div>
@@ -1264,46 +1270,490 @@
   };
 
   // ══════════════════════════════════════════════
-  // Export Checklist
+  // Export Checklist — PDF with branding
   // ══════════════════════════════════════════════
-  window.clExportChecklist = function() {
+
+  let _pdfLoading = false; // guard against concurrent exports
+
+  // ─── Helper: load external script dynamically ───
+  function loadScript(url) {
+    return new Promise(function(resolve, reject) {
+      // Check if already loaded
+      if (document.querySelector('script[src="' + url + '"]')) {
+        resolve();
+        return;
+      }
+      const script = document.createElement('script');
+      script.src = url;
+      script.onload = resolve;
+      script.onerror = function() { reject(new Error('Không thể tải thư viện PDF: ' + url)); };
+      document.head.appendChild(script);
+    });
+  }
+
+  // ─── Build HTML content for PDF ───
+  function buildPDFHtml(progress) {
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('vi-VN');
+    const visaType = checklist.name || 'Du học Hàn Quốc';
+    const totalItems = checklist.totalItems || 0;
+    let completedItems = 0;
+    checklist.modules.forEach(function(mod) {
+      mod.items.forEach(function(item) {
+        if (item.status === 'completed') completedItems++;
+      });
+    });
+
+    const statusColors = { pending: '#94a3b8', in_progress: '#f59e0b', completed: '#22c55e', not_applicable: '#94a3b8' };
+    const statusLabels = { pending: '⬜ Chưa làm', in_progress: '🔄 Đang làm', completed: '✅ Hoàn thành', not_applicable: '➖ Không áp dụng' };
+
+    let modulesHtml = '';
+    for (let mi = 0; mi < checklist.modules.length; mi++) {
+      const mod = checklist.modules[mi];
+      let itemsHtml = '';
+      for (let ii = 0; ii < mod.items.length; ii++) {
+        const item = mod.items[ii];
+        const statusColor = statusColors[item.status] || '#94a3b8';
+        const statusLabel = statusLabels[item.status] || '⬜ Chưa làm';
+        const badgeHtml = item.required
+          ? '<span style="display:inline-block;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:700;background:#fee2e2;color:#991b1b;margin-right:6px;">BẮT BUỘC</span>'
+          : '<span style="display:inline-block;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:700;background:#fef3c7;color:#92400e;margin-right:6px;">KK</span>';
+        const noteHtml = item.note
+          ? '<div style="font-size:10px;color:#64748b;margin-top:3px;padding-left:20px;">📝 ' + escapeHtml(item.note) + '</div>'
+          : '';
+        const warningHtml = item.warning
+          ? '<div style="font-size:10px;color:#92400e;background:#fef3c7;padding:4px 8px;border-radius:6px;margin-top:4px;">⚠️ ' + escapeHtml(item.warning) + '</div>'
+          : '';
+        itemsHtml += '<tr style="border-bottom:1px solid #e2e8f0;">' +
+          '<td style="padding:7px 10px;vertical-align:top;width:24px;text-align:center;">' +
+            '<span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:' + statusColor + ';"></span>' +
+          '</td>' +
+          '<td style="padding:7px 10px;vertical-align:top;">' +
+            '<div style="font-size:12px;font-weight:600;color:#1e293b;">' + badgeHtml + escapeHtml(item.name) + '</div>' +
+            '<div style="font-size:10px;color:#64748b;margin-top:2px;">' + escapeHtml(item.description) + '</div>' +
+            warningHtml +
+            noteHtml +
+          '</td>' +
+          '<td style="padding:7px 10px;vertical-align:top;text-align:right;white-space:nowrap;font-size:10px;color:' + statusColor + ';font-weight:600;">' + statusLabel + '</td>' +
+        '</tr>';
+      }
+      modulesHtml += '<div style="margin-bottom:16px;">' +
+        '<div style="background:linear-gradient(135deg,#1e3a5f,#2d5a87);color:#fff;padding:10px 14px;border-radius:8px 8px 0 0;font-size:13px;font-weight:700;">' +
+          (mod.icon || '📄') + ' ' + escapeHtml(mod.name) +
+          ' <span style="font-weight:400;opacity:0.8;font-size:11px;">(' + mod.items.filter(function(it) { return it.status === 'completed'; }).length + '/' + mod.items.length + ')</span>' +
+        '</div>' +
+        '<table style="width:100%;border-collapse:collapse;background:#fff;border:1px solid #e2e8f0;border-top:0;border-radius:0 0 8px 8px;">' +
+          itemsHtml +
+        '</table>' +
+      '</div>';
+    }
+
+    // Profile summary
+    let profileHtml = '';
+    if (profile.fullName || profile.phone || profile.email) {
+      profileHtml = '<div style="margin-bottom:16px;padding:12px 14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;">' +
+        '<div style="font-size:11px;font-weight:700;color:#475569;margin-bottom:6px;">👤 Hồ sơ</div>' +
+        '<table style="width:100%;border-collapse:collapse;font-size:11px;">';
+      if (profile.fullName) profileHtml += '<tr><td style="padding:2px 8px;color:#64748b;width:100px;">Họ tên</td><td style="padding:2px 8px;font-weight:600;">' + escapeHtml(profile.fullName) + '</td></tr>';
+      if (profile.phone) profileHtml += '<tr><td style="padding:2px 8px;color:#64748b;">Điện thoại</td><td style="padding:2px 8px;">' + escapeHtml(profile.phone) + '</td></tr>';
+      if (profile.email) profileHtml += '<tr><td style="padding:2px 8px;color:#64748b;">Email</td><td style="padding:2px 8px;">' + escapeHtml(profile.email) + '</td></tr>';
+      if (profile.visaType) profileHtml += '<tr><td style="padding:2px 8px;color:#64748b;">Visa</td><td style="padding:2px 8px;font-weight:600;">' + escapeHtml(profile.visaType) + '</td></tr>';
+      profileHtml += '</table></div>';
+    }
+
+    return '<!DOCTYPE html><html><head><meta charset="utf-8">' +
+      '<style>' +
+        '@page { margin: 0; }' +
+        'body { font-family: "Be Vietnam Pro", Arial, Helvetica, sans-serif; color: #1e293b; margin: 0; padding: 0; }' +
+        '.pdf-header { background: linear-gradient(135deg, #1e3a5f 0%, #0f766e 100%); color: #fff; padding: 24px 28px 20px; }' +
+        '.pdf-header h1 { margin: 0; font-size: 20px; font-weight: 800; }' +
+        '.pdf-header p { margin: 4px 0 0; font-size: 12px; color: rgba(255,255,255,0.8); }' +
+        '.pdf-body { padding: 20px 24px; }' +
+        '.pdf-footer { text-align: center; padding: 12px; font-size: 10px; color: #94a3b8; border-top: 1px solid #e2e8f0; margin-top: 20px; }' +
+        '.progress-pill { display:inline-block;padding:4px 12px;border-radius:999px;background:rgba(255,255,255,0.18);font-size:13px;font-weight:700;margin-top:8px;}' +
+      '</style>' +
+      '</head><body>' +
+      '<div class="pdf-header">' +
+        '<h1>📋 Checklist cá nhân hoá</h1>' +
+        '<p>' + escapeHtml(visaType) + ' — ' + dateStr + '</p>' +
+        '<div class="progress-pill">' +
+          completedItems + '/' + totalItems + ' hoàn thành · ' + progress + '%' +
+        '</div>' +
+      '</div>' +
+      '<div class="pdf-body">' +
+        profileHtml +
+        modulesHtml +
+      '</div>' +
+      '<div class="pdf-footer">' +
+        'Tạo bởi Thông Tin Trường Hàn · thongtintruonghan.vercel.app' +
+      '</div>' +
+      '</body></html>';
+  }
+
+  // ─── Export to PDF ───
+  window.clExportChecklist = async function() {
     if (!checklist) return;
+    if (_pdfLoading) {
+      toast('⏳ Đang tạo PDF, vui lòng đợi...');
+      return;
+    }
+    _pdfLoading = true;
 
     const progress = window.calculateChecklistProgress(checklist);
-    let text = `📋 CHECKLIST CÁ NHÂN HOÁ\n`;
-    text += `━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
-    text += `Loại visa: ${checklist.name}\n`;
-    text += `Tổng tiến độ: ${progress}%\n`;
-    text += `Ngày tạo: ${new Date().toLocaleDateString('vi-VN')}\n\n`;
+    toast('🔄 Đang tạo PDF...');
+    let container = null;
 
-    for (const mod of checklist.modules) {
-      text += `\n## ${mod.icon} ${mod.name}\n`;
-      text += `${'─'.repeat(30)}\n`;
-      for (const item of mod.items) {
-        const statusMap = { pending: '⬜', in_progress: '🔄', completed: '✅', not_applicable: '➖' };
-        const status = statusMap[item.status] || '⬜';
-        text += `${status} ${item.required ? '[BẮT BUỘC]' : '[KK]'} ${item.name}\n`;
-        if (item.note) text += `   📝 ${item.note}\n`;
+    try {
+      // Load html2pdf.js library from CDN
+      await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js');
+
+      // Build HTML content
+      const htmlContent = buildPDFHtml(progress);
+
+      // Create off-screen container
+      container = document.createElement('div');
+      container.innerHTML = htmlContent;
+      container.style.cssText = 'position:fixed;left:-9999px;top:0;width:800px;background:#fff;z-index:-1;';
+      document.body.appendChild(container);
+
+      const opt = {
+        margin:       [8, 10, 8, 10],
+        filename:     'checklist-' + (profile.visaType || 'visa') + '-' + new Date().toISOString().split('T')[0] + '.pdf',
+        image:        { type: 'jpeg', quality: 0.95 },
+        html2canvas:  { scale: 2, useCORS: true, letterRendering: true, logging: false },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
+      };
+
+      await window.html2pdf().set(opt).from(container).save();
+      toast('✅ Đã tải PDF — ' + opt.filename);
+    } catch (err) {
+      console.error('PDF export error:', err);
+      toast('❌ Lỗi tạo PDF: ' + (err.message || 'Không xác định'));
+
+      // Fallback: copy text to clipboard
+      let fallbackText = '📋 CHECKLIST CÁ NHÂN HOÁ\n';
+      fallbackText += '━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
+      fallbackText += 'Loại visa: ' + checklist.name + '\n';
+      fallbackText += 'Tổng tiến độ: ' + progress + '%\n';
+      fallbackText += 'Ngày tạo: ' + new Date().toLocaleDateString('vi-VN') + '\n\n';
+      for (let mi = 0; mi < checklist.modules.length; mi++) {
+        const mod = checklist.modules[mi];
+        fallbackText += '\n## ' + (mod.icon || '') + ' ' + mod.name + '\n';
+        fallbackText += '─'.repeat(30) + '\n';
+        for (let ii = 0; ii < mod.items.length; ii++) {
+          const item = mod.items[ii];
+          const sMap = { pending: '⬜', in_progress: '🔄', completed: '✅', not_applicable: '➖' };
+          fallbackText += (sMap[item.status] || '⬜') + ' ' + (item.required ? '[BẮT BUỘC]' : '[KK]') + ' ' + item.name + '\n';
+          if (item.note) fallbackText += '   📝 ' + item.note + '\n';
+        }
+      }
+      fallbackText += '\n━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
+      fallbackText += 'Tạo bởi: Thông Tin Trường Hàn\n';
+      fallbackText += 'thongtintruonghan.vercel.app\n';
+
+      try {
+        await navigator.clipboard.writeText(fallbackText);
+        toast('📋 Đã copy nội dung vào clipboard (thay thế PDF)');
+      } catch (e) {
+        const blob = new Blob([fallbackText], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'checklist-' + (profile.visaType || 'visa') + '.txt';
+        a.click();
+        URL.revokeObjectURL(url);
+        toast('📋 Đã tải file text thay thế');
+      }
+    } finally {
+      // Clean up off-screen container
+      if (container && container.parentNode) {
+        document.body.removeChild(container);
+      }
+      _pdfLoading = false;
+    }
+  };
+
+  // ══════════════════════════════════════════════
+  // Auto Reminder from Checklist
+  // ══════════════════════════════════════════════
+
+  // ─── Map documentType → reminder_type ───
+  // Includes both D-4-1 and D-2 aliases
+  const DOC_REMINDER_MAP = {
+    // Health
+    'tb_test': 'health_check',
+    'health_check': 'health_check',
+    'health': 'health_check', // D-2 alias
+    // Visa / Submission
+    'kvac_booking': 'visa_appointment',
+    'kvac': 'visa_appointment', // D-2 alias
+    'submission': 'submission',
+    'result_tracking': 'other',
+    'tracking': 'other', // D-2 alias
+    // Finance
+    'savings_book': 'document',
+    'bank_statement': 'document',
+    'sponsorship_letter': 'document',
+    'sponsorship': 'document', // D-2 alias
+    'income_proof': 'document',
+    'relationship_proof': 'document',
+    'relationship': 'document', // D-2 alias
+    'self_income_proof': 'document',
+    'asset_proof': 'document',
+    'k_study_account': 'document',
+    'notarized': 'document', // D-2 alias
+    // School
+    'admission_letter': 'submission',
+    'tuition_invoice': 'document',
+    'school_business_registration': 'document',
+    // Education
+    'diploma': 'document',
+    'transcript': 'document',
+    'gap_explanation': 'document',
+    'study_plan': 'document',
+    'personal_statement': 'document',
+    'recommendation_letter': 'document',
+    'topik_certificate': 'document',
+    'topik_optional': 'document', // D-4-1 optional
+    'korean_certificate': 'document',
+    'university_diploma': 'document',
+    'uni_diploma': 'document', // D-2 alias
+    'university_transcript': 'document',
+    'uni_transcript': 'document', // D-2 alias
+    'language_cert': 'document',
+    // Identity
+    'passport': 'document',
+    'photo': 'document',
+    'id_card': 'document',
+    'birth_certificate': 'document',
+    'household_registration': 'document',
+    'visa_application_form': 'document',
+    'visa_form': 'document', // D-2 alias
+    'criminal_record_check': 'document',
+    'criminal_record': 'document', // D-2 alias
+    // Legalization
+    'translate_all': 'document',
+    'notarize_translation': 'document',
+    'mofa_certification': 'document',
+    'consular_legalization': 'document',
+    // Other
+    'insurance': 'document',
+    'work_contract': 'document',
+    'previous_visa_dossier': 'document',
+    'visa_rejection_explanation': 'document',
+    'rejection_explain': 'document', // D-2 alias
+    'illegal_relative_explanation': 'document',
+    'illegal_relative': 'document', // D-2 alias
+    // D4→D2
+    'completion_cert': 'document',
+    'korean_transcript': 'document',
+    'arc_copy': 'document',
+    'change_form': 'submission',
+    'finance_proof': 'document',
+    'program_intro': 'document',
+    'prep_course': 'document',
+  };
+
+  // ─── Suggested deadlines (days from now) ───
+  function getSuggestedDays(docType) {
+    const map = {
+      'kvac_booking': 7,
+      'kvac': 7,
+      'health_check': 14,
+      'health': 14,
+      'tb_test': 14,
+      'insurance': 14,
+      'study_plan': 14,
+      'personal_statement': 14,
+      'gap_explanation': 14,
+      'visa_rejection_explanation': 14,
+      'rejection_explain': 14,
+      'submission': 30,
+      'change_form': 30,
+      'admission_letter': 30,
+      'diploma': 30,
+      'transcript': 30,
+      'savings_book': 60,
+      'bank_statement': 45,
+      'notarized_translation': 60,
+      'translate_all': 60,
+      'notarize_translation': 60,
+      'mofa_certification': 45,
+      'consular_legalization': 30,
+    };
+    return map[docType] || 30;
+  }
+
+  // ─── Auto Reminder modal ───
+  window.clAutoReminders = function() {
+    if (!checklist) return;
+    
+    // Check login
+    var token = getStudentToken();
+    if (!token) {
+      toast('🔒 Vui lòng đăng nhập để sử dụng nhắc nhở!');
+      return;
+    }
+
+    // Collect reminder-worthy items (skip ALERT warnings + already completed)
+    var reminderItems = [];
+    for (var mi = 0; mi < checklist.modules.length; mi++) {
+      var mod = checklist.modules[mi];
+      for (var ii = 0; ii < mod.items.length; ii++) {
+        var item = mod.items[ii];
+        // Skip: ALERT items (general_warning), already completed, not_applicable
+        if (item.documentType === 'general_warning') continue;
+        if (item.status === 'completed' || item.status === 'not_applicable') continue;
+        
+        var remType = DOC_REMINDER_MAP[item.documentType];
+        if (!remType) continue; // Unknown type, skip
+        
+        var days = getSuggestedDays(item.documentType);
+        var suggestedDate = new Date();
+        suggestedDate.setDate(suggestedDate.getDate() + days);
+        
+        reminderItems.push({
+          id: item.id,
+          name: item.name,
+          docType: item.documentType,
+          remType: remType,
+          suggestedDate: suggestedDate.toISOString().split('T')[0],
+          selected: true
+        });
       }
     }
 
-    text += `\n━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
-    text += `Tạo bởi: Thông Tin Trường Hàn\n`;
-    text += `thongtintruonghan.vercel.app\n`;
+    if (reminderItems.length === 0) {
+      toast('✅ Không có mục nào cần tạo nhắc nhở!');
+      return;
+    }
 
-    navigator.clipboard.writeText(text).then(() => {
-      toast('✅ Đã copy checklist vào clipboard!');
-    }).catch(() => {
-      // Fallback: create a downloadable text file
-      const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `checklist-${profile.visaType || 'visa'}.txt`;
-      a.click();
-      URL.revokeObjectURL(url);
-      toast('✅ Đã tải file checklist!');
+    // Build modal
+    var overlay = document.createElement('div');
+    overlay.className = 'cl-ai-overlay';
+    overlay.innerHTML = `
+      <div class="cl-ai-modal cl-ai-modal-wide">
+        <div class="cl-ai-modal-header">
+          <h3>⏰ Tạo nhắc nhở từ checklist</h3>
+          <button type="button" class="cl-ai-close" onclick="this.closest('.cl-ai-overlay').remove()">&times;</button>
+        </div>
+        <div class="cl-ai-modal-body">
+          <p style="color:#64748b;font-size:.85rem;margin-bottom:1rem;">
+            Chọn các mục bạn muốn tạo nhắc nhở. Ngày hạn đã được gợi ý dựa trên từng loại giấy tờ — bạn có thể điều chỉnh.
+          </p>
+          <div style="display:flex;gap:0.5rem;margin-bottom:1rem;">
+            <button type="button" class="btn btn-sm btn-primary" onclick="window._rmSelectAll(true)">Chọn tất cả</button>
+            <button type="button" class="btn btn-sm btn-outline" onclick="window._rmSelectAll(false)">Bỏ chọn</button>
+          </div>
+          <div id="rm-item-list" style="max-height:350px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;">
+            ${reminderItems.map(function(item, idx) {
+              var remLabels = { document: '📄 Giấy tờ', submission: '📨 Nộp hồ sơ', interview: '🎤 Phỏng vấn', health_check: '🏥 Khám sức khoẻ', visa_appointment: '🛂 Hẹn visa', other: '📌 Khác' };
+              var label = remLabels[item.remType] || item.remType;
+              return '<div class="rm-item" data-idx="' + idx + '" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;background:#f8fafc;">' +
+                '<input type="checkbox" class="rm-checkbox" checked data-idx="' + idx + '" style="width:18px;height:18px;accent-color:#1e3a5f;">' +
+                '<div style="flex:1;min-width:0;">' +
+                  '<div style="font-size:.85rem;font-weight:600;color:#1e293b;">' + escapeHtml(item.name) + '</div>' +
+                  '<div style="font-size:.75rem;color:#64748b;margin-top:2px;">' + label + '</div>' +
+                '</div>' +
+                '<input type="date" class="rm-date" value="' + item.suggestedDate + '" data-idx="' + idx + '" style="padding:4px 8px;border:1px solid #d1d5db;border-radius:6px;font:inherit;font-size:.8rem;flex:0 0 auto;width:140px;">' +
+              '</div>';
+            }).join('')}
+          </div>
+          <div style="display:flex;gap:10px;margin-top:1rem;">
+            <button type="button" class="btn btn-primary btn-lg" id="rm-create-btn" onclick="window._rmCreateAll()">
+              ✨ Tạo ${reminderItems.length} nhắc nhở
+            </button>
+            <button type="button" class="btn btn-outline" onclick="this.closest('.cl-ai-overlay').remove()">Huỷ</button>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+
+    // Store reference for the create function
+    window._rmItems = reminderItems;
+
+    overlay.addEventListener('click', function(e) {
+      if (e.target === this) this.remove();
     });
+  };
+
+  // ─── Select all / none ───
+  window._rmSelectAll = function(select) {
+    document.querySelectorAll('.rm-checkbox').forEach(function(cb) {
+      cb.checked = select;
+    });
+  };
+
+  // ─── Create reminders ───
+  window._rmCreateAll = async function() {
+    var btn = document.getElementById('rm-create-btn');
+    if (!btn) return;
+    btn.disabled = true;
+    btn.textContent = '⏳ Đang tạo...';
+
+    var items = window._rmItems || [];
+    var checkboxes = document.querySelectorAll('.rm-checkbox');
+    var dates = document.querySelectorAll('.rm-date');
+    var selected = [];
+
+    checkboxes.forEach(function(cb, idx) {
+      if (cb.checked) {
+        var dateInput = dates[idx];
+        selected.push({
+          item: items[idx],
+          dueDate: dateInput ? dateInput.value : items[idx].suggestedDate
+        });
+      }
+    });
+
+    if (selected.length === 0) {
+      toast('⚠️ Chưa chọn mục nào.');
+      btn.disabled = false;
+      btn.textContent = '✨ Tạo nhắc nhở';
+      return;
+    }
+
+    var success = 0;
+    var failed = 0;
+    var token = getStudentToken();
+
+    for (var i = 0; i < selected.length; i++) {
+      var s = selected[i];
+      var dueDate = s.dueDate;
+      if (!dueDate) {
+        failed++;
+        continue;
+      }
+
+      try {
+        var fetchFn = window.fetchWithAuth || fetch;
+        var res = await fetchFn('/api/auth/student?action=reminders-create', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: s.item.name,
+            dueDate: dueDate,
+            reminderType: s.item.remType
+          })
+        });
+        var data = await res.json();
+        if (data.success) {
+          success++;
+        } else {
+          failed++;
+        }
+      } catch (e) {
+        failed++;
+      }
+    }
+
+    // Close modal
+    var overlay = document.querySelector('.cl-ai-overlay');
+    if (overlay) overlay.remove();
+
+    toast('✅ Đã tạo ' + success + '/' + selected.length + ' nhắc nhở' + (failed > 0 ? ' (' + failed + ' lỗi)' : ''));
   };
 
   // ══════════════════════════════════════════════
