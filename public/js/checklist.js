@@ -311,6 +311,17 @@
   // ══════════════════════════════════════════════
   function renderPersonalForm(container) {
     const d = profile;
+    const isD4toD2 = profile.visaType === 'D4-to-D2';
+    const locationField = isD4toD2 ? `
+        <div class="cl-field">
+          <label>Bạn đang ở đâu?</label>
+          <div class="cl-radio-group">
+            <label><input type="radio" name="cl-location" value="vietnam" ${d.currentLocation === 'vietnam' ? 'checked' : ''} onchange="profile.currentLocation = 'vietnam'"> 🇻🇳 Việt Nam</label>
+            <label><input type="radio" name="cl-location" value="korea" ${d.currentLocation === 'korea' ? 'checked' : ''} onchange="profile.currentLocation = 'korea'"> 🇰🇷 Hàn Quốc (đang học tiếng)</label>
+          </div>
+          <p class="cl-hint">Dành cho hồ sơ chuyển đổi D4→D2 — thủ tục khác nhau tuỳ bạn đang ở đâu.</p>
+        </div>` : '';
+
     container.innerHTML = `
       <div class="cl-form-section">
         <h3>👤 Thông tin cá nhân</h3>
@@ -356,6 +367,8 @@
           </div>
         </div>
 
+        ${locationField}
+
         <div class="cl-nav">
           <button type="button" class="btn btn-primary btn-lg" onclick="window.clSaveStep1()">
             Lưu & Tiếp theo →
@@ -372,6 +385,9 @@
     profile.dateOfBirth = document.getElementById('cl-dob').value;
     profile.gender = document.getElementById('cl-gender').value;
     profile.educationLevel = document.getElementById('cl-edu-level').value;
+    // D4→D2: lưu vị trí hiện tại
+    const locInput = document.querySelector('input[name="cl-location"]:checked');
+    if (locInput) profile.currentLocation = locInput.value;
     saveData();
     window.clNextStep();
   };
@@ -381,6 +397,52 @@
   // ══════════════════════════════════════════════
   function renderEducationForm(container) {
     const d = profile;
+    const isD2 = profile.visaType === 'D-2';
+    const isD4toD2 = profile.visaType === 'D4-to-D2';
+
+    // D-2: thêm trường cho bằng ĐH và thư giới thiệu
+    const d2Fields = isD2 ? `
+        <div class="cl-grid-2">
+          <div class="cl-field">
+            <label>Trường Đại học / Cao đẳng đã tốt nghiệp (nếu có)</label>
+            <input type="text" id="cl-uni-name" value="${escapeHtml(d.universityName || '')}" placeholder="VD: Đại học Kinh tế">
+          </div>
+          <div class="cl-field">
+            <label>Bảng điểm Đại học (GPA thang 4 hoặc 10)</label>
+            <input type="text" id="cl-uni-gpa" value="${escapeHtml(d.universityGpa || '')}" placeholder="VD: 3.0/4 hoặc 7.0/10">
+          </div>
+        </div>
+        <div class="cl-field">
+          <label>Bạn đã có thư giới thiệu từ giáo viên chưa? (D-2 cần 2 thư)</label>
+          <div class="cl-radio-group">
+            <label><input type="radio" name="cl-has-rec" value="true" ${d.hasRecommendation ? 'checked' : ''} onchange="profile.hasRecommendation = true"> ✅ Có rồi</label>
+            <label><input type="radio" name="cl-has-rec" value="false" ${d.hasRecommendation === false ? 'checked' : ''} onchange="profile.hasRecommendation = false"> Chưa có</label>
+          </div>
+        </div>` : '';
+
+    // D4→D2: thêm trường về trường tiếng hiện tại
+    const d4d2Fields = isD4toD2 ? `
+        <div class="cl-field">
+          <label>Bạn đang học tiếng Hàn ở trường nào?</label>
+          <input type="text" id="cl-current-school" value="${escapeHtml(d.currentKoreanSchool || '')}" placeholder="VD: Osan University Language Institute">
+        </div>
+        <div class="cl-grid-2">
+          <div class="cl-field">
+            <label>Level / kỳ học hiện tại</label>
+            <input type="text" id="cl-current-level" value="${escapeHtml(d.currentKoreanLevel || '')}" placeholder="VD: Level 4, kỳ 2">
+          </div>
+          <div class="cl-field">
+            <label>Kết quả học tập</label>
+            <select id="cl-current-result">
+              <option value="">— Chọn —</option>
+              <option value="excellent" ${d.koreanStudyResult === 'excellent' ? 'selected' : ''}>Xuất sắc (A)</option>
+              <option value="good" ${d.koreanStudyResult === 'good' ? 'selected' : ''}>Khá (B)</option>
+              <option value="average" ${d.koreanStudyResult === 'average' ? 'selected' : ''}>Trung bình (C)</option>
+              <option value="poor" ${d.koreanStudyResult === 'poor' ? 'selected' : ''}>Yếu (D)</option>
+            </select>
+          </div>
+        </div>` : '';
+
     container.innerHTML = `
       <div class="cl-form-section">
         <h3>🎓 Thông tin học vấn</h3>
@@ -443,6 +505,9 @@
           </div>
         </div>
 
+        ${d2Fields}
+        ${d4d2Fields}
+
         <div class="cl-grid-2">
           <div class="cl-field">
             <label>Trường Hàn Quốc dự định</label>
@@ -479,6 +544,22 @@
     profile.chosenSchool = document.getElementById('cl-chosen-school')?.value?.trim() || '';
     profile.chosenMajor = document.getElementById('cl-chosen-major')?.value?.trim() || '';
 
+    // D-2 fields
+    const uniName = document.getElementById('cl-uni-name');
+    if (uniName) profile.universityName = uniName.value.trim();
+    const uniGpa = document.getElementById('cl-uni-gpa');
+    if (uniGpa) profile.universityGpa = uniGpa.value.trim();
+    const recInput = document.querySelector('input[name="cl-has-rec"]:checked');
+    if (recInput) profile.hasRecommendation = recInput.value === 'true';
+
+    // D4→D2 fields
+    const curSchool = document.getElementById('cl-current-school');
+    if (curSchool) profile.currentKoreanSchool = curSchool.value.trim();
+    const curLevel = document.getElementById('cl-current-level');
+    if (curLevel) profile.currentKoreanLevel = curLevel.value.trim();
+    const curResult = document.getElementById('cl-current-result');
+    if (curResult) profile.koreanStudyResult = curResult.value;
+
     // Calculate gap years
     if (profile.graduationYear) {
       const currentYear = new Date().getFullYear();
@@ -487,13 +568,29 @@
 
     saveData();
     window.clNextStep();
-  };
+  };  // ─── Helper: gợi ý sổ tiết kiệm tối thiểu theo visa type ───
+  function getVisaSavingsHint() {
+    const vt = profile.visaType || 'D-4-1';
+    const hints = {
+      'D-4-1': 'Tối thiểu 10,000 USD (~250 triệu VND) cho D-4-1. Có thể cao hơn tuỳ trường.',
+      'D-2': 'Tối thiểu 18,000-20,000 USD (~450-500 triệu VND) cho D-2. Yêu cầu cao hơn D-4-1 đáng kể!',
+      'D4-to-D2': 'Thường yêu cầu 10,000-18,000 USD tuỳ trường. Nếu đã có visa D-4-1, một số trường chấp nhận mức thấp hơn.',
+    };
+    return hints[vt] || hints['D-4-1'];
+  }
+
+  function getVisaMinSavings() {
+    const vt = profile.visaType || 'D-4-1';
+    const thresholds = { 'D-4-1': 10000, 'D-2': 18000, 'D4-to-D2': 10000 };
+    return thresholds[vt] || 10000;
+  }
 
   // ══════════════════════════════════════════════
   // STEP 3: Finance
   // ══════════════════════════════════════════════
   function renderFinanceForm(container) {
     const d = profile;
+    const savingsHint = getVisaSavingsHint();
     container.innerHTML = `
       <div class="cl-form-section">
         <h3>💰 Thông tin tài chính</h3>
@@ -524,7 +621,7 @@
         <div class="cl-field">
           <label>Số tiền dự kiến trong sổ tiết kiệm (USD)</label>
           <input type="number" id="cl-savings" min="0" step="1000" value="${d.savingsAmount || ''}" placeholder="10000">
-          <p class="cl-hint">Tối thiểu 10,000 USD (~250 triệu VND) cho D-4-1. Có thể cao hơn tuỳ trường.</p>
+          <p class="cl-hint">${escapeHtml(savingsHint)}</p>
         </div>
 
         <div class="cl-info-box" style="background:#fef3c7;border-color:#f59e0b">
@@ -728,11 +825,15 @@
             ${!profile.sponsorIsSelf ? '<li>📌 Người bảo lãnh không phải tự thân — cần chứng minh quan hệ + thu nhập</li>' : ''}
             ${(!profile.gpa || profile.gpa < 5) ? '<li>🟡 GPA thấp — có thể cần thư giới thiệu bổ sung</li>' : ''}
             ${(profile.koreanLevel === 'none') ? '<li>🟡 Chưa có tiếng Hàn — nên học Sejong 2B hoặc TOPIK 1 trước</li>' : ''}
-            ${(profile.savingsAmount < 10000) ? '<li>🔴 Sổ tiết kiệm dưới 10,000 USD — cần tăng lên mức tối thiểu</li>' : ''}
+            ${(profile.savingsAmount < getVisaMinSavings()) ? '<li>🔴 Sổ tiết kiệm dưới ' + getVisaMinSavings().toLocaleString() + ' USD — cần tăng lên mức tối thiểu cho ' + visaType + '</li>' : ''}
             ${!profile.hasLaborContract && profile.hasWorkExperience ? '<li>🟡 Đã đi làm nhưng không có HĐLĐ — cần giấy xác nhận khác</li>' : ''}
             ${(profile.gpa && profile.gpa >= 7) ? '<li>✅ GPA tốt — điểm mạnh trong hồ sơ</li>' : ''}
             ${(profile.koreanLevel && profile.koreanLevel !== 'none') ? '<li>✅ Đã có nền tảng tiếng Hàn — lợi thế</li>' : ''}
             ${profile.hasIllegalRelative ? '<li>🔴 Người thân cư trú bất hợp pháp — rủi ro cao, cần tư vấn riêng</li>' : ''}
+            ${visaType === 'D-2' && profile.koreanLevel !== 'topik3' && profile.koreanLevel !== 'topik4' ? '<li>🔴 D-2 thường yêu cầu TOPIK 3+ — nếu chưa đạt, cần kiểm tra kỹ điều kiện đầu vào của trường</li>' : ''}
+            ${visaType === 'D-2' && !profile.hasRecommendation ? '<li>🟡 D-2 cần 2 thư giới thiệu từ giáo viên — chuẩn bị sớm</li>' : ''}
+            ${visaType === 'D4-to-D2' && !profile.currentKoreanSchool ? '<li>📌 Bạn chưa nhập trường tiếng đang học — cần bổ sung để xác nhận quá trình học</li>' : ''}
+            ${visaType === 'D4-to-D2' && profile.currentLocation === 'korea' ? '<li>📌 Bạn đang ở Hàn — cần kiểm tra hạn visa D-4-1 hiện tại và thủ tục chuyển đổi tại Immigration</li>' : ''}
             ${!profile.hasVisaRejection && profile.gapYears <= 0.5 && profile.sponsorIsSelf && (profile.gpa || 0) >= 5 ? '<li>✅ Hồ sơ cơ bản ổn — không có rủi ro đặc biệt</li>' : ''}
           </ul>
         </div>
@@ -1048,17 +1149,45 @@
   // AI Assist Modal — NÂNG CẤP: 8 câu hỏi Study Plan
   // ══════════════════════════════════════════════
   
-  // ─── 8 câu hỏi cho Study Plan (từ Knowledge Base) ───
-  const STUDY_PLAN_QUESTIONS = [
-    { id: 'q1', label: '1. Vì sao bạn chọn du học Hàn Quốc, không phải nước khác?', hint: 'VD: Văn hoá Hàn Quốc, chất lượng giáo dục, gần Việt Nam, cơ hội việc làm...', key: 'reasonKorea' },
-    { id: 'q2', label: '2. Vì sao bạn chọn trường này / thành phố này?', hint: 'VD: Chương trình đào tạo phù hợp, vị trí thuận lợi, có người quen...', key: 'reasonSchool' },
-    { id: 'q3', label: '3. Bạn có kế hoạch học tập cụ thể theo từng giai đoạn không? (6 tháng, 1 năm, 2 năm...)', hint: 'VD: 6 tháng đầu học tiếng để đạt TOPIK 2, 6 tháng sau thi TOPIK 3...', key: 'studyPlan' },
-    { id: 'q4', label: '4. Bạn có kế hoạch gì sau khi tốt nghiệp / hoàn thành khóa học?', hint: 'VD: Về Việt Nam làm việc cho công ty Hàn Quốc, mở trung tâm tiếng Hàn...', key: 'futurePlan' },
-    { id: 'q5', label: '5. Ngành học / khóa học này liên quan gì đến định hướng nghề nghiệp của bạn?', hint: 'VD: Học tiếng Hàn để làm hướng dẫn viên du lịch, phiên dịch...', key: 'careerGoal' },
-    { id: 'q6', label: '6. Nếu có khoảng trống thời gian (gap year), bạn đã làm gì trong thời gian đó?', hint: 'VD: Đi làm, học thêm ngoại ngữ, tham gia hoạt động ngoại khóa...', key: 'gapActivity' },
-    { id: 'q7', label: '7. Gia đình / người bảo lãnh của bạn có nghề nghiệp và thu nhập ổn định không?', hint: 'VD: Cha mẹ làm kinh doanh / công chức, thu nhập ổn định...', key: 'familyFinance' },
-    { id: 'q8', label: '8. Bạn đã học tiếng Hàn / Anh đến trình độ nào? Có chứng chỉ gì không?', hint: 'VD: Đã học Sejong 2B, có TOPIK 2 hoặc đang ôn thi...', key: 'languageLevel' },
-  ];
+  // ─── Câu hỏi Study Plan — CÁ NHÂN HOÁ theo từng loại visa ───
+  const STUDY_PLAN_QUESTIONS_BY_VISA = {
+    // D-4-1: Visa học tiếng — ngắn gọn, tập trung động lực học tiếng & mục tiêu TOPIK
+    'D-4-1': [
+      { id: 'd41-q1', label: '1. Vì sao bạn chọn học tiếng Hàn tại Hàn Quốc thay vì học tại Việt Nam?', hint: 'VD: Môi trường ngôn ngữ tốt hơn, muốn trải nghiệm văn hoá, có người thân bên đó...', key: 'reasonKorea' },
+      { id: 'd41-q2', label: '2. Tại sao bạn chọn trường tiếng này? Bạn biết gì về trường?', hint: 'VD: Trường có chương trình tiếng tốt, bạn bè giới thiệu, vị trí thuận lợi...', key: 'reasonSchool' },
+      { id: 'd41-q3', label: '3. Bạn có mục tiêu TOPIK cụ thể không? Kế hoạch học tiếng theo từng giai đoạn?', hint: 'VD: 6 tháng đầu đạt TOPIK 2, 1 năm đạt TOPIK 3, mỗi ngày học 4-5 tiếng...', key: 'topikGoal' },
+      { id: 'd41-q4', label: '4. Sau khi hoàn thành khóa học tiếng (1-2 năm), bạn dự định làm gì?', hint: 'VD: Về Việt Nam làm phiên dịch, xin việc công ty Hàn, học lên đại học...', key: 'futurePlan' },
+      { id: 'd41-q5', label: '5. (Nếu có gap year) Bạn đã làm gì trong thời gian đó?', hint: 'VD: Đi làm, học thêm ngoại ngữ, tham gia hoạt động ngoại khóa...', key: 'gapActivity' },
+      { id: 'd41-q6', label: '6. Bạn đã từng học tiếng Hàn chưa? Trình độ hiện tại thế nào?', hint: 'VD: Đã học Sejong 2B, tự học qua YouTube, đang ôn TOPIK 1...', key: 'languageLevel' },
+    ],
+    // D-2: Visa đại học chính quy — chi tiết, tập trung học thuật, ngành nghề, dài hạn
+    'D-2': [
+      { id: 'd2-q1', label: '1. Vì sao bạn chọn du học đại học tại Hàn Quốc thay vì học tại Việt Nam?', hint: 'VD: Chất lượng giáo dục, ngành học phù hợp, cơ hội việc làm sau tốt nghiệp...', key: 'reasonKorea' },
+      { id: 'd2-q2', label: '2. Tại sao bạn chọn trường đại học này? Bạn biết gì về chương trình đào tạo?', hint: 'VD: Trường có thế mạnh về ngành này, chương trình giảng dạy bằng tiếng Anh, có cơ hội thực tập...', key: 'reasonSchool' },
+      { id: 'd2-q3', label: '3. Tại sao bạn chọn ngành này? Nó liên quan thế nào đến định hướng nghề nghiệp?', hint: 'VD: Đam mê từ nhỏ, ngành có nhu cầu nhân lực cao tại Việt Nam, phù hợp năng lực...', key: 'careerGoal' },
+      { id: 'd2-q4', label: '4. Bạn có kế hoạch học tập cụ thể từng học kỳ không? (mục tiêu GPA, chứng chỉ...)', hint: 'VD: Học kỳ 1 tập trung tiếng Hàn, từ kỳ 2 học chuyên ngành, mục tiêu GPA 3.5/4.5...', key: 'studyPlan' },
+      { id: 'd2-q5', label: '5. Bạn dự định làm gì sau khi tốt nghiệp đại học?', hint: 'VD: Về Việt Nam làm việc, xin visa E7 ở lại Hàn, học lên thạc sĩ...', key: 'futurePlan' },
+      { id: 'd2-q6', label: '6. (Nếu có gap year) Bạn đã làm gì trong thời gian đó?', hint: 'VD: Đi làm, học thêm ngoại ngữ, tham gia hoạt động ngoại khóa...', key: 'gapActivity' },
+      { id: 'd2-q7', label: '7. Trình độ tiếng Hàn/Anh của bạn có đáp ứng yêu cầu đầu vào không?', hint: 'VD: Có TOPIK 3, IELTS 5.5, đang ôn thi thêm...', key: 'languageLevel' },
+      { id: 'd2-q8', label: '8. Bạn có dự định học lên cao học (Thạc sĩ, Tiến sĩ) không?', hint: 'VD: Có dự định học lên thạc sĩ sau khi tốt nghiệp đại học, hoặc đi làm trước rồi tính sau...', key: 'higherStudy' },
+      { id: 'd2-q9', label: '9. Bạn có kế hoạch tham gia hoạt động ngoại khóa, thực tập, hay làm thêm không?', hint: 'VD: Muốn tham gia câu lạc bộ tiếng Hàn, thực tập tại công ty Hàn vào kỳ nghỉ hè...', key: 'extracurricular' },
+    ],
+    // D4-to-D2: Chuyển đổi — tập trung vào trải nghiệm tại Hàn & lý do chuyển tiếp
+    'D4-to-D2': [
+      { id: 'd42-q1', label: '1. Bạn đang học tiếng Hàn ở trường nào? Kết quả học tập thế nào?', hint: 'VD: Học tại Osan University, đã hoàn thành level 4, sắp thi TOPIK 3...', key: 'currentStudy' },
+      { id: 'd42-q2', label: '2. Vì sao bạn muốn chuyển từ visa D-4-1 lên D-2 thay vì về Việt Nam?', hint: 'VD: Muốn học lên đại học để có bằng cấp, yêu thích môi trường học tập tại Hàn...', key: 'reasonUpgrade' },
+      { id: 'd42-q3', label: '3. Tại sao bạn chọn trường đại học và ngành này?', hint: 'VD: Trường có chương trình liên thông, ngành học phù hợp với định hướng...', key: 'reasonSchool' },
+      { id: 'd42-q4', label: '4. Trình độ tiếng Hàn hiện tại của bạn có đủ để học đại học không? (TOPIK mấy?)', hint: 'VD: Đã có TOPIK 3, đang ôn TOPIK 4, tự tin đọc hiểu giáo trình...', key: 'languageLevel' },
+      { id: 'd42-q5', label: '5. Kế hoạch học tập cụ thể của bạn khi lên đại học là gì?', hint: 'VD: Năm 1 tập trung tiếng Hàn học thuật, năm 2-3 học chuyên ngành, năm 4 làm đồ án...', key: 'studyPlan' },
+      { id: 'd42-q6', label: '6. Bạn dự định làm gì sau khi tốt nghiệp đại học?', hint: 'VD: Ở lại Hàn làm việc visa E7, về Việt Nam khởi nghiệp, học lên thạc sĩ...', key: 'futurePlan' },
+      { id: 'd42-q7', label: '7. Kinh nghiệm sống và học tập tại Hàn đã thay đổi bạn như thế nào?', hint: 'VD: Tự tin hơn, tiếng Hàn tiến bộ, hiểu văn hoá Hàn hơn, có bạn bè quốc tế...', key: 'koreaExperience' },
+    ],
+  };
+
+  function getStudyPlanQuestions() {
+    const vt = profile.visaType || 'D-4-1';
+    return STUDY_PLAN_QUESTIONS_BY_VISA[vt] || STUDY_PLAN_QUESTIONS_BY_VISA['D-4-1'];
+  }
 
   window.clOpenAIAssist = function() {
     if (!checklist || !checklist._aiSuggestions || checklist._aiSuggestions.length === 0) {
@@ -1141,22 +1270,24 @@
     const formContent = document.getElementById('cl-ai-form-content');
 
     if (s.type === 'study_plan') {
-      // Study Plan: show 8 questions form
+      // Study Plan: show dynamic questions form — khác nhau theo visa type
+      const questions = getStudyPlanQuestions();
+      const totalQ = questions.length;
       const saved = window._clFormAnswers[s.type] || {};
       formContent.innerHTML = `
         <div class="sp-form">
           <h4>📝 Soạn Study Plan cá nhân hoá</h4>
-          <p class="cl-form-desc">Trả lời 8 câu hỏi sau để AI có đủ thông tin viết Study Plan thuyết phục. 
+          <p class="cl-form-desc">Trả lời ${totalQ} câu hỏi để AI có đủ thông tin viết Study Plan thuyết phục. 
           Study Plan càng chi tiết, càng dễ đậu visa!</p>
           
           <div class="sp-progress">
-            <div class="sp-progress-text">Đã trả lời: <span id="sp-answered-count">0</span>/8</div>
+            <div class="sp-progress-text">Đã trả lời: <span id="sp-answered-count">0</span>/${totalQ}</div>
             <div class="sp-progress-bar">
               <div id="sp-answered-fill" class="sp-progress-fill" style="width:0%"></div>
             </div>
           </div>
 
-          ${STUDY_PLAN_QUESTIONS.map((q, i) => `
+          ${questions.map((q, i) => `
             <div class="sp-question" data-qid="${q.id}">
               <label class="sp-question-label">${q.label}</label>
               <p class="sp-question-hint">💡 ${escapeHtml(q.hint)}</p>
@@ -1200,11 +1331,13 @@
     }
   };
 
-  // ─── Theo dõi số câu hỏi đã trả lời ───
+  // ─── Theo dõi số câu hỏi đã trả lời — linh hoạt theo số lượng câu hỏi ───
   window.clTrackSPAnswer = function() {
+    const questions = getStudyPlanQuestions();
+    const totalQ = questions.length;
     let answered = 0;
     const answers = {};
-    STUDY_PLAN_QUESTIONS.forEach(function(q) {
+    questions.forEach(function(q) {
       const input = document.getElementById('sp-' + q.id);
       if (input && input.value.trim()) {
         answered++;
@@ -1213,19 +1346,22 @@
     });
     const count = document.getElementById('sp-answered-count');
     const fill = document.getElementById('sp-answered-fill');
-    if (count) count.textContent = String(answered);
-    if (fill) fill.style.width = Math.round(answered / 8 * 100) + '%';
+    if (count) count.textContent = String(answered) + '/' + String(totalQ);
+    if (fill) fill.style.width = Math.round(answered / totalQ * 100) + '%';
     window._clFormAnswers[window._clCurrentType] = answers;
   };
 
-  // ─── Gửi Study Plan (với câu trả lời) ───
+  // ─── Gửi Study Plan (với câu trả lời) — số câu tối thiểu linh hoạt ───
   window.clSubmitStudyPlan = function() {
     window.clTrackSPAnswer();
     const answers = window._clFormAnswers[window._clCurrentType] || {};
+    const questions = getStudyPlanQuestions();
+    const totalQ = questions.length;
     const answeredCount = Object.keys(answers).length;
+    const minRequired = Math.min(3, Math.ceil(totalQ / 2));
     
-    if (answeredCount < 3) {
-      if (!confirm('Bạn mới trả lời ' + answeredCount + '/8 câu hỏi. Study Plan sẽ thiếu thông tin. Vẫn tạo?')) return;
+    if (answeredCount < minRequired) {
+      if (!confirm('Bạn mới trả lời ' + answeredCount + '/' + totalQ + ' câu hỏi. Study Plan sẽ thiếu thông tin. Vẫn tạo?')) return;
     }
     window._clFormAnswers['_studyPlanAnswers'] = answers;
     window.clCallAIGenerate('study_plan', { studyPlanAnswers: answers });

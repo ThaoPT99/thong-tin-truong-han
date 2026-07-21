@@ -1,5 +1,6 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeAll } from 'vitest';
 
+// Mock api-loader module
 vi.mock('../js/api-loader', () => ({
   REGION_LABELS: {
     any: 'không ưu tiên khu vực',
@@ -10,14 +11,23 @@ vi.mock('../js/api-loader', () => ({
   },
 }));
 
+let parseQuickProfile: Function;
+
+beforeAll(async () => {
+  // Set up window with all globals advisor.js expects
+  const mockWindow: Record<string, any> = {};
+  vi.stubGlobal('window', mockWindow);
+
+  // Import advisor.js — side effects execute and populate window.*
+  await import('../js/advisor');
+
+  // Advisor.js exposes parseQuickProfile on window for testing
+  parseQuickProfile = mockWindow.parseQuickProfile;
+  expect(parseQuickProfile).toBeDefined();
+});
+
 describe('Advisor Logic', () => {
-  beforeEach(() => {
-    vi.resetModules();
-  });
-
-  it('should parse quick profile - region detection', async () => {
-    const { parseQuickProfile } = await import('../js/advisor');
-
+  it('should parse quick profile - region detection', () => {
     expect(parseQuickProfile('seoul').region).toBe('seoul');
     expect(parseQuickProfile('gyeonggi').region).toBe('near-seoul');
     expect(parseQuickProfile('incheon').region).toBe('near-seoul');
@@ -25,9 +35,7 @@ describe('Advisor Logic', () => {
     expect(parseQuickProfile('gwangju').region).toBe('gwangju');
   });
 
-  it('should parse quick profile - gender detection', async () => {
-    const { parseQuickProfile } = await import('../js/advisor');
-
+  it('should parse quick profile - gender detection', () => {
     expect(parseQuickProfile('nữ').gender).toBe('female');
     expect(parseQuickProfile('nu').gender).toBe('female');
     expect(parseQuickProfile('female').gender).toBe('female');
@@ -35,42 +43,32 @@ describe('Advisor Logic', () => {
     expect(parseQuickProfile('male').gender).toBe('male');
   });
 
-  it('should parse quick profile - age and GPA', async () => {
-    const { parseQuickProfile } = await import('../js/advisor');
-
+  it('should parse quick profile - age and GPA', () => {
     const profile = parseQuickProfile('20t, GPA 6.5');
     expect(profile.age).toBe(20);
     expect(profile.gpa).toBe(6.5);
   });
 
-  it('should parse quick profile - korean level', async () => {
-    const { parseQuickProfile } = await import('../js/advisor');
-
+  it('should parse quick profile - korean level', () => {
     expect(parseQuickProfile('topik 2').korean).toBe('topik2');
     expect(parseQuickProfile('topik 3').korean).toBe('topik3');
     expect(parseQuickProfile('sejong').korean).toBe('sejong2b');
   });
 
-  it('should parse quick profile - visa fail', async () => {
-    const { parseQuickProfile } = await import('../js/advisor');
-
+  it('should parse quick profile - visa fail', () => {
     expect(parseQuickProfile('truot visa').visaFail).toBe('yes');
     expect(parseQuickProfile('trượt').visaFail).toBe('yes');
     expect(parseQuickProfile('fail').visaFail).toBe('yes');
   });
 
-  it('should parse quick profile - budget', async () => {
-    const { parseQuickProfile } = await import('../js/advisor');
-
+  it('should parse quick profile - budget', () => {
     expect(parseQuickProfile('tiết kiệm').budget).toBe('low');
     expect(parseQuickProfile('rẻ').budget).toBe('low');
     expect(parseQuickProfile('thấp').budget).toBe('low');
     expect(parseQuickProfile('cao').budget).toBe('high');
   });
 
-  it('should parse quick profile - priorities', async () => {
-    const { parseQuickProfile } = await import('../js/advisor');
-
+  it('should parse quick profile - priorities', () => {
     expect(parseQuickProfile('visa').priorities).toContain('visa');
     expect(parseQuickProfile('việc làm').priorities).toContain('job');
     expect(parseQuickProfile('e7').priorities).toContain('e7');

@@ -7,7 +7,7 @@ const http = require('http');
 const { KB_FOR_CHAT, KB_FOR_STUDY_PLAN, KB_FOR_GAP, KB_FOR_REJECTION } = require('../lib/knowledge-base');
 const { getDeepSeekKey, callDeepSeek, getBotToken, verifyTelegramWebhook, escapeHtmlTelegram } = require('../lib/ai/common');
 
-// ─── Action: Advisor ───
+// ─── Action: Advisor — CÁ NHÂN HOÁ theo visa type ───
 async function handleAdvisor(req, res) {
   const apiKey = getDeepSeekKey();
   if (!apiKey) {
@@ -15,10 +15,20 @@ async function handleAdvisor(req, res) {
   }
 
   const profile = req.body || {};
-  const { gender, age, gpa, absences, korean, visaFail, region, budget, priorities } = profile;
+  const { gender, age, gpa, absences, korean, visaFail, region, budget, priorities, visaType } = profile;
+  const vt = visaType || 'D2-6';
+
+  // ─── Filter schools by visa_type ───
+  let schoolsQuery = supabase.from('schools').select('*').order('slug');
+  if (vt === 'D4-1') {
+    schoolsQuery = schoolsQuery.eq('visa_type', 'D4-1');
+  } else {
+    // D2-6 hoặc default — lấy trường D2-6
+    schoolsQuery = schoolsQuery.eq('visa_type', 'D2-6');
+  }
 
   const [schoolsRes, profilesRes] = await Promise.all([
-    supabase.from('schools').select('*').order('slug'),
+    schoolsQuery,
     supabase.from('school_advisor_profiles').select('*'),
   ]);
 
@@ -40,10 +50,17 @@ async function handleAdvisor(req, res) {
     return `• ${s.name} (${s.name_kr || ''}):\n   - Hệ: ${s.system || 'Chưa rõ'} | Khu vực: ${ap.region || s.region || 'Chưa rõ'}\n   - Đối tượng: ${genderText} | Chỉ tiêu: ${s.quota || 'Chưa rõ'}\n   - Học phí: ${s.tuition || 'Chưa rõ'}\n   - KTX: ${s.ktx || 'Chưa rõ'}\n   - Chi phí: ${costText} | Visa: ${visaText} | Việc làm: ${jobText} | E7: ${e7Text}\n   - Tags: ${tags || 'Không có'}\n   - MOU: ${s.mou || 'Không có'}`;
   }).join('\\n');
 
-  const systemPrompt = `Bạn là chuyên gia tư vấn du học Hàn Quốc Visa D2-6, làm việc cho một trung tâm tư vấn du học.\n\nDữ liệu ${schools.length} trường Hàn Quốc đang tuyển sinh kỳ này:\n\n${schoolTexts}\n\nNHIỆM VỤ:\nPhân tích hồ sơ học sinh và đề xuất Top 3 trường phù hợp nhất.\n\nYÊU CẦU TRẢ LỜI:\n1. **Top 3 trường phù hợp nhất** kèm số % phù hợp\n2. Với mỗi trường, nêu:\n   - **Lý do phù hợp** (2-3 ý, dựa trên hồ sơ thực tế)\n   - **Rủi ro cần kiểm tra** (nếu có)\n3. Kết luận ngắn: trường nào nên ưu tiên nhất\n\nQUY TẮC:\n- Trả lời bằng tiếng Việt, ngắn gọn, dễ hiểu\n- KHÔNG thêm thông tin không có trong dữ liệu\n- Nếu hồ sơ có vấn đề (tuổi cao, GPA thấp, trượt visa) → cảnh báo rõ\n- Ưu tiên trường phù hợp với: khu vực, giới tính, học lực, ngân sách`;
+  // ─── Visa type labels ───
+  const visaLabels = {
+    'D2-6': 'Visa D2-6 (trao đổi sinh viên)',
+    'D4-1': 'Visa D4-1 (học tiếng Hàn)',
+  };
+  const visaLabel = visaLabels[vt] || vt;
+
+  const systemPrompt = `Bạn là chuyên gia tư vấn du học Hàn Quốc, chuyên về ${visaLabel}. Làm việc cho một trung tâm tư vấn du học.\n\nDữ liệu ${schools.length} trường Hàn Quốc đang tuyển sinh kỳ này (${visaLabel}):\n\n${schoolTexts}\n\nNHIỆM VỤ:\nPhân tích hồ sơ học sinh và đề xuất Top 3 trường phù hợp nhất.\n\nYÊU CẦU TRẢ LỜI:\n1. **Top 3 trường phù hợp nhất** kèm số % phù hợp\n2. Với mỗi trường, nêu:\n   - **Lý do phù hợp** (2-3 ý, dựa trên hồ sơ thực tế)\n   - **Rủi ro cần kiểm tra** (nếu có)\n3. Kết luận ngắn: trường nào nên ưu tiên nhất\n\nQUY TẮC:\n- Trả lời bằng tiếng Việt, ngắn gọn, dễ hiểu\n- KHÔNG thêm thông tin không có trong dữ liệu\n- Nếu hồ sơ có vấn đề (tuổi cao, GPA thấp, trượt visa) → cảnh báo rõ\n- Ưu tiên trường phù hợp với: khu vực, giới tính, học lực, ngân sách`;
 
   const priorityText = (priorities && priorities.length) ? `Ưu tiên: ${priorities.join(', ')}.` : '';
-  const userMessage = `Phân tích hồ sơ học sinh sau:\n- Giới tính: ${gender || 'Không rõ'}\n- Tuổi: ${age || 'Không rõ'}\n- GPA: ${gpa || 'Không rõ'}\n- Số buổi nghỉ: ${absences || 'Không rõ'}\n- Tiếng Hàn: ${korean || 'Chưa có'}\n- Đã từng trượt visa: ${visaFail === 'yes' ? 'Có' : 'Không'}\n- Khu vực mong muốn: ${region || 'Không ưu tiên'}\n- Ngân sách: ${budget || 'Trung bình'}\n${priorityText}`;
+  const userMessage = `Phân tích hồ sơ học sinh sau (${visaLabel}):\n- Giới tính: ${gender || 'Không rõ'}\n- Tuổi: ${age || 'Không rõ'}\n- GPA: ${gpa || 'Không rõ'}\n- Số buổi nghỉ: ${absences || 'Không rõ'}\n- Tiếng Hàn: ${korean || 'Chưa có'}\n- Đã từng trượt visa: ${visaFail === 'yes' ? 'Có' : 'Không'}\n- Khu vực mong muốn: ${region || 'Không ưu tiên'}\n- Ngân sách: ${budget || 'Trung bình'}\n${priorityText}`;
 
   const advice = await callDeepSeek(
     [{ role: 'system', content: systemPrompt }, { role: 'user', content: userMessage }],
@@ -948,35 +965,90 @@ HƯỚNG DẪN TRẢ LỜI:
     if (extraData) {
       if (extraData.studyPlanAnswers) {
         const a = extraData.studyPlanAnswers;
-        extraContext = `
-THONG TIN BO SUNG TU HOC SINH:
-- Ly do chon Han Quoc: ${a.reasonKorea || 'Khong co'}
-- Ly do chon truong: ${a.reasonSchool || 'Khong co'}
-- Ke hoach hoc tap: ${a.studyPlan || 'Khong co'}
-- Ke hoach tuong lai: ${a.futurePlan || 'Khong co'}
-- Dinh huong nghe nghiep: ${a.careerGoal || 'Khong co'}
-- Hoat dong gap year: ${a.gapActivity || 'Khong co'}
-- Gia dinh/bao lanh: ${a.familyFinance || 'Khong co'}
-- Trinh do ngon ngu: ${a.languageLevel || 'Khong co'}
-`;
+        // Map dong: lay tat ca key co san trong cau tra loi, khong bi gioi han boi 8 key cu
+        var extraLines = [];
+        if (a.reasonKorea) extraLines.push('- Ly do chon Han Quoc: ' + a.reasonKorea);
+        if (a.reasonSchool) extraLines.push('- Ly do chon truong: ' + a.reasonSchool);
+        if (a.studyPlan) extraLines.push('- Ke hoach hoc tap: ' + a.studyPlan);
+        if (a.futurePlan) extraLines.push('- Ke hoach tuong lai: ' + a.futurePlan);
+        if (a.careerGoal) extraLines.push('- Dinh huong nghe nghiep: ' + a.careerGoal);
+        if (a.gapActivity) extraLines.push('- Hoat dong gap year: ' + a.gapActivity);
+        if (a.familyFinance) extraLines.push('- Gia dinh/bao lanh: ' + a.familyFinance);
+        if (a.languageLevel) extraLines.push('- Trinh do ngon ngu: ' + a.languageLevel);
+        // D-4-1 keys
+        if (a.topikGoal) extraLines.push('- Muc tieu TOPIK: ' + a.topikGoal);
+        // D-2 keys
+        if (a.higherStudy) extraLines.push('- Du dinh hoc len cao: ' + a.higherStudy);
+        if (a.extracurricular) extraLines.push('- Hoat dong ngoai khoa/thuc tap: ' + a.extracurricular);
+        // D4-to-D2 keys
+        if (a.currentStudy) extraLines.push('- Tinh hinh hoc tap hien tai: ' + a.currentStudy);
+        if (a.reasonUpgrade) extraLines.push('- Ly do chuyen doi visa: ' + a.reasonUpgrade);
+        if (a.koreaExperience) extraLines.push('- Kinh nghiem song tai Han: ' + a.koreaExperience);
+        if (extraLines.length > 0) {
+          extraContext = '\nTHONG TIN BO SUNG TU HOC SINH:\n' + extraLines.join('\n');
+        }
       }
       if (extraData.extraInfo) {
         extraContext += `\nTHONG TIN BO SUNG: ${extraData.extraInfo}`;
       }
     }
 
-    const prompts = {
-      study_plan: {
-        system: `Bạn là chuyên viên tư vấn du học Hàn Quốc với 10 năm kinh nghiệm. Viết Study Plan cho học sinh Việt Nam xin visa du học Hàn Quốc.
-
-QUY TẮC:
+    // ─── System prompt cho Study Plan — CÁ NHÂN HOÁ theo visa type ───
+    function getStudyPlanSystemPrompt(vt) {
+      const baseRules = `QUY TẮC CHUNG:
 - Viết bằng tiếng Hàn nếu học sinh có chứng chỉ/đang học tiếng Hàn, nếu không thì viết bằng tiếng Anh
 - Chi tiết, cụ thể, có mốc thời gian rõ ràng
 - Cá nhân hoá theo thông tin học sinh
-- Độ dài: 500-800 từ
 - Tránh chung chung, phải thể hiện mục đích học thật
 - Kết thúc bằng cam kết tuân thủ luật và về nước đúng hạn
-- TUYỆT ĐỐI KHÔNG đề cập vấn đề tài chính trong Study Plan (tài chính là phần riêng của hồ sơ)`,
+- TUYỆT ĐỐI KHÔNG đề cập vấn đề tài chính trong Study Plan (tài chính là phần riêng của hồ sơ)`;
+
+      const prompts = {
+        'D-4-1': `Bạn là chuyên viên tư vấn du học Hàn Quốc với 10 năm kinh nghiệm. Viết Study Plan cho học sinh Việt Nam xin visa D-4-1 (học tiếng Hàn).
+
+MỤC TIÊU CỦA STUDY PLAN D-4-1:
+- Thể hiện động lực học tiếng Hàn mạnh mẽ: tại sao phải học tại Hàn Quốc?
+- Có mục tiêu TOPIK rõ ràng theo từng giai đoạn (VD: 6 tháng → TOPIK 2, 1 năm → TOPIK 3...)
+- Kế hoạch học tập cụ thể: mỗi ngày học mấy tiếng, phương pháp học gì?
+- KHÔNG tập trung vào ngành nghề hay nghiên cứu — đây là visa học tiếng
+- Sau khóa học sẽ về Việt Nam hoặc có dự định tương lai rõ ràng (không ở lại bất hợp pháp)
+- Độ dài: 500-700 từ
+
+${baseRules}`,
+
+        'D-2': `Bạn là chuyên viên tư vấn du học Hàn Quốc với 10 năm kinh nghiệm. Viết Study Plan cho học sinh Việt Nam xin visa D-2 (đại học chính quy).
+
+MỤC TIÊU CỦA STUDY PLAN D-2:
+- Thể hiện động lực học tập nghiêm túc: tại sao chọn Hàn Quốc để học đại học?
+- Chứng minh năng lực học thuật: GPA, chứng chỉ tiếng, kiến thức nền tảng
+- Lý do chọn ngành cụ thể, liên quan đến định hướng nghề nghiệp
+- Kế hoạch học tập chi tiết theo từng học kỳ (mục tiêu GPA, thực tập, ngoại khóa...)
+- Kế hoạch sau tốt nghiệp: về Việt Nam làm việc hoặc xin E7 (không ở lại bất hợp pháp)
+- Có thể đề cập mong muốn học lên cao học nếu phù hợp
+- Độ dài: 800-1200 từ
+
+${baseRules}`,
+
+        'D4-to-D2': `Bạn là chuyên viên tư vấn du học Hàn Quốc với 10 năm kinh nghiệm. Viết Study Plan cho học sinh Việt Nam đang học tiếng tại Hàn với visa D-4-1, muốn chuyển lên visa D-2 (chuyển đổi).
+
+MỤC TIÊU CỦA STUDY PLAN CHUYỂN ĐỔI D4→D2:
+- Thể hiện quá trình học tiếng tại Hàn thành công (kết quả, kinh nghiệm)
+- Tại sao muốn chuyển lên đại học thay vì về nước?
+- Trình độ tiếng Hàn hiện tại đủ để học đại học (nêu rõ TOPIK nếu có)
+- Lý do chọn trường và ngành học cụ thể
+- Kế hoạch học tập chi tiết cho chương trình đại học
+- Cam kết tuân thủ luật, gia hạn visa đúng hạn, không ở lại bất hợp pháp
+- Độ dài: 700-1000 từ
+
+${baseRules}`
+      };
+
+      return prompts[vt] || prompts['D-4-1'];
+    }
+
+    const prompts = {
+      study_plan: {
+        system: getStudyPlanSystemPrompt(visaType || 'D-4-1'),
         user: (p) => `Viết Study Plan cho học sinh sau:
 - Họ tên: ${p.fullName || 'Học sinh'}
 - Ngày sinh: ${p.dateOfBirth || 'Không rõ'}
@@ -1094,8 +1166,51 @@ Viết giải trình cho học sinh này.`
     };
     profile = Object.assign({}, defaultProfile, profile || {});
 
+    // ─── Tạo chủ đề phỏng vấn theo loại visa ───
+    function getInterviewTopics(vt) {
+      const baseTopics = [
+        '1. Gioi thieu ban than & muc dich du hoc',
+        '2. Ly do chon Han Quoc',
+        '6. Tai chinh & nguoi bao lanh',
+      ];
+
+      var visaTopics = {
+        'D-4-1': [
+          ...baseTopics.slice(0, 2),
+          '3. Tai sao chon hoc tieng Han tai Han Quoc? Mot trang tam tieng Viet van co the hoc?',
+          '4. Ke hoach hoc tieng cu the: Muc tieu TOPIK theo giai doan, phuong phap hoc, thoi gian hoc',
+          '5. Sau khi hoan thanh khoa hoc tieng (1-2 nam), ban du dinh lam gi?',
+          ...baseTopics.slice(2),
+          '7. Ban da tung hoc tieng Han chua? Trinh do hien tai the nao?',
+        ],
+        'D-2': [
+          ...baseTopics.slice(0, 2),
+          '3. Tai sao chon truong dai hoc nay? Ban biet gi ve chuong trinh dao tao?',
+          '4. Tai sao chon nganh nay? No lien quan the nao dinh huong nghe nghiep?',
+          '5. Ke hoach hoc tap cu the tu tung hoc ky? Muc tieu GPA?',
+          ...baseTopics.slice(2),
+          '7. Trinh do tieng Han/Anh co dap ung yeu cau dau vao khong?',
+          '8. Sau khi tot nghiep du dinh lam gi? (ve nuoc, E7, hoc len?)',
+        ],
+        'D4-to-D2': [
+          '1. Ban dang hoc tieng Han o truong nao? Ket qua the nao?',
+          '2. Vi sao muon chuyen tu D-4-1 len D-2 thay vi ve Viet Nam?',
+          '3. Tai sao chon truong dai hoc va nganh nay?',
+          '4. Trinh do tieng Han hien tai du de hoc dai hoc chua? (TOPIK may?)',
+          '5. Ke hoach hoc tap cu the khi len dai hoc?',
+          '6. Tai chinh & nguoi bao lanh trong thoi gian hoc dai hoc?',
+          '7. Sau khi tot nghiep dai hoc du dinh lam gi?',
+        ]
+      };
+      return visaTopics[vt] || visaTopics['D-4-1'];
+    }
+
     if (action_type === 'next') {
       // Generate first question based on profile
+      var interviewTopics = getInterviewTopics(profile.visaType || 'D-4-1');
+      var topicsText = interviewTopics.map(function(t, i) { return (i+1) + '. ' + t; }).join('\n');
+      var totalQ = interviewTopics.length;
+
       var systemPrompt = `Ban la nhan vien phong van visa Han Quoc tai KVAC. Ban can phong van hoc sinh xin visa ${profile.visaType || 'D-4-1'}.
 
 THONG TIN HOC SINH:
@@ -1105,17 +1220,10 @@ THONG TIN HOC SINH:
 - Tieng Han: ${profile.koreanLevel || 'Chua co'}${profile.gapYears > 0 ? '\n- Gap year: ' + profile.gapYears + ' nam' : ''}${profile.hasVisaRejection ? '\n- Da tuong truot visa: Co' : ''}${profile.chosenSchool ? '\n- Truong du dinh: ' + profile.chosenSchool : ''}${profile.chosenMajor ? '\n- Nganh du dinh: ' + profile.chosenMajor : ''}
 
 NHIEM VU:
-Ban se phong van hoc sinh bang tieng Viet. Moi lan hoi 1 cau hoi. Tong cong 5-7 cau hoi.
+Ban se phong van hoc sinh bang tieng Viet. Moi lan hoi 1 cau hoi. Tong cong ${totalQ} cau hoi.
 
 CAC CHU DE CAN HOI (theo thu tu):
-1. Gioi thieu ban than & muc dich du hoc
-2. Ly do chon Han Quoc (khong phai nuoc khac)
-3. Ly do chon truong & nganh hoc
-4. Ke hoach hoc tap cu the (theo giai doan)
-5. Ke hoach sau khi tot nghiep (ve nuoc lam gi)
-6. Tai chinh & nguoi bao lanh
-7. (Neu co gap year) Giai thich khoang trong thoi gian
-8. (Neu truot visa) Nguyen nhan truot va cach khac phuc
+${topicsText}
 
 QUY TAC:
 - Hoi bang tieng Viet, than thien nhung chuyen nghiep
@@ -1127,7 +1235,7 @@ Tra ve KET QUA DUOI DANG JSON, KHONG co text khac:
 {
   "question": "Cau hoi phong van...",
   "questionNumber": 1,
-  "totalQuestions": 6,
+  "totalQuestions": ${totalQ},
   "category": "gioi-thieu",
   "hint": "Goi y tra loi..."
 }`;
@@ -1324,8 +1432,7 @@ THONG TIN HOC SINH:
 - Hoc van: ${profile.educationLevel === 'university' ? 'Dai hoc' : 'THPT'}
 - GPA: ${profile.gpa || 'Khong ro'}
 - Tieng Han: ${profile.koreanLevel || 'Chua co'}
-- Nam tot nghiep: ${profile.graduationYear || 'Khong ro'}${profile.gapYears > 0 ? `\n- Khoang trong hoc tap: ${profile.gapYears} nam` : ''}${profile.hasVisaRejection ? '\n- Da tuong truot visa: Co' : ''}${profile.sponsorIsSelf === false ? '\n- Bao lanh tai chinh: Nguoi than' : '\n- Bao lanh tai chinh: Tu than'}` : '
-(Khong co thong tin ho so)';
+- Nam tot nghiep: ${profile.graduationYear || 'Khong ro'}${profile.gapYears > 0 ? '\n- Khoang trong hoc tap: ' + profile.gapYears + ' nam' : ''}${profile.hasVisaRejection ? '\n- Da tuong truot visa: Co' : ''}${profile.sponsorIsSelf === false ? '\n- Bao lanh tai chinh: Nguoi than' : '\n- Bao lanh tai chinh: Tu than'}\n` : '\n(Khong co thong tin ho so)';
 
     const systemPrompt = `Ban la chuyen vien tu van du hoc Han Quoc voi 15 nam kinh nghiem, chuyen danh gia Study Plan xin visa du hoc.
 

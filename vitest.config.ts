@@ -5,7 +5,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
-    include: ['lib/**/*.test.ts', 'api/**/*.test.ts', 'scripts/**/*.test.ts'],
+    include: ['lib/**/*.test.ts', 'api/**/*.test.ts', 'scripts/**/*.test.ts', 'public/**/*.test.ts'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],

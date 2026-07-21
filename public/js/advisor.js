@@ -7,7 +7,6 @@ const PRIORITY_LABELS = {
   "low-study": "học ít"
 };
 
-
 /** Parse nhanh ho so tu text: "nu, 20t, GPA 6.0, topik 2" */
 function parseQuickProfile(text) {
   const q = (text || '').toLowerCase().trim();
@@ -70,7 +69,25 @@ function renderAdvisorApp(container) {
     container.innerHTML = getAdvisorTemplate();
     container.dataset.ready = "true";
     bindAdvisorEvents(container);
+    // Restore last selected visa type
+    const savedVisa = localStorage.getItem('advisor_visa_type');
+    if (savedVisa) {
+      const sel = container.querySelector('#advisor-visa-type');
+      if (sel) sel.value = savedVisa;
+      updateAdvisorKicker(container, savedVisa);
+    }
   }
+}
+
+function getVisaTypeKickerText(visaType) {
+  const labels = { 'D2-6': 'Visa D2-6', 'D4-1': 'Visa D4-1' };
+  return labels[visaType] || 'Visa D2-6';
+}
+
+function updateAdvisorKicker(container, visaType) {
+  const kickers = container.querySelectorAll('.advisor-kicker');
+  const label = getVisaTypeKickerText(visaType);
+  kickers.forEach(function(el) { el.textContent = label; });
 }
 
 function getAdvisorTemplate() {
@@ -95,6 +112,14 @@ function getAdvisorTemplate() {
 
       <form id="advisor-form" class="advisor-form">
         <div class="advisor-grid">
+          <label class="advisor-field">
+            <span>Loại visa</span>
+            <select id="advisor-visa-type" name="visaType">
+              <option value="D2-6">D2-6: Trao đổi sinh viên</option>
+              <option value="D4-1">D4-1: Học tiếng Hàn</option>
+            </select>
+          </label>
+
           <label class="advisor-field">
             <span>Giới tính</span>
             <select name="gender">
@@ -177,6 +202,8 @@ function getAdvisorTemplate() {
   `;
 }
 
+
+
 function bindAdvisorEvents(container) {
   const form = container.querySelector("#advisor-form");
   const reset = container.querySelector(".advisor-reset");
@@ -235,7 +262,7 @@ function bindAdvisorEvents(container) {
     renderAdvisorResults(container.querySelector("#advisor-results"), profile, results);
     // Track advisor analysis
     if (typeof window.trackAnalytics === 'function') {
-      window.trackAnalytics('event', { eventType: 'advisor_analyze', eventData: { region: profile.region, priorities: profile.priorities } });
+      window.trackAnalytics('event', { eventType: 'advisor_analyze', eventData: { region: profile.region, visaType: profile.visaType, priorities: profile.priorities } });
     }
   });
   reset.addEventListener("click", () => {
@@ -243,6 +270,16 @@ function bindAdvisorEvents(container) {
     container.querySelector("#advisor-results").innerHTML = "";
     if (aiResponse) { aiResponse.style.display = 'none'; aiResponse.textContent = ''; }
   });
+
+  // ─── Visa type change handler ───
+  const visaTypeSelect = container.querySelector('#advisor-visa-type');
+  if (visaTypeSelect) {
+    visaTypeSelect.addEventListener('change', function() {
+      var value = this.value;
+      try { localStorage.setItem('advisor_visa_type', value); } catch(e) {}
+      updateAdvisorKicker(container, value);
+    });
+  }
 
   // ─── AI Tư vấn ───
   if (aiBtn && aiResponse) {
@@ -263,7 +300,7 @@ function bindAdvisorEvents(container) {
 
         // Track AI advisor usage
         if (typeof window.trackAnalytics === 'function') {
-          window.trackAnalytics('event', { eventType: 'ai_advisor', eventData: { region: profile.region } });
+          window.trackAnalytics('event', { eventType: 'ai_advisor', eventData: { region: profile.region, visaType: profile.visaType } });
         }
         if (data.success && data.advice) {
           // Convert response safely: chỉ allow <br> và <strong>, escape mọi thứ khác
@@ -293,6 +330,7 @@ function bindAdvisorEvents(container) {
 function readAdvisorForm(form) {
   const data = new FormData(form);
   return {
+    visaType: data.get("visaType") || 'D2-6',
     gender: data.get("gender"),
     age: Number(data.get("age") || 0),
     gpa: Number(data.get("gpa") || 0),
@@ -306,7 +344,13 @@ function readAdvisorForm(form) {
 }
 
 function analyzeSchools(profile) {
+  const currentVisaType = profile.visaType || 'D2-6';
+  // Filter schools by visa type (D2-6 vs D4-1)
   return Object.keys(SCHOOLS_DATA || {})
+    .filter(function(schoolId) {
+      const school = SCHOOLS_DATA[schoolId];
+      return (school.visaType || 'D2-6') === currentVisaType;
+    })
     .map((schoolId) => scoreSchool(schoolId, SCHOOLS_DATA[schoolId], profile))
     .sort((a, b) => b.score - a.score)
     .map((item, index) => ({ ...item, rank: index + 1 }));
@@ -342,7 +386,7 @@ function scoreSchool(schoolId, school, profile) {
     risks.push("Tuổi trên 25 cần kiểm tra kỹ yêu cầu trường và chiến lược giải trình hồ sơ.");
   } else if (profile.age >= 18) {
     score += 5;
-    reasons.push("Độ tuổi nằm trong nhóm hồ sơ D2-6 thường dễ xử lý hơn.");
+    reasons.push("Độ tuổi nằm trong nhóm hồ sơ " + getVisaTypeKickerText(profile.visaType || 'D2-6') + " thường dễ xử lý hơn.");
   }
 
   if (profile.gpa >= rules.minGpa + 0.5) {
@@ -487,8 +531,9 @@ function getFitLevel(score) {
 function buildAdvisorShareText(profile, results) {
   const top = results.slice(0, 3);
   const priorities = profile.priorities.map((p) => PRIORITY_LABELS[p]).join(", ") || "chưa chọn";
+  const visaKicker = getVisaTypeKickerText(profile.visaType || 'D2-6');
   return [
-    "Kết quả gợi ý trường D2-6",
+    `Kết quả gợi ý trường ${visaKicker}`,
     `Khu vực ưu tiên: ${REGION_LABELS[profile.region]}`,
     `Ưu tiên: ${priorities}`,
     "",
@@ -513,7 +558,7 @@ function renderAdvisorResults(target, profile, results) {
       <div>
         <p class="advisor-kicker">Kết quả phân tích</p>
         <h3>Top 3 trường phù hợp nhất</h3>
-        <p>Ưu tiên: ${escapeHtml(priorities)}. Khu vực: ${escapeHtml(REGION_LABELS[profile.region])}.</p>
+        <p>Loại visa: ${escapeHtml(getVisaTypeKickerText(profile.visaType || 'D2-6'))}. Ưu tiên: ${escapeHtml(priorities)}. Khu vực: ${escapeHtml(REGION_LABELS[profile.region])}.</p>
       </div>
       <div class="advisor-score-pill">${top[0]?.score || 0}% phù hợp nhất</div>
     </div>
@@ -610,4 +655,11 @@ function renderAdvisorCard(item) {
       <button type="button" class="advisor-open-school" data-open-school="${item.id}">Xem chi tiết trường</button>
     </article>
   `;
+}
+
+// ─── Expose for testing ───
+// Vite's static export extraction doesn't detect function declarations in this file,
+// so we expose them on window for unit tests to access.
+if (typeof window !== 'undefined') {
+  window.parseQuickProfile = parseQuickProfile;
 }

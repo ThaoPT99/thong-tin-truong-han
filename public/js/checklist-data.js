@@ -691,25 +691,641 @@ window.CHECKLIST_DATA = {
   },
 
   // ═══════════════════════════════════════════════════════════
-  // D4→D2: Chuyển đổi visa
+  // D4→D2: Chuyển đổi visa (học tiếng lên đại học)
   // ═══════════════════════════════════════════════════════════
+  // Lưu ý: Học sinh đã ở Hàn Quốc với visa D-4-1, đang học tiếng tại trường,
+  // muốn chuyển lên visa D-2 để học đại học. Nộp tại Immigration Hàn Quốc (không phải KVAC).
   'D4-to-D2': {
     visaType: 'D4-to-D2',
     name: 'Chuyển đổi Visa D4 → D2',
-    description: 'Dành cho học sinh đang ở Hàn với visa D-4-1, muốn chuyển lên visa D-2.',
+    description: 'Dành cho học sinh đang ở Hàn với visa D-4-1, muốn chuyển lên visa D-2 để học đại học chính quy.',
     modules: [
+
+      // ═══ C1: Giấy tờ hành chính tại Hàn ═══
       {
         id: 'C1',
-        name: 'Giấy tờ tại Hàn',
+        name: 'Giấy tờ hành chính tại Hàn Quốc',
         icon: '🏛️',
+        description: 'Giấy tờ cư trú và nhân thân — học sinh đang ở Hàn nên cần chuẩn bị các giấy tờ này.',
         required: true,
         items: [
-          { id: 'C1-1', name: 'Giấy chứng nhận hoàn thành khóa tiếng', description: 'Từ trường tiếng Hàn.', documentType: 'completion_cert', required: true, rule: null },
-          { id: 'C1-2', name: 'Bảng điểm khóa tiếng Hàn', description: 'Thể hiện kết quả học tập.', documentType: 'korean_transcript', required: true, rule: null },
-          { id: 'C1-3', name: 'Admission Letter từ trường ĐH', description: 'Thư nhập học đại học.', documentType: 'admission_letter', required: true, rule: null },
-          { id: 'C1-4', name: 'Hộ chiếu + Thẻ ngoại kiều (ARC)', description: 'Bản photo thẻ cư trú hiện tại.', documentType: 'arc_copy', required: true, rule: null },
-          { id: 'C1-5', name: 'Đơn xin chuyển đổi visa (mẫu Hàn)', description: 'Nộp tại Immigration Hàn Quốc.', documentType: 'change_form', required: true, rule: null },
-          { id: 'C1-6', name: 'Giấy tờ tài chính chứng minh đủ điều kiện', description: 'Sổ tiết kiệm tại Hàn hoặc VN.', documentType: 'finance_proof', required: true, rule: null }
+          {
+            id: 'C1-1',
+            name: 'Hộ chiếu còn hạn',
+            description: 'Còn hạn ít nhất 6 tháng, còn trang trống. Nếu hộ chiếu sắp hết hạn — gia hạn trước khi nộp hồ sơ chuyển đổi.',
+            documentType: 'passport',
+            required: true,
+            rule: null
+          },
+          {
+            id: 'C1-2',
+            name: 'Thẻ ngoại kiều (ARC) — bản gốc + photo',
+            description: 'Mặt trước và sau của thẻ ARC hiện tại. Photo rõ ràng. ARC là giấy tờ quan trọng nhất khi ở Hàn.',
+            documentType: 'arc_card',
+            required: true,
+            rule: null
+          },
+          {
+            id: 'C1-3',
+            name: 'Đơn xin chuyển đổi tư cách lưu trú (mẫu 26-ho/26-he)',
+            description: 'Mẫu đơn xin thay đổi tư cách lưu trú (Change of Status of Sojourn). Tải từ Hi Korea (www.hikorea.go.kr), điền thông tin cá nhân, visa hiện tại, visa muốn chuyển đổi.',
+            documentType: 'status_change_form',
+            required: true,
+            warning: '⚠️ Điền CHÍNH XÁC thông tin — sai sót sẽ bị trả hồ sơ. Có thể nhờ trường ĐH hỗ trợ điền.',
+            rule: null
+          },
+          {
+            id: 'C1-4',
+            name: 'Ảnh thẻ 3.5x4.5cm (mới nhất)',
+            description: 'Nền trắng, chụp trong 6 tháng gần nhất. Nên chụp lại tại Hàn Quốc để đúng chuẩn.',
+            documentType: 'photo',
+            required: true,
+            rule: null
+          },
+          {
+            id: 'C1-5',
+            name: 'CCCD/CMND (bản photo)',
+            description: 'Photo rõ ràng, không cần công chứng. Giữ lại từ Việt Nam mang sang.',
+            documentType: 'id_card',
+            required: true,
+            rule: null
+          },
+          {
+            id: 'C1-6',
+            name: 'Sổ hộ khẩu (bản photo) hoặc Giấy xác nhận thông tin cư trú (CT07)',
+            description: 'Photo sổ hộ khẩu tất cả các trang. Nếu không có sổ hộ khẩu gốc tại Hàn, có thể xin CT07 online hoặc nhờ người nhà gửi sang.',
+            documentType: 'household_registration',
+            required: true,
+            rule: null
+          },
+          {
+            id: 'C1-7',
+            name: 'Giấy khai sinh (bản sao)',
+            description: 'Bản sao có công chứng. Nhờ người nhà gửi từ Việt Nam sang nếu chưa mang theo.',
+            documentType: 'birth_certificate',
+            required: true,
+            rule: null
+          },
+          {
+            id: 'C1-8',
+            name: 'Giấy khám sức khỏe tổng quát (tại Hàn Quốc)',
+            description: 'Khám tại bệnh viện Hàn Quốc — xin Giấy chứng nhận sức khỏe (Health Certificate). Có giá trị 3 tháng. Một số trường ĐH yêu cầu giấy khám riêng.',
+            documentType: 'health_certificate',
+            required: true,
+            warning: '💡 Nên khám tại bệnh viện được Immigration chấp nhận. Hỏi trường ĐH để biết mẫu khám cụ thể.',
+            rule: null
+          },
+          {
+            id: 'C1-9',
+            name: 'Giấy xác nhận đăng ký tạm trú tại Hàn (Certificate of Residence)',
+            description: 'Xin tại Immigration hoặc dùng giấy xác nhận địa chỉ từ người cho thuê nhà/hợp đồng thuê nhà.',
+            documentType: 'residence_cert',
+            required: false,
+            recommended: true,
+            rule: null
+          }
+        ]
+      },
+
+      // ═══ C2: Giấy tờ học vấn ═══
+      {
+        id: 'C2',
+        name: 'Giấy tờ học vấn',
+        icon: '🎓',
+        description: 'Bao gồm kết quả học tiếng tại Hàn + học vấn từ Việt Nam.',
+        required: true,
+        items: [
+          {
+            id: 'C2-1',
+            name: 'Giấy chứng nhận hoàn thành khóa học tiếng Hàn',
+            description: 'Từ trường tiếng Hàn bạn đang theo học. Xác nhận bạn đã hoàn thành khóa học (hoặc đang học kỳ cuối). Đây là giấy tờ BẮT BUỘC để chuyển đổi visa.',
+            documentType: 'korean_completion_cert',
+            required: true,
+            warning: '🚨 Không có giấy chứng nhận hoàn thành khóa tiếng = KHÔNG thể chuyển đổi visa. Nếu chưa hoàn thành, cần xin xác nhận đang theo học và cam kết hoàn thành.',
+            rule: null
+          },
+          {
+            id: 'C2-2',
+            name: 'Bảng điểm khóa học tiếng Hàn',
+            description: 'Điểm tổng kết tất cả các kỳ đã học. Immigration xem xét điểm số để đánh giá khả năng học tập. Điểm trung bình nên từ C (70/100) trở lên — dưới C sẽ bị từ chối.',
+            documentType: 'korean_transcript',
+            required: true,
+            warning: '⚠️ Điểm tiếng Hàn dưới C (70/100) là lý do phổ biến bị từ chối chuyển đổi visa. Nếu điểm thấp, cần giải trình kèm chứng chỉ TOPIK để bù.',
+            rule: null
+          },
+          {
+            id: 'C2-3',
+            name: 'Chứng chỉ TOPIK (bắt buộc tối thiểu TOPIK 3)',
+            description: 'Hầu hết trường ĐH Hàn Quốc yêu cầu TOPIK 3+ để nhập học. Immigration cũng xem TOPIK như bằng chứng năng lực tiếng Hàn để học ĐH. Nếu chưa có — cần thi gấp.',
+            documentType: 'topik_certificate',
+            required: true,
+            warning: '🚨 TOPIK 3+ gần như là BẮT BUỘC cho chuyển đổi D4→D2. Không có TOPIK = tỉ lệ đậu rất thấp. Một số trường chấp nhận TOPIK 2 nhưng rất hiếm.',
+            rule: { has_topik: { eq: true } }
+          },
+          {
+            id: 'C2-4',
+            name: 'Chứng chỉ TOPIK 2+ (khuyến nghị thi gấp nếu chưa có)',
+            description: 'Nếu chưa có TOPIK 3 — đăng ký thi kỳ gần nhất. Có TOPIK dù chưa đủ 3 cũng là điểm cộng khi giải trình với Immigration.',
+            documentType: 'topik_optional',
+            required: false,
+            recommended: true,
+            rule: { has_topik: { neq: true } },
+            warning: '💡 Nếu bạn chưa có TOPIK — hãy đăng ký thi ngay kỳ TOPIK gần nhất. Việc có chứng chỉ (dù chỉ TOPIK 2) giúp hồ sơ mạnh hơn nhiều.'
+          },
+          {
+            id: 'C2-5',
+            name: 'Bằng tốt nghiệp THPT',
+            description: 'Bản gốc + bản dịch công chứng tiếng Hàn hoặc Anh. Nhờ người nhà gửi từ Việt Nam sang nếu chưa mang theo.',
+            documentType: 'high_school_diploma',
+            required: true,
+            rule: null
+          },
+          {
+            id: 'C2-6',
+            name: 'Bảng điểm THPT (học bạ)',
+            description: 'Bản gốc + dịch công chứng. GPA THPT nên >= 6.0 để tăng tỉ lệ đậu D-2.',
+            documentType: 'high_school_transcript',
+            required: true,
+            rule: null
+          },
+          {
+            id: 'C2-7',
+            name: 'Bằng tốt nghiệp Đại học/Cao đẳng (nếu có)',
+            description: 'Nếu đã học ĐH ở Việt Nam — nộp bản gốc + dịch công chứng. Đây là điểm cộng lớn.',
+            documentType: 'uni_diploma',
+            required: false,
+            rule: { education_level: { eq: 'university' } }
+          },
+          {
+            id: 'C2-8',
+            name: 'Bảng điểm Đại học (nếu có)',
+            description: 'Bản gốc + dịch công chứng.',
+            documentType: 'uni_transcript',
+            required: false,
+            rule: { education_level: { eq: 'university' } }
+          },
+          {
+            id: 'C2-9',
+            name: 'Thư giới thiệu từ giáo viên trường tiếng Hàn',
+            description: 'Thư giới thiệu từ giáo viên dạy tiếng Hàn tại trường bạn đang học — xác nhận thái độ học tập, chuyên cần, khả năng tiếng Hàn.',
+            documentType: 'teacher_recommendation',
+            required: true,
+            hasAiAssist: true,
+            rule: null
+          },
+          {
+            id: 'C2-10',
+            name: 'Giấy chứng nhận chuyên cần (Attendance Certificate)',
+            description: 'Xin từ trường tiếng Hàn — xác nhận tỉ lệ đi học. Tỉ lệ chuyên cần >= 80% là yêu cầu cơ bản. Dưới 70% có thể bị từ chối chuyển đổi.',
+            documentType: 'attendance_cert',
+            required: true,
+            warning: '⚠️ Tỉ lệ chuyên cần < 80% là "cờ đỏ" cho Immigration. Nếu thấp, chuẩn bị giải trình lý do vắng học.',
+            rule: null
+          }
+        ]
+      },
+
+      // ═══ C3: Giấy tờ từ trường Đại học Hàn Quốc ═══
+      {
+        id: 'C3',
+        name: 'Giấy tờ từ trường Đại học Hàn Quốc',
+        icon: '🏫',
+        description: 'Giấy tờ do trường ĐH cấp sau khi bạn trúng tuyển.',
+        required: true,
+        items: [
+          {
+            id: 'C3-1',
+            name: 'Admission Letter / Thư nhập học từ trường ĐH',
+            description: 'Thư chính thức từ trường Đại học Hàn Quốc xác nhận bạn đã trúng tuyển. Kiểm tra kỹ thông tin cá nhân, ngành học, kỳ nhập học.',
+            documentType: 'admission_letter',
+            required: true,
+            rule: null
+          },
+          {
+            id: 'C3-2',
+            name: 'Invoice / Giấy báo học phí',
+            description: 'Chi tiết học phí toàn khóa hoặc học kỳ đầu. Dùng để chứng minh với Immigration.',
+            documentType: 'tuition_invoice',
+            required: true,
+            rule: null
+          },
+          {
+            id: 'C3-3',
+            name: 'Giấy giới thiệu chương trình đào tạo (Program Introduction)',
+            description: 'Mô tả ngành học, thời gian đào tạo, số tín chỉ. Immigration muốn thấy bạn hiểu rõ chương trình mình sẽ học.',
+            documentType: 'program_intro',
+            required: false,
+            recommended: true,
+            rule: null
+          },
+          {
+            id: 'C3-4',
+            name: 'Giấy xác nhận hỗ trợ từ trường ĐH (nếu có)',
+            description: 'Một số trường ĐH cung cấp thư hỗ trợ cho thủ tục chuyển đổi visa. Hỏi văn phòng quốc tế của trường.',
+            documentType: 'school_support_letter',
+            required: false,
+            recommended: true,
+            rule: null
+          }
+        ]
+      },
+
+      // ═══ C4: Chứng minh tài chính ═══
+      {
+        id: 'C4',
+        name: 'Chứng minh tài chính',
+        icon: '💰',
+        description: 'Chứng minh khả năng chi trả học phí ĐH + sinh hoạt tại Hàn. Quan trọng: có thể dùng tài khoản ngân hàng Hàn Quốc.',
+        required: true,
+        items: [
+          {
+            id: 'C4-1',
+            name: 'Sổ tiết kiệm / Giấy xác nhận số dư',
+            description: 'Tối thiểu $10,000-$18,000 USD tùy trường ĐH. Có thể mở sổ tại Hàn Quốc (ngân hàng Hàn) hoặc Việt Nam. Gửi kỳ hạn tối thiểu 6 tháng, mở trước 1-3 tháng.',
+            documentType: 'savings_book',
+            required: true,
+            warning: '⚠️ Mức tiền tối thiểu tùy trường ĐH. Có trường yêu cầu $18,000, có trường chỉ $10,000. Kiểm tra với văn phòng quốc tế của trường trước khi chuẩn bị.',
+            rule: null
+          },
+          {
+            id: 'C4-2',
+            name: 'Xác nhận số dư + sao kê ngân hàng 3 tháng gần nhất',
+            description: 'Bản gốc cấp trong vòng 30 ngày. Có thể dùng sao kê từ tài khoản Hàn Quốc (thể hiện lịch sử sinh hoạt tại Hàn). Sao kê phải ổn định, không biến động bất thường.',
+            documentType: 'bank_statement',
+            required: true,
+            warning: '⚠️ Nếu đang ở Hàn, nên dùng sao kê tài khoản Hàn Quốc để thể hiện lịch sử tài chính và sinh hoạt thực tế tại Hàn.',
+            rule: null
+          },
+          {
+            id: 'C4-3',
+            name: 'Giấy cam kết bảo lãnh tài chính',
+            description: 'Người bảo lãnh (bố/mẹ) cam kết chi trả học phí và sinh hoạt phí.',
+            documentType: 'sponsorship_letter',
+            required: false,
+            rule: { sponsor_is_self: { eq: false } },
+            hasAiAssist: true
+          },
+          {
+            id: 'C4-4',
+            name: 'Giấy tờ chứng minh quan hệ với người bảo lãnh',
+            description: 'Giấy khai sinh, sổ hộ khẩu. Nếu người bảo lãnh không phải bố/mẹ — cần thêm giấy tờ chứng minh quan hệ.',
+            documentType: 'relationship_proof',
+            required: false,
+            rule: { sponsor_is_self: { eq: false } }
+          },
+          {
+            id: 'C4-5',
+            name: 'Giấy tờ chứng minh thu nhập người bảo lãnh',
+            description: 'Hợp đồng lao động, sao kê lương, xác nhận công việc, giấy phép kinh doanh...',
+            documentType: 'income_proof',
+            required: true,
+            rule: { sponsor_is_self: { eq: false } }
+          },
+          {
+            id: 'C4-6',
+            name: 'Hợp đồng lao động / sao kê lương (tự thân)',
+            description: 'Nếu bạn tự bảo lãnh — cần chứng minh thu nhập ổn định từ Việt Nam. Lưu ý: không được đi làm thêm khi đang visa D-4-1 (vi phạm).',
+            documentType: 'self_income_proof',
+            required: false,
+            rule: { sponsor_is_self: { eq: true } }
+          },
+          {
+            id: 'C4-7',
+            name: 'Sao kê tài khoản ngân hàng Hàn Quốc',
+            description: 'Nếu bạn đã mở tài khoản tại Hàn — nộp sao kê thể hiện lịch sử nhận tiền từ gia đình và chi tiêu sinh hoạt. Thể hiện sự ổn định tài chính khi ở Hàn.',
+            documentType: 'korea_bank_statement',
+            required: false,
+            recommended: true,
+            rule: { current_location: { eq: 'korea' } }
+          },
+          {
+            id: 'C4-8',
+            name: 'Dịch công chứng toàn bộ giấy tờ tài chính',
+            description: 'Giấy tờ tiếng Việt cần dịch công chứng sang tiếng Hàn. Có thể dịch tại ĐSQ hoặc công chứng viên Hàn Quốc.',
+            documentType: 'notarized_translation',
+            required: true,
+            rule: null
+          },
+          {
+            id: 'C4-9',
+            name: 'Sổ đóng băng K-Study hoặc tài khoản đóng băng tại Hàn',
+            description: 'Một số trường yêu cầu sổ đóng băng tại Shinhan, Woori, hoặc Hana Bank. Số tiền 8,000-10,000 USD. Tăng tỉ lệ đậu xét duyệt.',
+            documentType: 'k_study_account',
+            required: false,
+            recommended: true,
+            rule: null
+          }
+        ]
+      },
+
+      // ═══ C5: Study Plan & Personal Statement ═══
+      {
+        id: 'C5',
+        name: 'Study Plan & Personal Statement',
+        icon: '✍️',
+        description: 'QUAN TRỌNG: Immigration muốn thấy lý do chuyển đổi rõ ràng và kế hoạch học tập thuyết phục.',
+        required: true,
+        items: [
+          {
+            id: 'C5-1',
+            name: 'Study Plan chuyển đổi (Change of Status Statement)',
+            description: '700-1000 từ tiếng Hàn. GIẢI TRÌNH RÕ: (1) Quá trình học tiếng tại Hàn — đã học được gì? (2) Tại sao muốn học ĐH tại Hàn? (3) Tại sao chọn ngành/trường này? (4) Kế hoạch sau tốt nghiệp ĐH. Đây là giấy tờ QUAN TRỌNG NHẤT — Immigration đọc kỹ để đánh giá mục đích chuyển đổi có thật không.',
+            documentType: 'change_of_status_statement',
+            required: true,
+            hasAiAssist: true,
+            warning: '🚨 Study Plan CHUYỂN ĐỔI khác với Study Plan xin visa lần đầu! Phải tập trung vào: Kết quả học tiếng → Lý do chuyển ĐH → Kế hoạch tương lai. Không copy từ Study Plan cũ!',
+            rule: null
+          },
+          {
+            id: 'C5-2',
+            name: 'Personal Statement (cập nhật)',
+            description: 'Giới thiệu bản thân — cập nhật với trải nghiệm học tập và sinh hoạt tại Hàn Quốc.',
+            documentType: 'personal_statement',
+            required: false,
+            recommended: true,
+            hasAiAssist: true,
+            rule: null
+          }
+        ]
+      },
+
+      // ═══ C6: Nộp hồ sơ tại Immigration ═══
+      {
+        id: 'C6',
+        name: 'Nộp hồ sơ tại Immigration Hàn Quốc',
+        icon: '📬',
+        description: 'Khác với visa lần đầu — nộp tại Immigration Hàn Quốc (Hi Korea), không phải KVAC.',
+        required: true,
+        items: [
+          {
+            id: 'C6-1',
+            name: 'Đặt lịch hẹn tại Immigration (Hi Korea)',
+            description: 'Đặt lịch online qua www.hikorea.go.kr. Lịch thường đầy nhanh, cần đặt sớm 2-4 tuần. Chọn dịch vụ "Change of Status of Sojourn" (D-4 → D-2).',
+            documentType: 'hikorea_booking',
+            required: true,
+            link: 'https://www.hikorea.go.kr/',
+            rule: null
+          },
+          {
+            id: 'C6-2',
+            name: 'Lệ phí xét duyệt chuyển đổi visa',
+            description: 'Nộp lệ phí tại Immigration. Khoảng 60,000-100,000 KRW (tùy loại visa). Chuẩn bị tiền mặt hoặc thẻ.',
+            documentType: 'fee_payment',
+            required: true,
+            rule: null
+          },
+          {
+            id: 'C6-3',
+            name: 'Bộ hồ sơ gốc + bản photo (mang đến Immigration)',
+            description: 'Sắp xếp hồ sơ theo thứ tự: (1) Đơn xin chuyển đổi → (2) Giấy tờ cá nhân → (3) Học vấn → (4) Giấy tờ trường ĐH → (5) Tài chính → (6) Study Plan. Photo 2 bộ: 1 nộp, 1 giữ.',
+            documentType: 'dossier_preparation',
+            required: true,
+            rule: null
+          },
+          {
+            id: 'C6-4',
+            name: 'Nộp hồ sơ tại Immigration (phỏng vấn nếu cần)',
+            description: 'Đến đúng giờ hẹn. Có thể được phỏng vấn ngắn — chuẩn bị trả lời: lý do chuyển đổi, kết quả học tiếng, kế hoạch học ĐH, dự định tương lai.',
+            documentType: 'submission',
+            required: true,
+            rule: null
+          },
+          {
+            id: 'C6-5',
+            name: 'Theo dõi kết quả xét duyệt online',
+            description: 'Kiểm tra trạng thái qua Hi Korea hoặc Civil Service Portal (민원24). Thời gian xử lý 2-8 tuần.',
+            documentType: 'result_tracking',
+            required: true,
+            rule: null
+          },
+          {
+            id: 'C6-6',
+            name: 'Nhận thẻ ARC mới (D-2)',
+            description: 'Sau khi được chấp thuận — đến Immigration nhận thẻ ARC mới với tư cách lưu trú D-2. Kiểm tra kỹ thông tin trước khi rời quầy.',
+            documentType: 'new_arc',
+            required: true,
+            rule: null
+          },
+          {
+            id: 'C6-7',
+            name: 'Báo cáo với trường ĐH sau khi đổi visa',
+            description: 'Thông báo cho văn phòng quốc tế của trường ĐH về việc visa đã được chuyển đổi. Trường cần cập nhật hồ sơ sinh viên.',
+            documentType: 'report_to_school',
+            required: true,
+            rule: null
+          }
+        ]
+      },
+
+      // ═══ ALERT-D4D2: Lưu ý quan trọng ═══
+      {
+        id: 'ALERT-D4D2',
+        name: 'Lưu ý sống còn khi chuyển đổi visa D4→D2',
+        icon: '📌',
+        description: 'Những lưu ý cực kỳ quan trọng — học sinh đang ở Hàn cần biết!',
+        required: true,
+        items: [
+          {
+            id: 'ALERT-D4D2-1',
+            name: '⏳ Kiểm tra hạn visa D-4-1 trước khi xin chuyển đổi',
+            description: 'Phải xin chuyển đổi TRƯỚC KHI VISA HẾT HẠN. Nếu visa đã hết hạn — bạn đang ở lại bất hợp pháp và không thể xin chuyển đổi. Phải về nước và xin visa mới từ đầu.',
+            documentType: 'general_warning',
+            required: true,
+            rule: null
+          },
+          {
+            id: 'ALERT-D4D2-2',
+            name: '📅 Nộp hồ sơ ít nhất 1 tháng trước khi visa hết hạn',
+            description: 'Immigration cần thời gian xử lý 2-8 tuần. Nếu nộp sát ngày hết hạn, bạn có thể rơi vào trạng thái "quá hạn" trong thời gian chờ. Nên nộp sớm — đừng đợi đến phút cuối!',
+            documentType: 'general_warning',
+            required: true,
+            rule: null
+          },
+          {
+            id: 'ALERT-D4D2-3',
+            name: '📝 Chuyên cần học tiếng >= 80%',
+            description: 'Tỉ lệ đi học dưới 80% là "cờ đỏ" cho Immigration. Nghỉ nhiều = không có thiện chí học tập = từ chối chuyển đổi.',
+            documentType: 'general_warning',
+            required: true,
+            rule: null
+          },
+          {
+            id: 'ALERT-D4D2-4',
+            name: '🎯 TOPIK 3+ là bắt buộc',
+            description: 'Gần như 100% trường ĐH và Immigration yêu cầu TOPIK 3+ cho chuyển đổi D4→D2. Nếu chưa có — đăng ký thi gấp kỳ TOPIK gần nhất. Không có TOPIK = tỉ lệ đậu cực thấp.',
+            documentType: 'general_warning',
+            required: true,
+            rule: null
+          },
+          {
+            id: 'ALERT-D4D2-5',
+            name: '📍 Không được đi làm thêm khi chưa được phép',
+            description: 'Visa D-4-1 KHÔNG cho phép đi làm thêm (trừ chương trình thực tập được trường cho phép). Đi làm trái phép = bị trục xuất và cấm nhập cảnh. Sau khi có D-2 mới được xin giấy phép làm thêm.',
+            documentType: 'general_warning',
+            required: true,
+            rule: null
+          },
+          {
+            id: 'ALERT-D4D2-6',
+            name: '📄 Hồ sơ phải nhất quán giữa các lần nộp',
+            description: 'Thông tin trong hồ sơ chuyển đổi phải KHỚP với hồ sơ đã nộp xin D-4-1 trước đó. Sai lệch = bị nghi ngờ gian lận = từ chối.',
+            documentType: 'general_warning',
+            required: true,
+            rule: null
+          },
+          {
+            id: 'ALERT-D4D2-7',
+            name: '🔍 Trượt chuyển đổi: hậu quả nghiêm trọng',
+            description: 'Nếu bị từ chối chuyển đổi, bạn có thể phải về nước ngay lập tức. Cần chuẩn bị hồ sơ cực kỳ cẩn thận ngay từ lần đầu. Nếu cần — nhờ luật sư di trú Hàn Quốc tư vấn.',
+            documentType: 'general_warning',
+            required: true,
+            rule: null
+          },
+          {
+            id: 'ALERT-D4D2-8',
+            name: '📜 Hợp pháp hóa giấy tờ từ Việt Nam',
+            description: 'Giấy tờ gửi từ Việt Nam sang (bằng cấp, sổ hộ khẩu...) cần được dịch công chứng và hợp pháp hóa lãnh sự. Có thể nhờ người nhà làm thủ tục tại Việt Nam rồi chuyển phát nhanh sang.',
+            documentType: 'general_warning',
+            required: true,
+            rule: null
+          },
+          {
+            id: 'ALERT-D4D2-9',
+            name: '⏸️ Trượt visa lần trước: cần giải trình',
+            description: 'Nếu đã từng trượt visa D-4-1 hoặc bất kỳ visa Hàn nào — cần khai báo và giải trình trong hồ sơ chuyển đổi. Không khai = bị phát hiện và từ chối ngay.',
+            documentType: 'general_warning',
+            required: true,
+            rule: { has_visa_rejection: { eq: true } }
+          }
+        ]
+      },
+
+      // ═══ C7: Dịch thuật, Công chứng & Hợp pháp hóa ═══
+      {
+        id: 'C7',
+        name: 'Dịch thuật, Công chứng & Hợp pháp hóa',
+        icon: '📜',
+        description: 'Giấy tờ từ Việt Nam cần dịch công chứng trước khi nộp tại Immigration Hàn Quốc.',
+        required: true,
+        items: [
+          {
+            id: 'C7-1',
+            name: 'Dịch thuật giấy tờ mới sang tiếng Hàn hoặc Anh',
+            description: 'Giấy tờ Việt Nam chưa dịch (bằng cấp, sổ hộ khẩu, giấy tờ tài chính...) cần dịch sang tiếng Hàn (ưu tiên) hoặc Anh. Có thể dịch tại Hàn Quốc qua công ty dịch thuật được cấp phép.',
+            documentType: 'translate_all',
+            required: true,
+            rule: null
+          },
+          {
+            id: 'C7-2',
+            name: 'Công chứng bản dịch (tại Hàn hoặc Việt Nam)',
+            description: 'Công chứng tại: (1) Đại sứ quán/Lãnh sự quán Việt Nam tại Hàn Quốc, hoặc (2) Nhờ người nhà công chứng tại Việt Nam rồi gửi sang.',
+            documentType: 'notarize_translation',
+            required: true,
+            rule: null
+          },
+          {
+            id: 'C7-3',
+            name: 'Chứng nhận tại Bộ Ngoại giao (MOFA) — nếu cần',
+            description: 'Một số giấy tờ mới từ Việt Nam cần chứng nhận tại Sở Tư pháp / Bộ Ngoại giao (Việt Nam) trước khi hợp pháp hóa. Nếu giấy tờ đã có từ lần xin D-4-1 thì có thể dùng lại.',
+            documentType: 'mofa_certification',
+            required: false,
+            rule: null
+          },
+          {
+            id: 'C7-4',
+            name: 'Hợp pháp hóa lãnh sự (ĐSQ Hàn Quốc tại Việt Nam hoặc tại Hàn)',
+            description: 'Giấy tờ mới từ Việt Nam cần hợp pháp hóa. Có thể làm tại ĐSQ Hàn tại VN hoặc tại Hàn Quốc qua ĐSQ VN tại Hàn. Từ 11/09/2026: Apostille thay thế.',
+            documentType: 'consular_legalization',
+            required: false,
+            rule: null
+          }
+        ]
+      },
+
+      // ═══ RISK-D4D2: Rủi ro đặc thù ═══
+      {
+        id: 'RISK-D4D2',
+        name: 'Xử lý rủi ro đặc thù D4→D2',
+        icon: '⚠️',
+        description: 'Các tình huống rủi ro khi chuyển đổi visa — cần xử lý cẩn thận.',
+        required: false,
+        items: [
+          {
+            id: 'RISK-D4D2-1',
+            name: 'Giải trình điểm tiếng Hàn thấp (dưới C)',
+            description: 'Nếu bảng điểm tiếng Hàn dưới 70/100 (điểm C) — cần giải trình lý do và cam kết cải thiện. Kèm chứng chỉ TOPIK (nếu có) để bù đắp.',
+            documentType: 'low_score_explanation',
+            required: true,
+            hasAiAssist: true,
+            rule: { korean_grade: { lt: 70 } },
+            warning: '⚠️ Điểm tiếng dưới C là lý do trượt chuyển đổi phổ biến. Cần giải trình THUYẾT PHỤC kèm bằng chứng cải thiện (TOPIK, chứng chỉ khác).'
+          },
+          {
+            id: 'RISK-D4D2-2',
+            name: 'Giải trình chuyên cần thấp (dưới 80%)',
+            description: 'Tỉ lệ đi học dưới 80% — cần giải trình lý do vắng (ốm đau, việc gia đình...) kèm giấy tờ chứng minh (giấy khám bệnh, vé máy bay...).',
+            documentType: 'attendance_explanation',
+            required: true,
+            hasAiAssist: true,
+            rule: { attendance_rate: { lt: 80 } },
+            warning: '⚠️ Tỉ lệ đi học thấp là "cờ đỏ" cho Immigration. Giải trình không thuyết phục = từ chối.'
+          },
+          {
+            id: 'RISK-D4D2-3',
+            name: 'Giải trình trượt visa lần trước',
+            description: 'Nếu đã từng trượt bất kỳ visa Hàn nào (D-4-1 hoặc khác) — cần phân tích nguyên nhân trượt và giải trình khắc phục. Không khai báo = bị phát hiện = từ chối ngay.',
+            documentType: 'visa_rejection_explanation',
+            required: true,
+            hasAiAssist: true,
+            rule: { has_visa_rejection: { eq: true } }
+          },
+          {
+            id: 'RISK-D4D2-4',
+            name: 'Giải trình người thân cư trú bất hợp pháp tại Hàn',
+            description: 'Nếu có người thân từng ở lại Hàn bất hợp pháp — hồ sơ sẽ bị soi kỹ hơn. Cần giải trình rõ mối quan hệ và cam kết không tái phạm.',
+            documentType: 'illegal_relative_explanation',
+            required: true,
+            hasAiAssist: true,
+            rule: { has_illegal_relative: { eq: true } }
+          },
+          {
+            id: 'RISK-D4D2-5',
+            name: 'Phiếu lý lịch tư pháp (xin tại Hàn Quốc hoặc Việt Nam)',
+            description: 'Có thể xin phiếu lý lịch tư pháp tại Hàn Quốc (Criminal Record Certificate) qua cảnh sát địa phương hoặc tại Việt Nam. Không bắt buộc cho mọi trường hợp nhưng khuyến khích để tăng độ tin cậy.',
+            documentType: 'criminal_record_check',
+            required: false,
+            recommended: true,
+            rule: null
+          },
+          {
+            id: 'RISK-D4D2-6',
+            name: 'Thư giới thiệu bổ sung từ giảng viên trường ĐH (nếu có)',
+            description: 'Nếu đã liên hệ và được giảng viên trường ĐH tương lai hỗ trợ — xin thư giới thiệu xác nhận năng lực và thiện chí học tập. Là điểm cộng lớn.',
+            documentType: 'professor_recommendation',
+            required: false,
+            recommended: true,
+            hasAiAssist: true,
+            rule: null
+          },
+          {
+            id: 'RISK-D4D2-7',
+            name: 'Chứng từ nhà trọ / hợp đồng thuê nhà tại Hàn',
+            description: 'Hợp đồng thuê nhà, hóa đơn tiền điện/nước — chứng minh nơi ở ổn định tại Hàn. Nếu không có hợp đồng chính thức, xin giấy xác nhận từ chủ nhà.',
+            documentType: 'housing_proof',
+            required: false,
+            recommended: true,
+            rule: null
+          },
+          {
+            id: 'RISK-D4D2-8',
+            name: 'Giải trình nếu chưa có TOPIK 3 (kế hoạch thi bổ sung)',
+            description: 'Nếu chưa có TOPIK 3 nhưng đã đăng ký thi — nộp giấy xác nhận đăng ký thi và giải trình lộ trình đạt TOPIK 3. Immigration có thể chấp nhận nếu hồ sơ khác mạnh.',
+            documentType: 'topik_plan_explanation',
+            required: true,
+            hasAiAssist: true,
+            rule: { has_topik: { neq: true } }
+          }
         ]
       }
     ]
@@ -735,6 +1351,9 @@ window.evaluateChecklistRule = function(rule, profile) {
     has_illegal_relative: 'hasIllegalRelative',
     savings_amount: 'savingsAmount',
     gpa: 'gpa',
+    current_location: 'currentLocation',
+    korean_grade: 'koreanGrade',
+    attendance_rate: 'attendanceRate',
   };
 
   for (const [field, condition] of Object.entries(rule)) {
