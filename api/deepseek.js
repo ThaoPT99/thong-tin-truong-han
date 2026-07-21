@@ -1580,8 +1580,12 @@ async function handleTrackAnalytics(body, req) {
     case 'page_view': {
       const { pageType, schoolSlug, schoolName, referrer, sessionId, userAgent } = data;
       if (!pageType) return { error: 'pageType is required' };
-      const { error: viewErr } = await supabase.from('analytics_page_views').insert({ page_type: pageType, school_slug: schoolSlug || null, school_name: schoolName || null, referrer: referrer || null, session_id: sessionId || null, user_agent: userAgent || null, ip: clientIp || null });
-      if (viewErr) throw viewErr;
+      try {
+        const { error: viewErr } = await supabase.from('analytics_page_views').insert({ page_type: pageType, school_slug: schoolSlug || null, school_name: schoolName || null, referrer: referrer || null, session_id: sessionId || null, user_agent: userAgent || null, ip: clientIp || null });
+        if (viewErr) console.warn('Analytics insert warning:', viewErr.message);
+      } catch (e) {
+        console.warn('Analytics insert error:', e.message);
+      }
       const preciseLocation = data.preciseLocation || null;
       try {
         const { data: cached } = await supabase.from('analytics_ip_cache').select('ip').eq('ip', clientIp).maybeSingle();
@@ -1593,22 +1597,24 @@ async function handleTrackAnalytics(body, req) {
     case 'search': {
       const { query, resultCount, hasResults, filtersUsed, searchType, sessionId } = data;
       if (!query) return { error: 'query is required' };
-      await supabase.from('analytics_searches').insert({ query, result_count: resultCount || 0, has_results: hasResults !== false, filters_used: filtersUsed || null, search_type: searchType || 'text', session_id: sessionId || null });
+      try { await supabase.from('analytics_searches').insert({ query, result_count: resultCount || 0, has_results: hasResults !== false, filters_used: filtersUsed || null, search_type: searchType || 'text', session_id: sessionId || null }); } catch (e) { console.warn('Analytics search error:', e.message); }
       break;
     }
     case 'event': {
       const { eventType, eventData, schoolSlug, sessionId } = data;
       if (!eventType) return { error: 'eventType is required' };
-      await supabase.from('analytics_events').insert({ event_type: eventType, event_data: eventData || null, school_slug: schoolSlug || null, session_id: sessionId || null });
+      try { await supabase.from('analytics_events').insert({ event_type: eventType, event_data: eventData || null, school_slug: schoolSlug || null, session_id: sessionId || null }); } catch (e) { console.warn('Analytics event error:', e.message); }
       break;
     }
     case 'session': {
       const { sessionId, action, pageType, referrer, userAgent } = data;
       if (!sessionId) return { error: 'sessionId is required' };
       if (action === 'start') {
-        const { data: existing } = await supabase.from('analytics_sessions').select('id, page_views').eq('session_id', sessionId).maybeSingle();
-        if (existing) { await supabase.from('analytics_sessions').update({ last_activity: new Date().toISOString(), page_views: (existing.page_views || 0) + 1, user_agent: userAgent || existing.user_agent }).eq('session_id', sessionId); }
-        else { await supabase.from('analytics_sessions').insert({ session_id: sessionId, ip: clientIp || null, user_agent: userAgent || null, referrer: referrer || null, landing_page: pageType || null, page_views: 1, started_at: new Date().toISOString(), last_activity: new Date().toISOString() }); }
+        try {
+          const { data: existing } = await supabase.from('analytics_sessions').select('id, page_views').eq('session_id', sessionId).maybeSingle();
+          if (existing) { await supabase.from('analytics_sessions').update({ last_activity: new Date().toISOString(), page_views: (existing.page_views || 0) + 1, user_agent: userAgent || existing.user_agent }).eq('session_id', sessionId); }
+          else { await supabase.from('analytics_sessions').insert({ session_id: sessionId, ip: clientIp || null, user_agent: userAgent || null, referrer: referrer || null, landing_page: pageType || null, page_views: 1, started_at: new Date().toISOString(), last_activity: new Date().toISOString() }); }
+        } catch (e) { console.warn('Analytics session error:', e.message); }
         const preciseLocation = data.preciseLocation || null;
         try {
           const { data: cached } = await supabase.from('analytics_ip_cache').select('ip').eq('ip', clientIp).maybeSingle();
