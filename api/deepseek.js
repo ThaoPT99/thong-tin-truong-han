@@ -11,7 +11,7 @@ const { getDeepSeekKey, callDeepSeek, getBotToken, verifyTelegramWebhook, escape
 async function handleAdvisor(req, res) {
  const apiKey = getDeepSeekKey();
  if (!apiKey) {
- return res.status(503).json({ success: false, error: 'DEEPSEEK_API_KEY chưa được cấu hình.'});
+ return res.status(503).json({ success: false, error: ' DEEPSEEK_API_KEY chưa được cấu hình.'});
  }
 
  const profile = req.body || {};
@@ -22,7 +22,7 @@ async function handleAdvisor(req, res) {
  supabase.from('school_advisor_profiles').select('*'),
  ]);
 
- if (schoolsRes.error) throw new Error('DB error: '+ schoolsRes.error.message);
+ if (schoolsRes.error) throw new Error(' DB error: '+ schoolsRes.error.message);
  const schools = schoolsRes.data || [];
  const advisorProfiles = profilesRes.data || [];
 
@@ -43,7 +43,7 @@ async function handleAdvisor(req, res) {
  const systemPrompt = `Bạn là chuyên gia tư vấn du học Hàn Quốc (visa D-4-1, D-2, D2-6), làm việc cho một trung tâm tư vấn du học.\n\nDữ liệu ${schools.length} trường Hàn Quốc đang tuyển sinh kỳ này:\n\n${schoolTexts}\n\nNHIỆM VỤ:\nPhân tích hồ sơ học sinh và đề xuất Top 3 trường phù hợp nhất.\n\nYÊU CẦU TRẢ LỜI:\n1. **Top 3 trường phù hợp nhất** kèm số % phù hợp\n2. Với mỗi trường, nêu:\n - **Lý do phù hợp** (2-3 ý, dựa trên hồ sơ thực tế)\n - **Rủi ro cần kiểm tra** (nếu có)\n3. Kết luận ngắn: trường nào nên ưu tiên nhất\n\nQUY TẮC:\n- Trả lời bằng tiếng Việt, ngắn gọn, dễ hiểu\n- KHÔNG thêm thông tin không có trong dữ liệu\n- Nếu hồ sơ có vấn đề (tuổi cao, GPA thấp, trượt visa) → cảnh báo rõ\n- Ưu tiên trường phù hợp với: khu vực, giới tính, học lực, ngân sách`;
 
  const priorityText = (priorities && priorities.length) ? `Ưu tiên: ${priorities.join(', ')}.` : '';
- const userMessage = `Phân tích hồ sơ học sinh sau:\n- Giới tính: ${gender || 'Không rõ'}\n- Tuổi: ${age || 'Không rõ'}\n- GPA: ${gpa || 'Không rõ'}\n- Số buổi nghỉ: ${absences || 'Không rõ'}\n- Tiếng Hàn: ${korean || 'Chưa có'}\n- Đã từng trượt visa: ${visaFail === 'yes'? 'Có': 'Không'}\n- Khu vực mong muốn: ${region || 'Không ưu tiên'}\n- Ngân sách: ${budget || 'Trung bình'}\n${priorityText}`;
+ const userMessage = `Phân tích hồ sơ học sinh sau:\n- Giới tính: ${gender || 'Không rõ'}\n- Tuổi: ${age || 'Không rõ'}\n- GPA: ${gpa || 'Không rõ'}\n- Số buổi nghỉ: ${absences || 'Không rõ'}\n- Tiếng Hàn: ${korean || 'Chưa có'}\n- Đã từng trượt visa: ${visaFail === 'yes'? 'Có': 'Không'}\n- Khu vực mong muốn: ${region || 'Không ưu tiên'}\n- Ngân sách: ${budget || ' Trung bình'}\n${priorityText}`;
 
  const advice = await callDeepSeek(
  [{ role: 'system', content: systemPrompt }, { role: 'user', content: userMessage }],
@@ -57,16 +57,16 @@ async function handleAdvisor(req, res) {
 async function handleGenerateZalo(req, res) {
  const apiKey = getDeepSeekKey();
  if (!apiKey) {
- return res.status(503).json({ success: false, error: 'DEEPSEEK_API_KEY chưa được cấu hình.'});
+ return res.status(503).json({ success: false, error: ' DEEPSEEK_API_KEY chưa được cấu hình.'});
  }
 
  const { slug, studentName, studentInfo } = req.body || {};
- if (!slug) return res.status(400).json({ error: 'slug is required'});
+ if (!slug) return res.status(400).json({ error: ' slug is required'});
 
  const { data: school, error } = await supabase
  .from('schools').select('*').eq('slug', slug).single();
 
- if (error || !school) return res.status(404).json({ error: 'School not found'});
+ if (error || !school) return res.status(404).json({ error: ' School not found'});
 
  const { data: ap } = await supabase
  .from('school_advisor_profiles').select('*').eq('school_id', school.id).maybeSingle();
@@ -110,7 +110,7 @@ async function handleSearchParse(req, res) {
  ];
  const regionStr = knownRegions.map(r =>`"${r}"`).join(', ');
 
- const prompt = `Query:"${query}"\n\nParse thành JSON:\n{\n"region": null hoặc một trong [${regionStr}] (chuẩn hóa:"gần Seoul"hoặc"near Seoul"hoặc"gyeonggi"hoặc"incheon"→"near-seoul"),\n"tags": [] (các tag:"female"nếu có từ"nữ","low-cost"nếu có từ"rẻ"/"thấp"/"tiết kiệm","e7"nếu có từ"e7"),\n"searchTerms":"phần còn lại của query sau khi loại bỏ region/tag"\n}\n\nCHỈ trả về JSON object, không có text khác.`;
+ const prompt = `Query:"${query}"\n\nParse thành JSON:\n{\n"region": null hoặc một trong [${regionStr}] (chuẩn hóa:"gần Seoul"hoặc" near Seoul"hoặc"gyeonggi"hoặc"incheon"→"near-seoul"),\n"tags": [] (các tag:"female"nếu có từ"nữ","low-cost"nếu có từ"rẻ"/"thấp"/"tiết kiệm","e7"nếu có từ"e7"),\n"searchTerms":"phần còn lại của query sau khi loại bỏ region/tag"\n}\n\nCHỈ trả về JSON object, không có text khác.`;
 
  const result = await callDeepSeek(
  [
@@ -137,7 +137,7 @@ async function handleSearchParse(req, res) {
 async function handleGenerateDescription(req, res) {
  const apiKey = getDeepSeekKey();
  if (!apiKey) {
- return res.json({ success: true, intro: '', suggestedAdvantages: [], message: 'DEEPSEEK_API_KEY chưa được cấu hình.'});
+ return res.json({ success: true, intro: '', suggestedAdvantages: [], message: ' DEEPSEEK_API_KEY chưa được cấu hình.'});
  }
 
  const school = req.body || {};
@@ -202,7 +202,7 @@ Viết intro giới thiệu trường và gợi ý thêm ưu điểm dựa trên
  }
  }
 
- return res.json({ success: true, intro: '', suggestedAdvantages: [], message: 'AI không phản hồi, vui lòng thử lại.'});
+ return res.json({ success: true, intro: '', suggestedAdvantages: [], message: ' AI không phản hồi, vui lòng thử lại.'});
 }
 
 // ═══════════════════════════════════════════════════
@@ -249,7 +249,7 @@ async function handleTelegramHelp(chatId) {
 
 async function handleTelegramSearchSchool(chatId, query) {
  if (!query || query.trim().length < 2) {
- return await sendTelegramMessage(chatId, 'Vui lòng nhập tên trường cần tra cứu.\n\nVí dụ: <code>/truong Osan</code>');
+ return await sendTelegramMessage(chatId, ' Vui lòng nhập tên trường cần tra cứu.\n\nVí dụ: <code>/truong Osan</code>');
  }
 
  const searchTerm = query.trim();
@@ -260,7 +260,7 @@ async function handleTelegramSearchSchool(chatId, query) {
  .limit(5);
 
  if (error) {
- console.error('Telegram search school error:', error);
+ console.error(' Telegram search school error:', error);
  return await sendTelegramMessage(chatId, 'Lỗi tra cứu, vui lòng thử lại sau.');
  }
 
@@ -368,7 +368,7 @@ async function handleTelegramAddStudent(chatId, text) {
  const note = parts.slice(3).join(', ').trim() || '';
 
  if (!name || !phone) {
- return await sendTelegramMessage(chatId, 'Vui lòng nhập đúng định dạng:\n\n<code>/gui Tên học sinh, Số điện thoại, Trường, Ghi chú</code>\n\nVí dụ:\n<code>/gui Nguyễn Văn A, 0978123456, Osan, Gọi lại 2h chiều</code>');
+ return await sendTelegramMessage(chatId, ' Vui lòng nhập đúng định dạng:\n\n<code>/gui Tên học sinh, Số điện thoại, Trường, Ghi chú</code>\n\nVí dụ:\n<code>/gui Nguyễn Văn A, 0978123456, Osan, Gọi lại 2h chiều</code>');
  }
 
  let schoolId = null;
@@ -388,14 +388,14 @@ async function handleTelegramAddStudent(chatId, text) {
  .single();
 
  if (error) {
- return await sendTelegramMessage(chatId, 'Lỗi tạo học sinh: '+ (error.message || 'Unknown error'));
+ return await sendTelegramMessage(chatId, 'Lỗi tạo học sinh: '+ (error.message || ' Unknown error'));
  }
 
  await supabase.from('student_logs').insert({
- student_id: student.id, action: 'created', description: 'Tạo từ Telegram Bot', created_by: 'Telegram Bot',
+ student_id: student.id, action: 'created', description: 'Tạo từ Telegram Bot', created_by: ' Telegram Bot',
  });
 
- await sendNewStudentAlert({ name, phone, school: schoolName || 'Chưa chọn', note: note || 'Không có', createdBy: 'Bot Telegram'});
+ await sendNewStudentAlert({ name, phone, school: schoolName || 'Chưa chọn', note: note || 'Không có', createdBy: ' Bot Telegram'});
 
  const schoolText = schoolName ? `trường <b>${escapeHtmlTelegram(schoolName)}</b>` : 'chưa chọn trường';
  await sendTelegramMessage(chatId, ` Đã tạo học sinh <b>${escapeHtmlTelegram(name)}</b>(${schoolText}) thành công!\n SĐT: ${escapeHtmlTelegram(phone)}\n Ghi chú: ${escapeHtmlTelegram(note || 'Không có')}\n\nBạn có thể xem trong CRM: thongtintruonghan.vercel.app/admin/students.html`);
@@ -447,7 +447,7 @@ async function handleTelegramSchoolList(chatId) {
 async function handleTelegramCompare(chatId, args) {
  const parts = args.split(',').map(s =>s.trim()).filter(Boolean);
  if (parts.length < 2) {
- return await sendTelegramMessage(chatId, 'Vui lòng nhập tên 2 trường, cách nhau bằng dấu phẩy.\n\nVí dụ: <code>/sosanh Osan, Induk</code>');
+ return await sendTelegramMessage(chatId, ' Vui lòng nhập tên 2 trường, cách nhau bằng dấu phẩy.\n\nVí dụ: <code>/sosanh Osan, Induk</code>');
  }
 
  const [name1, name2] = parts;
@@ -586,7 +586,7 @@ async function handleTelegramSystemInfo(chatId) {
 async function handleTelegramIpAnalysis(chatId) {
  const apiKey = getDeepSeekKey();
  if (!apiKey) {
- return await sendTelegramMessage(chatId, 'DEEPSEEK_API_KEY chưa được cấu hình để dùng tính năng này.');
+ return await sendTelegramMessage(chatId, ' DEEPSEEK_API_KEY chưa được cấu hình để dùng tính năng này.');
  }
 
  await sendTelegramMessage(chatId, '🧠 <b>Đang phân tích dữ liệu IP...</b>\n\nTôi đang thu thập thông tin và phân tích bằng AI. Sẽ mất vài giây...');
@@ -723,27 +723,27 @@ DỮ LIỆU:
  await sendTelegramMessage(chatId, analysis);
  }
  } else {
- await sendTelegramMessage(chatId, 'AI không phản hồi, vui lòng thử lại sau.');
+ await sendTelegramMessage(chatId, ' AI không phản hồi, vui lòng thử lại sau.');
  }
  } catch (err) {
- console.error('IP analysis error:', err);
- await sendTelegramMessage(chatId, 'Lỗi phân tích: '+ (err.message || 'Unknown error'));
+ console.error(' IP analysis error:', err);
+ await sendTelegramMessage(chatId, 'Lỗi phân tích: '+ (err.message || ' Unknown error'));
  }
 }
 
 async function handleTelegramWebhook(req, res) {
  // GET — health check
  if (req.method === 'GET') {
- return res.json({ success: true, message: 'Telegram Bot Webhook is active', configured: !!getBotToken() });
+ return res.json({ success: true, message: ' Telegram Bot Webhook is active', configured: !!getBotToken() });
  }
 
  // Verify webhook
  if (!verifyTelegramWebhook(req)) {
- return res.status(403).json({ error: 'Invalid webhook source'});
+ return res.status(403).json({ error: ' Invalid webhook source'});
  }
 
  if (!getBotToken()) {
- return res.status(503).json({ error: 'TELEGRAM_BOT_TOKEN not configured'});
+ return res.status(503).json({ error: ' TELEGRAM_BOT_TOKEN not configured'});
  }
 
  const update = req.body || {};
@@ -782,17 +782,17 @@ async function handleTelegramWebhook(req, res) {
 // ═══════════════════════════════════════════════════
 async function handleChatWeb(req, res) {
  if (req.method !== 'POST') {
- return res.status(405).json({ error: 'Method not allowed'});
+ return res.status(405).json({ error: ' Method not allowed'});
  }
 
  const apiKey = getDeepSeekKey();
  if (!apiKey) {
- return res.json({ success: false, error: 'AI chưa được cấu hình.', answer: 'Xin lỗi, tính năng AI chưa sẵn sàng. Vui lòng quay lại sau!'});
+ return res.json({ success: false, error: ' AI chưa được cấu hình.', answer: ' Xin lỗi, tính năng AI chưa sẵn sàng. Vui lòng quay lại sau!'});
  }
 
  const { message } = req.body || {};
  if (!message || message.trim().length < 2) {
- return res.json({ success: false, error: 'Vui lòng nhập câu hỏi.', answer: ''});
+ return res.json({ success: false, error: ' Vui lòng nhập câu hỏi.', answer: ''});
  }
 
  try {
@@ -864,14 +864,14 @@ HƯỚNG DẪN TRẢ LỜI:
 
  return res.json({
  success: true,
- answer: answer || 'Xin lỗi, tôi chưa có câu trả lời cho câu hỏi này. Bạn có thể tham gia nhóm Zalo để được tư vấn trực tiếp nhé!',
+ answer: answer || ' Xin lỗi, tôi chưa có câu trả lời cho câu hỏi này. Bạn có thể tham gia nhóm Zalo để được tư vấn trực tiếp nhé!',
  });
  } catch (err) {
- console.error('Chat web error:', err);
+ console.error(' Chat web error:', err);
  return res.json({
  success: false,
  error: err.message || 'Lỗi xử lý',
- answer: 'Xin lỗi, đã có lỗi xảy ra. Vui lòng thử lại sau!',
+ answer: ' Xin lỗi, đã có lỗi xảy ra. Vui lòng thử lại sau!',
  });
  }
 } // ═══════════════════════════════════════════════════
@@ -881,12 +881,12 @@ HƯỚNG DẪN TRẢ LỜI:
  async function handleGenerateChecklist(req, res) {
  const apiKey = getDeepSeekKey();
  if (!apiKey) {
- return res.json({ success: false, error: 'AI chưa được cấu hình.', draft: null });
+ return res.json({ success: false, error: ' AI chưa được cấu hình.', draft: null });
  }
 
  const { type, profile, visaType, extraData } = req.body || {};
  if (!type || !profile) {
- return res.status(400).json({ success: false, error: 'Missing type or profile', draft: null });
+ return res.status(400).json({ success: false, error: ' Missing type or profile', draft: null });
  }
 
  // Build extra context from study plan answers
@@ -896,14 +896,14 @@ HƯỚNG DẪN TRẢ LỜI:
  const a = extraData.studyPlanAnswers;
  extraContext = `
 THONG TIN BO SUNG TU HOC SINH:
-- Ly do chon Han Quoc: ${a.reasonKorea || 'Khong co'}
-- Ly do chon truong: ${a.reasonSchool || 'Khong co'}
-- Ke hoach hoc tap: ${a.studyPlan || 'Khong co'}
-- Ke hoach tuong lai: ${a.futurePlan || 'Khong co'}
-- Dinh huong nghe nghiep: ${a.careerGoal || 'Khong co'}
-- Hoat dong gap year: ${a.gapActivity || 'Khong co'}
-- Gia dinh/bao lanh: ${a.familyFinance || 'Khong co'}
-- Trinh do ngon ngu: ${a.languageLevel || 'Khong co'}
+- Ly do chon Han Quoc: ${a.reasonKorea || ' Khong co'}
+- Ly do chon truong: ${a.reasonSchool || ' Khong co'}
+- Ke hoach hoc tap: ${a.studyPlan || ' Khong co'}
+- Ke hoach tuong lai: ${a.futurePlan || ' Khong co'}
+- Dinh huong nghe nghiep: ${a.careerGoal || ' Khong co'}
+- Hoat dong gap year: ${a.gapActivity || ' Khong co'}
+- Gia dinh/bao lanh: ${a.familyFinance || ' Khong co'}
+- Trinh do ngon ngu: ${a.languageLevel || ' Khong co'}
 `;
  }
  if (extraData.extraInfo) {
@@ -1018,7 +1018,7 @@ Viết giải trình cho học sinh này.`
  return res.json({
  success: !!draft,
  draft: draft || null,
- error: draft ? null : 'AI không phản hồi, vui lòng thử lại sau.'});
+ error: draft ? null : ' AI không phản hồi, vui lòng thử lại sau.'});
  }
 
  // ═══════════════════════════════════════════════════
@@ -1028,13 +1028,13 @@ Viết giải trình cho học sinh này.`
  async function handleInterviewSimulator(req, res) {
  const apiKey = getDeepSeekKey();
  if (!apiKey) {
- return res.json({ success: false, error: 'AI chua duoc cau hinh.'});
+ return res.json({ success: false, error: ' AI chua duoc cau hinh.'});
  }
 
  var { action_type, history, profile, answer, visaType } = req.body || {};
 
  var defaultProfile = {
- fullName: 'Hoc sinh',
+ fullName: ' Hoc sinh',
  visaType: visaType || 'D-4-1',
  educationLevel: 'THPT',
  koreanLevel: 'none',
@@ -1095,14 +1095,14 @@ Trả về KẾT QUẢ DƯỚI DẠNG JSON, KHÔNG có text khác:
  questionNumber: parsed.questionNumber || 1,
  totalQuestions: parsed.totalQuestions || 6,
  category: parsed.category || 'gioi-thieu',
- hint: parsed.hint || 'Hay tra loi tu nhien, trung thuc'}});
+ hint: parsed.hint || ' Hay tra loi tu nhien, trung thuc'}});
  } catch (e) {
  return res.json({ success: true, interview: {
  question: result || 'Hãy giới thiệu về bản thân và mục đích du học Hàn Quốc?',
  questionNumber: 1, totalQuestions: 6, category: 'gioi-thieu', hint: ''}});
  }
  }
- return res.json({ success: false, error: 'AI khong phan hoi'});
+ return res.json({ success: false, error: ' AI khong phan hoi'});
  }
 
  if (action_type === 'answer') {
@@ -1122,7 +1122,7 @@ Trả về KẾT QUẢ DƯỚI DẠNG JSON, KHÔNG có text khác:
  if (history && history.length >0) {
  historyText = history.map(function(h) {
  if (h.role === 'assistant') return 'KVAC: '+ h.content;
- if (h.role === 'user') return 'Hoc sinh: '+ h.content;
+ if (h.role === 'user') return ' Hoc sinh: '+ h.content;
  return '';
  }).join('\n');
  }
@@ -1162,22 +1162,22 @@ Trả về KẾT QUẢ DƯỚI DẠNG JSON:
  var jsonStr = result.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
  var parsed = JSON.parse(jsonStr);
  return res.json({ success: true, interview: {
- feedback: parsed.feedback || 'Cam on cau tra loi cua ban.',
+ feedback: parsed.feedback || ' Cam on cau tra loi cua ban.',
  score: parsed.score || 5,
- nextQuestion: parsed.nextQuestion || 'Cam on ban. Toi khong co them cau hoi nao khac.',
+ nextQuestion: parsed.nextQuestion || ' Cam on ban. Toi khong co them cau hoi nao khac.',
  questionNumber: parsed.questionNumber || qNum + 1,
  totalQuestions: parsed.totalQuestions || 6,
  category: parsed.category || 'khac',
  hint: parsed.hint || ''}});
  } catch (e) {
  return res.json({ success: true, interview: {
- feedback: result || 'Cam on cau tra loi.',
+ feedback: result || ' Cam on cau tra loi.',
  score: 5,
  nextQuestion: 'Cảm ơn bạn. Còn câu hỏi nào bạn muốn hỏi thêm không?',
  questionNumber: qNum + 1, totalQuestions: 6, category: 'khac', hint: ''}});
  }
  }
- return res.json({ success: false, error: 'AI khong phan hoi'});
+ return res.json({ success: false, error: ' AI khong phan hoi'});
  }
 
  if (action_type === 'complete') {
@@ -1185,7 +1185,7 @@ Trả về KẾT QUẢ DƯỚI DẠNG JSON:
  if (history && history.length >0) {
  historyText = history.map(function(h) {
  if (h.role === 'assistant') return 'KVAC: '+ (h.content || '');
- if (h.role === 'user') return 'Hoc sinh: '+ (h.content || '');
+ if (h.role === 'user') return ' Hoc sinh: '+ (h.content || '');
  return '';
  }).join('\n');
  }
@@ -1223,7 +1223,7 @@ Trả về JSON:
  var parsed = JSON.parse(jsonStr);
  return res.json({ success: true, summary: {
  overallScore: parsed.overallScore || 5,
- overallFeedback: parsed.overallFeedback || 'Cam on ban da tham gia buoi phong van.',
+ overallFeedback: parsed.overallFeedback || ' Cam on ban da tham gia buoi phong van.',
  strengths: parsed.strengths || [],
  weaknesses: parsed.weaknesses || [],
  tips: parsed.tips || []
@@ -1231,15 +1231,15 @@ Trả về JSON:
  } catch (e) {
  return res.json({ success: true, summary: {
  overallScore: 5,
- overallFeedback: result || 'Cam on ban.',
- strengths: [], weaknesses: [], tips: [result || 'Cam on ban da tham gia.']
+ overallFeedback: result || ' Cam on ban.',
+ strengths: [], weaknesses: [], tips: [result || ' Cam on ban da tham gia.']
  }});
  }
  }
- return res.json({ success: false, error: 'AI khong phan hoi'});
+ return res.json({ success: false, error: ' AI khong phan hoi'});
  }
 
- return res.status(400).json({ success: false, error: 'Unknown action_type'});
+ return res.status(400).json({ success: false, error: ' Unknown action_type'});
  }
 
  // ═══════════════════════════════════════════════════
@@ -1249,26 +1249,26 @@ Trả về JSON:
  async function handleReviewStudyPlan(req, res) {
  const apiKey = getDeepSeekKey();
  if (!apiKey) {
- return res.json({ success: false, error: 'AI chua duoc cau hinh.', review: null });
+ return res.json({ success: false, error: ' AI chua duoc cau hinh.', review: null });
  }
 
  const { studyPlan, visaType, profile } = req.body || {};
  if (!studyPlan || studyPlan.trim().length < 50) {
  return res.status(400).json({
  success: false,
- error: 'Study Plan qua ngan. Vui long nhap it nhat 50 ky tu.',
+ error: ' Study Plan qua ngan. Vui long nhap it nhat 50 ky tu.',
  review: null
  });
  }
 
  const profileInfo = profile ? `
 THONG TIN HOC SINH:
-- Ho ten: ${profile.fullName || 'Khong ro'}
+- Ho ten: ${profile.fullName || ' Khong ro'}
 - Visa: ${visaType || profile.visaType || 'D-4-1'}
-- Hoc van: ${profile.educationLevel === 'university'? 'Dai hoc': 'THPT'}
-- GPA: ${profile.gpa || 'Khong ro'}
-- Tieng Han: ${profile.koreanLevel || 'Chua co'}
-- Nam tot nghiep: ${profile.graduationYear || 'Khong ro'}${profile.gapYears >0 ? `\n- Khoang trong hoc tap: ${profile.gapYears} nam` : ''}${profile.hasVisaRejection ? '\n- Da tuong truot visa: Co': ''}${profile.sponsorIsSelf === false ? '\n- Bao lanh tai chinh: Nguoi than': '\n- Bao lanh tai chinh: Tu than'}` : '(Khong co thong tin ho so)';
+- Hoc van: ${profile.educationLevel === 'university'? ' Dai hoc': 'THPT'}
+- GPA: ${profile.gpa || ' Khong ro'}
+- Tieng Han: ${profile.koreanLevel || ' Chua co'}
+- Nam tot nghiep: ${profile.graduationYear || ' Khong ro'}${profile.gapYears >0 ? `\n- Khoang trong hoc tap: ${profile.gapYears} nam` : ''}${profile.hasVisaRejection ? '\n- Da tuong truot visa: Co': ''}${profile.sponsorIsSelf === false ? '\n- Bao lanh tai chinh: Nguoi than': '\n- Bao lanh tai chinh: Tu than'}` : '(Khong co thong tin ho so)';
 
  const systemPrompt = `Ban la chuyen vien tu van du hoc Han Quoc voi 15 nam kinh nghiem, chuyen danh gia Study Plan xin visa du hoc.
 
@@ -1291,9 +1291,9 @@ QUY TAC DANH GIA:
 
 Tra ve KET QUA DUOI DANG JSON, KHONG co text khac ngoai JSON:
 {"overallScore": <so tu 1-10, 2 so le>,"criteria": [
- {"name":"Cau truc","score": <1-10>,"comment":"Nhan xet ngan ve tieu chi nay...","suggestion":"Goi y cai thien cu the..."},
+ {"name":" Cau truc","score": <1-10>,"comment":" Nhan xet ngan ve tieu chi nay...","suggestion":" Goi y cai thien cu the..."},
  ...(6 tieu chi)
- ],"strengths": ["Diem manh 1","Diem manh 2","Diem manh 3"],"weaknesses": ["Diem yeu 1","Diem yeu 2","Diem yeu 3"],"suggestions": ["Goi y cai thien 1","Goi y cai thien 2","Goi y cai thien 3","Goi y cai thien 4","Goi y cai thien 5"]
+ ],"strengths": [" Diem manh 1"," Diem manh 2"," Diem manh 3"],"weaknesses": [" Diem yeu 1"," Diem yeu 2"," Diem yeu 3"],"suggestions": [" Goi y cai thien 1"," Goi y cai thien 2"," Goi y cai thien 3"," Goi y cai thien 4"," Goi y cai thien 5"]
 }`;
 
  const userMessage = `${profileInfo}
@@ -1334,11 +1334,11 @@ Hay danh gia Study Plan tren va tra ve JSON theo dung format quy dinh.`;
  review: {
  overallScore: 5,
  criteria: [
- { name: 'Tong quan', score: 5, comment: 'Khong the phan tich du lieu JSON tu AI.', suggestion: 'Vui long thu lai.'}
+ { name: ' Tong quan', score: 5, comment: ' Khong the phan tich du lieu JSON tu AI.', suggestion: ' Vui long thu lai.'}
  ],
  strengths: [],
  weaknesses: [],
- suggestions: [result || 'AI khong phan hoi.']
+ suggestions: [result || ' AI khong phan hoi.']
  }
  });
  }
@@ -1346,7 +1346,7 @@ Hay danh gia Study Plan tren va tra ve JSON theo dung format quy dinh.`;
 
  return res.json({
  success: false,
- error: 'AI khong phan hoi, vui long thu lai sau.',
+ error: ' AI khong phan hoi, vui long thu lai sau.',
  review: null
  });
  }
@@ -1358,7 +1358,7 @@ Hay danh gia Study Plan tren va tra ve JSON theo dung format quy dinh.`;
 async function handleTelegramDailyReport(req, res) {
  // Chỉ cho phép GET (để cron-job.org dễ gọi)
  if (req.method !== 'GET') {
- return res.status(405).json({ error: 'Method not allowed'});
+ return res.status(405).json({ error: ' Method not allowed'});
  }
 
  // Verify secret để tránh bị gọi trái phép
@@ -1366,12 +1366,12 @@ async function handleTelegramDailyReport(req, res) {
  const providedSecret = req.query.secret;
 
  if (cronSecret && providedSecret !== cronSecret) {
- return res.status(403).json({ error: 'Invalid secret'});
+ return res.status(403).json({ error: ' Invalid secret'});
  }
 
  // Kiểm tra Telegram đã cấu hình chưa
  if (!getBotToken()) {
- return res.status(503).json({ success: false, error: 'TELEGRAM_BOT_TOKEN chưa được cấu hình.'});
+ return res.status(503).json({ success: false, error: ' TELEGRAM_BOT_TOKEN chưa được cấu hình.'});
  }
 
  try {
@@ -1437,11 +1437,11 @@ async function handleTelegramDailyReport(req, res) {
  if (sent) {
  return res.json({ success: true, message: `Báo cáo ngày ${yesterday} đã gửi.` });
  } else {
- return res.json({ success: false, message: 'TELEGRAM_ADMIN_CHAT_ID chưa được cấu hình để nhận báo cáo.'});
+ return res.json({ success: false, message: ' TELEGRAM_ADMIN_CHAT_ID chưa được cấu hình để nhận báo cáo.'});
  }
  } catch (err) {
- console.error('Daily report error:', err);
- return res.status(500).json({ success: false, error: err.message || 'Internal server error'});
+ console.error(' Daily report error:', err);
+ return res.status(500).json({ success: false, error: err.message || ' Internal server error'});
  }
 }
 
@@ -1499,20 +1499,20 @@ async function checkNewCityTelegramAlert(location, clientIp, pageType) {
  const { city, region, country, country_code, isp } = location;
  if (!city) return;
  const { data: existingCity } = await supabase.from('analytics_ip_cache').select('ip').eq('city', city).order('first_seen', { ascending: true }).limit(1);
- if (existingCity && existingCity.length >0) { if (existingCity.length === 1 && existingCity[0].ip === clientIp) { const pageLabels = { school_list: 'Danh sách trường', school_detail: 'Chi tiết trường', advisor: 'Công cụ tư vấn', compare: 'So sánh trường'}; await sendNewCityAlert({ city: city, region: region || '', country: country || 'Vietnam', ip: clientIp, isp: isp || 'Không rõ', url: pageLabels[pageType] || pageType || 'Trang chủ'}); } return; }
- const pageLabels = { school_list: 'Danh sách trường', school_detail: 'Chi tiết trường', advisor: 'Công cụ tư vấn', compare: 'So sánh trường'};
- await sendNewCityAlert({ city: city, region: region || '', country: country || 'Vietnam', ip: clientIp, isp: isp || 'Không rõ', url: pageLabels[pageType] || pageType || 'Trang chủ'});
- } catch (err) { console.error('checkNewCityTelegramAlert error:', err.message); }
+ if (existingCity && existingCity.length >0) { if (existingCity.length === 1 && existingCity[0].ip === clientIp) { const pageLabels = { school_list: ' Danh sách trường', school_detail: ' Chi tiết trường', advisor: 'Công cụ tư vấn', compare: ' So sánh trường'}; await sendNewCityAlert({ city: city, region: region || '', country: country || 'Vietnam', ip: clientIp, isp: isp || 'Không rõ', url: pageLabels[pageType] || pageType || ' Trang chủ'}); } return; }
+ const pageLabels = { school_list: ' Danh sách trường', school_detail: ' Chi tiết trường', advisor: 'Công cụ tư vấn', compare: ' So sánh trường'};
+ await sendNewCityAlert({ city: city, region: region || '', country: country || 'Vietnam', ip: clientIp, isp: isp || 'Không rõ', url: pageLabels[pageType] || pageType || ' Trang chủ'});
+ } catch (err) { console.error(' checkNewCityTelegramAlert error:', err.message); }
 }
 
 async function handleTrackAnalytics(body, req) {
  const { type, data } = body;
  const clientIp = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.headers['x-real-ip'] || req.connection?.remoteAddress || '';
- if (!type || !data) return { error: 'Missing type or data'};
+ if (!type || !data) return { error: ' Missing type or data'};
  switch (type) {
  case 'page_view': {
  const { pageType, schoolSlug, schoolName, referrer, sessionId, userAgent } = data;
- if (!pageType) return { error: 'pageType is required'};
+ if (!pageType) return { error: ' pageType is required'};
  const { error: viewErr } = await supabase.from('analytics_page_views').insert({ page_type: pageType, school_slug: schoolSlug || null, school_name: schoolName || null, referrer: referrer || null, session_id: sessionId || null, user_agent: userAgent || null, ip: clientIp || null });
  if (viewErr) throw viewErr;
  const preciseLocation = data.preciseLocation || null;
@@ -1525,19 +1525,19 @@ async function handleTrackAnalytics(body, req) {
  }
  case 'search': {
  const { query, resultCount, hasResults, filtersUsed, searchType, sessionId } = data;
- if (!query) return { error: 'query is required'};
+ if (!query) return { error: ' query is required'};
  await supabase.from('analytics_searches').insert({ query, result_count: resultCount || 0, has_results: hasResults !== false, filters_used: filtersUsed || null, search_type: searchType || 'text', session_id: sessionId || null });
  break;
  }
  case 'event': {
  const { eventType, eventData, schoolSlug, sessionId } = data;
- if (!eventType) return { error: 'eventType is required'};
+ if (!eventType) return { error: ' eventType is required'};
  await supabase.from('analytics_events').insert({ event_type: eventType, event_data: eventData || null, school_slug: schoolSlug || null, session_id: sessionId || null });
  break;
  }
  case 'session': {
  const { sessionId, action, pageType, referrer, userAgent } = data;
- if (!sessionId) return { error: 'sessionId is required'};
+ if (!sessionId) return { error: ' sessionId is required'};
  if (action === 'start') {
  const { data: existing } = await supabase.from('analytics_sessions').select('id, page_views').eq('session_id', sessionId).maybeSingle();
  if (existing) { await supabase.from('analytics_sessions').update({ last_activity: new Date().toISOString(), page_views: (existing.page_views || 0) + 1, user_agent: userAgent || existing.user_agent }).eq('session_id', sessionId); }
@@ -1600,7 +1600,7 @@ async function handleAnalyticsAdmin(req) {
  const cityCounts = {}; let gpsCount = 0; let ipCount = 0;
  for (const row of ipCache) { if (!row.city) continue; const key = `${row.city}|${row.region || ''}|${row.country || ''}`; if (!cityCounts[key]) cityCounts[key] = { city: row.city, region: row.region || '', country: row.country || '', country_code: row.country_code || '', lat: row.lat, lon: row.lon, views: 0, gps: 0, ip: 0 }; cityCounts[key].views += row.total_views || 1; if (row.location_source === 'gps') { cityCounts[key].gps += row.total_views || 1; gpsCount++; } else { cityCounts[key].ip += row.total_views || 1; ipCount++; } }
  const locations = Object.values(cityCounts).sort((a, b) =>b.views - a.views);
- const regionCounts = {}; for (const loc of locations) { const regionKey = loc.region || (loc.city ? 'Khu vực khác': 'Không xác định'); if (!regionCounts[regionKey]) regionCounts[regionKey] = { region: regionKey, country: loc.country, pageViews: 0 }; regionCounts[regionKey].pageViews += loc.views; }
+ const regionCounts = {}; for (const loc of locations) { const regionKey = loc.region || (loc.city ? ' Khu vực khác': 'Không xác định'); if (!regionCounts[regionKey]) regionCounts[regionKey] = { region: regionKey, country: loc.country, pageViews: 0 }; regionCounts[regionKey].pageViews += loc.views; }
  const countryCounts = {}; for (const loc of locations) { const c = loc.country || 'Unknown'; if (!countryCounts[c]) countryCounts[c] = { country: c, code: loc.country_code, pageViews: 0 }; countryCounts[c].pageViews += loc.views; }
  return { locations: locations.slice(0, 50), regions: Object.values(regionCounts).sort((a, b) =>b.pageViews - a.pageViews), countries: Object.values(countryCounts).sort((a, b) =>b.pageViews - a.pageViews), totalLocatedViews: locations.reduce((a, b) =>a + b.views, 0), uniqueCities: locations.length, gpsCount, ipCount };
  }
@@ -1617,8 +1617,8 @@ async function handleAnalyticsAdmin(req) {
  }
  if (view === 'ab-tests') {
  const { data: assignments } = await supabase.from('analytics_events').select('event_data').eq('event_type', 'ab_assignment').gte('created_at', since).limit(5000);
- const { data: zaloEvents } = await supabase.from('analytics_events').select('event_data').eq('event_type', 'zalo_popup_open').filter('event_data->>source', 'eq', 'fab_click').gte('created_at', since).limit(5000);
- const testDefs = [{ key: 'zalo-fab', name: 'Zalo FAB', convEvent: 'zalo_popup_open', convLabel: 'Mở popup Zalo'}, { key: 'zalo-timing', name: 'Zalo Timing', convEvent: null, convLabel: null }, { key: 'advisor-btn-color', name: 'Advisor Button', convEvent: null, convLabel: null }, { key: 'header-color', name: 'Header Topbar', convEvent: null, convLabel: null }, { key: 'cta-text', name: 'CTA Text', convEvent: null, convLabel: null }, { key: 'tuition-display', name: 'Tuition Display', convEvent: null, convLabel: null }];
+ const { data: zaloEvents } = await supabase.from('analytics_events').select('event_data').eq('event_type', 'zalo_popup_open').filter(' event_data->>source', 'eq', 'fab_click').gte('created_at', since).limit(5000);
+ const testDefs = [{ key: 'zalo-fab', name: ' Zalo FAB', convEvent: 'zalo_popup_open', convLabel: 'Mở popup Zalo'}, { key: 'zalo-timing', name: ' Zalo Timing', convEvent: null, convLabel: null }, { key: 'advisor-btn-color', name: ' Advisor Button', convEvent: null, convLabel: null }, { key: 'header-color', name: ' Header Topbar', convEvent: null, convLabel: null }, { key: 'cta-text', name: ' CTA Text', convEvent: null, convLabel: null }, { key: 'tuition-display', name: ' Tuition Display', convEvent: null, convLabel: null }];
  const assignByTest = {}; for (const row of assignments || []) { const ed = row.event_data || {}; const t = ed.test; const v = ed.variant; if (!t || !v) continue; if (!assignByTest[t]) assignByTest[t] = { a: 0, b: 0 }; assignByTest[t][v] = (assignByTest[t][v] || 0) + 1; }
  const zaloByVariant = { a: 0, b: 0 }; for (const row of zaloEvents || []) { const v = (row.event_data || {}).variant; if (v === 'a'|| v === 'b') zaloByVariant[v]++; }
  const tests = testDefs.map(def =>{ const aCount = assignByTest[def.key]?.a || 0; const bCount = assignByTest[def.key]?.b || 0; let aConv = 0, bConv = 0; if (def.key === 'zalo-fab') { aConv = zaloByVariant.a || 0; bConv = zaloByVariant.b || 0; } const aRate = aCount >0 ? ((aConv / aCount) * 100).toFixed(1) + '%': '—'; const bRate = bCount >0 ? ((bConv / bCount) * 100).toFixed(1) + '%': '—'; let winner = null; if (aCount >0 && bCount >0 && def.convEvent) { const rateA = aConv / aCount; const rateB = bConv / bCount; if (rateA >rateB) winner = 'a'; else if (rateB >rateA) winner = 'b'; } return { key: def.key, name: def.name, convLabel: def.convLabel, aCount, bCount, total: aCount + bCount, aConv, bConv, aRate, bRate, winner }; });
@@ -1641,7 +1641,7 @@ async function handleAnalytics(req, res) {
  return res.json({ success: true, data });
  })(req, res);
  }
- return res.status(405).json({ error: 'Method not allowed'});
+ return res.status(405).json({ error: ' Method not allowed'});
 }
 
 // ═══════════════════════════════════════════════════
@@ -1657,10 +1657,10 @@ module.exports = async (req, res) =>{
  // Telegram webhook + analytics cho phép GET (health check) + POST; các action khác chỉ POST
  if (req.query.action === 'telegram-webhook'|| req.query.action === 'telegram-daily-report'|| req.query.action === 'analytics') {
  if (req.method !== 'POST'&& req.method !== 'GET') {
- return res.status(405).json({ error: 'Method not allowed'});
+ return res.status(405).json({ error: ' Method not allowed'});
  }
  } else if (req.method !== 'POST') {
- return res.status(405).json({ error: 'Method not allowed'});
+ return res.status(405).json({ error: ' Method not allowed'});
  }
 
  try {
@@ -1683,6 +1683,6 @@ module.exports = async (req, res) =>{
  }
  } catch (err) {
  console.error('/api/deepseek error:', err);
- return res.status(500).json({ success: false, error: err.message || 'Internal server error'});
+ return res.status(500).json({ success: false, error: err.message || ' Internal server error'});
  }
 };

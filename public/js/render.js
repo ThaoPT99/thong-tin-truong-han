@@ -83,8 +83,8 @@ function getSchools() {
 }
 
 function getVisaTypeLabel(type) {
- if (type === 'D4-1') return 'Visa D4-1 (học tiếng Hàn)';
- return 'Visa D2-6 (trao đổi sinh viên)';
+ if (type === 'D4-1') return ' Visa D4-1 (học tiếng Hàn)';
+ return ' Visa D2-6 (trao đổi sinh viên)';
 }
 
 function getSchoolById(schoolId) {
@@ -126,7 +126,7 @@ function getRegionLabel(region) {
  const label = window.REGION_LABELS[region];
  return label.charAt(0).toUpperCase() + label.slice(1);
  }
- // Fallback: humanize unknown region keys (e.g."my-region"->"My Region")
+ // Fallback: humanize unknown region keys (e.g."my-region"->" My Region")
  try {
  return String(region).replace(/-/g,"").replace(/\b\w/g, c =>c.toUpperCase());
  } catch (e) {
@@ -160,7 +160,7 @@ function renderRecentSchools() {
  const recent = getRecentSchools().map(id =>getSchoolById(id)).filter(Boolean);
  if (!recent.length) return"";
  return `
- <div class="recent-schools"><span>Đã xem gần đây</span><div>${recent.map(s =>`<button type="button"data-open-school="${escapeHtml(s.id)}">${escapeHtml(s.name)}</button>`).join("")}</div><div>`;
+ <div class="recent-schools"><span>Đã xem gần đây</span><div>${recent.map(s =>`<button type="button" data-open-school="${escapeHtml(s.id)}">${escapeHtml(s.name)}</button>`).join("")}</div><div>`;
 }
 
 function buildSchoolSearchText(school) {
@@ -186,16 +186,16 @@ function renderSchool(schoolId) {
  const s = getSchoolById(schoolId);
  if (!s) return"";
 
- const img = (path) =>path ? `<img src="${path}"alt=""onerror="this.src='${PLACEHOLDER}'"class="sheet-img">` :"";
+ const img = (path) =>path ? `<img src="${path}" alt="" onerror="this.src='${PLACEHOLDER}'" class="sheet-img">` :"";
  let videoEmbedHtml ="";
  if (s.video?.youtubeId) {
- videoEmbedHtml = `<div class="video-embed"><iframe src="https://www.youtube.com/embed/${s.video.youtubeId}"referrerpolicy="strict-origin-when-cross-origin"allowfullscreen><iframe><div>`;
+ videoEmbedHtml = `<div class="video-embed"><iframe src="https://www.youtube.com/embed/${s.video.youtubeId}" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen><iframe><div>`;
  } else if (s.video?.url && s.video.url.includes("drive.google.com")) {
  const m = s.video.url.match(/\/d\/([^/]+)/);
- if (m) videoEmbedHtml = `<div class="video-embed"><iframe src="https://drive.google.com/file/d/${m[1]}/preview"referrerpolicy="strict-origin-when-cross-origin"allowfullscreen><iframe><div>`;
+ if (m) videoEmbedHtml = `<div class="video-embed"><iframe src="https://drive.google.com/file/d/${m[1]}/preview" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen><iframe><div>`;
  }
 
- const videoLinkHtml = s.video?.url ? `<a href="${s.video.url}"target="_blank"rel="noopener"class="video-link">Mở video</a>` :"";
+ const videoLinkHtml = s.video?.url ? `<a href="${s.video.url}" target="_blank" rel="noopener" class="video-link">Mở video</a>` :"";
  const videoHtml = videoEmbedHtml
  ? videoEmbedHtml + (videoLinkHtml ?"<br>"+ videoLinkHtml :"")
  : videoLinkHtml || (s.video?.title ? `<span>${s.video.title}</span>` :"");
@@ -204,24 +204,24 @@ function renderSchool(schoolId) {
  ? arr.map(p =>`<span class="partner-tag">${escapeHtml(p.code ||"")}</span>${escapeHtml(p.name ||"")}`).join("<br>")
  : `<span class="muted-empty">Đang cập nhật</span>`;
 
- const mainImg = s.images?.main && s.images.main !== 'images/placeholder.svg'? `<img class="detail-hero-img"src="${escapeHtml(s.images.main)}"alt="${escapeHtml(s.name)}"onerror="this.style.display='none'">`
+ const mainImg = s.images?.main && s.images.main !== 'images/placeholder.svg'? `<img class="detail-hero-img" src="${escapeHtml(s.images.main)}" alt="${escapeHtml(s.name)}" onerror="this.style.display='none'">`
  : '';
  const catalogVal = s.links?.catalog
- ? `<a href="${s.links.catalog}"target="_blank"rel="noopener">Mở Catalog</a>`
+ ? `<a href="${s.links.catalog}" target="_blank" rel="noopener">Mở Catalog</a>`
  : s.images?.catalog ? img(s.images.catalog) :"";
  const locationVal = [renderValue(s.location), s.images?.locationMap ? img(s.images.locationMap) :""].filter(Boolean).join("<br>");
- const introVal = [s.links?.website ? `<a href="${s.links.website}"target="_blank"rel="noopener">${escapeHtml(s.links.website)}</a>` :"", renderValue(s.intro)].filter(Boolean).join("<br>");
+ const introVal = [s.links?.website ? `<a href="${s.links.website}" target="_blank" rel="noopener">${escapeHtml(s.links.website)}</a>` :"", renderValue(s.intro)].filter(Boolean).join("<br>");
  const docsVal = renderSimpleList(s.documents) + (s.documentsNote ? `<div class="note">${renderText(s.documentsNote)}</div>` :"");
  const invoiceVal = s.links?.invoice
- ? `<a href="${s.links.invoice}"target="_blank"rel="noopener">Mở Invoice</a>`
+ ? `<a href="${s.links.invoice}" target="_blank" rel="noopener">Mở Invoice</a>`
  : s.images?.invoice ? img(s.images.invoice) :"";
  const rules = getAdvisorRules(schoolId, s);
 
  return `
  <section class="school-detail">${mainImg}
- <div class="detail-hero"><div><div class="detail-breadcrumb"><button type="button"class="back-to-schools">Trường</button><span>/</span><span>${escapeHtml(s.name)}</span><div><p class="detail-kicker">Chi tiết trường</p><h2>${escapeHtml(s.name)}</h2>${s.nameKr ? `<p class="korean">${escapeHtml(s.nameKr)}</p>` :""}
- ${s.nameEn ? `<p>${escapeHtml(s.nameEn)}</p>` :""}</div><div class="detail-actions"><button type="button"class="copy-school-info"data-school-id="${escapeHtml(schoolId)}">Copy thông tin</button><button type="button"class="copy-school-zalo"data-school-id="${escapeHtml(schoolId)}">Copy Zalo</button><button type="button"class="zalo-ai-btn"data-school-id="${escapeHtml(schoolId)}">Soạn Zalo AI</button><button type="button"class="copy-school-link"data-school-id="${escapeHtml(schoolId)}">Copy link</button><button type="button"class="open-zalo-detail">Tư vấn Zalo</button><div><div><nav class="detail-jump"aria-label="Mục trong trang"><a href="#tong-quan">Tổng quan</a><a href="#lien-he">Liên hệ</a><a href="#dieu-kien">Điều kiện</a><a href="#hoc-phi">Học phí</a><a href="#ho-so">Hồ sơ</a><a href="#tai-lieu">Tài liệu</a><nav><div class="detail-overview"><div><span>Hệ học</span><strong>${renderValue(s.system)}</strong><div><div><span>Khu vực</span><strong>${escapeHtml(getRegionLabel(rules.region))}</strong><div><div><span>Chỉ tiêu</span><strong>${s.quota ? escapeHtml(String(s.quota)) : `<span class="muted-empty">Đang cập nhật</span>`}</strong><div><div><span>Đối tượng</span><strong>${rules.gender ==="female"?"Nữ sinh":"Nam/Nữ"}</strong><div><div><div class="detail-grid"><article class="detail-card detail-card-wide"id="tong-quan"><h3>Tổng quan</h3><div class="detail-readable">${introVal}</div><article><article class="detail-card"><h3>Vị trí</h3><div>${locationVal}</div><article><article class="detail-card"id="lien-he"><h3>Liên hệ</h3><div>${renderContactInfo(s)}</div><article><article class="detail-card"id="dieu-kien"><h3>Điều kiện tuyển sinh</h3>${renderSimpleList(s.conditions)}</article><article class="detail-card"><h3>Chuyên ngành</h3>${renderSimpleList(s.majors)}</article><article class="detail-card"id="hoc-phi"><h3>Học phí</h3><div>${renderTuitionWithVND(s.tuition)}</div><article><article class="detail-card"><h3>Ký túc xá</h3><div>${renderTuitionWithVND(s.ktx)}</div><article><article class="detail-card"><h3>Ưu điểm</h3>${renderSimpleList(s.advantages)}</article><article class="detail-card"><h3>Lộ trình chuyển đổi</h3>${renderSimpleList(s.conversion)}</article><article class="detail-card detail-card-wide"id="ho-so"><h3>Hồ sơ cần lưu ý</h3><details class="detail-more"open><summary>Xem danh sách hồ sơ</summary><div>${docsVal}</div><details><article><article class="detail-card"id="tai-lieu"><h3>Tài liệu</h3><div class="detail-links">${catalogVal || `<span class="muted-empty">Catalog đang cập nhật</span>`}
- ${invoiceVal || `<span class="muted-empty">Invoice đang cập nhật</span>`}</div><article><article class="detail-card"><h3>Video</h3><div>${videoHtml || `<span class="muted-empty">Đang cập nhật</span>`}</div><article><article class="detail-card detail-card-wide"><h3>Trường CĐ/ĐH tại Việt Nam</h3><div>${(s.mou ? renderText(s.mou) :"") || partnersToText(s.partners)}</div><article><div><div class="copy-toast"hidden>Đã copy thông tin trường</div><section>`;
+ <div class="detail-hero"><div><div class="detail-breadcrumb"><button type="button" class="back-to-schools">Trường</button><span>/</span><span>${escapeHtml(s.name)}</span><div><p class="detail-kicker">Chi tiết trường</p><h2>${escapeHtml(s.name)}</h2>${s.nameKr ? `<p class="korean">${escapeHtml(s.nameKr)}</p>` :""}
+ ${s.nameEn ? `<p>${escapeHtml(s.nameEn)}</p>` :""}</div><div class="detail-actions"><button type="button" class="copy-school-info" data-school-id="${escapeHtml(schoolId)}">Copy thông tin</button><button type="button" class="copy-school-zalo" data-school-id="${escapeHtml(schoolId)}">Copy Zalo</button><button type="button" class="zalo-ai-btn" data-school-id="${escapeHtml(schoolId)}">Soạn Zalo AI</button><button type="button" class="copy-school-link" data-school-id="${escapeHtml(schoolId)}">Copy link</button><button type="button" class="open-zalo-detail">Tư vấn Zalo</button><div><div><nav class="detail-jump" aria-label="Mục trong trang"><a href="#tong-quan">Tổng quan</a><a href="#lien-he">Liên hệ</a><a href="#dieu-kien">Điều kiện</a><a href="#hoc-phi">Học phí</a><a href="#ho-so">Hồ sơ</a><a href="#tai-lieu">Tài liệu</a><nav><div class="detail-overview"><div><span>Hệ học</span><strong>${renderValue(s.system)}</strong><div><div><span>Khu vực</span><strong>${escapeHtml(getRegionLabel(rules.region))}</strong><div><div><span>Chỉ tiêu</span><strong>${s.quota ? escapeHtml(String(s.quota)) : `<span class="muted-empty">Đang cập nhật</span>`}</strong><div><div><span>Đối tượng</span><strong>${rules.gender ==="female"?"Nữ sinh":"Nam/Nữ"}</strong><div><div><div class="detail-grid"><article class=" detail-card detail-card-wide" id="tong-quan"><h3>Tổng quan</h3><div class="detail-readable">${introVal}</div><article><article class="detail-card"><h3>Vị trí</h3><div>${locationVal}</div><article><article class="detail-card" id="lien-he"><h3>Liên hệ</h3><div>${renderContactInfo(s)}</div><article><article class="detail-card" id="dieu-kien"><h3>Điều kiện tuyển sinh</h3>${renderSimpleList(s.conditions)}</article><article class="detail-card"><h3>Chuyên ngành</h3>${renderSimpleList(s.majors)}</article><article class="detail-card" id="hoc-phi"><h3>Học phí</h3><div>${renderTuitionWithVND(s.tuition)}</div><article><article class="detail-card"><h3>Ký túc xá</h3><div>${renderTuitionWithVND(s.ktx)}</div><article><article class="detail-card"><h3>Ưu điểm</h3>${renderSimpleList(s.advantages)}</article><article class="detail-card"><h3>Lộ trình chuyển đổi</h3>${renderSimpleList(s.conversion)}</article><article class=" detail-card detail-card-wide" id="ho-so"><h3>Hồ sơ cần lưu ý</h3><details class="detail-more" open><summary>Xem danh sách hồ sơ</summary><div>${docsVal}</div><details><article><article class="detail-card" id="tai-lieu"><h3>Tài liệu</h3><div class="detail-links">${catalogVal || `<span class="muted-empty">Catalog đang cập nhật</span>`}
+ ${invoiceVal || `<span class="muted-empty">Invoice đang cập nhật</span>`}</div><article><article class="detail-card"><h3>Video</h3><div>${videoHtml || `<span class="muted-empty">Đang cập nhật</span>`}</div><article><article class=" detail-card detail-card-wide"><h3>Trường CĐ/ĐH tại Việt Nam</h3><div>${(s.mou ? renderText(s.mou) :"") || partnersToText(s.partners)}</div><article><div><div class="copy-toast" hidden>Đã copy thông tin trường</div><section>`;
 }
 
 function renderSemesterSelector() {
@@ -236,7 +236,7 @@ function renderSemesterSelector() {
  return '<option value="'+ s.id + '"'+ selected + '>'+ escapeHtml(s.title || 'Kỳ tháng '+ s.ky + '/'+ s.nam) + '</option>';
  }).join('');
 
- return '<div class="semester-selector"><label>Kỳ tuyển sinh:</label><select id="semester-select"onchange="switchSemester(this.value)">'+ options + '</select><div>';
+ return '<div class="semester-selector"><label>Kỳ tuyển sinh:</label><select id="semester-select" onchange="switchSemester(this.value)">'+ options + '</select><div>';
 }
 
 window.switchSemester = function(semesterId) {
@@ -269,8 +269,8 @@ function renderSchoolsDirectory() {
 
  return `
  <section class="directory-view">${renderSemesterSelector()}
- <div class="directory-head"><div><p class="advisor-kicker">Danh sách trường</p><h2>${schools.length} trường tuyển sinh</h2><p>Chọn tên trường để xem thông tin chi tiết về điều kiện, học phí, hồ sơ, ký túc xá và tài liệu liên quan.</p><div><div class="directory-tools"><div style="position:relative;"><input id="school-search"type="search"placeholder="Tìm trường, khu vực, hệ học..."autocomplete="off"role="combobox"aria-expanded="false"aria-controls="search-suggestions"><div id="search-suggestions"class="search-suggestions"role="listbox"hidden><div><div id="smart-chips"class="smart-chips"><div><div><select id="school-region-filter">` + regionOptions + `</select><select id="school-system-filter">` + systemOptions + `</select><div><div><div class="quick-filter-bar"aria-label="Bộ lọc nhanh"><button type="button"data-quick-filter="all"class="active">Tất cả</button><button type="button"data-quick-filter="seoul">Seoul</button><button type="button"data-quick-filter="near-seoul">Gần Seoul</button><button type="button"data-quick-filter="busan">Busan</button><button type="button"data-quick-filter="low-cost">Chi phí thấp</button><button type="button"data-quick-filter="female">Chỉ nữ</button><button type="button"data-quick-filter="e7">Dễ E7</button><div>${renderRecentSchools()}
- <div class="directory-count"><span id="school-result-count">${schools.length}</span>trường đang hiển thị</div><div id="school-card-grid"class="school-name-grid skeleton-loading">${schools.length >0 ? schools.map(renderSchoolCard).join("") : skeletonCards}</div><p id="school-empty-state"class="muted-empty directory-empty hidden">Không tìm thấy trường phù hợp với bộ lọc hiện tại.</p><section>`;
+ <div class="directory-head"><div><p class="advisor-kicker">Danh sách trường</p><h2>${schools.length} trường tuyển sinh</h2><p>Chọn tên trường để xem thông tin chi tiết về điều kiện, học phí, hồ sơ, ký túc xá và tài liệu liên quan.</p><div><div class="directory-tools"><div style="position:relative;"><input id="school-search" type="search" placeholder="Tìm trường, khu vực, hệ học..." autocomplete="off" role="combobox" aria-expanded="false" aria-controls="search-suggestions"><div id="search-suggestions" class="search-suggestions" role="listbox" hidden><div><div id="smart-chips" class="smart-chips"><div><div><select id="school-region-filter">` + regionOptions + `</select><select id="school-system-filter">` + systemOptions + `</select><div><div><div class="quick-filter-bar" aria-label="Bộ lọc nhanh"><button type="button" data-quick-filter="all" class="active">Tất cả</button><button type="button" data-quick-filter="seoul">Seoul</button><button type="button" data-quick-filter="near-seoul">Gần Seoul</button><button type="button" data-quick-filter="busan">Busan</button><button type="button" data-quick-filter="low-cost">Chi phí thấp</button><button type="button" data-quick-filter="female">Chỉ nữ</button><button type="button" data-quick-filter="e7">Dễ E7</button><div>${renderRecentSchools()}
+ <div class="directory-count"><span id="school-result-count">${schools.length}</span>trường đang hiển thị</div><div id="school-card-grid" class=" school-name-grid skeleton-loading">${schools.length >0 ? schools.map(renderSchoolCard).join("") : skeletonCards}</div><p id="school-empty-state" class=" muted-empty directory-empty hidden">Không tìm thấy trường phù hợp với bộ lọc hiện tại.</p><section>`;
 }
 
 function renderSchoolCard(school) {
@@ -280,7 +280,7 @@ function renderSchoolCard(school) {
  rules.gender ==="female"?"female":"",
  rules.e7Opportunity >= 4 ?"e7":""].filter(Boolean).join("");
  return `
- <button type="button"class="school-name-item"data-school-card data-region="${escapeHtml(rules.region)}"data-system="${escapeHtml(school.system || '')}"data-tags="${escapeHtml(tags)}"data-search="${escapeHtml(buildSchoolSearchText(school))}"data-open-school="${escapeHtml(school.id)}">${escapeHtml(school.name)}</button>`;
+ <button type="button" class="school-name-item" data-school-card data-region="${escapeHtml(rules.region)}" data-system="${escapeHtml(school.system || '')}" data-tags="${escapeHtml(tags)}" data-search="${escapeHtml(buildSchoolSearchText(school))}" data-open-school="${escapeHtml(school.id)}">${escapeHtml(school.name)}</button>`;
 }
 
 function bindSchoolsDirectory(container) {
@@ -296,7 +296,7 @@ function bindSchoolsDirectory(container) {
 
 // ─── Region normalization: map DB regions to filter values ───
  // Only normalizes when filter is 'near-seoul'(quick filter or smart search).
- // Dropdown selections like 'gyeonggi'/'incheon'do exact match.
+ // Dropdown selections like 'gyeonggi'/'incheon' do exact match.
  function normalizeRegionForFilter(cardRegion, filterRegion) {
  if (!cardRegion) return '';
  const r = String(cardRegion).toLowerCase().trim();
@@ -319,7 +319,7 @@ function bindSchoolsDirectory(container) {
  ],
  tag: [
  { patterns: [/nữ|nữ sinh|nữsinh|female|여/], value: 'female', label: 'Chỉ nữ'},
- { patterns: [/chi phí thấp|rẻ|thấp|low.?cost|비용|저렴/], value: 'low-cost', label: 'Chi phí thấp'},
+ { patterns: [/chi phí thấp|rẻ|thấp|low.?cost|비용|저렴/], value: 'low-cost', label: ' Chi phí thấp'},
  { patterns: [/e7|việc làm|vieclam|job|취업/], value: 'e7', label: 'Dễ E7'},
  ]
  };
@@ -391,12 +391,12 @@ function bindSchoolsDirectory(container) {
  if (intents.region) {
  let label = 'Seoul';
  INTENT_MAP.region.some(function(r) { if (r.value === intents.region) { label = r.label; return true; } });
- chips.push('<span class="smart-chip smart-chip-region"><span class="smart-chip-label">KV</span>'+ escapeHtml(label) + '</span>');
+ chips.push('<span class=" smart-chip smart-chip-region"><span class="smart-chip-label">KV</span>'+ escapeHtml(label) + '</span>');
  }
  intents.tags.forEach(function(t) {
  let label = t;
  INTENT_MAP.tag.some(function(r) { if (r.value === t) { label = r.label; return true; } });
- chips.push('<span class="smart-chip smart-chip-tag"><span class="smart-chip-label"><span>'+ escapeHtml(label) + '</span>');
+ chips.push('<span class=" smart-chip smart-chip-tag"><span class="smart-chip-label"><span>'+ escapeHtml(label) + '</span>');
  });
  chipsContainer.innerHTML = chips.join('');
  }
@@ -495,7 +495,7 @@ function bindSchoolsDirectory(container) {
  safeSuggestions.innerHTML = matches.map(card =>{
  const name = card.textContent.trim();
  const id = card.dataset.openSchool;
- return `<button type="button"class="suggestion-item"role="option"data-open-school="${escapeHtml(id)}"><span class="suggestion-name">${escapeHtml(name)}</span><button>`;
+ return `<button type="button" class="suggestion-item" role="option" data-open-school="${escapeHtml(id)}"><span class="suggestion-name">${escapeHtml(name)}</span><button>`;
  }).join("");
  safeSuggestions.hidden = false;
  search.setAttribute("aria-expanded","true");
@@ -590,7 +590,7 @@ function renderCompare() {
  preselected = compareParam.split(",").map(s =>decodeURIComponent(s.trim())).filter(Boolean);
  }
  return `
- <section class="compare-view"><div class="directory-head"><div><p class="advisor-kicker">So sánh trường</p><h2>So sánh nhanh theo dữ liệu hiện có</h2><p>Chọn tối đa 3 trường để xem nhanh những điểm khác biệt quan trọng nhất.</p><div><div><div class="compare-picker"><select class="compare-select"data-index="0">${options}</select><select class="compare-select"data-index="1">${options}</select><select class="compare-select"data-index="2">${options}</select><div><div class="compare-actions"><button type="button"class="btn btn-primary"id="compare-copy-link">Copy link so sánh</button><button type="button"class="btn btn-outline"id="compare-export">Xuất PDF</button><div><div id="compare-result"><div><section>`;
+ <section class="compare-view"><div class="directory-head"><div><p class="advisor-kicker">So sánh trường</p><h2>So sánh nhanh theo dữ liệu hiện có</h2><p>Chọn tối đa 3 trường để xem nhanh những điểm khác biệt quan trọng nhất.</p><div><div><div class="compare-picker"><select class="compare-select" data-index="0">${options}</select><select class="compare-select" data-index="1">${options}</select><select class="compare-select" data-index="2">${options}</select><div><div class="compare-actions"><button type="button" class=" btn btn-primary" id="compare-copy-link">Copy link so sánh</button><button type="button" class=" btn btn-outline" id="compare-export">Xuất PDF</button><div><div id="compare-result"><div><section>`;
 }
 
 function bindCompare(container) {
@@ -686,7 +686,7 @@ function exportComparePDF(container) {
  
  const printWindow = window.open("","_blank");
  const html = `
- <!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><title>So sánh trường - ${document.title}</title><link rel="stylesheet"href="${location.origin}/styles.css"><style>body { padding: 2rem; font-family: 'Be Vietnam Pro', sans-serif; }
+ <!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><title>So sánh trường - ${document.title}</title><link rel="stylesheet" href="${location.origin}/styles.css"><style>body { padding: 2rem; font-family: ' Be Vietnam Pro', sans-serif; }
  .compare-table { width: 100%; border-collapse: collapse; margin-bottom: 2rem; }
  .compare-table th, .compare-table td { border: 1px solid #e2e8f0; padding: 8px 12px; text-align: left; }
  .compare-table th { background: #1e3a5f; color: white; }
@@ -708,7 +708,7 @@ function getSchoolZaloText(school) {
  const regionName = rules && rules.region ? (window.REGION_LABELS && window.REGION_LABELS[rules.region] ? window.REGION_LABELS[rules.region].charAt(0).toUpperCase() + window.REGION_LABELS[rules.region].slice(1) : rules.region) : '';
  const line = String.prototype.padEnd ? ''.padEnd(30, '\u2500') : '──────────────────────────────';
  return [
- 'TU VAN DU HOC HAN QUOC',
+ ' TU VAN DU HOC HAN QUOC',
  line,
  '• Truong: '+ (school.name || '') + (school.nameKr ? '('+ school.nameKr + ')': ''),
  school.nameEn ? '• Ten tieng Anh: '+ school.nameEn : '',
@@ -717,7 +717,7 @@ function getSchoolZaloText(school) {
  school.tuition ? '• Hoc phi: '+ String(school.tuition).replace(/\n+/g, '').substring(0, 200) : '',
  school.ktx ? '• Ky tuc xa: '+ String(school.ktx).replace(/\n+/g, '').substring(0, 200) : '',
  '',
- 'Can tu van? LH Zalo',
+ ' Can tu van? LH Zalo',
  '🌐 '+ location.origin + location.pathname + '?school='+ encodeURIComponent(school.id)
  ].filter(Boolean).join("\n");
 }
@@ -810,7 +810,7 @@ function bindSchoolDetail(container, schoolId) {
  } else {
  // Fallback: dùng text cũ
  await navigator.clipboard.writeText(getSchoolZaloText(school));
- showCopyToast(container, 'AI không phản hồi, đã copy text mặc định');
+ showCopyToast(container, ' AI không phản hồi, đã copy text mặc định');
  }
  } catch (err) {
  // Fallback
@@ -931,8 +931,8 @@ function renderCompareResult(container) {
  target.innerHTML = `
  ${schools.length >0 ? `
  <div class="compare-radar-wrap"><div class="compare-radar-head"><p class="advisor-kicker">Biểu đồ so sánh</p><h3>5 chỉ số đánh giá trường</h3><p style="color:var(--text-muted);font-size:0.85rem;margin-top:0.15rem;">Chi phí thấp, dễ đỗ visa, cơ hội việc làm, chuyển đổi E7 và khối lượng học</p><div><div class="compare-radar-canvas-wrap"><canvas id="compare-radar-canvas"><canvas><div><div>` : ''}
- <div class="compare-table-wrap"><table class="compare-table"><thead><tr><th>Tiêu chí</th>${schools.map(s =>`<th>${escapeHtml(s.name)} ${winners[s.id] ? `<span class="winner-badge"title="Thắng ${winners[s.id].join(', ')}"><span>` : ''}</th>`).join("")}</tr><thead><tbody>${renderCompareRow("Hệ học", schools, s =>renderValue(s.system))}
- ${renderCompareRow("Khu vực", schools, s =>escapeHtml(getRegionLabel(getAdvisorRules(s.id, s).region)))}
+ <div class="compare-table-wrap"><table class="compare-table"><thead><tr><th>Tiêu chí</th>${schools.map(s =>`<th>${escapeHtml(s.name)} ${winners[s.id] ? `<span class="winner-badge" title="Thắng ${winners[s.id].join(', ')}"><span>` : ''}</th>`).join("")}</tr><thead><tbody>${renderCompareRow("Hệ học", schools, s =>renderValue(s.system))}
+ ${renderCompareRow(" Khu vực", schools, s =>escapeHtml(getRegionLabel(getAdvisorRules(s.id, s).region)))}
  ${renderCompareRowWithDiff("Học phí", schools, s =>renderValue(s.tuition),"tuition", true)}
  ${renderCompareRowWithDiff("KTX", schools, s =>renderValue(s.ktx),"ktx", true)}
  ${renderCompareRow("Ưu điểm chính", schools, s =>renderText(listToInline(s.advantages, 3)))}
@@ -989,7 +989,7 @@ function getCompareRisk(school) {
  const risks = [];
  if (rules.interviewDifficulty >= 4) risks.push("Phỏng vấn/đánh giá đầu vào cần chuẩn bị kỹ");
  if (rules.studyLoad >= 4) risks.push("Khối lượng học tương đối nặng");
- if (rules.costLevel >= 4) risks.push("Chi phí thuộc nhóm cao");
+ if (rules.costLevel >= 4) risks.push(" Chi phí thuộc nhóm cao");
  if (rules.gender ==="female") risks.push("Chỉ phù hợp nữ sinh");
  return risks.join(";") ||"Chưa có rủi ro nổi bật";
 }
@@ -1042,7 +1042,7 @@ function renderCostCalculator() {
  return '<option value="'+ escapeHtml(s.id) + '">'+ escapeHtml(s.name) + '</option>';
  }).join('');
  return `
- <section class="cost-calc"><div class="cost-calc-head"><div><p class="advisor-kicker">Dự toán chi phí</p><h2>Máy tính chi phí du học 1 năm</h2><p>Chọn trường và điều chỉnh các khoản phí để ước tính tổng chi phí học tập tại Hàn Quốc.</p><div><div><div class="cost-calc-body"><div class="cost-calc-form"><h3>Thông tin đầu vào</h3><div class="cost-calc-field"><label for="cost-school">Trường</label><select id="cost-school">${options}</select><div><div class="cost-calc-field"><label for="cost-tuition">Học phí <span class="auto-filled">(tự động từ dữ liệu trường)</span><label><input id="cost-tuition"type="text"inputmode="numeric"placeholder="KRW"><div><div class="cost-calc-field"><label for="cost-ktx">Ký túc xá <span class="auto-filled">(tự động từ dữ liệu trường)</span><label><input id="cost-ktx"type="text"inputmode="numeric"placeholder="KRW"><div><div class="cost-calc-field"><label for="cost-insurance">Bảo hiểm (1 năm)</label><input id="cost-insurance"type="text"inputmode="numeric"value="${INSURANCE_COST.toLocaleString('ko-KR')}"placeholder="KRW"><div><div class="cost-calc-field"><label for="cost-living">Sinh hoạt phí hàng tháng</label><input id="cost-living"type="text"inputmode="numeric"value="${MONTHLY_LIVING_COST.toLocaleString('ko-KR')}"placeholder="KRW/tháng"><div><div class="cost-calc-field"><label for="cost-months">Số tháng học</label><input id="cost-months"type="number"value="12"min="6"max="24"step="1"><div><div class="cost-calc-field"><label for="cost-visa-fee">Phí visa + thủ tục</label><input id="cost-visa-fee"type="text"inputmode="numeric"value="${VISA_FEE.toLocaleString('ko-KR')}"placeholder="KRW"><div><div class="cost-calc-field"><label for="cost-flight">Vé máy bay</label><input id="cost-flight"type="text"inputmode="numeric"value="${FLIGHT_TICKET.toLocaleString('ko-KR')}"placeholder="KRW"><div><div class="cost-calc-field"><label for="cost-rate">Tỷ giá KRW → VND</label><input id="cost-rate"type="number"value="${DEFAULT_EXCHANGE_RATE}"min="1"max="100"step="1"><div><div><div class="cost-calc-result"><h3>Dự toán chi phí</h3><table class="cost-table"><thead><tr><th>Khoản mục</th><th>KRW</th><th>VND</th><tr><thead><tbody id="cost-result-body"><tr><td>Học phí</td><td>—</td><td>—</td><tr><tr><td>Ký túc xá</td><td>—</td><td>—</td><tr><tr><td>Bảo hiểm</td><td>—</td><td>—</td><tr><tr><td>Sinh hoạt phí</td><td>—</td><td>—</td><tr><tr><td>Phí visa + thủ tục</td><td>—</td><td>—</td><tr><tr><td>Vé máy bay</td><td>—</td><td>—</td><tr><tr class="total"><td>Tổng cộng</td><td>—</td><td>—</td><tr><tbody><table><div class="cost-note">Đây là ước tính tham khảo dựa trên dữ liệu trường và các khoản phí thông thường. 
+ <section class="cost-calc"><div class="cost-calc-head"><div><p class="advisor-kicker">Dự toán chi phí</p><h2>Máy tính chi phí du học 1 năm</h2><p>Chọn trường và điều chỉnh các khoản phí để ước tính tổng chi phí học tập tại Hàn Quốc.</p><div><div><div class="cost-calc-body"><div class="cost-calc-form"><h3>Thông tin đầu vào</h3><div class="cost-calc-field"><label for="cost-school">Trường</label><select id="cost-school">${options}</select><div><div class="cost-calc-field"><label for="cost-tuition">Học phí <span class="auto-filled">(tự động từ dữ liệu trường)</span><label><input id="cost-tuition" type="text" inputmode="numeric" placeholder="KRW"><div><div class="cost-calc-field"><label for="cost-ktx">Ký túc xá <span class="auto-filled">(tự động từ dữ liệu trường)</span><label><input id="cost-ktx" type="text" inputmode="numeric" placeholder="KRW"><div><div class="cost-calc-field"><label for="cost-insurance">Bảo hiểm (1 năm)</label><input id="cost-insurance" type="text" inputmode="numeric" value="${INSURANCE_COST.toLocaleString('ko-KR')}" placeholder="KRW"><div><div class="cost-calc-field"><label for="cost-living">Sinh hoạt phí hàng tháng</label><input id="cost-living" type="text" inputmode="numeric" value="${MONTHLY_LIVING_COST.toLocaleString('ko-KR')}" placeholder="KRW/tháng"><div><div class="cost-calc-field"><label for="cost-months">Số tháng học</label><input id="cost-months" type="number" value="12" min="6" max="24" step="1"><div><div class="cost-calc-field"><label for="cost-visa-fee">Phí visa + thủ tục</label><input id="cost-visa-fee" type="text" inputmode="numeric" value="${VISA_FEE.toLocaleString('ko-KR')}" placeholder="KRW"><div><div class="cost-calc-field"><label for="cost-flight">Vé máy bay</label><input id="cost-flight" type="text" inputmode="numeric" value="${FLIGHT_TICKET.toLocaleString('ko-KR')}" placeholder="KRW"><div><div class="cost-calc-field"><label for="cost-rate">Tỷ giá KRW → VND</label><input id="cost-rate" type="number" value="${DEFAULT_EXCHANGE_RATE}" min="1" max="100" step="1"><div><div><div class="cost-calc-result"><h3>Dự toán chi phí</h3><table class="cost-table"><thead><tr><th>Khoản mục</th><th>KRW</th><th>VND</th><tr><thead><tbody id="cost-result-body"><tr><td>Học phí</td><td>—</td><td>—</td><tr><tr><td>Ký túc xá</td><td>—</td><td>—</td><tr><tr><td>Bảo hiểm</td><td>—</td><td>—</td><tr><tr><td>Sinh hoạt phí</td><td>—</td><td>—</td><tr><tr><td>Phí visa + thủ tục</td><td>—</td><td>—</td><tr><tr><td>Vé máy bay</td><td>—</td><td>—</td><tr><tr class="total"><td>Tổng cộng</td><td>—</td><td>—</td><tr><tbody><table><div class="cost-note">Đây là ước tính tham khảo dựa trên dữ liệu trường và các khoản phí thông thường. 
  Chi phí thực tế có thể thay đổi theo từng trường, kỳ tuyển sinh và nhu cầu cá nhân.</div><div><div><section>`;
 }
 
@@ -1073,7 +1073,7 @@ function updateCostResult(container) {
  { label: 'Học phí', krw: tuition },
  { label: 'Ký túc xá', krw: ktx },
  { label: 'Bảo hiểm', krw: insurance },
- { label: 'Sinh hoạt phí ('+ months + 'tháng)', krw: livingTotal },
+ { label: ' Sinh hoạt phí ('+ months + 'tháng)', krw: livingTotal },
  { label: 'Phí visa + thủ tục', krw: visaFee },
  { label: 'Vé máy bay', krw: flight },
  ];
@@ -1153,7 +1153,7 @@ function bindCostCalculator(container) {
 }
 
 // ─── Radar Chart ───
-const RADAR_LABELS = ['Chi phí', 'Visa', 'Việc làm', 'E7', 'Học lực'];
+const RADAR_LABELS = [' Chi phí', 'Visa', 'Việc làm', 'E7', 'Học lực'];
 const RADAR_COLORS = ['#2563eb', '#0f766e', '#d97706'];
 
 function getRadarMetrics(school) {
@@ -1203,7 +1203,7 @@ function drawRadarGrid(ctx, cx, cy, maxR, angles, isDark) {
  const lx = cx + (maxR + 26) * Math.cos(angles[i]);
  const ly = cy + (maxR + 26) * Math.sin(angles[i]);
  ctx.fillStyle = textColor;
- ctx.font = '600 12px"Be Vietnam Pro", -apple-system, sans-serif';
+ ctx.font = '600 12px" Be Vietnam Pro", -apple-system, sans-serif';
  ctx.textAlign = 'center';
  ctx.textBaseline = 'middle';
  ctx.fillText(RADAR_LABELS[i], lx, ly);
@@ -1261,7 +1261,7 @@ function drawRadarPolygons(ctx, cx, cy, maxR, angles, activeSchools, scale, isDa
  const vy = cy + ((values[i] / 5) * maxR * scale + 14) * Math.sin(angles[i]);
  ctx.fillStyle = color;
  ctx.globalAlpha = alpha;
- ctx.font = '700 10px"Be Vietnam Pro", sans-serif';
+ ctx.font = '700 10px" Be Vietnam Pro", sans-serif';
  ctx.textAlign = 'center';
  ctx.textBaseline = 'middle';
  ctx.fillText(String(values[i]), vx, vy);
@@ -1278,7 +1278,7 @@ function drawRadarLegend(ctx, cx, h, activeSchools, isDark, hoveredIndex) {
  const legendY = h - 6;
  let totalWidth = 0;
  activeSchools.forEach(function(s, i) {
- ctx.font = '12px"Be Vietnam Pro", sans-serif';
+ ctx.font = '12px" Be Vietnam Pro", sans-serif';
  totalWidth += ctx.measureText(s.name || '').width + 34;
  });
  let lx = cx - totalWidth / 2;
@@ -1299,7 +1299,7 @@ function drawRadarLegend(ctx, cx, h, activeSchools, isDark, hoveredIndex) {
  ctx.fillStyle = color;
  ctx.fillRect(lx, legendY - 5, 12, 12);
  ctx.fillStyle = isHovered ? color : textColor;
- ctx.font = (isHovered ? '700 ': '') + '12px"Be Vietnam Pro", sans-serif';
+ ctx.font = (isHovered ? '700 ': '') + '12px" Be Vietnam Pro", sans-serif';
  ctx.textAlign = 'left';
  ctx.textBaseline = 'middle';
  ctx.fillText(school.name || '', lx + 18, legendY);
@@ -1375,7 +1375,7 @@ function renderRadarChart(canvas, schools) {
  const legendY = h - 6;
  if (Math.abs(mouseY - legendY) >14) return -1;
 
- ctx.font = '12px"Be Vietnam Pro", sans-serif';
+ ctx.font = '12px" Be Vietnam Pro", sans-serif';
  const totalWidth = 0;
  const widths = activeSchools.map(function(s) {
  const tw = ctx.measureText(s.name || '').width + 34;
@@ -1441,7 +1441,7 @@ function renderD26Checklist() {
  <article class="checklist-group"><h3>${escapeHtml(group.group || 'Khác')}</h3><div class="checklist-items">${group.items.map(function(item, itemIndex) {
  const id = 'd26-check-'+ groupIndex + '-'+ itemIndex;
  return `
- <label class="checklist-item"for="${id}"><input id="${id}"type="checkbox"data-check-id="${id}"><span class="checklist-main"><strong>${escapeHtml(item.name)}</strong><small>${escapeHtml(item.note)}</small><span><span class="checklist-level checklist-level-${getChecklistLevelClass(item.level)}">${escapeHtml(item.level)}</span><label>`;
+ <label class="checklist-item" for="${id}"><input id="${id}" type="checkbox" data-check-id="${id}"><span class="checklist-main"><strong>${escapeHtml(item.name)}</strong><small>${escapeHtml(item.note)}</small><span><span class=" checklist-level checklist-level-${getChecklistLevelClass(item.level)}">${escapeHtml(item.level)}</span><label>`;
  }).join('')}</div><article>`;
  }).join('')}</div><div class="checklist-warning">Không dùng checklist này thay thế việc kiểm tra yêu cầu mới nhất từ trường, ĐSQ/LSQ và từng hồ sơ cụ thể.</div><section>`;
 }
@@ -1473,7 +1473,7 @@ function bindD26Checklist(container) {
 function getDataHealthReport() {
  const required = [
  ["Hệ học", s =>s.system],
- ["Khu vực", s =>s.location],
+ [" Khu vực", s =>s.location],
  ["Điều kiện", s =>s.conditions?.length],
  ["Chuyên ngành", s =>s.majors?.length],
  ["Học phí", s =>s.tuition],
@@ -1493,20 +1493,20 @@ function renderDataHealthReport() {
  const complete = rows.filter(row =>row.missing.length === 0).length;
  return `
  <section class="data-health"><div class="docs-section-head"><div><p class="advisor-kicker">Kiểm tra thông tin</p><h2>Tình trạng thông tin trường</h2><div><span>${complete}/${rows.length} trường đủ mục chính</span><div><div class="data-health-grid">${rows.map(({ school, missing }) =>`
- <div class="data-health-row ${missing.length ?"":"is-complete"}"><strong>${escapeHtml(school.name)}</strong><span>${missing.length ? `Cần bổ sung: ${escapeHtml(missing.join(","))}` :"Đã đủ các mục chính"}</span><div>`).join("")}</div><section>`;
+ <div class=" data-health-row ${missing.length ?"":"is-complete"}"><strong>${escapeHtml(school.name)}</strong><span>${missing.length ? `Cần bổ sung: ${escapeHtml(missing.join(","))}` :"Đã đủ các mục chính"}</span><div>`).join("")}</div><section>`;
 }
 
 function renderGeneralDocs(sheet) {
  let html = `
- <section class="docs-panel"><div class="docs-section-head"><div><p class="advisor-kicker">Tài liệu tham khảo</p><h2>Tài liệu chung</h2><div><div class="docs-actions"><a href="${sheet}"target="_blank"rel="noopener">Mở bảng tổng hợp</a><a href="#"class="ebook-tab-link"data-school="ebook">Cẩm nang D2-6</a><div><div>`;
+ <section class="docs-panel"><div class="docs-section-head"><div><p class="advisor-kicker">Tài liệu tham khảo</p><h2>Tài liệu chung</h2><div><div class="docs-actions"><a href="${sheet}" target="_blank" rel="noopener">Mở bảng tổng hợp</a><a href="#" class="ebook-tab-link" data-school="ebook">Cẩm nang D2-6</a><div><div>`;
 
  if (EXTRA_SHEETS?.danhSach?.rows?.length) {
- html += `<details class="docs-detail"><summary>Danh sách trường tổng hợp</summary><div class="table-scroll"><table class="summary-table"><tr><th>Trường</th><th>Hệ</th><th>Chỉ tiêu</th><th>MOU</th><th>Catalog</th><tr>${EXTRA_SHEETS.danhSach.rows.map(r =>`<tr><td>${escapeHtml(r.name)} ${r.nameKr ? `<span class="korean">${escapeHtml(r.nameKr)}</span>` :""}</td><td>${escapeHtml(r.system ||"")}</td><td>${r.quota ||""}</td><td>${escapeHtml(r.mou ||"")}</td><td>${r.catalog ? `<a href="${r.catalog}"target="_blank"rel="noopener">Mở</a>` :""}</td><tr>`).join("")}</table><div><details>`;
+ html += `<details class="docs-detail"><summary>Danh sách trường tổng hợp</summary><div class="table-scroll"><table class="summary-table"><tr><th>Trường</th><th>Hệ</th><th>Chỉ tiêu</th><th>MOU</th><th>Catalog</th><tr>${EXTRA_SHEETS.danhSach.rows.map(r =>`<tr><td>${escapeHtml(r.name)} ${r.nameKr ? `<span class="korean">${escapeHtml(r.nameKr)}</span>` :""}</td><td>${escapeHtml(r.system ||"")}</td><td>${r.quota ||""}</td><td>${escapeHtml(r.mou ||"")}</td><td>${r.catalog ? `<a href="${r.catalog}" target="_blank" rel="noopener">Mở</a>` :""}</td><tr>`).join("")}</table><div><details>`;
  }
 
  if (EXTRA_SHEETS?.visaChecklist?.items?.length) {
  html += `<details class="docs-detail"><summary>Checklist từ bảng tổng hợp</summary><div class="table-scroll"><table class="summary-table">${EXTRA_SHEETS.visaChecklist.items.map(it =>`<tr><td>${escapeHtml(it.stt ||"")}</td><td>${escapeHtml(it.noidung ||"")}${it.luuy ? `<br><em>${escapeHtml(it.luuy)}</em>` :""}
- ${it.link ? `<br><a href="${it.link}"target="_blank"rel="noopener">${escapeHtml(it.linkText ||"Mở tài liệu")}</a>` : it.linkText ? `<br>${escapeHtml(it.linkText)}` :""}</td><tr>`).join("")}</table><div><details>`;
+ ${it.link ? `<br><a href="${it.link}" target="_blank" rel="noopener">${escapeHtml(it.linkText ||"Mở tài liệu")}</a>` : it.linkText ? `<br>${escapeHtml(it.linkText)}` :""}</td><tr>`).join("")}</table><div><details>`;
  }
 
  html += `</section>`;
@@ -1696,7 +1696,7 @@ function init() {
 
  const content = document.getElementById("advisor-content");
  if (typeof SCHOOLS_DATA ==="undefined"|| Object.keys(SCHOOLS_DATA).length === 0) {
- content.innerHTML = `<p class="empty"style="padding:2rem;color:#dc2626;">Chưa tải được thông tin trường. Vui lòng thử lại sau.</p>`;
+ content.innerHTML = `<p class="empty" style="padding:2rem;color:#dc2626;">Chưa tải được thông tin trường. Vui lòng thử lại sau.</p>`;
  return;
  }
 
@@ -1744,7 +1744,7 @@ function init() {
  try {
  showSchool(getInitialView());
  } catch (e) {
- content.innerHTML = `<p class="empty"style="padding:2rem;color:#dc2626;">Lỗi: ${escapeHtml(String(e.message))}</p>`;
+ content.innerHTML = `<p class="empty" style="padding:2rem;color:#dc2626;">Lỗi: ${escapeHtml(String(e.message))}</p>`;
  console.error(e);
  }
 }

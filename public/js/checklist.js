@@ -1,7 +1,7 @@
 // checklist.js — Dynamic Personalized Checklist
 // UI: Profile Form → AI Analysis → Checklist View → Progress Tracking
 (function() {
- 'use strict';
+ ' use strict';
 
  const STORAGE_KEY = 'checklist_data';
  let currentStep = 0;
@@ -60,7 +60,7 @@
  // Sync to server if logged in
  syncToServer();
  } catch (e) {
- console.warn('Save failed:', e);
+ console.warn(' Save failed:', e);
  }
  }
 
@@ -98,7 +98,7 @@
  }
  }
  } catch (e) {
- console.warn('Server sync failed:', e);
+ console.warn(' Server sync failed:', e);
  }
  }
 
@@ -125,7 +125,7 @@
  }
  }
  } catch (e) {
- console.warn('Server load failed:', e);
+ console.warn(' Server load failed:', e);
  }
  return false;
  }
@@ -142,8 +142,8 @@
  init();
 
  container.innerHTML = `
- <section class="checklist-view"><div class="checklist-hero"><div><p class="advisor-kicker">Hồ sơ cá nhân hoá</p><h2 id="checklist-title">Tự làm hồ sơ du học Hàn Quốc</h2><p id="checklist-desc"class="checklist-desc">Hệ thống sẽ phân tích hồ sơ của bạn và tạo checklist cá nhân hoá — 
- chỉ hiển thị những giấy tờ bạn thực sự cần, dựa trên hoàn cảnh của bạn.</p><div><div><!-- Progress --><div class="cl-progress"id="cl-progress"><div class="cl-steps"id="cl-steps"><div><div class="cl-progress-bar"><div class="cl-progress-fill"id="cl-progress-fill"><div><div><div class="cl-progress-label"id="cl-progress-label"><div><div><!-- Content --><div id="cl-content"class="cl-content"><div><!-- Resume / Restore --><div id="cl-resume-bar"class="cl-resume-bar"style="display:none"><span>Bạn đang tiếp tục hồ sơ đã lưu trước đó.</span><button type="button"class="btn btn-sm btn-outline"onclick="window.clStartFresh()">Bắt đầu lại</button><div><section>`;
+ <section class="checklist-view"><div class="checklist-hero"><div><p class="advisor-kicker">Hồ sơ cá nhân hoá</p><h2 id="checklist-title">Tự làm hồ sơ du học Hàn Quốc</h2><p id="checklist-desc" class="checklist-desc">Hệ thống sẽ phân tích hồ sơ của bạn và tạo checklist cá nhân hoá — 
+ chỉ hiển thị những giấy tờ bạn thực sự cần, dựa trên hoàn cảnh của bạn.</p><div><div><!-- Progress --><div class="cl-progress" id="cl-progress"><div class="cl-steps" id="cl-steps"><div><div class="cl-progress-bar"><div class="cl-progress-fill" id="cl-progress-fill"><div><div><div class="cl-progress-label" id="cl-progress-label"><div><div><!-- Content --><div id="cl-content" class="cl-content"><div><!-- Resume / Restore --><div id="cl-resume-bar" class="cl-resume-bar" style="display:none"><span>Bạn đang tiếp tục hồ sơ đã lưu trước đó.</span><button type="button" class=" btn btn-sm btn-outline" onclick="window.clStartFresh()">Bắt đầu lại</button><div><section>`;
 
  renderStep();
  renderStepIndicator();
@@ -158,7 +158,7 @@
  const active = i === currentStep ? 'active': '';
  const done = i < currentStep ? 'done': '';
  const clickable = (done || active) && i <= 6 ? 'clickable': '';
- return `<div class="cl-step ${active} ${done} ${clickable}"onclick="${clickable ? `window.clGoToStep(${i})` : ''}"data-step="${i}"><div class="cl-step-circle">${done ? '✓': step.icon}</div><div class="cl-step-label">${escapeHtml(step.label)}</div><div>`;
+ return `<div class=" cl-step ${active} ${done} ${clickable}" onclick="${clickable ? `window.clGoToStep(${i})` : ''}" data-step="${i}"><div class="cl-step-circle">${done ? '✓': step.icon}</div><div class="cl-step-label">${escapeHtml(step.label)}</div><div>`;
  }).join('');
 
  updateProgress();
@@ -226,7 +226,7 @@
  // ══════════════════════════════════════════════
  function renderWelcome(container) {
  container.innerHTML = `
- <div class="cl-welcome"><div class="cl-welcome-icon"><div><h3>Chào mừng bạn đến với hệ thống tự làm hồ sơ!</h3><p>Chúng tôi sẽ giúp bạn tạo một checklist cá nhân hoá — chỉ gồm những giấy tờ bạn thực sự cần, dựa trên hoàn cảnh cụ thể của bạn.</p><div class="cl-benefits"><div class="cl-benefit"><span><span><div><strong>Checklist theo hoàn cảnh</strong><br>Bạn gap year? Trượt visa? Tài chính tự thân? Checklist sẽ khác.</div><div><div class="cl-benefit"><span><span><div><strong>AI hỗ trợ soạn thảo</strong><br>Study Plan, giải trình gap, giải trình trượt visa — AI giúp bạn viết.</div><div><div class="cl-benefit"><span><span><div><strong>Theo dõi tiến độ</strong><br>Biết bạn đã hoàn thành bao nhiêu %, còn thiếu gì, sắp tới hạn gì.</div><div><div><div class="cl-visa-select"><label for="cl-visa-type">Loại visa bạn muốn xin:</label><select id="cl-visa-type"onchange="window.clSelectVisa(this.value)"><option value="D-4-1">D-4-1: Visa học tiếng Hàn</option><option value="D-2">D-2: Visa đại học chính quy</option><option value="D4-to-D2">D4 → D2: Chuyển đổi visa</option><select><p class="cl-hint">Chọn loại visa bạn định xin. Bạn có thể thay đổi sau.</p><div><button type="button"class="btn btn-primary btn-lg"onclick="window.clNextStep()">Bắt đầu khai báo →</button><div>`;
+ <div class="cl-welcome"><div class="cl-welcome-icon"><div><h3>Chào mừng bạn đến với hệ thống tự làm hồ sơ!</h3><p>Chúng tôi sẽ giúp bạn tạo một checklist cá nhân hoá — chỉ gồm những giấy tờ bạn thực sự cần, dựa trên hoàn cảnh cụ thể của bạn.</p><div class="cl-benefits"><div class="cl-benefit"><span><span><div><strong>Checklist theo hoàn cảnh</strong><br>Bạn gap year? Trượt visa? Tài chính tự thân? Checklist sẽ khác.</div><div><div class="cl-benefit"><span><span><div><strong>AI hỗ trợ soạn thảo</strong><br>Study Plan, giải trình gap, giải trình trượt visa — AI giúp bạn viết.</div><div><div class="cl-benefit"><span><span><div><strong>Theo dõi tiến độ</strong><br>Biết bạn đã hoàn thành bao nhiêu %, còn thiếu gì, sắp tới hạn gì.</div><div><div><div class="cl-visa-select"><label for="cl-visa-type">Loại visa bạn muốn xin:</label><select id="cl-visa-type" onchange="window.clSelectVisa(this.value)"><option value="D-4-1">D-4-1: Visa học tiếng Hàn</option><option value="D-2">D-2: Visa đại học chính quy</option><option value="D4-to-D2">D4 → D2: Chuyển đổi visa</option><select><p class="cl-hint">Chọn loại visa bạn định xin. Bạn có thể thay đổi sau.</p><div><button type="button" class=" btn btn-primary btn-lg" onclick="window.clNextStep()">Bắt đầu khai báo →</button><div>`;
 
  // Restore visa type if already selected
  if (profile.visaType) {
@@ -246,7 +246,7 @@
  function renderPersonalForm(container) {
  const d = profile;
  container.innerHTML = `
- <div class="cl-form-section"><h3>Thông tin cá nhân</h3><p class="cl-form-desc">Thông tin cơ bản để xác định hồ sơ của bạn.</p><div class="cl-grid-2"><div class="cl-field"><label>Họ và tên</label><input type="text"id="cl-fullname"value="${escapeHtml(d.fullName || '')}"placeholder="Nguyễn Văn A"><div><div class="cl-field"><label>Số điện thoại</label><input type="tel"id="cl-phone"value="${escapeHtml(d.phone || '')}"placeholder="090xxxxxxx"><div><div><div class="cl-grid-2"><div class="cl-field"><label>Email</label><input type="email"id="cl-email"value="${escapeHtml(d.email || '')}"placeholder="email@example.com"><div><div class="cl-field"><label>Ngày sinh</label><input type="date"id="cl-dob"value="${escapeHtml(d.dateOfBirth || '')}"><div><div><div class="cl-grid-2"><div class="cl-field"><label>Giới tính</label><select id="cl-gender"><option value="">— Chọn —</option><option value="male"${d.gender === 'male'? 'selected': ''}>Nam</option><option value="female"${d.gender === 'female'? 'selected': ''}>Nữ</option><select><div><div class="cl-field"><label>Trình độ học vấn cao nhất</label><select id="cl-edu-level"><option value="highschool"${d.educationLevel !== 'university'? 'selected': ''}>THPT</option><option value="university"${d.educationLevel === 'university'? 'selected': ''}>Đại học / Cao đẳng</option><select><div><div><div class="cl-nav"><button type="button"class="btn btn-primary btn-lg"onclick="window.clSaveStep1()">Lưu & Tiếp theo →</button><div><div>`;
+ <div class="cl-form-section"><h3>Thông tin cá nhân</h3><p class="cl-form-desc">Thông tin cơ bản để xác định hồ sơ của bạn.</p><div class="cl-grid-2"><div class="cl-field"><label>Họ và tên</label><input type="text" id="cl-fullname" value="${escapeHtml(d.fullName || '')}" placeholder="Nguyễn Văn A"><div><div class="cl-field"><label>Số điện thoại</label><input type="tel" id="cl-phone" value="${escapeHtml(d.phone || '')}" placeholder="090xxxxxxx"><div><div><div class="cl-grid-2"><div class="cl-field"><label>Email</label><input type="email" id="cl-email" value="${escapeHtml(d.email || '')}" placeholder="email@example.com"><div><div class="cl-field"><label>Ngày sinh</label><input type="date" id="cl-dob" value="${escapeHtml(d.dateOfBirth || '')}"><div><div><div class="cl-grid-2"><div class="cl-field"><label>Giới tính</label><select id="cl-gender"><option value="">— Chọn —</option><option value="male"${d.gender === 'male'? 'selected': ''}>Nam</option><option value="female"${d.gender === 'female'? 'selected': ''}>Nữ</option><select><div><div class="cl-field"><label>Trình độ học vấn cao nhất</label><select id="cl-edu-level"><option value="highschool"${d.educationLevel !== 'university'? 'selected': ''}>THPT</option><option value="university"${d.educationLevel === 'university'? 'selected': ''}>Đại học / Cao đẳng</option><select><div><div><div class="cl-nav"><button type="button" class=" btn btn-primary btn-lg" onclick="window.clSaveStep1()">Lưu & Tiếp theo →</button><div><div>`;
  }
 
  window.clSaveStep1 = function() {
@@ -266,7 +266,7 @@
  function renderEducationForm(container) {
  const d = profile;
  container.innerHTML = `
- <div class="cl-form-section"><h3>Thông tin học vấn</h3><p class="cl-form-desc">Giúp hệ thống đánh giá hồ sơ học tập của bạn.</p><div class="cl-grid-2"><div class="cl-field"><label>Trường THPT</label><input type="text"id="cl-hs-name"value="${escapeHtml(d.highSchoolName || '')}"placeholder="Tên trường THPT"><div><div class="cl-field"><label>GPA THPT (thang 10)</label><input type="number"id="cl-gpa"min="0"max="10"step="0.1"value="${d.gpa || ''}"placeholder="6.5"><div><div><div class="cl-grid-2"><div class="cl-field"><label>Năm tốt nghiệp THPT</label><input type="number"id="cl-grad-year"min="2000"max="2030"value="${d.graduationYear || ''}"placeholder="VD: 2023"><div><div class="cl-field"><label>Trình độ tiếng Hàn hiện tại</label><select id="cl-korean"><option value="none"${d.koreanLevel === 'none'|| !d.koreanLevel ? 'selected': ''}>Chưa học</option><option value="beginner"${d.koreanLevel === 'beginner'? 'selected': ''}>Mới bắt đầu</option><option value="sejong2b"${d.koreanLevel === 'sejong2b'? 'selected': ''}>Sejong 2B</option><option value="topik1"${d.koreanLevel === 'topik1'? 'selected': ''}>TOPIK 1</option><option value="topik2"${d.koreanLevel === 'topik2'? 'selected': ''}>TOPIK 2</option><option value="topik3"${d.koreanLevel === 'topik3'? 'selected': ''}>TOPIK 3</option><option value="topik4"${d.koreanLevel === 'topik4'? 'selected': ''}>TOPIK 4+</option><select><div><div><div class="cl-field"><label>Bạn đã có chứng chỉ TOPIK chưa?</label><div class="cl-radio-group"><label><input type="radio"name="cl-has-topik"value="true"${d.hasTopik ? 'checked': ''} onchange="profile.hasTopik = true; document.getElementById('cl-topik-score').style.display=''">Có</label><label><input type="radio"name="cl-has-topik"value="false"${d.hasTopik === false ? 'checked': ''} onchange="profile.hasTopik = false; document.getElementById('cl-topik-score').style.display='none'">Chưa</label><div><div><div id="cl-topik-score"style="${d.hasTopik ? '': 'display:none'}"><div class="cl-field"><label>Điểm TOPIK</label><select id="cl-topik-grade"><option value="">— Chọn —</option><option value="topik1"${d.topikGrade === 'topik1'? 'selected': ''}>TOPIK 1급</option><option value="topik2"${d.topikGrade === 'topik2'? 'selected': ''}>TOPIK 2급</option><option value="topik3"${d.topikGrade === 'topik3'? 'selected': ''}>TOPIK 3급</option><option value="topik4"${d.topikGrade === 'topik4'? 'selected': ''}>TOPIK 4급</option><option value="topik5"${d.topikGrade === 'topik5'? 'selected': ''}>TOPIK 5급</option><option value="topik6"${d.topikGrade === 'topik6'? 'selected': ''}>TOPIK 6급</option><select><div><div><div class="cl-field"><label>Điểm IELTS (nếu có)</label><input type="number"id="cl-ielts"min="0"max="9"step="0.5"value="${d.ieltsScore || ''}"placeholder="5.5"><div><div class="cl-grid-2"><div class="cl-field"><label>Trường Hàn Quốc bạn dự định nộp</label><input type="text"id="cl-chosen-school"value="${escapeHtml(d.chosenSchool || '')}"placeholder="VD: Đại học Quốc gia Seoul"><div><div class="cl-field"><label>Ngành học dự định</label><input type="text"id="cl-chosen-major"value="${escapeHtml(d.chosenMajor || '')}"placeholder="VD: Kinh doanh quốc tế, Tiếng Hàn"><div><div><div class="cl-info-box"><strong>Tại sao cần thông tin này?</strong><br>GPA thấp, gap year dài, học lực yếu — mỗi yếu tố sẽ thêm giấy tờ bổ sung vào checklist của bạn.</div><div class="cl-nav"><button type="button"class="btn btn-primary btn-lg"onclick="window.clSaveStep2()">Lưu & Tiếp theo →</button><div><div>`;
+ <div class="cl-form-section"><h3>Thông tin học vấn</h3><p class="cl-form-desc">Giúp hệ thống đánh giá hồ sơ học tập của bạn.</p><div class="cl-grid-2"><div class="cl-field"><label>Trường THPT</label><input type="text" id="cl-hs-name" value="${escapeHtml(d.highSchoolName || '')}" placeholder="Tên trường THPT"><div><div class="cl-field"><label>GPA THPT (thang 10)</label><input type="number" id="cl-gpa" min="0" max="10" step="0.1" value="${d.gpa || ''}" placeholder="6.5"><div><div><div class="cl-grid-2"><div class="cl-field"><label>Năm tốt nghiệp THPT</label><input type="number" id="cl-grad-year" min="2000" max="2030" value="${d.graduationYear || ''}" placeholder="VD: 2023"><div><div class="cl-field"><label>Trình độ tiếng Hàn hiện tại</label><select id="cl-korean"><option value="none"${d.koreanLevel === 'none'|| !d.koreanLevel ? 'selected': ''}>Chưa học</option><option value="beginner"${d.koreanLevel === 'beginner'? 'selected': ''}>Mới bắt đầu</option><option value="sejong2b"${d.koreanLevel === 'sejong2b'? 'selected': ''}>Sejong 2B</option><option value="topik1"${d.koreanLevel === 'topik1'? 'selected': ''}>TOPIK 1</option><option value="topik2"${d.koreanLevel === 'topik2'? 'selected': ''}>TOPIK 2</option><option value="topik3"${d.koreanLevel === 'topik3'? 'selected': ''}>TOPIK 3</option><option value="topik4"${d.koreanLevel === 'topik4'? 'selected': ''}>TOPIK 4+</option><select><div><div><div class="cl-field"><label>Bạn đã có chứng chỉ TOPIK chưa?</label><div class="cl-radio-group"><label><input type="radio" name="cl-has-topik" value="true"${d.hasTopik ? 'checked': ''} onchange="profile.hasTopik = true; document.getElementById('cl-topik-score').style.display=''">Có</label><label><input type="radio" name="cl-has-topik" value="false"${d.hasTopik === false ? 'checked': ''} onchange="profile.hasTopik = false; document.getElementById('cl-topik-score').style.display='none'">Chưa</label><div><div><div id="cl-topik-score" style="${d.hasTopik ? '': 'display:none'}"><div class="cl-field"><label>Điểm TOPIK</label><select id="cl-topik-grade"><option value="">— Chọn —</option><option value="topik1"${d.topikGrade === 'topik1'? 'selected': ''}>TOPIK 1급</option><option value="topik2"${d.topikGrade === 'topik2'? 'selected': ''}>TOPIK 2급</option><option value="topik3"${d.topikGrade === 'topik3'? 'selected': ''}>TOPIK 3급</option><option value="topik4"${d.topikGrade === 'topik4'? 'selected': ''}>TOPIK 4급</option><option value="topik5"${d.topikGrade === 'topik5'? 'selected': ''}>TOPIK 5급</option><option value="topik6"${d.topikGrade === 'topik6'? 'selected': ''}>TOPIK 6급</option><select><div><div><div class="cl-field"><label>Điểm IELTS (nếu có)</label><input type="number" id="cl-ielts" min="0" max="9" step="0.5" value="${d.ieltsScore || ''}" placeholder="5.5"><div><div class="cl-grid-2"><div class="cl-field"><label>Trường Hàn Quốc bạn dự định nộp</label><input type="text" id="cl-chosen-school" value="${escapeHtml(d.chosenSchool || '')}" placeholder="VD: Đại học Quốc gia Seoul"><div><div class="cl-field"><label>Ngành học dự định</label><input type="text" id="cl-chosen-major" value="${escapeHtml(d.chosenMajor || '')}" placeholder="VD: Kinh doanh quốc tế, Tiếng Hàn"><div><div><div class="cl-info-box"><strong>Tại sao cần thông tin này?</strong><br>GPA thấp, gap year dài, học lực yếu — mỗi yếu tố sẽ thêm giấy tờ bổ sung vào checklist của bạn.</div><div class="cl-nav"><button type="button" class=" btn btn-primary btn-lg" onclick="window.clSaveStep2()">Lưu & Tiếp theo →</button><div><div>`;
  }
 
  window.clSaveStep2 = function() {
@@ -298,9 +298,9 @@
  function renderFinanceForm(container) {
  const d = profile;
  container.innerHTML = `
- <div class="cl-form-section"><h3>Thông tin tài chính</h3><p class="cl-form-desc">Giúp xác định hồ sơ tài chính bạn cần chuẩn bị.</p><div class="cl-field"><label>Ai sẽ là người bảo lãnh tài chính?</label><select id="cl-sponsor"onchange="toggleSponsorFields(this.value)"><option value="self"${d.sponsorIsSelf !== false ? 'selected': ''}>Tự thân (tự bảo lãnh)</option><option value="parent"${d.sponsorIsSelf === false ? 'selected': ''}>Cha/Mẹ</option><option value="other"${d.sponsorIsSelf === false && d.sponsorRelation && d.sponsorRelation !== 'parent'? 'selected': ''}>Người thân khác</option><select><div><div id="cl-sponsor-fields"style="${d.sponsorIsSelf === false ? '': 'display:none'}"><div class="cl-grid-2"><div class="cl-field"><label>Người bảo lãnh (họ tên)</label><input type="text"id="cl-sponsor-name"value="${escapeHtml(d.sponsorName || '')}"placeholder="Nguyễn Văn ..."><div><div class="cl-field"><label>Nghề nghiệp người bảo lãnh</label><input type="text"id="cl-sponsor-job"value="${escapeHtml(d.sponsorOccupation || '')}"placeholder="VD: Kinh doanh, Giáo viên"><div><div><div><div class="cl-field"><label>Số tiền dự kiến trong sổ tiết kiệm (USD)</label><input type="number"id="cl-savings"min="0"step="1000"value="${d.savingsAmount || ''}"placeholder="10000"><p class="cl-hint">Tối thiểu 10,000 USD (~250 triệu VND) cho D-4-1. Có thể cao hơn tuỳ trường.</p><div><div class="cl-info-box"style="background:#fef3c7;border-color:#f59e0b"><strong>Lưu ý quan trọng:</strong><br>Hồ sơ tài chính là một trong những phần dễ bị từ chối nhất. 
+ <div class="cl-form-section"><h3>Thông tin tài chính</h3><p class="cl-form-desc">Giúp xác định hồ sơ tài chính bạn cần chuẩn bị.</p><div class="cl-field"><label>Ai sẽ là người bảo lãnh tài chính?</label><select id="cl-sponsor" onchange="toggleSponsorFields(this.value)"><option value="self"${d.sponsorIsSelf !== false ? 'selected': ''}>Tự thân (tự bảo lãnh)</option><option value="parent"${d.sponsorIsSelf === false ? 'selected': ''}>Cha/Mẹ</option><option value="other"${d.sponsorIsSelf === false && d.sponsorRelation && d.sponsorRelation !== 'parent'? 'selected': ''}>Người thân khác</option><select><div><div id="cl-sponsor-fields" style="${d.sponsorIsSelf === false ? '': 'display:none'}"><div class="cl-grid-2"><div class="cl-field"><label>Người bảo lãnh (họ tên)</label><input type="text" id="cl-sponsor-name" value="${escapeHtml(d.sponsorName || '')}" placeholder="Nguyễn Văn ..."><div><div class="cl-field"><label>Nghề nghiệp người bảo lãnh</label><input type="text" id="cl-sponsor-job" value="${escapeHtml(d.sponsorOccupation || '')}" placeholder="VD: Kinh doanh, Giáo viên"><div><div><div><div class="cl-field"><label>Số tiền dự kiến trong sổ tiết kiệm (USD)</label><input type="number" id="cl-savings" min="0" step="1000" value="${d.savingsAmount || ''}" placeholder="10000"><p class="cl-hint">Tối thiểu 10,000 USD (~250 triệu VND) cho D-4-1. Có thể cao hơn tuỳ trường.</p><div><div class="cl-info-box" style="background:#fef3c7;border-color:#f59e0b"><strong>Lưu ý quan trọng:</strong><br>Hồ sơ tài chính là một trong những phần dễ bị từ chối nhất. 
  Nếu người bảo lãnh không phải tự thân, bạn cần thêm giấy tờ chứng minh quan hệ 
- và chứng minh thu nhập của người bảo lãnh.</div><div class="cl-nav"><button type="button"class="btn btn-primary btn-lg"onclick="window.clSaveStep3()">Lưu & Tiếp theo →</button><div><div>`;
+ và chứng minh thu nhập của người bảo lãnh.</div><div class="cl-nav"><button type="button" class=" btn btn-primary btn-lg" onclick="window.clSaveStep3()">Lưu & Tiếp theo →</button><div><div>`;
  }
 
  window.toggleSponsorFields = function(value) {
@@ -331,9 +331,9 @@
  function renderRiskForm(container) {
  const d = profile;
  container.innerHTML = `
- <div class="cl-form-section"><h3>Đánh giá rủi ro</h3><p class="cl-form-desc">Các yếu tố có thể ảnh hưởng đến hồ sơ visa của bạn.</p><div class="cl-field"><label>Bạn đã từng trượt visa Hàn Quốc chưa?</label><div class="cl-radio-group"><label><input type="radio"name="cl-visa-fail"value="true"${d.hasVisaRejection ? 'checked': ''} onchange="profile.hasVisaRejection = true">Đã từng trượt</label><label><input type="radio"name="cl-visa-fail"value="false"${d.hasVisaRejection === false ? 'checked': ''} onchange="profile.hasVisaRejection = false">Chưa từng</label><div><div><div id="cl-rejection-detail"style="${d.hasVisaRejection ? '': 'display:none'}"><div class="cl-field"><label>Lý do trượt (nếu biết)</label><textarea id="cl-rejection-reason"rows="2"placeholder="VD: Thiếu giấy tờ tài chính, Study Plan chung chung...">${escapeHtml(d.rejectionReason || '')}</textarea><div><div><div class="cl-field"><label>Bạn đã từng có người thân ở lại Hàn Quốc bất hợp pháp?</label><div class="cl-radio-group"><label><input type="radio"name="cl-illegal"value="true"${d.hasIllegalRelative ? 'checked': ''} onchange="profile.hasIllegalRelative = true">Có</label><label><input type="radio"name="cl-illegal"value="false"${d.hasIllegalRelative === false ? 'checked': ''} onchange="profile.hasIllegalRelative = false">Không</label><div><div><div class="cl-field"><label>Bạn đã từng đi làm chưa?</label><div class="cl-radio-group"><label><input type="radio"name="cl-work"value="true"${d.hasWorkExperience ? 'checked': ''} onchange="profile.hasWorkExperience = true; toggleWorkFields(true)">Đã đi làm</label><label><input type="radio"name="cl-work"value="false"${d.hasWorkExperience === false ? 'checked': ''} onchange="profile.hasWorkExperience = false; toggleWorkFields(false)">Chưa đi làm</label><div><div><div id="cl-work-fields"style="${d.hasWorkExperience ? '': 'display:none'}"><div class="cl-grid-2"><div class="cl-field"><label>Tên công ty / nơi làm việc</label><input type="text"id="cl-work-company"value="${escapeHtml(d.workCompany || '')}"placeholder="VD: Công ty TNHH ABC"><div><div class="cl-field"><label>Vị trí công việc</label><input type="text"id="cl-work-position"value="${escapeHtml(d.workPosition || '')}"placeholder="VD: Nhân viên kinh doanh"><div><div><div class="cl-field"><label>Thời gian đã làm (số năm)</label><input type="number"id="cl-work-duration"min="0"max="30"step="0.5"value="${d.workDuration || ''}"placeholder="VD: 2"><div><div class="cl-field"><label>Bạn có hợp đồng lao động / bảo hiểm xã hội không?</label><div class="cl-radio-group"><label><input type="radio"name="cl-contract"value="true"${d.hasLaborContract ? 'checked': ''} onchange="profile.hasLaborContract = true">Có đầy đủ</label><label><input type="radio"name="cl-contract"value="false"${d.hasLaborContract === false ? 'checked': ''} onchange="profile.hasLaborContract = false">Không / Không chính thức</label><div><div><div><div class="cl-info-box"style="background:#fef2f2;border-color:#ef4444"><strong>Lưu ý:</strong><br>Các yếu tố rủi ro (trượt visa, gap year, người thân bất hợp pháp) 
+ <div class="cl-form-section"><h3>Đánh giá rủi ro</h3><p class="cl-form-desc">Các yếu tố có thể ảnh hưởng đến hồ sơ visa của bạn.</p><div class="cl-field"><label>Bạn đã từng trượt visa Hàn Quốc chưa?</label><div class="cl-radio-group"><label><input type="radio" name="cl-visa-fail" value="true"${d.hasVisaRejection ? 'checked': ''} onchange="profile.hasVisaRejection = true">Đã từng trượt</label><label><input type="radio" name="cl-visa-fail" value="false"${d.hasVisaRejection === false ? 'checked': ''} onchange="profile.hasVisaRejection = false">Chưa từng</label><div><div><div id="cl-rejection-detail" style="${d.hasVisaRejection ? '': 'display:none'}"><div class="cl-field"><label>Lý do trượt (nếu biết)</label><textarea id="cl-rejection-reason" rows="2" placeholder="VD: Thiếu giấy tờ tài chính, Study Plan chung chung...">${escapeHtml(d.rejectionReason || '')}</textarea><div><div><div class="cl-field"><label>Bạn đã từng có người thân ở lại Hàn Quốc bất hợp pháp?</label><div class="cl-radio-group"><label><input type="radio" name="cl-illegal" value="true"${d.hasIllegalRelative ? 'checked': ''} onchange="profile.hasIllegalRelative = true">Có</label><label><input type="radio" name="cl-illegal" value="false"${d.hasIllegalRelative === false ? 'checked': ''} onchange="profile.hasIllegalRelative = false">Không</label><div><div><div class="cl-field"><label>Bạn đã từng đi làm chưa?</label><div class="cl-radio-group"><label><input type="radio" name="cl-work" value="true"${d.hasWorkExperience ? 'checked': ''} onchange="profile.hasWorkExperience = true; toggleWorkFields(true)">Đã đi làm</label><label><input type="radio" name="cl-work" value="false"${d.hasWorkExperience === false ? 'checked': ''} onchange="profile.hasWorkExperience = false; toggleWorkFields(false)">Chưa đi làm</label><div><div><div id="cl-work-fields" style="${d.hasWorkExperience ? '': 'display:none'}"><div class="cl-grid-2"><div class="cl-field"><label>Tên công ty / nơi làm việc</label><input type="text" id="cl-work-company" value="${escapeHtml(d.workCompany || '')}" placeholder="VD: Công ty TNHH ABC"><div><div class="cl-field"><label>Vị trí công việc</label><input type="text" id="cl-work-position" value="${escapeHtml(d.workPosition || '')}" placeholder="VD: Nhân viên kinh doanh"><div><div><div class="cl-field"><label>Thời gian đã làm (số năm)</label><input type="number" id="cl-work-duration" min="0" max="30" step="0.5" value="${d.workDuration || ''}" placeholder="VD: 2"><div><div class="cl-field"><label>Bạn có hợp đồng lao động / bảo hiểm xã hội không?</label><div class="cl-radio-group"><label><input type="radio" name="cl-contract" value="true"${d.hasLaborContract ? 'checked': ''} onchange="profile.hasLaborContract = true">Có đầy đủ</label><label><input type="radio" name="cl-contract" value="false"${d.hasLaborContract === false ? 'checked': ''} onchange="profile.hasLaborContract = false">Không / Không chính thức</label><div><div><div><div class="cl-info-box" style="background:#fef2f2;border-color:#ef4444"><strong>Lưu ý:</strong><br>Các yếu tố rủi ro (trượt visa, gap year, người thân bất hợp pháp) 
  sẽ làm hồ sơ của bạn cần nhiều giấy tờ bổ sung hơn. 
- Đừng lo — hệ thống sẽ hướng dẫn bạn từng bước.</div><div class="cl-nav"><button type="button"class="btn btn-primary btn-lg"onclick="window.clSaveStep4()">Phân tích hồ sơ →</button><div><div>`;
+ Đừng lo — hệ thống sẽ hướng dẫn bạn từng bước.</div><div class="cl-nav"><button type="button" class=" btn btn-primary btn-lg" onclick="window.clSaveStep4()">Phân tích hồ sơ →</button><div><div>`;
  }
 
  window.toggleWorkFields = function(show) {
@@ -386,7 +386,7 @@
  ${(profile.gpa && profile.gpa >= 7) ? '<li>GPA tốt — điểm mạnh trong hồ sơ</li>': ''}
  ${(profile.koreanLevel && profile.koreanLevel !== 'none') ? '<li>Đã có nền tảng tiếng Hàn — lợi thế</li>': ''}
  ${profile.hasIllegalRelative ? '<li>Người thân cư trú bất hợp pháp — rủi ro cao, cần tư vấn riêng</li>': ''}
- ${!profile.hasVisaRejection && profile.gapYears <= 0.5 && profile.sponsorIsSelf && (profile.gpa || 0) >= 5 ? '<li>Hồ sơ cơ bản ổn — không có rủi ro đặc biệt</li>': ''}</ul><div><div class="cl-nav"><button type="button"class="btn btn-primary btn-lg"onclick="window.clNextStep()">Xem checklist cá nhân →</button><div><div>`;
+ ${!profile.hasVisaRejection && profile.gapYears <= 0.5 && profile.sponsorIsSelf && (profile.gpa || 0) >= 5 ? '<li>Hồ sơ cơ bản ổn — không có rủi ro đặc biệt</li>': ''}</ul><div><div class="cl-nav"><button type="button" class=" btn btn-primary btn-lg" onclick="window.clNextStep()">Xem checklist cá nhân →</button><div><div>`;
  }
 
  // ══════════════════════════════════════════════
@@ -403,11 +403,11 @@
 
  // Module tabs
  const moduleTabs = checklist.modules.map((mod, i) =>`
- <button type="button"class="cl-module-tab ${i === 0 ? 'active': ''}"onclick="window.clSwitchModule(${i})"data-module-idx="${i}">${mod.icon} ${mod.name}
+ <button type="button" class=" cl-module-tab ${i === 0 ? 'active': ''}" onclick="window.clSwitchModule(${i})" data-module-idx="${i}">${mod.icon} ${mod.name}
  <span class="cl-module-count">${mod.items.filter(it =>it.status === 'completed').length}/${mod.items.length}</span><button>`).join('');
 
  container.innerHTML = `
- <div class="cl-checklist"><div class="cl-checklist-header"><h3>Checklist cá nhân hoá của bạn</h3><p class="cl-form-desc">Dành cho <strong>${checklist.name}</strong>— chỉ hiển thị giấy tờ phù hợp với hoàn cảnh của bạn.</p><div><!-- Overall Progress --><div class="cl-overall-progress"><div class="cl-progress-circle"><svg viewBox="0 0 36 36"class="cl-circular-chart"><path class="cl-circle-bg"d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/><path class="cl-circle-fill"stroke-dasharray="${progress}, 100"d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/><text x="18"y="20.5"class="cl-circle-text">${progress}%</text><svg><div><div class="cl-progress-info"><div><strong>${checklist.totalItems}</strong>giấy tờ cần chuẩn bị</div><div><strong>${checklist.requiredItems}</strong>bắt buộc + <strong>${checklist.recommendedItems}</strong>khuyến khích</div><div><strong>${moduleCount}</strong>nhóm thủ tục</div><div><div><!-- Module Tabs --><div class="cl-module-tabs"id="cl-module-tabs">${moduleTabs}</div><!-- Module Content --><div id="cl-module-content"class="cl-module-content"><div><!-- AI Assist Button --><div class="cl-ai-bar"><button type="button"class="btn btn-primary"onclick="window.clOpenAIAssist()">AI hỗ trợ viết Study Plan / Giải trình</button><button type="button"class="btn btn-outline"onclick="window.clExportChecklist()">Xuất checklist</button><button type="button"class="btn btn-outline"onclick="window.clAutoReminders()">Tạo nhắc nhở</button><button type="button"class="btn btn-outline"onclick="window.clOpenStudyPlanReviewer()">Đánh giá Study Plan</button><button type="button"class="btn btn-outline"onclick="window.clOpenInterviewSimulator()">Luyện phỏng vấn</button><div><div>`;
+ <div class="cl-checklist"><div class="cl-checklist-header"><h3>Checklist cá nhân hoá của bạn</h3><p class="cl-form-desc">Dành cho <strong>${checklist.name}</strong>— chỉ hiển thị giấy tờ phù hợp với hoàn cảnh của bạn.</p><div><!-- Overall Progress --><div class="cl-overall-progress"><div class="cl-progress-circle"><svg viewBox="0 0 36 36" class="cl-circular-chart"><path class="cl-circle-bg" d=" M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/><path class="cl-circle-fill" stroke-dasharray="${progress}, 100" d=" M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/><text x="18" y="20.5" class="cl-circle-text">${progress}%</text><svg><div><div class="cl-progress-info"><div><strong>${checklist.totalItems}</strong>giấy tờ cần chuẩn bị</div><div><strong>${checklist.requiredItems}</strong>bắt buộc + <strong>${checklist.recommendedItems}</strong>khuyến khích</div><div><strong>${moduleCount}</strong>nhóm thủ tục</div><div><div><!-- Module Tabs --><div class="cl-module-tabs" id="cl-module-tabs">${moduleTabs}</div><!-- Module Content --><div id="cl-module-content" class="cl-module-content"><div><!-- AI Assist Button --><div class="cl-ai-bar"><button type="button" class=" btn btn-primary" onclick="window.clOpenAIAssist()">AI hỗ trợ viết Study Plan / Giải trình</button><button type="button" class=" btn btn-outline" onclick="window.clExportChecklist()">Xuất checklist</button><button type="button" class=" btn btn-outline" onclick="window.clAutoReminders()">Tạo nhắc nhở</button><button type="button" class=" btn btn-outline" onclick="window.clOpenStudyPlanReviewer()">Đánh giá Study Plan</button><button type="button" class=" btn btn-outline" onclick="window.clOpenInterviewSimulator()">Luyện phỏng vấn</button><div><div>`;
 
  // Show first module
  if (checklist.modules.length >0) {
@@ -417,7 +417,7 @@
  // Update title/desc
  const title = document.getElementById('checklist-title');
  const desc = document.getElementById('checklist-desc');
- if (title) title.textContent = 'Checklist cá nhân hoá';
+ if (title) title.textContent = ' Checklist cá nhân hoá';
  if (desc) desc.textContent = `Hệ thống đã phân tích hồ sơ và tạo checklist gồm ${checklist.totalItems} giấy tờ dành riêng cho bạn.`;
  }
 
@@ -465,12 +465,12 @@
  completed: 'Hoàn thành',
  not_applicable: 'Không áp dụng'};
  const badge = item.required
- ? '<span class="cl-badge cl-badge-required">Bắt buộc</span>': '<span class="cl-badge cl-badge-recommended">Khuyến khích</span>';
- const aiBadge = item.hasAiAssist ? '<span class="cl-badge cl-badge-ai">AI</span>': '';
+ ? '<span class=" cl-badge cl-badge-required">Bắt buộc</span>': '<span class=" cl-badge cl-badge-recommended">Khuyến khích</span>';
+ const aiBadge = item.hasAiAssist ? '<span class=" cl-badge cl-badge-ai">AI</span>': '';
  const warningHtml = item.warning ? `<div class="cl-item-warning">${escapeHtml(item.warning)}</div>` : '';
- const linkHtml = item.link ? `<a href="${escapeHtml(item.link)}"target="_blank"rel="noopener"class="cl-item-link">${escapeHtml(item.link)}</a>` : '';
+ const linkHtml = item.link ? `<a href="${escapeHtml(item.link)}" target="_blank" rel="noopener" class="cl-item-link">${escapeHtml(item.link)}</a>` : '';
 
- // Document status: ready_status: 'not_ready'| 'ready'| 'translated'| 'notarized'const docStatusLabels = { not_ready: 'Chưa có', ready: 'Đã có', translated: 'Đã dịch', notarized: 'Sẵn sàng'};
+ // Document status: ready_status: 'not_ready'| 'ready'| 'translated'| 'notarized' const docStatusLabels = { not_ready: 'Chưa có', ready: 'Đã có', translated: 'Đã dịch', notarized: 'Sẵn sàng'};
  const docStatus = item.docStatus || 'not_ready';
  const hasFile = item.fileUrl ? true : false;
  const isWarning = item.documentType === 'general_warning'; // ALERT items — không cần document tracking
@@ -482,19 +482,19 @@
  const isDone = i <= idx;
  const isCurrent = i === idx;
  const clickable = s !== 'not_ready'&& !isDone && item.source !== 'school'? 'clickable': '';
- return `<div class="cl-doc-step ${isDone ? 'done': ''} ${isCurrent ? 'current': ''} ${clickable}"data-doc-status="${s}"><div class="cl-doc-step-dot"><div><span>${docStatusLabels[s]}</span><div>`;
- }).join('')}</div><div class="cl-doc-upload-row"><button type="button"class="cl-doc-upload-btn btn btn-sm ${hasFile ? 'btn-outline': 'btn-primary'}"data-item-id="${item.id}">${hasFile ? 'Đã upload': 'Upload file'}</button><input type="file"class="cl-doc-file-input"data-item-id="${item.id}"style="display:none"accept="image/*,.pdf,.doc,.docx">${hasFile ? `<span class="cl-doc-filename">${escapeHtml(item.fileName || '')}</span>` : ''}
+ return `<div class=" cl-doc-step ${isDone ? 'done': ''} ${isCurrent ? 'current': ''} ${clickable}" data-doc-status="${s}"><div class="cl-doc-step-dot"><div><span>${docStatusLabels[s]}</span><div>`;
+ }).join('')}</div><div class="cl-doc-upload-row"><button type="button" class=" cl-doc-upload-btn btn btn-sm ${hasFile ? 'btn-outline': 'btn-primary'}" data-item-id="${item.id}">${hasFile ? 'Đã upload': ' Upload file'}</button><input type="file" class="cl-doc-file-input" data-item-id="${item.id}" style="display:none" accept="image/*,.pdf,.doc,.docx">${hasFile ? `<span class="cl-doc-filename">${escapeHtml(item.fileName || '')}</span>` : ''}
  ${hasFile && docStatus === 'ready'? `
- <button type="button"class="cl-doc-quick-btn btn btn-sm btn-outline"onclick="window.clMarkTranslated('${item.id}')">Đã dịch thuật xong</button><button type="button"class="cl-doc-quick-btn btn btn-sm btn-success"onclick="window.clMarkReady('${item.id}')">Sẵn sàng luôn</button>` : ''}
+ <button type="button" class=" cl-doc-quick-btn btn btn-sm btn-outline" onclick="window.clMarkTranslated('${item.id}')">Đã dịch thuật xong</button><button type="button" class=" cl-doc-quick-btn btn btn-sm btn-success" onclick="window.clMarkReady('${item.id}')">Sẵn sàng luôn</button>` : ''}
  ${hasFile && docStatus === 'translated'? `
- <button type="button"class="cl-doc-quick-btn btn btn-sm btn-success"onclick="window.clMarkReady('${item.id}')">Đánh dấu sẵn sàng</button>` : ''}</div><div>`;
+ <button type="button" class=" cl-doc-quick-btn btn btn-sm btn-success" onclick="window.clMarkReady('${item.id}')">Đánh dấu sẵn sàng</button>` : ''}</div><div>`;
 
  return `
- <div class="cl-item ${item.status === 'completed'? 'cl-item-done': ''} ${hasFile ? 'cl-item-has-file': ''}"data-item-id="${item.id}"><div class="cl-item-head"><div class="cl-item-icon">${statusIcons[item.status] || '⬜'}</div><div class="cl-item-info"><div class="cl-item-name">${escapeHtml(item.name)} ${badge} ${aiBadge}</div><div class="cl-item-desc">${escapeHtml(item.description)}</div>${warningHtml}
+ <div class=" cl-item ${item.status === 'completed'? 'cl-item-done': ''} ${hasFile ? 'cl-item-has-file': ''}" data-item-id="${item.id}"><div class="cl-item-head"><div class="cl-item-icon">${statusIcons[item.status] || '⬜'}</div><div class="cl-item-info"><div class="cl-item-name">${escapeHtml(item.name)} ${badge} ${aiBadge}</div><div class="cl-item-desc">${escapeHtml(item.description)}</div>${warningHtml}
  ${linkHtml}
- ${item.source === 'school'? '<div class="cl-item-source">Trường Hàn cấp — theo dõi trạng thái</div>': ''}</div><div class="cl-item-actions"><select class="cl-item-status"data-item-id="${item.id}">${Object.entries(statusLabels).map(([val, label]) =>`<option value="${val}"${item.status === val ? 'selected': ''}>${label}</option>`
+ ${item.source === 'school'? '<div class="cl-item-source">Trường Hàn cấp — theo dõi trạng thái</div>': ''}</div><div class="cl-item-actions"><select class="cl-item-status" data-item-id="${item.id}">${Object.entries(statusLabels).map(([val, label]) =>`<option value="${val}"${item.status === val ? 'selected': ''}>${label}</option>`
  ).join('')}</select><div><div>${docTrackingHtml}
- <div class="cl-item-note"><input type="text"class="cl-item-note-input"data-item-id="${item.id}"value="${escapeHtml(item.note || '')}"placeholder="Ghi chú thêm..."><div><div>`;
+ <div class="cl-item-note"><input type="text" class="cl-item-note-input" data-item-id="${item.id}" value="${escapeHtml(item.note || '')}" placeholder=" Ghi chú thêm..."><div><div>`;
  }
 
  function updateItemStatus(itemId, newStatus) {
@@ -553,7 +553,7 @@
  if (profile.gapYears >0.5) {
  var gapDesc = `Bạn đã tốt nghiệp ${profile.graduationYear || 'cách đây'} ${profile.gapYears} năm. Cần giải trình rõ: đã làm gì trong thời gian này, tại sao chưa đi du học sớm hơn.`;
  if (profile.workCompany) {
- gapDesc += ` Đã làm việc tại ${profile.workCompany}${profile.workPosition ? '('+ profile.workPosition + ')': ''}${profile.workDuration ? 'trong '+ profile.workDuration + 'năm': ''}.`;
+ gapDesc += ` Đã làm việc tại ${profile.workCompany}${profile.workPosition ? '('+ profile.workPosition + ')': ''}${profile.workDuration ? ' trong '+ profile.workDuration + 'năm': ''}.`;
  }
  suggestions.push({
  type: 'gap_explanation',
@@ -603,8 +603,8 @@
  const overlay = document.createElement('div');
  overlay.className = 'cl-ai-overlay';
  overlay.innerHTML = `
- <div class="cl-ai-modal cl-ai-modal-wide"><div class="cl-ai-modal-header"><h3>AI hỗ trợ soạn thảo</h3><button type="button"class="cl-ai-close"onclick="this.closest('.cl-ai-overlay').remove()">&times;</button><div><div class="cl-ai-modal-body"><!-- Step 1: Choose type --><div id="cl-ai-step-choose"><p>Chọn loại giấy tờ bạn muốn AI hỗ trợ soạn thảo:</p><div class="cl-ai-options">${suggestions.map((s, i) =>`
- <div class="cl-ai-option"onclick="window.clOpenAIForm(${i})"><div class="cl-ai-option-title">${escapeHtml(s.title)}</div><div class="cl-ai-option-desc">${escapeHtml(s.description)}</div><div class="cl-ai-option-action">Bắt đầu →</div><div>`).join('')}</div><div><!-- Step 2: Form (hidden initially, shown by clOpenAIForm) --><div id="cl-ai-step-form"style="display:none"><div id="cl-ai-form-content"><div><div><!-- Step 3: Loading --><div id="cl-ai-loading"class="cl-ai-loading"style="display:none"><div class="spinner"><div><span id="cl-ai-loading-text">AI đang soạn thảo...</span><div><!-- Step 4: Result --><div id="cl-ai-result"class="cl-ai-result"style="display:none"><h4>Kết quả:</h4><div id="cl-ai-result-text"class="cl-ai-result-text"contenteditable="true"><div><div class="cl-ai-result-actions"><button type="button"class="btn btn-primary btn-sm"onclick="window.clCopyAIDraft()">Copy</button><button type="button"class="btn btn-outline btn-sm"onclick="window.clDownloadAIDraft()">📥 Tải xuống</button><button type="button"class="btn btn-outline btn-sm"onclick="window.clRegenerateAIDraft()">Tạo lại</button><button type="button"class="btn btn-outline btn-sm"onclick="window.clSaveAIDraft()">💾 Lưu</button><button type="button"class="btn btn-outline btn-sm"onclick="window.clCloseAIDraft()">Đóng</button><div><div><div><div>`;
+ <div class=" cl-ai-modal cl-ai-modal-wide"><div class="cl-ai-modal-header"><h3>AI hỗ trợ soạn thảo</h3><button type="button" class="cl-ai-close" onclick="this.closest('.cl-ai-overlay').remove()">&times;</button><div><div class="cl-ai-modal-body"><!-- Step 1: Choose type --><div id="cl-ai-step-choose"><p>Chọn loại giấy tờ bạn muốn AI hỗ trợ soạn thảo:</p><div class="cl-ai-options">${suggestions.map((s, i) =>`
+ <div class="cl-ai-option" onclick="window.clOpenAIForm(${i})"><div class="cl-ai-option-title">${escapeHtml(s.title)}</div><div class="cl-ai-option-desc">${escapeHtml(s.description)}</div><div class="cl-ai-option-action">Bắt đầu →</div><div>`).join('')}</div><div><!-- Step 2: Form (hidden initially, shown by clOpenAIForm) --><div id="cl-ai-step-form" style="display:none"><div id="cl-ai-form-content"><div><div><!-- Step 3: Loading --><div id="cl-ai-loading" class="cl-ai-loading" style="display:none"><div class="spinner"><div><span id="cl-ai-loading-text">AI đang soạn thảo...</span><div><!-- Step 4: Result --><div id="cl-ai-result" class="cl-ai-result" style="display:none"><h4>Kết quả:</h4><div id="cl-ai-result-text" class="cl-ai-result-text" contenteditable="true"><div><div class="cl-ai-result-actions"><button type="button" class=" btn btn-primary btn-sm" onclick="window.clCopyAIDraft()">Copy</button><button type="button" class=" btn btn-outline btn-sm" onclick="window.clDownloadAIDraft()">📥 Tải xuống</button><button type="button" class=" btn btn-outline btn-sm" onclick="window.clRegenerateAIDraft()">Tạo lại</button><button type="button" class=" btn btn-outline btn-sm" onclick="window.clSaveAIDraft()">💾 Lưu</button><button type="button" class=" btn btn-outline btn-sm" onclick="window.clCloseAIDraft()">Đóng</button><div><div><div><div>`;
  document.body.appendChild(overlay);
  overlay.addEventListener('click', function(e) {
  if (e.target === this) this.remove();
@@ -634,15 +634,15 @@
  const saved = window._clFormAnswers[s.type] || {};
  formContent.innerHTML = `
  <div class="sp-form"><h4>Soạn Study Plan cá nhân hoá</h4><p class="cl-form-desc">Trả lời 8 câu hỏi sau để AI có đủ thông tin viết Study Plan thuyết phục. 
- Study Plan càng chi tiết, càng dễ đậu visa!</p><div class="sp-progress"><div class="sp-progress-text">Đã trả lời: <span id="sp-answered-count">0</span>/8</div><div class="sp-progress-bar"><div id="sp-answered-fill"class="sp-progress-fill"style="width:0%"><div><div><div>${STUDY_PLAN_QUESTIONS.map((q, i) =>`
- <div class="sp-question"data-qid="${q.id}"><label class="sp-question-label">${q.label}</label><p class="sp-question-hint">${escapeHtml(q.hint)}</p><textarea class="sp-question-input"id="sp-${q.id}"data-key="${q.key}"rows="3"placeholder="Nhập câu trả lời của bạn..."oninput="window.clTrackSPAnswer()">${escapeHtml(saved[q.key] || '')}</textarea><div>`).join('')}
+ Study Plan càng chi tiết, càng dễ đậu visa!</p><div class="sp-progress"><div class="sp-progress-text">Đã trả lời: <span id="sp-answered-count">0</span>/8</div><div class="sp-progress-bar"><div id="sp-answered-fill" class="sp-progress-fill" style="width:0%"><div><div><div>${STUDY_PLAN_QUESTIONS.map((q, i) =>`
+ <div class="sp-question" data-qid="${q.id}"><label class="sp-question-label">${q.label}</label><p class="sp-question-hint">${escapeHtml(q.hint)}</p><textarea class="sp-question-input" id="sp-${q.id}" data-key="${q.key}" rows="3" placeholder="Nhập câu trả lời của bạn..." oninput="window.clTrackSPAnswer()">${escapeHtml(saved[q.key] || '')}</textarea><div>`).join('')}
 
- <div class="sp-actions"><button type="button"class="btn btn-primary btn-lg"onclick="window.clSubmitStudyPlan()">Tạo Study Plan từ câu trả lời</button><button type="button"class="btn btn-outline"onclick="window.clQuickGenerate()">Tạo nhanh (bỏ qua câu hỏi)</button><div><div>`;
+ <div class="sp-actions"><button type="button" class=" btn btn-primary btn-lg" onclick="window.clSubmitStudyPlan()">Tạo Study Plan từ câu trả lời</button><button type="button" class=" btn btn-outline" onclick="window.clQuickGenerate()">Tạo nhanh (bỏ qua câu hỏi)</button><div><div>`;
  window.clTrackSPAnswer();
  } else {
  // Gap or Rejection: show simple form
  formContent.innerHTML = `
- <div class="sp-form"><h4>${escapeHtml(s.title)}</h4><p class="cl-form-desc">${escapeHtml(s.description)}</p><div class="sp-question"><label class="sp-question-label">Bạn có muốn bổ sung thêm thông tin gì không?</label><textarea id="cl-ai-extra-info"rows="4"style="width:100%;padding:.65rem .75rem;border:1.5px solid #d1d5db;border-radius:8px;font:inherit;font-size:.9rem;"placeholder="Nhập thêm thông tin chi tiết... (tuỳ chọn)"><textarea><div><div class="sp-actions"><button type="button"class="btn btn-primary btn-lg"onclick="window.clSubmitSimple()">Soạn ngay</button><div><div>`;
+ <div class="sp-form"><h4>${escapeHtml(s.title)}</h4><p class="cl-form-desc">${escapeHtml(s.description)}</p><div class="sp-question"><label class="sp-question-label">Bạn có muốn bổ sung thêm thông tin gì không?</label><textarea id="cl-ai-extra-info" rows="4" style="width:100%;padding:.65rem .75rem;border:1.5px solid #d1d5db;border-radius:8px;font:inherit;font-size:.9rem;" placeholder="Nhập thêm thông tin chi tiết... (tuỳ chọn)"><textarea><div><div class="sp-actions"><button type="button" class=" btn btn-primary btn-lg" onclick="window.clSubmitSimple()">Soạn ngay</button><div><div>`;
  }
  };
 
@@ -699,7 +699,7 @@
 
  if (formEl) formEl.style.display = 'none';
  if (loading) loading.style.display = '';
- if (loadingText) loadingText.textContent = 'AI đang soạn '+ (type === 'study_plan'? 'Study Plan': type === 'gap_explanation'? 'giải trình': 'giải trình visa') + '...';
+ if (loadingText) loadingText.textContent = ' AI đang soạn '+ (type === 'study_plan'? ' Study Plan': type === 'gap_explanation'? 'giải trình': 'giải trình visa') + '...';
  if (result) result.style.display = 'none';
 
  try {
@@ -716,7 +716,7 @@
 
  const ct = res.headers.get('content-type') || '';
  if (!ct.includes('application/json')) {
- throw new Error('Backend API chưa khả dụng. Tính năng AI yêu cầu chạy trên Vercel hoặc cấu hình DEEPSEEK_API_KEY.');
+ throw new Error(' Backend API chưa khả dụng. Tính năng AI yêu cầu chạy trên Vercel hoặc cấu hình DEEPSEEK_API_KEY.');
  }
 
  const data = await res.json();
@@ -737,7 +737,7 @@
  saveData();
  }
  
- toast('Đã tạo '+ (type === 'study_plan'? 'Study Plan': 'bản giải trình') + 'thành công!');
+ toast('Đã tạo '+ (type === 'study_plan'? ' Study Plan': 'bản giải trình') + 'thành công!');
  } else {
  if (resultText) resultText.textContent = ''+ (data.error || 'Lỗi kết nối AI, vui lòng thử lại sau.');
  }
@@ -799,8 +799,8 @@
  var overlay = document.createElement('div');
  overlay.className = 'cl-ai-overlay';
  overlay.innerHTML = `
- <div class="cl-ai-modal cl-ai-modal-wide"style="max-height:90vh"><div class="cl-ai-modal-header"><h3>Đánh giá Study Plan</h3><button type="button"class="cl-ai-close"onclick="this.closest('.cl-ai-overlay').remove()">&times;</button><div><div class="cl-ai-modal-body"><!-- Input step --><div id="spr-step-input"><p class="cl-form-desc">Dán Study Plan bạn đã viết (hoặc AI đã tạo) vào đây. Hệ thống sẽ chấm điểm và gợi ý cải thiện.</p><div class="spr-field"><label class="spr-label">Study Plan của bạn</label><textarea id="spr-text"class="spr-textarea"rows="10"placeholder="Paste Study Plan của bạn vào đây... (tối thiểu 50 ký tự)"><textarea><div><div class="spr-field"><label class="spr-label">Loại visa</label><select id="spr-visa-type"class="spr-select"><option value="D-4-1">D-4-1 (Học tiếng Hàn)</option><option value="D-2">D-2 (Đại học chính quy)</option><select><div><div class="spr-info-box"><strong>Mẹo:</strong>Nếu bạn đã khai báo hồ sơ ở bước trước, thông tin cá nhân sẽ được tự động đính kèm
- để AI đánh giá chính xác hơn. Kết quả sẽ bao gồm điểm số, nhận xét và gợi ý cải thiện.</div><div class="spr-actions"><button type="button"class="btn btn-primary btn-lg"onclick="window.clSubmitReview()">Đánh giá ngay</button><button type="button"class="btn btn-outline"onclick="window.clLoadSavedStudyPlan()">Dùng Study Plan đã lưu</button><div><div><!-- Loading step --><div id="spr-loading"class="cl-ai-loading"style="display:none"><div class="spinner"><div><span>🧠 AI đang phân tích Study Plan...</span><div><!-- Result step --><div id="spr-result"style="display:none"><div class="spr-result-header"><div class="spr-score-ring"><svg viewBox="0 0 36 36"class="spr-circular"><path class="spr-circle-bg"d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/><path class="spr-circle-fill"id="spr-circle-fill"stroke-dasharray="0, 100"d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/><text x="18"y="20.5"class="spr-circle-text"id="spr-circle-text">-</text><svg><div><div class="spr-summary"><h3 id="spr-overall-label">Đang phân tích...</h3><p id="spr-overall-desc"><p><div><div><!-- Criteria scores --><div class="spr-criteria"id="spr-criteria"><div><!-- Strengths & Weaknesses --><div class="spr-grid-2"><div class="spr-section spr-strengths"><h4>Điểm mạnh</h4><ul id="spr-strengths"><ul><div><div class="spr-section spr-weaknesses"><h4>Điểm yếu</h4><ul id="spr-weaknesses"><ul><div><div><!-- Suggestions --><div class="spr-section spr-suggestions"><h4>Gợi ý cải thiện</h4><ol id="spr-suggestions"><ol><div><!-- Actions --><div class="spr-result-actions"><button type="button"class="btn btn-outline"onclick="window.clRegenerateStudyPlan()">Tạo lại từ góp ý</button><button type="button"class="btn btn-outline"onclick="window.clCopyReviewResult()">Copy kết quả</button><button type="button"class="btn btn-outline"onclick="window.clCloseReviewer(this)">Đóng</button><div><div><div><div>`;
+ <div class=" cl-ai-modal cl-ai-modal-wide" style="max-height:90vh"><div class="cl-ai-modal-header"><h3>Đánh giá Study Plan</h3><button type="button" class="cl-ai-close" onclick="this.closest('.cl-ai-overlay').remove()">&times;</button><div><div class="cl-ai-modal-body"><!-- Input step --><div id="spr-step-input"><p class="cl-form-desc">Dán Study Plan bạn đã viết (hoặc AI đã tạo) vào đây. Hệ thống sẽ chấm điểm và gợi ý cải thiện.</p><div class="spr-field"><label class="spr-label">Study Plan của bạn</label><textarea id="spr-text" class="spr-textarea" rows="10" placeholder=" Paste Study Plan của bạn vào đây... (tối thiểu 50 ký tự)"><textarea><div><div class="spr-field"><label class="spr-label">Loại visa</label><select id="spr-visa-type" class="spr-select"><option value="D-4-1">D-4-1 (Học tiếng Hàn)</option><option value="D-2">D-2 (Đại học chính quy)</option><select><div><div class="spr-info-box"><strong>Mẹo:</strong>Nếu bạn đã khai báo hồ sơ ở bước trước, thông tin cá nhân sẽ được tự động đính kèm
+ để AI đánh giá chính xác hơn. Kết quả sẽ bao gồm điểm số, nhận xét và gợi ý cải thiện.</div><div class="spr-actions"><button type="button" class=" btn btn-primary btn-lg" onclick="window.clSubmitReview()">Đánh giá ngay</button><button type="button" class=" btn btn-outline" onclick="window.clLoadSavedStudyPlan()">Dùng Study Plan đã lưu</button><div><div><!-- Loading step --><div id="spr-loading" class="cl-ai-loading" style="display:none"><div class="spinner"><div><span>🧠 AI đang phân tích Study Plan...</span><div><!-- Result step --><div id="spr-result" style="display:none"><div class="spr-result-header"><div class="spr-score-ring"><svg viewBox="0 0 36 36" class="spr-circular"><path class="spr-circle-bg" d=" M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/><path class="spr-circle-fill" id="spr-circle-fill" stroke-dasharray="0, 100" d=" M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/><text x="18" y="20.5" class="spr-circle-text" id="spr-circle-text">-</text><svg><div><div class="spr-summary"><h3 id="spr-overall-label">Đang phân tích...</h3><p id="spr-overall-desc"><p><div><div><!-- Criteria scores --><div class="spr-criteria" id="spr-criteria"><div><!-- Strengths & Weaknesses --><div class="spr-grid-2"><div class=" spr-section spr-strengths"><h4>Điểm mạnh</h4><ul id="spr-strengths"><ul><div><div class=" spr-section spr-weaknesses"><h4>Điểm yếu</h4><ul id="spr-weaknesses"><ul><div><div><!-- Suggestions --><div class=" spr-section spr-suggestions"><h4>Gợi ý cải thiện</h4><ol id="spr-suggestions"><ol><div><!-- Actions --><div class="spr-result-actions"><button type="button" class=" btn btn-outline" onclick="window.clRegenerateStudyPlan()">Tạo lại từ góp ý</button><button type="button" class=" btn btn-outline" onclick="window.clCopyReviewResult()">Copy kết quả</button><button type="button" class=" btn btn-outline" onclick="window.clCloseReviewer(this)">Đóng</button><div><div><div><div>`;
  document.body.appendChild(overlay);
  overlay.addEventListener('click', function(e) {
  if (e.target === this) this.querySelector('.cl-ai-close')?.click();
@@ -832,7 +832,7 @@
  var visaType = visaTypeEl ? visaTypeEl.value : 'D-4-1';
 
  if (!studyPlan || studyPlan.length < 50) {
- toast('Vui lòng nhập Study Plan (tối thiểu 50 ký tự).');
+ toast(' Vui lòng nhập Study Plan (tối thiểu 50 ký tự).');
  return;
  }
 
@@ -907,7 +907,7 @@
  else overallLabel.textContent = 'Cần viết lại';
  }
  if (overallDesc) {
- overallDesc.textContent = 'Study Plan của bạn đạt '+ score + '/10 điểm. Dưới đây là chi tiết từng tiêu chí và gợi ý cải thiện.';
+ overallDesc.textContent = ' Study Plan của bạn đạt '+ score + '/10 điểm. Dưới đây là chi tiết từng tiêu chí và gợi ý cải thiện.';
  }
 
  // Criteria
@@ -920,7 +920,7 @@
  if (cScore >= 7) cColor = '#059669';
  else if (cScore >= 5) cColor = '#d97706';
  return `
- <div class="spr-criterion"><div class="spr-criterion-head"><span class="spr-criterion-name">${escapeHtml(c.name)}</span><span class="spr-criterion-score"style="color:${cColor}">${cScore}/10</span><div><div class="spr-criterion-bar"><div class="spr-criterion-fill"style="width:${cPercent}%;background:${cColor}"><div><div><p class="spr-criterion-comment">${escapeHtml(c.comment || '')}</p>${c.suggestion ? '<div class="spr-criterion-suggestion"><strong>Gợi ý:</strong>'+ escapeHtml(c.suggestion) + '</div>': ''}</div>`;
+ <div class="spr-criterion"><div class="spr-criterion-head"><span class="spr-criterion-name">${escapeHtml(c.name)}</span><span class="spr-criterion-score" style="color:${cColor}">${cScore}/10</span><div><div class="spr-criterion-bar"><div class="spr-criterion-fill" style="width:${cPercent}%;background:${cColor}"><div><div><p class="spr-criterion-comment">${escapeHtml(c.comment || '')}</p>${c.suggestion ? '<div class="spr-criterion-suggestion"><strong>Gợi ý:</strong>'+ escapeHtml(c.suggestion) + '</div>': ''}</div>`;
  }).join('');
  }
 
@@ -964,7 +964,7 @@
 
  try {
  var suggestions = (_spReviewerData.review.suggestions || []).join('\n- ');
- var prompt = 'Day la Study Plan can cai thien:\n\n'+ _spReviewerData.studyPlan + '\n\nCac goi y cai thien:\n- '+ suggestions + '\n\nHay viet LAI Study Plan nay, khac phuc tat ca nhung diem yeu tren. Giu nguyen thong tin ca nhan, nhung viet tot hon.';
+ var prompt = ' Day la Study Plan can cai thien:\n\n'+ _spReviewerData.studyPlan + '\n\nCac goi y cai thien:\n- '+ suggestions + '\n\nHay viet LAI Study Plan nay, khac phuc tat ca nhung diem yeu tren. Giu nguyen thong tin ca nhan, nhung viet tot hon.';
 
  // Use existing AI assist to regenerate
  var fetchFn = window.fetchWithAuth || fetch;
@@ -997,17 +997,17 @@
  draftHtml.innerHTML = '<h4 style="color:#059669;margin:0 0 0.5rem">Study Plan da duoc cai thien!</h4>'+
  '<div style="font-size:.9rem;line-height:1.6;white-space:pre-wrap;max-height:400px;overflow-y:auto;margin-bottom:0.75rem">'+ escapeHtml(data.draft) + '</div>'+
  '<div style="display:flex;gap:0.5rem">'+
- '<button type="button"class="btn btn-primary btn-sm"onclick="var t=this.parentElement.previousElementSibling.textContent;navigator.clipboard.writeText(t);toast(\'Da copy!\')">Copy</button>'+
- '<button type="button"class="btn btn-outline btn-sm"onclick="this.closest(\'[style]\').remove()">Đóng</button>'+
+ '<button type="button" class=" btn btn-primary btn-sm" onclick=" var t=this.parentElement.previousElementSibling.textContent;navigator.clipboard.writeText(t);toast(\' Da copy!\')">Copy</button>'+
+ '<button type="button" class=" btn btn-outline btn-sm" onclick="this.closest(\'[style]\').remove()">Đóng</button>'+
  '</div>';
 
  var targetEl = document.querySelector('#spr-result .spr-result-actions');
  if (targetEl) {
  targetEl.parentElement.insertBefore(draftHtml, targetEl);
- toast('Da tao Study Plan cai thien!');
+ toast(' Da tao Study Plan cai thien!');
  }
  } else {
- toast(''+ (data.error || 'Khong the tao lai.'));
+ toast(''+ (data.error || ' Khong the tao lai.'));
  if (resultEl) resultEl.style.display = '';
  }
  } catch (err) {
@@ -1019,12 +1019,12 @@
 
  window.clCopyReviewResult = function() {
  if (!_spReviewerData || !_spReviewerData.review) {
- toast('Chua co ket qua.');
+ toast(' Chua co ket qua.');
  return;
  }
  var r = _spReviewerData.review;
  var text = '=== DANH GIA STUDY PLAN ===\n'+
- 'Diem tong: '+ (r.overallScore || '?') + '/10\n\n';
+ ' Diem tong: '+ (r.overallScore || '?') + '/10\n\n';
  if (r.criteria) {
  r.criteria.forEach(function(c) {
  text += '• '+ c.name + ': '+ (c.score || '?') + '/10\n '+ (c.comment || '') + '\n';
@@ -1038,7 +1038,7 @@
  if (r.suggestions) r.suggestions.forEach(function(s) { text += '• '+ s + '\n'; });
 
  navigator.clipboard.writeText(text);
- toast('Da copy ket qua danh gia!');
+ toast(' Da copy ket qua danh gia!');
  };
 
  window.clCloseReviewer = function(btn) {
@@ -1072,7 +1072,7 @@
  function buildPDFHtml(progress) {
  const now = new Date();
  const dateStr = now.toLocaleDateString('vi-VN');
- const visaType = checklist.name || 'Du học Hàn Quốc';
+ const visaType = checklist.name || ' Du học Hàn Quốc';
  const totalItems = checklist.totalItems || 0;
  let completedItems = 0;
  checklist.modules.forEach(function(mod) {
@@ -1138,7 +1138,7 @@
  return '<!DOCTYPE html><html><head><meta charset="utf-8">'+
  '<style>'+
  '@page { margin: 0; }'+
- 'body { font-family:"Be Vietnam Pro", Arial, Helvetica, sans-serif; color: #1e293b; margin: 0; padding: 0; }'+
+ ' body { font-family:" Be Vietnam Pro", Arial, Helvetica, sans-serif; color: #1e293b; margin: 0; padding: 0; }'+
  '.pdf-header { background: linear-gradient(135deg, #1e3a5f 0%, #0f766e 100%); color: #fff; padding: 24px 28px 20px; }'+
  '.pdf-header h1 { margin: 0; font-size: 20px; font-weight: 800; }'+
  '.pdf-header p { margin: 4px 0 0; font-size: 12px; color: rgba(255,255,255,0.8); }'+
@@ -1202,11 +1202,11 @@
  await window.html2pdf().set(opt).from(container).save();
  toast('Đã tải PDF — '+ opt.filename);
  } catch (err) {
- console.error('PDF export error:', err);
+ console.error(' PDF export error:', err);
  toast('Lỗi tạo PDF: '+ (err.message || 'Không xác định'));
 
  // Fallback: copy text to clipboard
- let fallbackText = 'CHECKLIST CÁ NHÂN HOÁ\n';
+ let fallbackText = ' CHECKLIST CÁ NHÂN HOÁ\n';
  fallbackText += '━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
  fallbackText += 'Loại visa: '+ checklist.name + '\n';
  fallbackText += 'Tổng tiến độ: '+ progress + '%\n';
@@ -1366,7 +1366,7 @@
  // Check login
  var token = getStudentToken();
  if (!token) {
- toast('Vui lòng đăng nhập để sử dụng nhắc nhở!');
+ toast(' Vui lòng đăng nhập để sử dụng nhắc nhở!');
  return;
  }
 
@@ -1407,18 +1407,18 @@
  var overlay = document.createElement('div');
  overlay.className = 'cl-ai-overlay';
  overlay.innerHTML = `
- <div class="cl-ai-modal cl-ai-modal-wide"><div class="cl-ai-modal-header"><h3>Tạo nhắc nhở từ checklist</h3><button type="button"class="cl-ai-close"onclick="this.closest('.cl-ai-overlay').remove()">&times;</button><div><div class="cl-ai-modal-body"><p style="color:#64748b;font-size:.85rem;margin-bottom:1rem;">Chọn các mục bạn muốn tạo nhắc nhở. Ngày hạn đã được gợi ý dựa trên từng loại giấy tờ — bạn có thể điều chỉnh.</p><div style="display:flex;gap:0.5rem;margin-bottom:1rem;"><button type="button"class="btn btn-sm btn-primary"onclick="window._rmSelectAll(true)">Chọn tất cả</button><button type="button"class="btn btn-sm btn-outline"onclick="window._rmSelectAll(false)">Bỏ chọn</button><div><div id="rm-item-list"style="max-height:350px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;">${reminderItems.map(function(item, idx) {
+ <div class=" cl-ai-modal cl-ai-modal-wide"><div class="cl-ai-modal-header"><h3>Tạo nhắc nhở từ checklist</h3><button type="button" class="cl-ai-close" onclick="this.closest('.cl-ai-overlay').remove()">&times;</button><div><div class="cl-ai-modal-body"><p style="color:#64748b;font-size:.85rem;margin-bottom:1rem;">Chọn các mục bạn muốn tạo nhắc nhở. Ngày hạn đã được gợi ý dựa trên từng loại giấy tờ — bạn có thể điều chỉnh.</p><div style="display:flex;gap:0.5rem;margin-bottom:1rem;"><button type="button" class=" btn btn-sm btn-primary" onclick="window._rmSelectAll(true)">Chọn tất cả</button><button type="button" class=" btn btn-sm btn-outline" onclick="window._rmSelectAll(false)">Bỏ chọn</button><div><div id="rm-item-list" style="max-height:350px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;">${reminderItems.map(function(item, idx) {
  var remLabels = { document: 'Giấy tờ', submission: 'Nộp hồ sơ', interview: 'Phỏng vấn', health_check: '🏥 Khám sức khoẻ', visa_appointment: 'Hẹn visa', other: 'Khác'};
  var label = remLabels[item.remType] || item.remType;
- return '<div class="rm-item"data-idx="'+ idx + '"style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;background:#f8fafc;">'+
- '<input type="checkbox"class="rm-checkbox"checked data-idx="'+ idx + '"style="width:18px;height:18px;accent-color:#1e3a5f;">'+
+ return '<div class="rm-item" data-idx="'+ idx + '" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;background:#f8fafc;">'+
+ '<input type="checkbox" class="rm-checkbox" checked data-idx="'+ idx + '" style="width:18px;height:18px;accent-color:#1e3a5f;">'+
  '<div style="flex:1;min-width:0;">'+
  '<div style="font-size:.85rem;font-weight:600;color:#1e293b;">'+ escapeHtml(item.name) + '</div>'+
  '<div style="font-size:.75rem;color:#64748b;margin-top:2px;">'+ label + '</div>'+
  '</div>'+
- '<input type="date"class="rm-date"value="'+ item.suggestedDate + '"data-idx="'+ idx + '"style="padding:4px 8px;border:1px solid #d1d5db;border-radius:6px;font:inherit;font-size:.8rem;flex:0 0 auto;width:140px;">'+
+ '<input type="date" class="rm-date" value="'+ item.suggestedDate + '" data-idx="'+ idx + '" style="padding:4px 8px;border:1px solid #d1d5db;border-radius:6px;font:inherit;font-size:.8rem;flex:0 0 auto;width:140px;">'+
  '</div>';
- }).join('')}</div><div style="display:flex;gap:10px;margin-top:1rem;"><button type="button"class="btn btn-primary btn-lg"id="rm-create-btn"onclick="window._rmCreateAll()">✨ Tạo ${reminderItems.length} nhắc nhở</button><button type="button"class="btn btn-outline"onclick="this.closest('.cl-ai-overlay').remove()">Huỷ</button><div><div><div>`;
+ }).join('')}</div><div style="display:flex;gap:10px;margin-top:1rem;"><button type="button" class=" btn btn-primary btn-lg" id="rm-create-btn" onclick="window._rmCreateAll()">✨ Tạo ${reminderItems.length} nhắc nhở</button><button type="button" class=" btn btn-outline" onclick="this.closest('.cl-ai-overlay').remove()">Huỷ</button><div><div><div>`;
  document.body.appendChild(overlay);
 
  // Store reference for the create function
@@ -1662,7 +1662,7 @@
  async function handleFileUpload(itemId, file, fileInputEl) {
  const token = getStudentToken();
  if (!token) {
- toast('Vui lòng đăng nhập để upload file');
+ toast(' Vui lòng đăng nhập để upload file');
  if (fileInputEl) fileInputEl.value = '';
  return;
  }
@@ -1704,10 +1704,10 @@
  if (data.warning) {
  toast(''+ data.warning);
  } else {
- toast('Upload thành công: '+ escapeHtml(file.name));
+ toast(' Upload thành công: '+ escapeHtml(file.name));
  }
  } else {
- toast('Upload thất bại: '+ (data.error || 'Lỗi không xác định'));
+ toast(' Upload thất bại: '+ (data.error || 'Lỗi không xác định'));
  }
  if (fileInputEl) fileInputEl.value = '';
  } catch (err) {

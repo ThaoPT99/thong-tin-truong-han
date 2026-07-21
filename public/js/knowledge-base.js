@@ -1,26 +1,26 @@
 // knowledge-base.js — Knowledge Base page: articles, search, FAQ
 (function() {
- 'use strict';
+ ' use strict';
 
  let currentCategory = 'all';
- let currentView = 'articles'; // 'articles'| 'article-detail'| 'faq'let articlesCache = [];
+ let currentView = 'articles'; // 'articles'| 'article-detail'| 'faq' let articlesCache = [];
  let currentArticle = null;
 
  // ─── Categories ───
  const CATEGORIES = [
  { id: 'all', label: 'Tất cả', icon: ''},
- { id: 'visa', label: 'Visa & Quy định', icon: ''},
+ { id: 'visa', label: ' Visa & Quy định', icon: ''},
  { id: 'documents', label: 'Giấy tờ & Hồ sơ', icon: ''},
  { id: 'finance', label: 'Tài chính', icon: ''},
- { id: 'study-plan', label: 'Study Plan', icon: ''},
- { id: 'process', label: 'Quy trình', icon: ''},
+ { id: 'study-plan', label: ' Study Plan', icon: ''},
+ { id: 'process', label: ' Quy trình', icon: ''},
  { id: 'schools', label: 'Trường & Khu vực', icon: ''},
  ];
 
  // ─── Init ───
  window.renderKnowledgeBase = function(container) {
  if (!container) return;
- container.innerHTML = `<div class="kb-loading"><div class="skeleton skeleton-heading"style="width:300px"><div><div>`;
+ container.innerHTML = `<div class="kb-loading"><div class=" skeleton skeleton-heading" style="width:300px"><div><div>`;
 
  // Load articles + FAQ from API
  Promise.all([
@@ -41,7 +41,7 @@
 
  container.innerHTML = `
  <section class="kb-view"><div class="kb-hero"><div><p class="advisor-kicker">Tài nguyên hữu ích</p><h2>Kiến thức du học Hàn Quốc</h2><p class="kb-hero-desc">Tổng hợp kiến thức về visa, giấy tờ, tài chính và quy trình du học Hàn Quốc.
- Tất cả thông tin được cập nhật theo quy định mới nhất.</p><div><div><!-- Search --><div class="kb-search-bar"><svg class="kb-search-icon"viewBox="0 0 24 24"width="20"height="20"fill="none"stroke="currentColor"stroke-width="2"stroke-linecap="round"><circle cx="11"cy="11"r="8"/><line x1="21"y1="21"x2="16.65"y2="16.65"/><svg><input type="text"id="kb-search"class="kb-search-input"placeholder="Tìm kiếm bài viết..."autocomplete="off"><span class="kb-search-count"id="kb-result-count">${articles.length} bài viết</span><div><!-- Tabs: Articles / FAQ --><div class="kb-tabs"><button type="button"class="kb-tab ${currentView === 'articles'? 'active': ''}"onclick="window._kbSwitchView('articles')">Bài viết</button><button type="button"class="kb-tab ${currentView === 'faq'? 'active': ''}"onclick="window._kbSwitchView('faq')">Hỏi đáp (${faqs.length})</button><div><!-- Content --><div id="kb-content">${currentView === 'articles'? renderArticlesView(articles) : renderFaqView(faqs)}</div><!-- Article Detail (hidden by default) --><div id="kb-article-detail"class="kb-article-detail"style="display:none"><div><section>`;
+ Tất cả thông tin được cập nhật theo quy định mới nhất.</p><div><div><!-- Search --><div class="kb-search-bar"><svg class="kb-search-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><svg><input type="text" id="kb-search" class="kb-search-input" placeholder="Tìm kiếm bài viết..." autocomplete="off"><span class="kb-search-count" id="kb-result-count">${articles.length} bài viết</span><div><!-- Tabs: Articles / FAQ --><div class="kb-tabs"><button type="button" class=" kb-tab ${currentView === 'articles'? 'active': ''}" onclick="window._kbSwitchView('articles')">Bài viết</button><button type="button" class=" kb-tab ${currentView === 'faq'? 'active': ''}" onclick="window._kbSwitchView('faq')">Hỏi đáp (${faqs.length})</button><div><!-- Content --><div id="kb-content">${currentView === 'articles'? renderArticlesView(articles) : renderFaqView(faqs)}</div><!-- Article Detail (hidden by default) --><div id="kb-article-detail" class="kb-article-detail" style="display:none"><div><section>`;
 
  // Bind search
  const searchInput = document.getElementById('kb-search');
@@ -68,10 +68,10 @@
  }
 
  const catTabs = CATEGORIES.map(c =>`
- <button type="button"class="kb-cat-tab ${c.id === currentCategory ? 'active': ''}"data-cat="${c.id}">${c.icon} ${c.label}</button>`).join('');
+ <button type="button" class=" kb-cat-tab ${c.id === currentCategory ? 'active': ''}" data-cat="${c.id}">${c.icon} ${c.label}</button>`).join('');
 
  const articleCards = articles.map(a =>`
- <div class="kb-article-card"onclick="window._kbOpenArticle('${a.id}')"><div class="kb-article-cat">${getCatIcon(a.category)} ${getCatLabel(a.category)}</div><h3 class="kb-article-title">${escapeHtml(a.title)}</h3><p class="kb-article-summary">${escapeHtml(a.summary)}</p><div class="kb-article-tags">${(a.tags || []).slice(0, 3).map(t =>`<span class="kb-tag">${escapeHtml(t)}</span>`).join('')}</div><div>`).join('');
+ <div class="kb-article-card" onclick="window._kbOpenArticle('${a.id}')"><div class="kb-article-cat">${getCatIcon(a.category)} ${getCatLabel(a.category)}</div><h3 class="kb-article-title">${escapeHtml(a.title)}</h3><p class="kb-article-summary">${escapeHtml(a.summary)}</p><div class="kb-article-tags">${(a.tags || []).slice(0, 3).map(t =>`<span class="kb-tag">${escapeHtml(t)}</span>`).join('')}</div><div>`).join('');
 
  return `
  <div class="kb-cat-tabs">${catTabs}</div><div class="kb-result-info"><span id="kb-article-count">${articles.length}</span>bài viết</div><div class="kb-article-grid">${articleCards}</div>`;
@@ -93,7 +93,7 @@
 
  const faqItems = faqs.map(function(f, idx) {
  return `
- <div class="kb-faq-item"><button type="button"class="kb-faq-question"onclick="window._kbToggleFaq(this)"><span>${escapeHtml(f.question)}</span><svg class="kb-faq-chevron"viewBox="0 0 20 20"width="16"height="16"fill="currentColor"><path d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"/><svg><button><div class="kb-faq-answer">${escapeHtml(f.answer)}</div><div>`;
+ <div class="kb-faq-item"><button type="button" class="kb-faq-question" onclick="window._kbToggleFaq(this)"><span>${escapeHtml(f.question)}</span><svg class="kb-faq-chevron" viewBox="0 0 20 20" width="16" height="16" fill="currentColor"><path d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"/><svg><button><div class="kb-faq-answer">${escapeHtml(f.answer)}</div><div>`;
  }).join('');
 
  return `
@@ -144,7 +144,7 @@
  }).join('');
 
  container.innerHTML = `
- <div class="kb-detail-header"><button type="button"class="kb-back-btn"onclick="window._kbCloseArticle()">← Quay lại</button><span class="kb-article-cat">${getCatIcon(article.category)} ${getCatLabel(article.category)}</span><div><h2 class="kb-detail-title">${escapeHtml(article.title)}</h2><p class="kb-detail-summary">${escapeHtml(article.summary)}</p><div class="kb-detail-tags">${(article.tags || []).map(function(t) { return '<span class="kb-tag">'+ escapeHtml(t) + '</span>'; }).join('')}</div><div class="kb-detail-body">${contentHtml}</div><div class="kb-detail-footer"><button type="button"class="btn btn-outline"onclick="window._kbCloseArticle()">← Quay lại danh sách</button><div>`;
+ <div class="kb-detail-header"><button type="button" class="kb-back-btn" onclick="window._kbCloseArticle()">← Quay lại</button><span class="kb-article-cat">${getCatIcon(article.category)} ${getCatLabel(article.category)}</span><div><h2 class="kb-detail-title">${escapeHtml(article.title)}</h2><p class="kb-detail-summary">${escapeHtml(article.summary)}</p><div class="kb-detail-tags">${(article.tags || []).map(function(t) { return '<span class="kb-tag">'+ escapeHtml(t) + '</span>'; }).join('')}</div><div class="kb-detail-body">${contentHtml}</div><div class="kb-detail-footer"><button type="button" class=" btn btn-outline" onclick="window._kbCloseArticle()">← Quay lại danh sách</button><div>`;
  }
 
  window._kbCloseArticle = function() {
@@ -207,7 +207,7 @@
  function renderFaqItems(faqs) {
  if (faqs.length === 0) return '<div class="kb-empty"><p>Chưa có câu hỏi nào.</p><div>';
  return faqs.map(function(f) {
- return '<div class="kb-faq-item"><button type="button"class="kb-faq-question"onclick="window._kbToggleFaq(this)"><span>'+ escapeHtml(f.question) + '</span><svg class="kb-faq-chevron"viewBox="0 0 20 20"width="16"height="16"fill="currentColor"><path d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"/><svg><button><div class="kb-faq-answer">'+ escapeHtml(f.answer) + '</div><div>';
+ return '<div class="kb-faq-item"><button type="button" class="kb-faq-question" onclick="window._kbToggleFaq(this)"><span>'+ escapeHtml(f.question) + '</span><svg class="kb-faq-chevron" viewBox="0 0 20 20" width="16" height="16" fill="currentColor"><path d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"/><svg><button><div class="kb-faq-answer">'+ escapeHtml(f.answer) + '</div><div>';
  }).join('');
  }
 

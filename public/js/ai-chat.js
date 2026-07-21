@@ -1,6 +1,6 @@
 // ai-chat.js — Floating AI Chat Widget for website visitors
 (function() {
- 'use strict';
+ ' use strict';
 
  // ─── State ───
  let isOpen = false;
@@ -23,7 +23,7 @@
  const container = document.createElement('div');
  container.id = 'ai-chat-widget';
  container.innerHTML = `
- <button type="button"id="ai-chat-fab"class="ai-chat-fab"aria-label="Mở chat AI"title="Hỏi AI về trường và visa"><svg class="ai-chat-fab-icon"viewBox="0 0 24 24"width="26"height="26"fill="none"stroke="currentColor"stroke-width="2"stroke-linecap="round"stroke-linejoin="round"><path d="M12 2l.5 9.5L22 12l-9.5.5L12 22l-.5-9.5L2 12l9.5-.5z"/><path d="M18 4l.5 3.5L22 8l-3.5.5L18 12l-.5-3.5L14 8l3.5-.5z"/><svg><svg class="ai-chat-fab-close"viewBox="0 0 24 24"width="20"height="20"fill="none"stroke="currentColor"stroke-width="2.5"stroke-linecap="round"stroke-linejoin="round"style="display:none"><line x1="18"y1="6"x2="6"y2="18"/><line x1="6"y1="6"x2="18"y2="18"/><svg><button><div id="ai-chat-panel"class="ai-chat-panel"><div class="ai-chat-header"><div class="ai-chat-header-left"><div class="ai-chat-avatar"><svg viewBox="0 0 24 24"width="18"height="18"fill="none"stroke="currentColor"stroke-width="2"stroke-linecap="round"stroke-linejoin="round"><path d="M12 8V4m0 4a4 4 0 0 1 4 4h-8a4 4 0 0 1 4-4z"/><circle cx="12"cy="14"r="8"/><path d="M12 22v-4"/><svg><div><div><div class="ai-chat-header-title">Trợ lý D2-6</div><div class="ai-chat-header-status">Online • Hỏi về trường, visa</div><div><div><button type="button"id="ai-chat-close"class="ai-chat-header-close"aria-label="Đóng chat"><svg viewBox="0 0 24 24"width="18"height="18"fill="none"stroke="currentColor"stroke-width="2"stroke-linecap="round"stroke-linejoin="round"><line x1="18"y1="6"x2="6"y2="18"/><line x1="6"y1="6"x2="18"y2="18"/><svg><button><div><div id="ai-chat-messages"class="ai-chat-messages"><div class="ai-chat-welcome"><div class="ai-chat-bubble ai-chat-bubble-ai"><div class="ai-chat-bubble-content">👋 Chào bạn! Tôi là trợ lý AI của <b>Thông Tin Trường Hàn</b>.<br><br>Bạn có thể hỏi tôi về:<br>• Thông tin trường (học phí, KTX, điều kiện)<br>• Checklist visa D2-6<br>• Phỏng vấn visa<br>• Khu vực, hệ học<br><br><i>Ví dụ:"Trường Osan học phí bao nhiêu?"</i><div><div><div><div><div class="ai-chat-input-area"><div class="ai-chat-input-wrap"><input type="text"id="ai-chat-input"class="ai-chat-input"placeholder="Nhập câu hỏi..."autocomplete="off"><button type="button"id="ai-chat-send"class="ai-chat-send-btn"aria-label="Gửi"><svg viewBox="0 0 24 24"width="20"height="20"fill="none"stroke="currentColor"stroke-width="2"stroke-linecap="round"stroke-linejoin="round"><line x1="22"y1="2"x2="11"y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/><svg><button><div><div class="ai-chat-suggestions"><button type="button"data-quick="Trường Osan học phí bao nhiêu?">Osan</button><button type="button"data-quick="Checklist visa D2-6 gồm những gì?">Checklist</button><button type="button"data-quick="Chứng minh tài chính du học Hàn cần bao nhiêu tiền?">Tài chính</button><button type="button"data-quick="Quy trình xin visa du học Hàn Quốc như thế nào?">Quy trình</button><div><div><div>`;
+ <button type="button" id="ai-chat-fab" class="ai-chat-fab" aria-label="Mở chat AI" title="Hỏi AI về trường và visa"><svg class="ai-chat-fab-icon" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d=" M12 2l.5 9.5L22 12l-9.5.5L12 22l-.5-9.5L2 12l9.5-.5z"/><path d=" M18 4l.5 3.5L22 8l-3.5.5L18 12l-.5-3.5L14 8l3.5-.5z"/><svg><svg class="ai-chat-fab-close" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/><svg><button><div id="ai-chat-panel" class="ai-chat-panel"><div class="ai-chat-header"><div class="ai-chat-header-left"><div class="ai-chat-avatar"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d=" M12 8V4m0 4a4 4 0 0 1 4 4h-8a4 4 0 0 1 4-4z"/><circle cx="12" cy="14" r="8"/><path d=" M12 22v-4"/><svg><div><div><div class="ai-chat-header-title">Trợ lý D2-6</div><div class="ai-chat-header-status">Online • Hỏi về trường, visa</div><div><div><button type="button" id="ai-chat-close" class="ai-chat-header-close" aria-label="Đóng chat"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/><svg><button><div><div id="ai-chat-messages" class="ai-chat-messages"><div class="ai-chat-welcome"><div class=" ai-chat-bubble ai-chat-bubble-ai"><div class="ai-chat-bubble-content">👋 Chào bạn! Tôi là trợ lý AI của <b>Thông Tin Trường Hàn</b>.<br><br>Bạn có thể hỏi tôi về:<br>• Thông tin trường (học phí, KTX, điều kiện)<br>• Checklist visa D2-6<br>• Phỏng vấn visa<br>• Khu vực, hệ học<br><br><i>Ví dụ:"Trường Osan học phí bao nhiêu?"</i><div><div><div><div><div class="ai-chat-input-area"><div class="ai-chat-input-wrap"><input type="text" id="ai-chat-input" class="ai-chat-input" placeholder="Nhập câu hỏi..." autocomplete="off"><button type="button" id="ai-chat-send" class="ai-chat-send-btn" aria-label="Gửi"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/><svg><button><div><div class="ai-chat-suggestions"><button type="button" data-quick="Trường Osan học phí bao nhiêu?">Osan</button><button type="button" data-quick=" Checklist visa D2-6 gồm những gì?">Checklist</button><button type="button" data-quick="Chứng minh tài chính du học Hàn cần bao nhiêu tiền?">Tài chính</button><button type="button" data-quick=" Quy trình xin visa du học Hàn Quốc như thế nào?">Quy trình</button><div><div><div>`;
  document.body.appendChild(container);
  return container;
  }
@@ -48,7 +48,7 @@
 
  for (const msg of messages) {
  const div = document.createElement('div');
- div.className = 'ai-chat-bubble ai-chat-bubble-'+ (msg.role === 'user'? 'user': 'ai');
+ div.className = ' ai-chat-bubble ai-chat-bubble-'+ (msg.role === 'user'? 'user': 'ai');
  div.innerHTML = '<div class="ai-chat-bubble-content">'+ msg.content + '</div>';
  container.insertBefore(div, loadingEl || null);
  }
@@ -64,7 +64,7 @@
  if (existing) return;
 
  const div = document.createElement('div');
- div.className = 'ai-chat-bubble ai-chat-bubble-ai ai-chat-loading';
+ div.className = ' ai-chat-bubble ai-chat-bubble-ai ai-chat-loading';
  div.innerHTML = '<div class="ai-chat-bubble-content"><span class="ai-chat-dots"><span><span><span><span><span><span><span><div>';
  container.appendChild(div);
  container.scrollTop = container.scrollHeight;
@@ -107,7 +107,7 @@
  } else {
  messages.push({
  role: 'assistant',
- content: 'Xin lỗi, đã có lỗi xảy ra. Vui lòng thử lại sau!',
+ content: ' Xin lỗi, đã có lỗi xảy ra. Vui lòng thử lại sau!',
  });
  }
  } catch (err) {

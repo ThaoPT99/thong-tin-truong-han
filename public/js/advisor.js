@@ -1,6 +1,6 @@
 const PRIORITY_LABELS = {
  visa:"dễ đỗ visa",
- cost:"chi phí thấp",
+ cost:" chi phí thấp",
  job:"việc làm thêm",
  e7:"dễ chuyển E7",
  prestige:"trường uy tín","low-study":"học ít"};
@@ -30,12 +30,12 @@ function parseQuickProfile(text) {
  if (absMatch) profile.absences = parseInt(absMatch[1], 10);
 
  // Korean level
- if (q.indexOf('topik 3') !== -1 || q.indexOf('topik3') !== -1) profile.korean = 'topik3';
- else if (q.indexOf('topik 2') !== -1 || q.indexOf('topik2') !== -1) profile.korean = 'topik2';
+ if (q.indexOf(' topik 3') !== -1 || q.indexOf('topik3') !== -1) profile.korean = 'topik3';
+ else if (q.indexOf(' topik 2') !== -1 || q.indexOf('topik2') !== -1) profile.korean = 'topik2';
  else if (q.indexOf('sejong') !== -1) profile.korean = 'sejong2b';
 
  // Visa fail
- if (q.indexOf('truot visa') !== -1 || q.indexOf('truot') !== -1 || q.indexOf('fail') !== -1) profile.visaFail = 'yes';
+ if (q.indexOf(' truot visa') !== -1 || q.indexOf('truot') !== -1 || q.indexOf('fail') !== -1) profile.visaFail = 'yes';
 
  // Region
  if (q.indexOf('seoul') !== -1) profile.region = 'seoul';
@@ -44,17 +44,17 @@ function parseQuickProfile(text) {
  else if (q.indexOf('gwangju') !== -1) profile.region = 'gwangju';
 
  // Budget
- if (q.indexOf('tiet kiem') !== -1 || q.indexOf('re') !== -1 || q.indexOf('thap') !== -1) profile.budget = 'low';
- else if (q.indexOf('cao') !== -1 || q.indexOf('khong ngan') !== -1) profile.budget = 'high';
+ if (q.indexOf(' tiet kiem') !== -1 || q.indexOf('re') !== -1 || q.indexOf('thap') !== -1) profile.budget = 'low';
+ else if (q.indexOf('cao') !== -1 || q.indexOf(' khong ngan') !== -1) profile.budget = 'high';
 
  // Priorities
  const prios = [];
  if (q.indexOf('visa') !== -1) prios.push('visa');
- if (q.indexOf('viec lam') !== -1 || q.indexOf('job') !== -1) prios.push('job');
- if (q.indexOf('chi phi') !== -1 || q.indexOf('cost') !== -1) prios.push('cost');
+ if (q.indexOf(' viec lam') !== -1 || q.indexOf('job') !== -1) prios.push('job');
+ if (q.indexOf(' chi phi') !== -1 || q.indexOf('cost') !== -1) prios.push('cost');
  if (q.indexOf('e7') !== -1) prios.push('e7');
- if (q.indexOf('hoc it') !== -1) prios.push('low-study');
- if (q.indexOf('uy tin') !== -1) prios.push('prestige');
+ if (q.indexOf(' hoc it') !== -1) prios.push('low-study');
+ if (q.indexOf(' uy tin') !== -1) prios.push('prestige');
  if (prios.length >0) profile.priorities = prios;
 
  return profile;
@@ -73,7 +73,7 @@ function renderAdvisorApp(container) {
 
 function getAdvisorTemplate() {
  return `
- <section class="advisor-view"><div class="advisor-head"><div><p class="advisor-kicker">Visa D2-6</p><h2>Tư vấn chọn trường phù hợp</h2><p>Nhập hồ sơ học sinh để nhận Top 3 trường nên cân nhắc cùng lý do và rủi ro chính.</p><div><div><div class="advisor-quick-input"><label style="font-size:0.82rem;font-weight:700;color:#475569;display:block;margin-bottom:4px;">Nhập nhanh hồ sơ</label><div style="display:flex;gap:8px;"><input type="text"id="advisor-quick-input"placeholder="VD: nữ, 20t, GPA 6.0, topik 2"style="flex:1;min-height:2.55rem;padding:0.5rem 0.7rem;border:1px solid #dbe3ee;border-radius:8px;background:#fff;font:inherit;font-size:0.9rem;"><button type="button"id="advisor-quick-btn"style="min-height:2.55rem;padding:0.5rem 0.9rem;border:none;border-radius:8px;background:#2563eb;color:#fff;font:inherit;font-weight:700;cursor:pointer;">Điền</button><div><div style="font-size:0.78rem;color:#94a3b8;margin-top:4px;">Nhập tự nhiên: nữ/nam, tuổi, GPA, topik, khu vực, ưu tiên...</div><div><form id="advisor-form"class="advisor-form"><div class="advisor-grid"><label class="advisor-field"><span>Giới tính</span><select name="gender"><option value="female">Nữ</option><option value="male">Nam</option><select><label><label class="advisor-field"><span>Tuổi</span><input name="age"type="number"min="16"max="35"value="21"><label><label class="advisor-field"><span>GPA cấp 3</span><input name="gpa"type="number"min="0"max="10"step="0.1"value="6.5"><label><label class="advisor-field"><span>Số buổi nghỉ</span><input name="absences"type="number"min="0"max="100"value="10"><label><label class="advisor-field"><span>Năng lực tiếng Hàn</span><select name="korean"><option value="none">Chưa có chứng chỉ</option><option value="sejong2b">Sejong 2B</option><option value="topik2">TOPIK 2</option><option value="topik3">TOPIK 3 trở lên</option><select><label><label class="advisor-field"><span>Từng trượt visa</span><select name="visaFail"><option value="no">Chưa từng trượt</option><option value="yes">Đã từng trượt</option><select><label><label class="advisor-field"><span>Khu vực mong muốn</span><select name="region"id="advisor-region-select"><option value="any">Không ưu tiên</option><select><label><label class="advisor-field"><span>Ngân sách</span><select name="budget"><option value="low">Cần tiết kiệm</option><option value="medium"selected>Trung bình</option><option value="high">Có thể chọn trường phí cao hơn</option><select><label><div><fieldset class="advisor-priorities"><legend>Ưu tiên chính</legend><label><input type="checkbox"name="priorities"value="visa"checked>Dễ đỗ visa</label><label><input type="checkbox"name="priorities"value="cost">Chi phí thấp</label><label><input type="checkbox"name="priorities"value="job"checked>Việc làm thêm</label><label><input type="checkbox"name="priorities"value="e7">Dễ chuyển E7</label><label><input type="checkbox"name="priorities"value="prestige">Trường uy tín</label><label><input type="checkbox"name="priorities"value="low-study">Học ít</label><fieldset><div class="advisor-actions"><button type="submit"class="advisor-submit">Phân tích hồ sơ</button><button type="button"class="advisor-ai-btn"id="advisor-ai-btn">AI Tư vấn</button><button type="button"class="advisor-reset">Nhập lại</button><div><div id="advisor-ai-response"class="advisor-ai-response"style="display:none;margin-top:1rem;padding:1rem;border:2px solid #2563eb;border-radius:12px;background:#eff6ff;white-space:pre-wrap;line-height:1.7;font-size:0.92rem;"><div><form><div id="advisor-results"class="advisor-results"aria-live="polite"><div><section>`;
+ <section class="advisor-view"><div class="advisor-head"><div><p class="advisor-kicker">Visa D2-6</p><h2>Tư vấn chọn trường phù hợp</h2><p>Nhập hồ sơ học sinh để nhận Top 3 trường nên cân nhắc cùng lý do và rủi ro chính.</p><div><div><div class="advisor-quick-input"><label style="font-size:0.82rem;font-weight:700;color:#475569;display:block;margin-bottom:4px;">Nhập nhanh hồ sơ</label><div style="display:flex;gap:8px;"><input type="text" id="advisor-quick-input" placeholder="VD: nữ, 20t, GPA 6.0, topik 2" style="flex:1;min-height:2.55rem;padding:0.5rem 0.7rem;border:1px solid #dbe3ee;border-radius:8px;background:#fff;font:inherit;font-size:0.9rem;"><button type="button" id="advisor-quick-btn" style="min-height:2.55rem;padding:0.5rem 0.9rem;border:none;border-radius:8px;background:#2563eb;color:#fff;font:inherit;font-weight:700;cursor:pointer;">Điền</button><div><div style="font-size:0.78rem;color:#94a3b8;margin-top:4px;">Nhập tự nhiên: nữ/nam, tuổi, GPA, topik, khu vực, ưu tiên...</div><div><form id="advisor-form" class="advisor-form"><div class="advisor-grid"><label class="advisor-field"><span>Giới tính</span><select name="gender"><option value="female">Nữ</option><option value="male">Nam</option><select><label><label class="advisor-field"><span>Tuổi</span><input name="age" type="number" min="16" max="35" value="21"><label><label class="advisor-field"><span>GPA cấp 3</span><input name="gpa" type="number" min="0" max="10" step="0.1" value="6.5"><label><label class="advisor-field"><span>Số buổi nghỉ</span><input name="absences" type="number" min="0" max="100" value="10"><label><label class="advisor-field"><span>Năng lực tiếng Hàn</span><select name="korean"><option value="none">Chưa có chứng chỉ</option><option value="sejong2b">Sejong 2B</option><option value="topik2">TOPIK 2</option><option value="topik3">TOPIK 3 trở lên</option><select><label><label class="advisor-field"><span>Từng trượt visa</span><select name="visaFail"><option value="no">Chưa từng trượt</option><option value="yes">Đã từng trượt</option><select><label><label class="advisor-field"><span>Khu vực mong muốn</span><select name="region" id="advisor-region-select"><option value="any">Không ưu tiên</option><select><label><label class="advisor-field"><span>Ngân sách</span><select name="budget"><option value="low">Cần tiết kiệm</option><option value="medium" selected>Trung bình</option><option value="high">Có thể chọn trường phí cao hơn</option><select><label><div><fieldset class="advisor-priorities"><legend>Ưu tiên chính</legend><label><input type="checkbox" name="priorities" value="visa" checked>Dễ đỗ visa</label><label><input type="checkbox" name="priorities" value="cost">Chi phí thấp</label><label><input type="checkbox" name="priorities" value="job" checked>Việc làm thêm</label><label><input type="checkbox" name="priorities" value="e7">Dễ chuyển E7</label><label><input type="checkbox" name="priorities" value="prestige">Trường uy tín</label><label><input type="checkbox" name="priorities" value="low-study">Học ít</label><fieldset><div class="advisor-actions"><button type="submit" class="advisor-submit">Phân tích hồ sơ</button><button type="button" class="advisor-ai-btn" id="advisor-ai-btn">AI Tư vấn</button><button type="button" class="advisor-reset">Nhập lại</button><div><div id="advisor-ai-response" class="advisor-ai-response" style="display:none;margin-top:1rem;padding:1rem;border:2px solid #2563eb;border-radius:12px;background:#eff6ff;white-space:pre-wrap;line-height:1.7;font-size:0.92rem;"><div><form><div id="advisor-results" class="advisor-results" aria-live="polite"><div><section>`;
 }
 
 function bindAdvisorEvents(container) {
@@ -183,7 +183,7 @@ function bindAdvisorEvents(container) {
  aiResponse.textContent = 'Lỗi kết nối: '+ err.message;
  } finally {
  aiBtn.disabled = false;
- aiBtn.textContent = 'AI Tư vấn';
+ aiBtn.textContent = ' AI Tư vấn';
  }
  });
  }
@@ -304,8 +304,8 @@ function scoreSchool(schoolId, school, profile) {
 
  if (profile.budget ==="low") {
  score += (6 - rules.costLevel) * 3;
- if (rules.costLevel <= 2) reasons.push("Chi phí thuộc nhóm dễ chịu, hợp hồ sơ cần tiết kiệm.");
- if (rules.costLevel >= 4) risks.push("Chi phí trường cao hơn nhóm tiết kiệm.");
+ if (rules.costLevel <= 2) reasons.push(" Chi phí thuộc nhóm dễ chịu, hợp hồ sơ cần tiết kiệm.");
+ if (rules.costLevel >= 4) risks.push(" Chi phí trường cao hơn nhóm tiết kiệm.");
  } else if (profile.budget ==="high"&& rules.costLevel >= 3) {
  score += 3;
  }
@@ -351,8 +351,8 @@ function buildFallbackAdvisorProfile(school) {
  minGpa: 5.5,
  maxAbsences: 25,
  region: text.includes("seoul") ?"seoul": text.includes("gyeonggi") || text.includes("incheon") ?"near-seoul": text.includes("busan") ?"busan": text.includes("gwangju") ?"gwangju":"province",
- costLevel: text.includes("chi phí thấp") || text.includes("học phí rẻ") ? 2 : 3,
- visaChance: text.includes("tỷ lệ đỗ") || text.includes("visa tốt") ? 4 : 3,
+ costLevel: text.includes(" chi phí thấp") || text.includes("học phí rẻ") ? 2 : 3,
+ visaChance: text.includes("tỷ lệ đỗ") || text.includes(" visa tốt") ? 4 : 3,
  jobOpportunity: text.includes("việc làm nhiều") || text.includes("làm thêm") ? 4 : 3,
  e7Opportunity: text.includes("e7") ? 4 : 3,
  studyLoad: text.includes("học nặng") ? 4 : 3,
@@ -404,7 +404,7 @@ function renderAdvisorResults(target, profile, results) {
  const shareText = buildAdvisorShareText(profile, results);
 
  target.innerHTML = `
- <div class="advisor-summary"><div><p class="advisor-kicker">Kết quả phân tích</p><h3>Top 3 trường phù hợp nhất</h3><p>Ưu tiên: ${escapeHtml(priorities)}. Khu vực: ${escapeHtml(REGION_LABELS[profile.region])}.</p><div><div class="advisor-score-pill">${top[0]?.score || 0}% phù hợp nhất</div><div><div class="advisor-result-actions"><button type="button"data-copy-advisor>Copy kết quả</button><button type="button"data-save-advisor>Lưu kết quả</button><button type="button"data-zalo-advisor>Gửi Zalo</button><span class="advisor-save-status"hidden><span><div><div class="advisor-result-list">${top.map(renderAdvisorCard).join("")}</div><div class="advisor-note-box"><strong>Lưu ý tư vấn:</strong>Kết quả này là bản MVP dùng để sàng lọc ban đầu. Trước khi chốt trường vẫn cần kiểm tra lại hồ sơ gốc, tài chính, MOU, lịch tuyển sinh và yêu cầu mới nhất từ trường.
+ <div class="advisor-summary"><div><p class="advisor-kicker">Kết quả phân tích</p><h3>Top 3 trường phù hợp nhất</h3><p>Ưu tiên: ${escapeHtml(priorities)}. Khu vực: ${escapeHtml(REGION_LABELS[profile.region])}.</p><div><div class="advisor-score-pill">${top[0]?.score || 0}% phù hợp nhất</div><div><div class="advisor-result-actions"><button type="button" data-copy-advisor>Copy kết quả</button><button type="button" data-save-advisor>Lưu kết quả</button><button type="button" data-zalo-advisor>Gửi Zalo</button><span class="advisor-save-status" hidden><span><div><div class="advisor-result-list">${top.map(renderAdvisorCard).join("")}</div><div class="advisor-note-box"><strong>Lưu ý tư vấn:</strong>Kết quả này là bản MVP dùng để sàng lọc ban đầu. Trước khi chốt trường vẫn cần kiểm tra lại hồ sơ gốc, tài chính, MOU, lịch tuyển sinh và yêu cầu mới nhất từ trường.
  ${excluded ? `<br>${excluded} trường đang bị đánh dấu rủi ro cao với hồ sơ này.` :""}</div>`;
 
  target.querySelectorAll("[data-open-school]").forEach((button) =>{
@@ -455,5 +455,5 @@ function renderAdvisorResults(target, profile, results) {
 function renderAdvisorCard(item) {
  const risks = item.risks.length ? item.risks : ["Chưa có rủi ro lớn trong bộ tiêu chí MVP."];
  return `
- <article class="advisor-card"><div class="advisor-card-top"><div><span class="advisor-rank">#${item.rank}</span><h4>${escapeHtml(item.school.name)}</h4><p>${escapeHtml(item.school.nameKr || item.school.nameEn ||"")}</p><div><div class="advisor-percent">${item.score}%</div><div><div class="advisor-meter"><span style="width:${item.score}%"><span><div><div class="advisor-badges"><span>${item.level}</span><span>${escapeHtml(REGION_LABELS[item.rules.region])}</span><span>Chi phí mức ${item.rules.costLevel}/5</span><div><div class="advisor-columns"><div><strong>Lý do nên cân nhắc</strong><ul>${item.reasons.map((reason) =>`<li>${escapeHtml(reason)}</li>`).join("")}</ul><div><div><strong>Rủi ro cần kiểm tra</strong><ul>${risks.map((risk) =>`<li>${escapeHtml(risk)}</li>`).join("")}</ul><div><div><button type="button"class="advisor-open-school"data-open-school="${item.id}">Xem chi tiết trường</button><article>`;
+ <article class="advisor-card"><div class="advisor-card-top"><div><span class="advisor-rank">#${item.rank}</span><h4>${escapeHtml(item.school.name)}</h4><p>${escapeHtml(item.school.nameKr || item.school.nameEn ||"")}</p><div><div class="advisor-percent">${item.score}%</div><div><div class="advisor-meter"><span style="width:${item.score}%"><span><div><div class="advisor-badges"><span>${item.level}</span><span>${escapeHtml(REGION_LABELS[item.rules.region])}</span><span>Chi phí mức ${item.rules.costLevel}/5</span><div><div class="advisor-columns"><div><strong>Lý do nên cân nhắc</strong><ul>${item.reasons.map((reason) =>`<li>${escapeHtml(reason)}</li>`).join("")}</ul><div><div><strong>Rủi ro cần kiểm tra</strong><ul>${risks.map((risk) =>`<li>${escapeHtml(risk)}</li>`).join("")}</ul><div><div><button type="button" class="advisor-open-school" data-open-school="${item.id}">Xem chi tiết trường</button><article>`;
 }

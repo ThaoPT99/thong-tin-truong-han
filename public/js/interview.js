@@ -1,6 +1,6 @@
 // interview.js — Interview Simulator: mo phong phong van visa KVAC
 (function() {
- 'use strict';
+ ' use strict';
 
  var _interviewState = null; // { history, profile, score, phase }
  var _isProcessing = false;
@@ -10,7 +10,7 @@
  overlay.className = 'cl-ai-overlay';
  overlay.dataset.hasEnterListener = 'true';
  overlay.innerHTML = `
- <div class="int-modal"><div class="cl-ai-modal-header"><h3>Luyên phỏng vấn visa KVAC</h3><button type="button"class="cl-ai-close"onclick="window.clCloseInterview(this)">&times;</button><div><div class="int-body"><!-- Setup --><div id="int-setup"class="int-setup"><div class="int-setup-icon"><div><h4>Mô phỏng phỏng vấn visa Hàn Quốc</h4><p style="color:#64748b;font-size:.85rem;line-height:1.5;margin-bottom:1.25rem;">AI sẽ đóng vai nhân viên KVAC phỏng vấn bạn. Trả lời tự nhiên và nhận đánh giá sau mỗi câu trả lời.</p><div class="int-info"><div class="int-info-item"><span class="int-info-icon"><span><div><strong>Loại visa</strong><span id="int-visa-label">D-4-1 (Học tiếng Hàn)</span><div><div><div class="int-info-item"><span class="int-info-icon"><span><div><strong>Số câu hỏi</strong><span>5-7 câu</span><div><div><div class="int-info-item"><span class="int-info-icon">⏱️</span><div><strong>Thời gian</strong><span>5-10 phút</span><div><div><div><div class="int-actions"><button type="button"class="btn btn-primary btn-lg"onclick="window.clStartInterview()">Bắt đầu phỏng vấn</button><div><div><!-- Interview Chat --><div id="int-chat"style="display:none"><div class="int-progress"><div class="int-progress-text">Câu hỏi: <span id="int-q-num">0</span>/<span id="int-q-total">0</span><div><div class="int-progress-bar"><div id="int-progress-fill"class="int-progress-fill"style="width:0%"><div><div><div class="int-score-badge"id="int-score-badge"><div><div><div id="int-messages"class="int-messages"><div><div id="int-input-area"class="int-input-area"><div id="int-hint"class="int-hint"style="display:none"><span id="int-hint-text"><span><div><div class="int-input-row"><input type="text"id="int-input"class="int-input"placeholder="Nhập câu trả lời..."autocomplete="off"><button type="button"id="int-send"class="int-send-btn"onclick="window.clSendAnswer()"><svg viewBox="0 0 24 24"width="18"height="18"fill="none"stroke="currentColor"stroke-width="2.5"stroke-linecap="round"><line x1="22"y1="2"x2="11"y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/><svg><button><div><div><div><!-- Summary --><div id="int-summary"style="display:none"><div class="int-summary-header"><div class="int-summary-ring"><svg viewBox="0 0 36 36"class="int-circular"><path class="spr-circle-bg"d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/><path class="spr-circle-fill"id="int-summary-fill"stroke-dasharray="0,100"d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/><text x="18"y="20.5"class="spr-circle-text"id="int-summary-score">-</text><svg><div><div class="int-summary-text"><h3 id="int-summary-title">Kết thúc buổi phỏng vấn</h3><p id="int-summary-feedback"style="color:#64748b;font-size:.85rem;"><p><div><div><div class="int-summary-grid"><div class="int-summary-section"><h4>Điểm mạnh</h4><ul id="int-strengths"><ul><div><div class="int-summary-section"><h4>Cần cải thiện</h4><ul id="int-weaknesses"><ul><div><div><div class="int-summary-section"style="margin-bottom:1rem"><h4>Lời khuyên</h4><ol id="int-tips"><ol><div><div class="int-actions"><button type="button"class="btn btn-primary"onclick="window.clRestartInterview()">Làm lại</button><button type="button"class="btn btn-outline"onclick="window.clCopyInterviewResult()">Copy kết quả</button><button type="button"class="btn btn-outline"onclick="window.clCloseInterview(this)">Đóng</button><div><div><div><div>`;
+ <div class="int-modal"><div class="cl-ai-modal-header"><h3>Luyên phỏng vấn visa KVAC</h3><button type="button" class="cl-ai-close" onclick="window.clCloseInterview(this)">&times;</button><div><div class="int-body"><!-- Setup --><div id="int-setup" class="int-setup"><div class="int-setup-icon"><div><h4>Mô phỏng phỏng vấn visa Hàn Quốc</h4><p style="color:#64748b;font-size:.85rem;line-height:1.5;margin-bottom:1.25rem;">AI sẽ đóng vai nhân viên KVAC phỏng vấn bạn. Trả lời tự nhiên và nhận đánh giá sau mỗi câu trả lời.</p><div class="int-info"><div class="int-info-item"><span class="int-info-icon"><span><div><strong>Loại visa</strong><span id="int-visa-label">D-4-1 (Học tiếng Hàn)</span><div><div><div class="int-info-item"><span class="int-info-icon"><span><div><strong>Số câu hỏi</strong><span>5-7 câu</span><div><div><div class="int-info-item"><span class="int-info-icon">⏱️</span><div><strong>Thời gian</strong><span>5-10 phút</span><div><div><div><div class="int-actions"><button type="button" class=" btn btn-primary btn-lg" onclick="window.clStartInterview()">Bắt đầu phỏng vấn</button><div><div><!-- Interview Chat --><div id="int-chat" style="display:none"><div class="int-progress"><div class="int-progress-text">Câu hỏi: <span id="int-q-num">0</span>/<span id="int-q-total">0</span><div><div class="int-progress-bar"><div id="int-progress-fill" class="int-progress-fill" style="width:0%"><div><div><div class="int-score-badge" id="int-score-badge"><div><div><div id="int-messages" class="int-messages"><div><div id="int-input-area" class="int-input-area"><div id="int-hint" class="int-hint" style="display:none"><span id="int-hint-text"><span><div><div class="int-input-row"><input type="text" id="int-input" class="int-input" placeholder="Nhập câu trả lời..." autocomplete="off"><button type="button" id="int-send" class="int-send-btn" onclick="window.clSendAnswer()"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/><svg><button><div><div><div><!-- Summary --><div id="int-summary" style="display:none"><div class="int-summary-header"><div class="int-summary-ring"><svg viewBox="0 0 36 36" class="int-circular"><path class="spr-circle-bg" d=" M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/><path class="spr-circle-fill" id="int-summary-fill" stroke-dasharray="0,100" d=" M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/><text x="18" y="20.5" class="spr-circle-text" id="int-summary-score">-</text><svg><div><div class="int-summary-text"><h3 id="int-summary-title">Kết thúc buổi phỏng vấn</h3><p id="int-summary-feedback" style="color:#64748b;font-size:.85rem;"><p><div><div><div class="int-summary-grid"><div class="int-summary-section"><h4>Điểm mạnh</h4><ul id="int-strengths"><ul><div><div class="int-summary-section"><h4>Cần cải thiện</h4><ul id="int-weaknesses"><ul><div><div><div class="int-summary-section" style="margin-bottom:1rem"><h4>Lời khuyên</h4><ol id="int-tips"><ol><div><div class="int-actions"><button type="button" class=" btn btn-primary" onclick="window.clRestartInterview()">Làm lại</button><button type="button" class=" btn btn-outline" onclick="window.clCopyInterviewResult()">Copy kết quả</button><button type="button" class=" btn btn-outline" onclick="window.clCloseInterview(this)">Đóng</button><div><div><div><div>`;
  document.body.appendChild(overlay);
  overlay.addEventListener('click', function(e) {
  if (e.target === this) window.clCloseInterview(this);
@@ -32,7 +32,7 @@
  _interviewState = { history: [], profile: userProfile || {}, visaType: visaType, totalScore: 0, answerCount: 0 };
  _isProcessing = true;
 
- addMessage('ai', 'Xin chào, tôi là nhân viên KVAC. Tôi sẽ phỏng vấn bạn về hồ sơ du học Hàn Quốc. Hãy trả lời tự nhiên và trung thực nhé! ', 'system');
+ addMessage('ai', ' Xin chào, tôi là nhân viên KVAC. Tôi sẽ phỏng vấn bạn về hồ sơ du học Hàn Quốc. Hãy trả lời tự nhiên và trung thực nhé! ', 'system');
 
  try {
  var fetchFn = window.fetchWithAuth || fetch;
@@ -88,7 +88,7 @@
 
  if (isLast) {
  // This was the last answer, ask for final evaluation
- _interviewState.history.push({ role: 'assistant', content: 'Cam on ban. Day la cau tra loi cuoi cung.', questionNumber: _interviewState.questionNumber });
+ _interviewState.history.push({ role: 'assistant', content: ' Cam on ban. Day la cau tra loi cuoi cung.', questionNumber: _interviewState.questionNumber });
  showLoading();
  await completeInterview();
  hideLoading();
@@ -126,12 +126,12 @@
  if (qNum >_interviewState.totalQuestions) {
  // Interview complete
  addMessage('ai', 'Cảm ơn bạn đã trả lời tất cả câu hỏi! Tôi sẽ tổng kết buổi phỏng vấn.', 'system');
- _interviewState.history.push({ role: 'assistant', content: 'Cam on ban. Buoi phong van ket thuc.'});
+ _interviewState.history.push({ role: 'assistant', content: ' Cam on ban. Buoi phong van ket thuc.'});
  await completeInterview();
  } else {
  showQuestion(data.interview);
  updateProgress(qNum, _interviewState.totalQuestions);
- addMessage('ai', escapeHtml(data.interview.nextQuestion || 'Cam on ban. Cau hoi tiep theo:'), 'question');
+ addMessage('ai', escapeHtml(data.interview.nextQuestion || ' Cam on ban. Cau hoi tiep theo:'), 'question');
  if (data.interview.hint) showHint(data.interview.hint);
  // Add to history
  _interviewState.history.push({ role: 'assistant', content: data.interview.nextQuestion || '', questionNumber: qNum });
@@ -201,7 +201,7 @@
  fillList('int-weaknesses', s.weaknesses);
  fillList('int-tips', s.tips);
  } else {
- document.getElementById('int-summary-feedback').textContent = ''+ (data.error || 'Khong the tong ket.');
+ document.getElementById('int-summary-feedback').textContent = ''+ (data.error || ' Khong the tong ket.');
  }
  } catch (err) {
  document.getElementById('int-summary-feedback').textContent = 'Loi: '+ err.message;
@@ -213,11 +213,11 @@
  var container = document.getElementById('int-messages');
  if (!container) return;
  var div = document.createElement('div');
- div.className = 'int-msg int-msg-'+ (type || role);
+ div.className = ' int-msg int-msg-'+ (type || role);
 
  var avatar = '';
- if (role === 'user') avatar = '<div class="int-avatar int-avatar-user"><div>';
- else if (role === 'ai'|| role === 'ai-feedback') avatar = '<div class="int-avatar int-avatar-ai"><div>';
+ if (role === 'user') avatar = '<div class=" int-avatar int-avatar-user"><div>';
+ else if (role === 'ai'|| role === 'ai-feedback') avatar = '<div class=" int-avatar int-avatar-ai"><div>';
 
  div.innerHTML = avatar + '<div class="int-bubble">'+ content + '</div>';
  container.appendChild(div);
@@ -230,8 +230,8 @@
  var existing = container.querySelector('.int-loading');
  if (existing) return;
  var div = document.createElement('div');
- div.className = 'int-msg int-msg-ai int-loading';
- div.innerHTML = '<div class="int-avatar int-avatar-ai"><div><div class="int-bubble"><span class="ai-chat-dots"><span><span><span><span><span><span><span><div>';
+ div.className = ' int-msg int-msg-ai int-loading';
+ div.innerHTML = '<div class=" int-avatar int-avatar-ai"><div><div class="int-bubble"><span class="ai-chat-dots"><span><span><span><span><span><span><span><div>';
  container.appendChild(div);
  container.scrollTop = container.scrollHeight;
  }
@@ -301,8 +301,8 @@
 
  window.clCopyInterviewResult = function() {
  var text = '=== KET QUA PHONG VAN ===\n';
- text += 'Diem tong: '+ (document.getElementById('int-summary-score').textContent || '?') + '/10\n\n';
- text += 'Nhan xet: '+ (document.getElementById('int-summary-feedback').textContent || '') + '\n\n';
+ text += ' Diem tong: '+ (document.getElementById('int-summary-score').textContent || '?') + '/10\n\n';
+ text += ' Nhan xet: '+ (document.getElementById('int-summary-feedback').textContent || '') + '\n\n';
  text += '=== NOI DUNG PHONG VAN ===\n';
  var msgs = document.querySelectorAll('#int-messages .int-msg');
  msgs.forEach(function(msg) {
@@ -314,7 +314,7 @@
  }
  });
  navigator.clipboard.writeText(text).then(function() {
- if (typeof toast === 'function') toast('Da copy ket qua!');
+ if (typeof toast === 'function') toast(' Da copy ket qua!');
  });
  };
 

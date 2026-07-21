@@ -10,8 +10,8 @@
  --text-muted: #64748b;
  --accent: #2563eb;
  --accent-soft: #dbeafe;
- --font: 'Be Vietnam Pro', sans-serif;
- --font-kr: 'Noto Sans KR', sans-serif;
+ --font: ' Be Vietnam Pro', sans-serif;
+ --font-kr: ' Noto Sans KR', sans-serif;
  --sidebar-width: 248px;
 }
 
@@ -272,7 +272,7 @@ body {
 .summary-table th, .summary-table td { padding: 0.4rem 0.5rem; border: 1px solid var(--border, #e0e0e0); text-align: left; }
 .summary-table th { background: var(--bg-alt, #f5f5f5); font-weight: 600; }
 .summary-table tr:nth-child(even) { background: #fafafa; }
-.summary-table .korean { font-family:"Noto Sans KR", sans-serif; }
+.summary-table .korean { font-family:" Noto Sans KR", sans-serif; }
 
 .empty { padding: 3rem; text-align: center; color: var(--text-muted); }
 
@@ -3579,7 +3579,7 @@ html {
  padding: 0;
  }
 
- /* Hide main nav tabs in sidebar on mobile — they're in .mobile-tab-bar now */
+ /* Hide main nav tabs in sidebar on mobile — they' re in .mobile-tab-bar now */
  /* Only hide DIRECT children of .tabs-inner, not submenu items */
  .app-sidebar .tabs-inner >.tab-btn[data-school],
  .app-sidebar .tabs-inner >.sidebar-divider {
@@ -3960,7 +3960,7 @@ html {
  margin-top: 0.15rem;
  color: #64748b;
  font-size: 0.88rem;
- font-family: 'Noto Sans KR', sans-serif;
+ font-family: ' Noto Sans KR', sans-serif;
 }
 
 .app-school-meta {
