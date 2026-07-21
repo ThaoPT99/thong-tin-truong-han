@@ -36,7 +36,7 @@ function parseQuickProfile(text) {
   else if (q.indexOf('sejong') !== -1) profile.korean = 'sejong2b';
 
   // Visa fail
-  if (q.indexOf('truot visa') !== -1 || q.indexOf('truot') !== -1 || q.indexOf('fail') !== -1) profile.visaFail = 'yes';
+  if (q.indexOf('truot visa') !== -1 || q.indexOf('truot') !== -1 || q.indexOf('trượt') !== -1 || q.indexOf('fail') !== -1) profile.visaFail = 'yes';
 
   // Region
   if (q.indexOf('seoul') !== -1) profile.region = 'seoul';
@@ -45,17 +45,17 @@ function parseQuickProfile(text) {
   else if (q.indexOf('gwangju') !== -1) profile.region = 'gwangju';
 
   // Budget
-  if (q.indexOf('tiet kiem') !== -1 || q.indexOf('re') !== -1 || q.indexOf('thap') !== -1) profile.budget = 'low';
+  if (q.indexOf('tiet kiem') !== -1 || q.indexOf('tiết kiệm') !== -1 || q.indexOf('re') !== -1 || q.indexOf('rẻ') !== -1 || q.indexOf('thấp') !== -1 || q.indexOf('thap') !== -1) profile.budget = 'low';
   else if (q.indexOf('cao') !== -1 || q.indexOf('khong ngan') !== -1) profile.budget = 'high';
 
   // Priorities
   const prios = [];
   if (q.indexOf('visa') !== -1) prios.push('visa');
   if (q.indexOf('viec lam') !== -1 || q.indexOf('job') !== -1) prios.push('job');
-  if (q.indexOf('chi phi') !== -1 || q.indexOf('cost') !== -1) prios.push('cost');
+  if (q.indexOf('chi phi') !== -1 || q.indexOf('chi phí') !== -1 || q.indexOf('cost') !== -1) prios.push('cost');
   if (q.indexOf('e7') !== -1) prios.push('e7');
-  if (q.indexOf('hoc it') !== -1) prios.push('low-study');
-  if (q.indexOf('uy tin') !== -1) prios.push('prestige');
+  if (q.indexOf('hoc it') !== -1 || q.indexOf('học ít') !== -1) prios.push('low-study');
+  if (q.indexOf('uy tin') !== -1 || q.indexOf('uy tín') !== -1) prios.push('prestige');
   if (prios.length > 0) profile.priorities = prios;
 
   return profile;
