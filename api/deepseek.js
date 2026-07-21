@@ -7,6 +7,50 @@ const http = require('http');
 const { KB_FOR_CHAT, KB_FOR_STUDY_PLAN, KB_FOR_GAP, KB_FOR_REJECTION } = require('../lib/knowledge-base');
 const { getDeepSeekKey, callDeepSeek, getBotToken, verifyTelegramWebhook, escapeHtmlTelegram } = require('../lib/ai/common');
 
+// ─── Helper: Tìm case tương tự từ Case DB (Phase 4: Learning Agent) ───
+async function fetchSimilarCases(profile) {
+  try {
+    const { visaType, gender, age, gpa, korean, visaFail } = profile || {};
+    // Build query: ưu tiên case đã confirm, cùng visa type, có điểm tương đồng
+    let matchConditions = 0;
+    if (visaType) matchConditions++;
+    if (gender) matchConditions++;
+    if (korean && korean !== 'none') matchConditions++;
+    if (visaFail === 'yes') matchConditions++;
+
+    let query = supabase
+      .from('advisor_cases')
+      .select('student_profile, visa_type, result, top_schools, lessons_learned, notes, created_at')
+      .not('result', 'eq', 'pending')
+      .order('created_at', { ascending: false })
+      .limit(5);
+
+    const { data } = await query;
+    if (!data || data.length === 0) return [];
+
+    // Score similarity client-side
+    return data
+      .map(function(c) {
+        var p = c.student_profile || {};
+        var sim = 0;
+        if (p.visaType === visaType) sim += 3;
+        if (p.gender === gender) sim += 2;
+        if (p.korean === korean) sim += 2;
+        if (Math.abs((p.age || 0) - (age || 0)) <= 2) sim += 1;
+        if (Math.abs((p.gpa || 0) - (gpa || 0)) <= 0.5) sim += 1;
+        if (p.visaFail === visaFail) sim += 2;
+        return { case: c, similarity: sim };
+      })
+      .filter(function(c) { return c.similarity >= 3; })
+      .sort(function(a, b) { return b.similarity - a.similarity; })
+      .slice(0, 3)
+      .map(function(c) { return c.case; });
+  } catch (e) {
+    console.error('fetchSimilarCases error:', e.message);
+    return [];
+  }
+}
+
 // ─── Action: Advisor — CÁ NHÂN HOÁ theo visa type ───
 async function handleAdvisor(req, res) {
   const apiKey = getDeepSeekKey();
@@ -17,6 +61,9 @@ async function handleAdvisor(req, res) {
   const profile = req.body || {};
   const { gender, age, gpa, absences, korean, visaFail, region, budget, priorities, visaType } = profile;
   const vt = visaType || 'D2-6';
+
+  // ─── Fetch similar past cases (Learning Agent) ───
+  const similarCases = await fetchSimilarCases(profile);
 
   // ─── Filter schools by visa_type ───
   let schoolsQuery = supabase.from('schools').select('*').order('slug');
@@ -60,12 +107,63 @@ async function handleAdvisor(req, res) {
   const systemPrompt = `Bạn là chuyên gia tư vấn du học Hàn Quốc, chuyên về ${visaLabel}. Làm việc cho một trung tâm tư vấn du học.\n\nDữ liệu ${schools.length} trường Hàn Quốc đang tuyển sinh kỳ này (${visaLabel}):\n\n${schoolTexts}\n\nNHIỆM VỤ:\nPhân tích hồ sơ học sinh và đề xuất Top 3 trường phù hợp nhất.\n\nYÊU CẦU TRẢ LỜI:\n1. **Top 3 trường phù hợp nhất** kèm số % phù hợp\n2. Với mỗi trường, nêu:\n   - **Lý do phù hợp** (2-3 ý, dựa trên hồ sơ thực tế)\n   - **Rủi ro cần kiểm tra** (nếu có)\n3. Kết luận ngắn: trường nào nên ưu tiên nhất\n\nQUY TẮC:\n- Trả lời bằng tiếng Việt, ngắn gọn, dễ hiểu\n- KHÔNG thêm thông tin không có trong dữ liệu\n- Nếu hồ sơ có vấn đề (tuổi cao, GPA thấp, trượt visa) → cảnh báo rõ\n- Ưu tiên trường phù hợp với: khu vực, giới tính, học lực, ngân sách`;
 
   const priorityText = (priorities && priorities.length) ? `Ưu tiên: ${priorities.join(', ')}.` : '';
-  const userMessage = `Phân tích hồ sơ học sinh sau (${visaLabel}):\n- Giới tính: ${gender || 'Không rõ'}\n- Tuổi: ${age || 'Không rõ'}\n- GPA: ${gpa || 'Không rõ'}\n- Số buổi nghỉ: ${absences || 'Không rõ'}\n- Tiếng Hàn: ${korean || 'Chưa có'}\n- Đã từng trượt visa: ${visaFail === 'yes' ? 'Có' : 'Không'}\n- Khu vực mong muốn: ${region || 'Không ưu tiên'}\n- Ngân sách: ${budget || 'Trung bình'}\n${priorityText}`;
+
+  // ─── Thêm case tương tự vào prompt (RAG từ Case DB) ───
+  let caseContext = '';
+  if (similarCases.length > 0) {
+    caseContext = '\n\n=== CASE TƯƠNG TỰ (KẾT QUẢ THỰC TẾ) ===';
+    similarCases.forEach(function(c, i) {
+      var p = c.student_profile || {};
+      var schools = (c.top_schools || []).slice(0, 3).map(function(s) { return s.name || ''; }).join(', ');
+      var lessons = (c.lessons_learned || []).length ? 'Bài học: ' + c.lessons_learned.join('; ') : '';
+      caseContext += '\nCase ' + (i + 1) + ' (KQ: ' + (c.result === 'approved' ? 'ĐÃ ĐỖ VISA' : c.result === 'rejected' ? 'TRƯỢT VISA' : c.result || 'Unknown') + '):';
+      caseContext += '\n  • Hồ sơ: ' + (p.gender === 'female' ? 'Nữ' : 'Nam') + ', ' + (p.age || '?') + 't, GPA ' + (p.gpa || '?') + ', Tiếng Hàn: ' + (p.korean || '?') + (p.visaFail === 'yes' ? ', ĐÃ trượt visa' : '');
+      caseContext += '\n  • Trường đề xuất: ' + (schools || 'Không rõ');
+      caseContext += '\n  • Ghi chú: ' + (c.notes || 'Không có');
+      if (lessons) caseContext += '\n  • ' + lessons;
+    });
+    caseContext += '\n\nLƯU Ý: Dùng các case trên THAM KHẢO để đưa ra lời khuyên chính xác hơn. Đây là kết quả thực tế từ các hồ sơ tương tự.';
+  }
+
+  const userMessage = `Phân tích hồ sơ học sinh sau (${visaLabel}):\n- Giới tính: ${gender || 'Không rõ'}\n- Tuổi: ${age || 'Không rõ'}\n- GPA: ${gpa || 'Không rõ'}\n- Số buổi nghỉ: ${absences || 'Không rõ'}\n- Tiếng Hàn: ${korean || 'Chưa có'}\n- Đã từng trượt visa: ${visaFail === 'yes' ? 'Có' : 'Không'}\n- Khu vực mong muốn: ${region || 'Không ưu tiên'}\n- Ngân sách: ${budget || 'Trung bình'}\n${priorityText}${caseContext}`;
 
   const advice = await callDeepSeek(
     [{ role: 'system', content: systemPrompt }, { role: 'user', content: userMessage }],
     { temperature: 0.3, maxTokens: 2000, timeout: 30000 }
   );
+
+  // ─── Save case to Case DB (Phase 4: Learning Agent) ───
+  if (advice) {
+    try {
+      // Parse top schools from advice (simple heuristic: find school names)
+      const topSchoolIds = [];
+      const topSchoolNames = (advice.match(/\*\*\d+\.\s*([^*]+)/g) || [])
+        .map(function(m) { return m.replace(/^\*\*\d+\.\s*/, '').split('—')[0].trim(); })
+        .filter(Boolean)
+        .slice(0, 3);
+
+      // Build top_schools array
+      var schoolsList = topSchoolNames.map(function(name, idx) {
+        return { name: name, rank: idx + 1, score: null, level: null };
+      });
+
+      await supabase.from('advisor_cases').insert({
+        student_name: req.body.studentName || '',
+        student_phone: req.body.studentPhone || '',
+        student_profile: profile,
+        visa_type: vt,
+        top_schools: schoolsList,
+        ai_advice: advice.substring(0, 3000), // Giới hạn độ dài
+        result: 'pending',
+        tags: profile.visaFail === 'yes' ? ['visa_fail'] : (profile.gpa && profile.gpa < 5.0 ? ['low_gpa'] : []),
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      });
+    } catch (caseErr) {
+      // Silent fail — không để lỗi save case ảnh hưởng response
+      console.error('Save advisor case error:', caseErr.message);
+    }
+  }
 
   return res.json({ success: true, advice: advice || '❌ Không nhận được phản hồi từ DeepSeek.' });
 }

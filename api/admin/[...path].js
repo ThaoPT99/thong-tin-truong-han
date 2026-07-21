@@ -1,6 +1,7 @@
 // /api/admin/[...path].js — Catch-all: handles ALL /api/admin/* routes
 // Consolidates 7 individual handlers into 1 function to stay under Vercel Hobby's 12-function limit.
 const accessControl = require('../../lib/admin/access-control');
+const cases = require('../../lib/admin/cases');
 const checklist = require('../../lib/admin/checklist');
 const importHandler = require('../../lib/admin/import');
 const schools = require('../../lib/admin/schools');
@@ -23,6 +24,8 @@ module.exports = async (req, res) => {
     case 'access-logs':
     case 'access-export':
       return accessControl(req, res);
+    case 'cases':
+      return cases(req, res);
     case 'checklist':
       return checklist(req, res);
     case 'import':

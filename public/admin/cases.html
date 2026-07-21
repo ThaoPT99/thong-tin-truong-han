@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case Học sinh — Admin Thông Tin Trường Hàn</title>
+<link rel="stylesheet" href="admin.css">
+<style>
+.case-filters { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:16px; align-items:center; }
+.case-filters input, .case-filters select { min-height:2.45rem; padding:0.45rem 0.7rem; border:1px solid var(--gray-300); border-radius:8px; background:#fff; font:inherit; font-size:.88rem; }
+.case-filters input { flex:1; min-width:200px; }
+.case-filters select { min-width:130px; }
+
+.case-stats { display:grid; grid-template-columns:repeat(auto-fit, minmax(120px,1fr)); gap:10px; margin-bottom:16px; }
+.stat-box { padding:12px; border-radius:8px; text-align:center; background:#fff; border:1px solid var(--gray-200); }
+.stat-box .num { font-size:1.6rem; font-weight:800; color:var(--primary); line-height:1.1; }
+.stat-box .label { font-size:.78rem; color:var(--gray-500); margin-top:2px; }
+.stat-box.pending { border-left:3px solid #f59e0b; }
+.stat-box.approved { border-left:3px solid #10b981; }
+.stat-box.rejected { border-left:3px solid #ef4444; }
+.stat-box.flagged { border-left:3px solid #8b5cf6; }
+
+.case-grid { display:grid; gap:10px; }
+.case-card { padding:14px 16px; border:1px solid var(--gray-200); border-radius:10px; background:#fff; cursor:pointer; transition:border-color .15s; }
+.case-card:hover { border-color:var(--primary); }
+.case-card .c-top { display:flex; justify-content:space-between; align-items:flex-start; gap:8px; }
+.case-card .c-name { font-weight:700; color:var(--gray-800); font-size:.95rem; }
+.case-card .c-visa { display:inline-block; padding:1px 7px; border-radius:4px; font-size:.75rem; font-weight:600; background:#dbeafe; color:#1d4ed8; }
+.case-card .c-meta { color:var(--gray-500); font-size:.8rem; margin-top:3px; }
+.case-card .c-meta span+span::before { content:" • "; }
+.case-card .c-tags { display:flex; flex-wrap:wrap; gap:4px; margin-top:6px; }
+.case-card .c-tag { padding:2px 7px; border-radius:4px; font-size:.72rem; background:var(--gray-100); color:var(--gray-600); }
+.case-card .c-schools { font-size:.8rem; color:var(--gray-400); margin-top:4px; }
+.case-result { display:inline-block; padding:2px 10px; border-radius:999px; font-size:.75rem; font-weight:700; white-space:nowrap; }
+.result-pending { background:#fef3c7; color:#92400e; }
+.result-approved { background:#d1fae5; color:#065f46; }
+.result-rejected { background:#fee2e2; color:#991b1b; }
+.result-other { background:#e0e7ff; color:#3730a3; }
+
+.modal-form { display:grid; gap:12px; }
+.modal-form .form-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.modal-form .form-group { display:flex; flex-direction:column; gap:3px; }
+.modal-form .form-group label { font-size:.82rem; font-weight:600; color:var(--gray-600); }
+.modal-form input, .modal-form select, .modal-form textarea { min-height:2.4rem; padding:0.45rem 0.7rem; border:1px solid var(--gray-300); border-radius:8px; font:inherit; font-size:.88rem; }
+.modal-form textarea { min-height:60px; resize:vertical; }
+.modal-form .full-width { grid-column:1/-1; }
+.modal-box { max-width:680px; }
+
+.profile-view { background:var(--off-white); padding:10px 12px; border-radius:6px; font-size:.85rem; line-height:1.55; }
+.profile-view .pv-row { display:flex; gap:8px; padding:2px 0; }
+.profile-view .pv-label { font-weight:600; color:var(--gray-500); min-width:100px; }
+.profile-view .pv-value { color:var(--gray-800); }
+
+.school-chip { display:inline-block; padding:2px 8px; border-radius:4px; font-size:.78rem; background:#e0e7ff; color:#3730a3; margin:2px; }
+
+.lessons-input { display:flex; flex-wrap:wrap; gap:4px; }
+.lesson-tag { display:inline-flex; align-items:center; gap:4px; padding:3px 8px; border-radius:4px; font-size:.78rem; background:#f3f0ff; color:#6d28d9; }
+.lesson-tag .remove { cursor:pointer; font-weight:700; color:#991b1b; font-size:.7rem; }
+
+.result-badge-group { display:flex; gap:6px; }
+.result-badge { padding:6px 14px; border-radius:8px; font-weight:700; font-size:.85rem; cursor:pointer; border:2px solid var(--gray-300); background:#fff; transition:.1s; }
+.result-badge:hover { border-color:var(--primary); }
+.result-badge.selected-approved { border-color:#10b981; background:#d1fae5; color:#065f46; }
+.result-badge.selected-rejected { border-color:#ef4444; background:#fee2e2; color:#991b1b; }
+.result-badge.selected-other { border-color:#6366f1; background:#e0e7ff; color:#3730a3; }
+
+.ai-advice-box { background:#eff6ff; border:1px solid #dbeafe; border-radius:6px; padding:10px 12px; font-size:.82rem; line-height:1.55; white-space:pre-wrap; max-height:200px; overflow-y:auto; }
+
+.empty-state { text-align:center; padding:40px 20px; color:var(--gray-400); }
+.loading-state { text-align:center; padding:40px; color:var(--gray-400); }
+.modal-overlay { z-index:999; }
+</style>
+</head>
+<body>
+<script src="admin.js"></script>
+<script>checkAuth();</script>
+
+<div class="admin-layout">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h2>🏫 Trường Hàn</h2>
+      <div class="sub">Quản lý dữ liệu</div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html" class="role-director">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+        Dashboard
+      </a>
+      <a href="kpi.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        KPI Sale
+      </a>
+      <a href="editor.html?mode=new" class="role-director">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Thêm trường
+      </a>
+      <a href="students.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        Học sinh
+      </a>
+      <a href="applications.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        Đơn đăng ký
+      </a>
+      <a href="cases.html" class="active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        Case Tư vấn
+      </a>
+      <a href="checklist.html" class="role-director">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        Checklist Visa
+      </a>
+      <a href="semester.html" class="role-director">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Kỳ tuyển sinh
+      </a>
+      <a href="import.html" class="role-director">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Import Excel
+      </a>
+      <a href="users.html" class="role-director">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        Tài khoản
+      </a>
+      <a href="access-control.html" class="role-director">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg>
+        Quản lý Truy cập
+      </a>
+      <a href="analytics.html" class="role-director">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+        Analytics
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div id="sidebar-user"></div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="top-bar">
+      <h1>🧠 Case Tư vấn</h1>
+      <div class="user-info">
+        <span id="user-display"></span>
+        <button class="btn btn-outline btn-sm" onclick="logout()">Đăng xuất</button>
+      </div>
+    </div>
+
+    <div class="content-area">
+      <!-- Stats -->
+      <div class="case-stats" id="stats-container">
+        <div class="stat-box"><div class="num" id="stat-total">—</div><div class="label">Tổng case</div></div>
+        <div class="stat-box pending"><div class="num" id="stat-pending">—</div><div class="label">Chờ duyệt</div></div>
+        <div class="stat-box approved"><div class="num" id="stat-approved">—</div><div class="label">Đã đỗ</div></div>
+        <div class="stat-box rejected"><div class="num" id="stat-rejected">—</div><div class="label">Trượt</div></div>
+        <div class="stat-box flagged"><div class="num" id="stat-flagged">—</div><div class="label">Đánh dấu</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Danh sách Case</h3>
+          <div class="toolbar">
+            <div class="case-filters">
+              <input type="text" id="search-input" placeholder="Tìm tên học sinh..." oninput="applyFilters()">
+              <select id="result-filter" onchange="applyFilters()">
+                <option value="">Tất cả kết quả</option>
+                <option value="pending">Chờ duyệt</option>
+                <option value="approved">Đã đỗ</option>
+                <option value="rejected">Trượt</option>
+                <option value="other">Khác</option>
+              </select>
+              <select id="visa-filter" onchange="applyFilters()">
+                <option value="">Tất cả visa</option>
+                <option value="D2-6">D2-6</option>
+                <option value="D4-1">D4-1</option>
+              </select>
+              <label style="display:flex;align-items:center;gap:4px;font-size:.82rem;cursor:pointer;">
+                <input type="checkbox" id="flagged-filter" onchange="applyFilters()"> ⚑ Đã gắn cờ
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div id="case-list" class="case-grid">
+            <div class="loading-state"><div class="spinner"></div> Đang tải...</div>
+          </div>
+          <div id="case-empty" class="empty-state" style="display:none">
+            <p>Không tìm thấy case nào.</p>
+          </div>
+
+          <!-- Pagination -->
+          <div id="pagination" style="display:flex;justify-content:center;gap:5px;margin-top:16px;"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Case detail modal -->
+<div class="modal-overlay" id="case-modal">
+  <div class="modal-box">
+    <h3 id="modal-title">Chi tiết Case</h3>
+    <div class="modal-form" id="case-form">
+      <!-- Thông tin cơ bản -->
+      <div class="form-row">
+        <div class="form-group">
+          <label>Tên học sinh</label>
+          <div id="cd-student-name" style="font-weight:600;font-size:.95rem;">—</div>
+        </div>
+        <div class="form-group">
+          <label>SĐT</label>
+          <div id="cd-student-phone" style="color:var(--gray-500);">—</div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Loại visa</label>
+          <div><span id="cd-visa-type" class="c-visa" style="display:inline-block;padding:2px 8px;border-radius:4px;font-size:.8rem;font-weight:600;background:#dbeafe;color:#1d4ed8;">—</span></div>
+        </div>
+        <div class="form-group">
+          <label>Ngày tạo</label>
+          <div id="cd-created-at" style="color:var(--gray-500);font-size:.85rem;">—</div>
+        </div>
+      </div>
+
+      <!-- Profile -->
+      <div class="form-group full-width">
+        <label>📋 Hồ sơ học sinh</label>
+        <div id="cd-profile" class="profile-view">—</div>
+      </div>
+
+      <!-- Top schools -->
+      <div class="form-group full-width">
+        <label>🏫 Trường đề xuất (Top 3)</label>
+        <div id="cd-top-schools" style="display:flex;flex-wrap:wrap;gap:4px;">—</div>
+      </div>
+
+      <!-- AI Advice -->
+      <div class="form-group full-width">
+        <label>🤖 Phân tích AI</label>
+        <div id="cd-ai-advice" class="ai-advice-box">—</div>
+      </div>
+
+      <!-- Tags -->
+      <div class="form-group full-width">
+        <label>🏷️ Tags</label>
+        <div id="cd-tags" class="case-card c-tags">—</div>
+      </div>
+
+      <hr style="border:none;border-top:1px solid var(--gray-200);margin:4px 0;">
+
+      <!-- Xác nhận kết quả -->
+      <div class="form-group full-width">
+        <label>✅ Kết quả thực tế</label>
+        <div class="result-badge-group" id="result-group">
+          <div class="result-badge" data-result="approved" onclick="selectResult('approved')">✅ Đã đỗ visa</div>
+          <div class="result-badge" data-result="rejected" onclick="selectResult('rejected')">❌ Trượt visa</div>
+          <div class="result-badge" data-result="other" onclick="selectResult('other')">🔄 Khác</div>
+        </div>
+      </div>
+
+      <!-- Lessons learned -->
+      <div class="form-group full-width">
+        <label>📚 Bài học rút ra</label>
+        <div id="lessons-container" class="lessons-input">
+          <input type="text" id="lesson-input" placeholder="Gõ bài học và nhấn Enter..." style="min-height:2.2rem;font-size:.85rem;flex:1;min-width:150px;">
+        </div>
+        <div id="lessons-list" style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;"></div>
+      </div>
+
+      <!-- Notes -->
+      <div class="form-group full-width">
+        <label>📝 Ghi chú của chuyên viên</label>
+        <textarea id="cd-notes" placeholder="Nhận xét, lưu ý về case này..." style="min-height:70px;"></textarea>
+      </div>
+
+      <!-- Flag -->
+      <div class="form-group full-width">
+        <label style="display:flex;align-items:center;gap:6px;">
+          <input type="checkbox" id="cd-flagged"> ⚑ Đánh dấu case đặc biệt cần xem lại
+        </label>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal()">Đóng</button>
+      <button class="btn btn-primary" id="save-case-btn" onclick="saveCase()">💾 Lưu kết quả</button>
+      <span id="save-status" style="color:var(--gray-400);font-size:12px;align-self:center;"></span>
+    </div>
+  </div>
+</div>
+
+<script>
+let cases = [];
+let currentPage = 1;
+let totalPages = 1;
+let editingId = null;
+let selectedResult = null;
+let lessons = [];
+
+const user = getUser();
+if (user) {
+  document.getElementById('user-display').textContent = user.displayName || user.email;
+  document.getElementById('sidebar-user').textContent = user.email;
+}
+
+const RESULT_LABELS = { pending: 'Chờ duyệt', approved: 'Đã đỗ visa', rejected: 'Trượt visa', other: 'Khác' };
+const VISA_LABELS = { 'D2-6': 'D2-6', 'D4-1': 'D4-1' };
+
+async function loadStats() {
+  try {
+    const res = await api('GET', '/admin/cases?action=stats');
+    const s = res.data;
+    document.getElementById('stat-total').textContent = s.total;
+    document.getElementById('stat-pending').textContent = s.pending;
+    document.getElementById('stat-approved').textContent = s.approved;
+    document.getElementById('stat-rejected').textContent = s.rejected;
+    document.getElementById('stat-flagged').textContent = s.flagged;
+  } catch (e) {}
+}
+
+async function loadCases(page) {
+  page = page || currentPage;
+  const result = document.getElementById('result-filter').value;
+  const visa = document.getElementById('visa-filter').value;
+  const flagged = document.getElementById('flagged-filter').checked ? 'true' : '';
+  const search = document.getElementById('search-input').value.trim();
+
+  let url = '/admin/cases?page=' + page + '&limit=20';
+  if (result) url += '&result=' + encodeURIComponent(result);
+  if (visa) url += '&visa_type=' + encodeURIComponent(visa);
+  if (flagged) url += '&flagged=true';
+  if (search) url += '&search=' + encodeURIComponent(search);
+
+  try {
+    const res = await api('GET', url);
+    cases = res.data || [];
+    currentPage = res.page || 1;
+    totalPages = res.totalPages || 1;
+    renderList();
+    renderPagination();
+  } catch (err) {
+    document.getElementById('case-list').innerHTML =
+      '<div class="empty-state" style="color:var(--danger)">Lỗi: ' + escapeHtml(err.message) + '</div>';
+  }
+}
+
+function renderList() {
+  const container = document.getElementById('case-list');
+  if (cases.length === 0) {
+    container.style.display = 'none';
+    document.getElementById('case-empty').style.display = 'block';
+    return;
+  }
+  container.style.display = 'grid';
+  document.getElementById('case-empty').style.display = 'none';
+
+  container.innerHTML = cases.map(function(c) {
+    var schoolsHtml = '';
+    if (c.top_schools && c.top_schools.length) {
+      schoolsHtml = '<div class="c-schools">🏫 ' + c.top_schools.slice(0, 3).map(function(s) {
+        return escapeHtml(s.name || '');
+      }).join(' → ') + '</div>';
+    }
+
+    var tagsHtml = '';
+    if (c.tags && c.tags.length) {
+      tagsHtml = '<div class="c-tags">' + c.tags.map(function(t) {
+        return '<span class="c-tag">' + escapeHtml(t) + '</span>';
+      }).join('') + '</div>';
+    }
+
+    var lessonsHtml = '';
+    if (c.lessons_learned && c.lessons_learned.length) {
+      lessonsHtml = '<div class="c-tags" style="margin-top:2px;">' + c.lessons_learned.map(function(l) {
+        return '<span class="c-tag" style="background:#f3f0ff;color:#6d28d9;">📚 ' + escapeHtml(l) + '</span>';
+      }).join('') + '</div>';
+    }
+
+    var flagIcon = c.is_flagged ? ' ⚑' : '';
+
+    return '<div class="case-card" onclick="showCaseDetail(\'' + c.id + '\')">' +
+      '<div class="c-top">' +
+        '<div>' +
+          '<div class="c-name">' + escapeHtml(c.student_name || 'Không tên') + flagIcon +
+            ' <span class="c-visa">' + escapeHtml(VISA_LABELS[c.visa_type] || c.visa_type) + '</span>' +
+          '</div>' +
+          '<div class="c-meta">' +
+            '<span>' + new Date(c.created_at).toLocaleDateString('vi-VN') + '</span>' +
+            (c.confirmed_at ? '<span>Xác nhận: ' + new Date(c.confirmed_at).toLocaleDateString('vi-VN') + '</span>' : '') +
+          '</div>' +
+          tagsHtml +
+          lessonsHtml +
+          schoolsHtml +
+        '</div>' +
+        '<div>' +
+          '<span class="case-result result-' + (c.result || 'pending') + '">' +
+            escapeHtml(RESULT_LABELS[c.result] || c.result) +
+          '</span>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function renderPagination() {
+  var container = document.getElementById('pagination');
+  if (totalPages <= 1) { container.innerHTML = ''; return; }
+
+  var html = '';
+  html += '<button class="btn btn-outline btn-sm" onclick="goPage(' + (currentPage - 1) + ')" ' +
+    (currentPage <= 1 ? 'disabled' : '') + '>‹ Trước</button>';
+
+  for (var i = 1; i <= totalPages; i++) {
+    if (i === currentPage) {
+      html += '<button class="btn btn-primary btn-sm" disabled>' + i + '</button>';
+    } else if (i === 1 || i === totalPages || Math.abs(i - currentPage) <= 2) {
+      html += '<button class="btn btn-outline btn-sm" onclick="goPage(' + i + ')">' + i + '</button>';
+    } else if (i === currentPage - 3 || i === currentPage + 3) {
+      html += '<span style="padding:0 4px;color:var(--gray-400);">...</span>';
+    }
+  }
+
+  html += '<button class="btn btn-outline btn-sm" onclick="goPage(' + (currentPage + 1) + ')" ' +
+    (currentPage >= totalPages ? 'disabled' : '') + '>Sau ›</button>';
+
+  container.innerHTML = html;
+}
+
+function goPage(page) {
+  if (page < 1 || page > totalPages) return;
+  loadCases(page);
+}
+
+function applyFilters() {
+  currentPage = 1;
+  loadCases(1);
+  loadStats();
+}
+
+// ─── Case Detail Modal ───
+async function showCaseDetail(id) {
+  editingId = id;
+  try {
+    var res = await api('GET', '/admin/cases?id=' + encodeURIComponent(id));
+    var c = res.data;
+    if (!c) { toast('Không tìm thấy case', 'error'); return; }
+
+    document.getElementById('modal-title').textContent = '✏️ Case: ' + escapeHtml(c.student_name || 'Không tên');
+    document.getElementById('cd-student-name').textContent = c.student_name || '—';
+    document.getElementById('cd-student-phone').textContent = c.student_phone || '—';
+    document.getElementById('cd-visa-type').textContent = VISA_LABELS[c.visa_type] || c.visa_type;
+    document.getElementById('cd-created-at').textContent = c.created_at ? new Date(c.created_at).toLocaleString('vi-VN') : '—';
+
+    // Profile
+    var profile = c.student_profile || {};
+    var profileHtml = '';
+    if (profile.gender) profileHtml += '<div class="pv-row"><span class="pv-label">Giới tính</span><span class="pv-value">' + (profile.gender === 'female' ? 'Nữ' : 'Nam') + '</span></div>';
+    if (profile.age) profileHtml += '<div class="pv-row"><span class="pv-label">Tuổi</span><span class="pv-value">' + profile.age + '</span></div>';
+    if (profile.gpa) profileHtml += '<div class="pv-row"><span class="pv-label">GPA</span><span class="pv-value">' + profile.gpa + '</span></div>';
+    if (profile.absences) profileHtml += '<div class="pv-row"><span class="pv-label">Buổi nghỉ</span><span class="pv-value">' + profile.absences + '</span></div>';
+    if (profile.korean) profileHtml += '<div class="pv-row"><span class="pv-label">Tiếng Hàn</span><span class="pv-value">' + profile.korean + '</span></div>';
+    if (profile.visaFail) profileHtml += '<div class="pv-row"><span class="pv-label">Trượt visa</span><span class="pv-value">' + (profile.visaFail === 'yes' ? 'Có' : 'Không') + '</span></div>';
+    if (profile.region) profileHtml += '<div class="pv-row"><span class="pv-label">Khu vực</span><span class="pv-value">' + profile.region + '</span></div>';
+    if (profile.budget) profileHtml += '<div class="pv-row"><span class="pv-label">Ngân sách</span><span class="pv-value">' + profile.budget + '</span></div>';
+    if (profile.priorities && profile.priorities.length) profileHtml += '<div class="pv-row"><span class="pv-label">Ưu tiên</span><span class="pv-value">' + profile.priorities.join(', ') + '</span></div>';
+    document.getElementById('cd-profile').innerHTML = profileHtml || '<em style="color:var(--gray-400)">Không có dữ liệu</em>';
+
+    // Top schools
+    var schools = c.top_schools || [];
+    if (schools.length) {
+      document.getElementById('cd-top-schools').innerHTML = schools.map(function(s) {
+        return '<span class="school-chip">#' + (s.rank || '?') + ' ' + escapeHtml(s.name || '') + ' (' + (s.score || '?') + '%)</span>';
+      }).join(' ');
+    } else {
+      document.getElementById('cd-top-schools').innerHTML = '<em style="color:var(--gray-400)">Chưa có</em>';
+    }
+
+    // AI Advice
+    var adviceEl = document.getElementById('cd-ai-advice');
+    if (c.ai_advice) {
+      adviceEl.textContent = c.ai_advice;
+    } else {
+      adviceEl.innerHTML = '<em style="color:var(--gray-400)">Không có phân tích AI</em>';
+    }
+
+    // Tags
+    var tagsEl = document.getElementById('cd-tags');
+    if (c.tags && c.tags.length) {
+      tagsEl.innerHTML = c.tags.map(function(t) {
+        return '<span class="c-tag">' + escapeHtml(t) + '</span>';
+      }).join('');
+    } else {
+      tagsEl.innerHTML = '<em style="color:var(--gray-400)">Chưa có</em>';
+    }
+
+    // Result
+    selectedResult = c.result || 'pending';
+    highlightResult(selectedResult);
+
+    // Lessons
+    lessons = c.lessons_learned || [];
+    renderLessons();
+
+    // Notes
+    document.getElementById('cd-notes').value = c.notes || '';
+
+    // Flagged
+    document.getElementById('cd-flagged').checked = c.is_flagged || false;
+
+    document.getElementById('save-status').textContent = '';
+    document.getElementById('case-modal').classList.add('show');
+  } catch (err) {
+    toast('Lỗi: ' + err.message, 'error');
+  }
+}
+
+function selectResult(result) {
+  selectedResult = result;
+  highlightResult(result);
+}
+
+function highlightResult(result) {
+  document.querySelectorAll('.result-badge').forEach(function(el) {
+    el.className = 'result-badge';
+  });
+  var sel = document.querySelector('.result-badge[data-result="' + result + '"]');
+  if (sel) sel.classList.add('selected-' + result);
+}
+
+function renderLessons() {
+  var container = document.getElementById('lessons-list');
+  if (lessons.length === 0) {
+    container.innerHTML = '<em style="color:var(--gray-400);font-size:.82rem;">Chưa có bài học nào</em>';
+    return;
+  }
+  container.innerHTML = lessons.map(function(l, i) {
+    return '<span class="lesson-tag">📚 ' + escapeHtml(l) +
+      ' <span class="remove" onclick="removeLesson(' + i + ')">×</span></span>';
+  }).join('');
+}
+
+function addLesson() {
+  var input = document.getElementById('lesson-input');
+  var val = input.value.trim();
+  if (!val) return;
+  if (lessons.indexOf(val) !== -1) { input.value = ''; return; }
+  lessons.push(val);
+  renderLessons();
+  input.value = '';
+}
+
+document.getElementById('lesson-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') { e.preventDefault(); addLesson(); }
+});
+
+function removeLesson(index) {
+  lessons.splice(index, 1);
+  renderLessons();
+}
+
+async function saveCase() {
+  if (!editingId) return;
+  var data = {
+    result: selectedResult,
+    notes: document.getElementById('cd-notes').value.trim(),
+    lessonsLearned: lessons,
+    isFlagged: document.getElementById('cd-flagged').checked,
+  };
+
+  try {
+    var btn = document.getElementById('save-case-btn');
+    btn.disabled = true;
+    btn.textContent = '⏳ Đang lưu...';
+    await api('PUT', '/admin/cases?id=' + encodeURIComponent(editingId), data);
+    toast('✅ Đã lưu case!', 'success');
+    document.getElementById('save-status').textContent = '✅ Đã lưu';
+    loadCases(currentPage);
+    loadStats();
+  } catch (err) {
+    toast('Lỗi: ' + err.message, 'error');
+  } finally {
+    var btn2 = document.getElementById('save-case-btn');
+    btn2.disabled = false;
+    btn2.textContent = '💾 Lưu kết quả';
+  }
+}
+
+function closeModal() {
+  document.getElementById('case-modal').classList.remove('show');
+}
+
+// Overlay click
+document.getElementById('case-modal').addEventListener('click', function(e) {
+  if (e.target === e.currentTarget) closeModal();
+});
+
+// Init
+loadCases(1);
+loadStats();
+</script>
+</body>
+</html>
