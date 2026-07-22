@@ -2028,6 +2028,15 @@ function showSchool(viewId) {
   if (viewId === "checklist") {
     hideAll();
     checklistEl.classList.remove("hidden");
+    // Yêu cầu đăng nhập để xem hồ sơ
+    var token = null;
+    try { token = localStorage.getItem('student_token'); } catch(e) {}
+    if (!token) {
+      checklistEl.innerHTML = '<div class="empty" style="padding:3rem 2rem;text-align:center"><p style="font-size:1.1rem;margin-bottom:1rem">Vui lòng đăng nhập để xem và quản lý hồ sơ của bạn.</p><button class="btn btn-primary" onclick="openAuthModal()">Đăng nhập ngay</button></div>';
+      // Auto mở modal login sau 300ms
+      setTimeout(function() { if (typeof openAuthModal === "function") openAuthModal(); }, 300);
+      return;
+    }
     if (typeof window.renderChecklistApp === "function") window.renderChecklistApp(checklistEl);
     else checklistEl.innerHTML = `<div class="empty"><p>Đang tải công cụ hồ sơ...</p></div>`;
     return;
