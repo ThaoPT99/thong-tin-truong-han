@@ -159,6 +159,9 @@
       case 'set_reminder': return renderReminderResult(data);
       case 'interview_simulator': return renderInterviewResult(data);
       case 'upload_document': return renderDocumentStatus(data);
+      case 'generate_study_plan': return renderStudyPlanDraft(data);
+      case 'get_advisor_history': return renderAdvisorHistory(data);
+      case 'check_deadlines': return renderDeadlines(data);
       default: return '';
     }
   }
@@ -419,6 +422,70 @@
     if (data.message) html += '<div style="color:#059669;font-size:12px;margin-top:4px">' + escapeHTML(data.message) + '</div>';
     html += '</div>';
     html += '<div style="text-align:center;margin-top:6px"><span style="color:#6b7280;font-size:11px">📌 Xem trong tab "📨 Gửi đơn"</span></div>';
+    html += '</div>';
+    return html;
+  }
+
+  // ─── Render study plan draft (for generate_study_plan) ───
+  function renderStudyPlanDraft(data) {
+    if (!data || data.error) return 'Xin loi, ' + escapeHTML(data.error || 'khong the tao Study Plan');
+    if (data.message && !data.draft) return escapeHTML(data.message);
+    var html = '<div style="background:#f0fdf4;border-radius:12px;padding:12px;margin:8px 0;font-size:13px;line-height:1.6">';
+    html += '<div style="font-weight:700;color:#059669;margin-bottom:6px;font-size:14px">Ban nhap Study Plan</div>';
+    html += '<div style="background:#fff;border-radius:8px;padding:12px;border:1px solid #bbf7d0;white-space:pre-wrap;color:#334155;font-size:12px">';
+    html += escapeHTML(data.draft || '') + '</div>';
+    if (data.message) html += '<div style="color:#6b7280;font-size:11px;margin-top:6px;font-style:italic">' + escapeHTML(data.message) + '</div>';
+    html += '</div>';
+    return html;
+  }
+
+  // ─── Render advisor history (for get_advisor_history) ───
+  function renderAdvisorHistory(data) {
+    if (!data || data.error) return 'Xin loi, ' + escapeHTML(data.error || 'khong the lay lich su');
+    if (data.message) return escapeHTML(data.message);
+    if (!data.cases || data.cases.length === 0) return 'Ban chua co lich su tu van.';
+    var html = '<div style="background:#f0f7ff;border-radius:12px;padding:12px;margin:8px 0;font-size:13px;line-height:1.5">';
+    html += '<div style="font-weight:700;color:#1a56db;margin-bottom:8px;font-size:14px">Lich su tu van</div>';
+    for (var i = 0; i < data.cases.length; i++) {
+      var c = data.cases[i];
+      var resultColors = { 'approved': '#059669', 'rejected': '#dc2626', 'pending': '#d97706', 'reviewing': '#2563eb' };
+      var color = resultColors[c.result] || '#6b7280';
+      html += '<div style="background:#fff;border-radius:8px;padding:10px 12px;margin-bottom:6px;border:1px solid #e5e7eb">';
+      html += '<div style="display:flex;justify-content:space-between;align-items:center">';
+      html += '<span style="font-weight:600;color:#111;font-size:12px">' + escapeHTML(c.visaType || 'Phan tich ho so') + '</span>';
+      html += '<span style="background:' + color + ';color:#fff;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:500">' + escapeHTML(c.result || 'pending') + '</span>';
+      html += '</div>';
+      if (c.schools) html += '<div style="color:#4b5563;font-size:11px;margin-top:2px">Truong: ' + escapeHTML(c.schools) + '</div>';
+      if (c.advicePreview) html += '<div style="color:#6b7280;font-size:11px;margin-top:2px">' + escapeHTML(c.advicePreview) + '...</div>';
+      if (c.createdAt) html += '<div style="color:#9ca3af;font-size:10px;margin-top:2px">' + new Date(c.createdAt).toLocaleDateString('vi-VN') + '</div>';
+      html += '</div>';
+    }
+    html += '</div>';
+    return html;
+  }
+
+  // ─── Render deadlines (for check_deadlines) ───
+  function renderDeadlines(data) {
+    if (!data || data.error) return 'Xin loi, ' + escapeHTML(data.error || 'khong the lay danh sach');
+    if (data.message) return escapeHTML(data.message);
+    if (!data.reminders || data.reminders.length === 0) return 'Ban chua co nhac nho nao.';
+    var html = '<div style="background:#fef9ef;border-radius:12px;padding:12px;margin:8px 0;font-size:13px;line-height:1.5">';
+    html += '<div style="font-weight:700;color:#d97706;margin-bottom:4px;font-size:14px">Han nop giay to</div>';
+    if (data.warnings) {
+      var warnColor = data.reminders.some(function(r) { return r.daysLeft < 0 && !r.completed; }) ? '#dc2626' : '#d97706';
+      html += '<div style="color:' + warnColor + ';font-weight:500;font-size:12px;margin-bottom:8px">' + escapeHTML(data.warnings) + '</div>';
+    }
+    for (var i = 0; i < data.reminders.length; i++) {
+      var r = data.reminders[i];
+      html += '<div style="display:flex;align-items:center;gap:8px;padding:6px 8px;background:#fff;border-radius:6px;margin-bottom:4px;border:1px solid #fde68a;' + (r.completed ? 'opacity:0.5' : '') + '">';
+      html += '<span style="width:8px;height:8px;border-radius:50%;background:' + (r.completed ? '#9ca3af' : r.statusColor || '#d97706') + ';flex-shrink:0"></span>';
+      html += '<div style="flex:1;min-width:0">';
+      html += '<div style="font-size:12px;color:#111;font-weight:500">' + escapeHTML(r.title || '') + '</div>';
+      html += '<div style="font-size:11px;color:' + (r.completed ? '#9ca3af' : r.statusColor || '#d97706') + '">' + escapeHTML(r.type || 'Khac') + ' - ' + escapeHTML(r.dueDate || '') + ' - ' + escapeHTML(r.statusText || '') + '</div>';
+      html += '</div>';
+      if (r.completed) html += '<span style="font-size:11px;color:#059669">Da xong</span>';
+      html += '</div>';
+    }
     html += '</div>';
     return html;
   }

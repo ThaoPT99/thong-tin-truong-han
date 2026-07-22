@@ -1218,6 +1218,145 @@ const STUDENT_TOOLS = {
     },
   },
 
+
+
+  generate_study_plan: {
+    description: 'Soan Study Plan cho hoc sinh dua tren ho so va cau tra loi cua ban',
+    params: {
+      type: { type: 'string', description: 'Loai: study_plan (mac dinh), gap_explanation, visa_rejection_explanation', required: false },
+      visaType: { type: 'string', description: 'D-4-1 hoac D2-6', required: false },
+    },
+    handler: async function(params, profile) {
+      if (!profile || !profile.fullName) return { error: 'Can co ho so hoc sinh de soan Study Plan. Hay nhap thong tin truoc.' };
+      try {
+        var vt = params.visaType || profile.visaType || 'D-4-1';
+        var type = params.type || 'study_plan';
+
+        // Build system prompt based on type & visaType — same logic as handleGenerateChecklist
+        var systemPrompt, userPrompt;
+
+        if (type === 'study_plan') {
+          var baseRules = 'QUY TẮC CHUNG:\n- Viết bằng tiếng Hàn nếu học sinh có chứng chỉ/đang học tiếng Hàn, nếu không thì viết bằng tiếng Anh\n- Chi tiết, cụ thể, có mốc thời gian rõ ràng\n- Cá nhân hoá theo thông tin học sinh\n- Tránh chung chung, phải thể hiện mục đích học thật\n- Kết thúc bằng cam kết tuân thủ luật và về nước đúng hạn\n- TUYỆT ĐỐI KHÔNG đề cập vấn đề tài chính trong Study Plan (tài chính là phần riêng của hồ sơ)';
+          var studyPlanPrompts = {
+            'D-4-1': 'Bạn là chuyên viên tư vấn du học Hàn Quốc với 10 năm kinh nghiệm. Viết Study Plan cho học sinh Việt Nam xin visa D-4-1 (học tiếng Hàn).\n\nMỤC TIÊU CỦA STUDY PLAN D-4-1:\n- Thể hiện động lực học tiếng Hàn mạnh mẽ: tại sao phải học tại Hàn Quốc?\n- Có mục tiêu TOPIK rõ ràng theo từng giai đoạn (VD: 6 tháng → TOPIK 2, 1 năm → TOPIK 3...)\n- Kế hoạch học tập cụ thể: mỗi ngày học mấy tiếng, phương pháp học gì?\n- KHÔNG tập trung vào ngành nghề hay nghiên cứu — đây là visa học tiếng\n- Sau khóa học sẽ về Việt Nam hoặc có dự định tương lai rõ ràng (không ở lại bất hợp pháp)\n- Độ dài: 500-700 từ\n\n' + baseRules,
+            'D-2': 'Bạn là chuyên viên tư vấn du học Hàn Quốc với 10 năm kinh nghiệm. Viết Study Plan cho học sinh Việt Nam xin visa D-2 (đại học chính quy).\n\nMỤC TIÊU CỦA STUDY PLAN D-2:\n- Thể hiện động lực học tập nghiêm túc: tại sao chọn Hàn Quốc để học đại học?\n- Chứng minh năng lực học thuật: GPA, chứng chỉ tiếng, kiến thức nền tảng\n- Lý do chọn ngành cụ thể, liên quan đến định hướng nghề nghiệp\n- Kế hoạch học tập chi tiết theo từng học kỳ (mục tiêu GPA, thực tập, ngoại khóa...)\n- Kế hoạch sau tốt nghiệp: về Việt Nam làm việc hoặc xin E7 (không ở lại bất hợp pháp)\n- Có thể đề cập mong muốn học lên cao học nếu phù hợp\n- Độ dài: 800-1200 từ\n\n' + baseRules,
+            'D4-to-D2': 'Bạn là chuyên viên tư vấn du học Hàn Quốc với 10 năm kinh nghiệm. Viết Study Plan cho học sinh Việt Nam đang học tiếng tại Hàn với visa D-4-1, muốn chuyển lên visa D-2 (chuyển đổi).\n\nMỤC TIÊU CỦA STUDY PLAN CHUYỂN ĐỔI:\n- Thể hiện sự tiến bộ trong quá trình học tiếng Hàn\n- Giải thích lý do chọn ngành học đại học cụ thể\n- Kế hoạch học tập chi tiết khi lên đại học\n- Chứng minh đủ năng lực tiếng Hàn để theo học đại học\n- Kế hoạch sau tốt nghiệp: về Việt Nam hoặc xin visa E7 (không ở lại bất hợp pháp)\n- Độ dài: 800-1000 từ\n\n' + baseRules,
+          };
+          systemPrompt = studyPlanPrompts[vt] || studyPlanPrompts['D-4-1'];
+          userPrompt = 'Viết Study Plan cho học sinh:\n- Họ tên: ' + (profile.fullName || 'Học sinh') + '\n- Giới tính: ' + (profile.gender || 'Không rõ') + '\n- GPA: ' + (profile.gpa || 'Không rõ') + '\n- Trình độ tiếng Hàn: ' + (profile.koreanLevel || 'Chưa có') + '\n- Học vấn: ' + (profile.educationLevel === 'university' ? 'Đại học' : 'THPT') + '\n- Năm tốt nghiệp: ' + (profile.graduationYear || 'Không rõ') + (profile.gapYears > 0 ? '\n- Khoảng trống: ' + profile.gapYears + ' năm' : '') + (profile.hasVisaRejection ? '\n- Đã từng trượt visa: Có' : '') + '\n- Visa: ' + vt + '\n\n' + (KB_FOR_STUDY_PLAN || '');
+        } else if (type === 'gap_explanation') {
+          systemPrompt = 'Bạn là chuyên viên tư vấn du học Hàn Quốc. Viết GIẢI TRÌNH KHOẢNG TRỐNG THỜI GIAN (Gap Year Explanation) cho học sinh Việt Nam.\n\nQUY TẮC:\n- Viết bằng tiếng Hàn hoặc tiếng Anh\n- Lý do gap phải hợp lý với hoàn cảnh: học thêm ngoại ngữ/kỹ năng, đi làm tích lũy kinh nghiệm, chờ đủ tuổi/điều kiện, lý do sức khoẻ cá nhân\n- TUYỆT ĐỐI KHÔNG viện lý do tài chính gia đình khó khăn\n- Thể hiện rằng thời gian gap là giai đoạn chuẩn bị cho việc du học\n- Nếu có đi làm, mô tả công việc đã làm và kinh nghiệm học được\n- Độ dài: 200-400 từ';
+          userPrompt = 'Viết giải trình khoảng trống thời gian cho học sinh:\n- Họ tên: ' + (profile.fullName || 'Học sinh') + '\n- Tốt nghiệp: ' + (profile.graduationYear || 'Không rõ') + '\n- Gap: ' + (profile.gapYears || 0) + ' năm\n- Đã đi làm: ' + (profile.hasWorkExperience ? 'Có' : 'Không') + (profile.hasWorkExperience && profile.workCompany ? '\n- Công ty: ' + profile.workCompany : '') + (profile.hasWorkExperience && profile.workPosition ? '\n- Vị trí: ' + profile.workPosition : '') + (profile.workDuration ? '\n- Thời gian làm: ' + profile.workDuration + ' năm' : '') + '\n- Trình độ tiếng Hàn: ' + (profile.koreanLevel || 'Chưa có') + '\n- Visa: ' + vt + '\n\n' + KB_FOR_GAP;
+        } else if (type === 'visa_rejection_explanation') {
+          systemPrompt = 'Bạn là chuyên viên tư vấn du học Hàn Quốc. Viết GIẢI TRÌNH LÝ DO TRƯỢT VISA cho học sinh Việt Nam.\n\nQUY TẮC:\n- Viết bằng tiếng Hàn hoặc tiếng Anh\n- Phân tích nguyên nhân trượt, thể hiện hiểu rõ vấn đề\n- Dựa vào lý do trượt cụ thể để suy luận cách khắc phục\n- TUYỆT ĐỐI KHÔNG dùng mẫu chung chung, phải cá nhân hoá\n- Cam kết hồ sơ lần này đã hoàn chỉnh hơn\n- Độ dài: 200-400 từ\n- Thể hiện sự chân thành và thiện chí';
+          userPrompt = 'Viết giải trình lý do trượt visa cho học sinh:\n- Họ tên: ' + (profile.fullName || 'Học sinh') + '\n- Lý do trượt: ' + (profile.rejectionReason || 'Không rõ nguyên nhân') + '\n- Visa: ' + vt + '\n\n' + KB_FOR_REJECTION;
+        } else {
+          return { error: 'Loai Study Plan khong hop le. Chi ho tro: study_plan, gap_explanation, visa_rejection_explanation.' };
+        }
+
+        var draft = await callDeepSeek(
+          [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: userPrompt }
+          ],
+          { temperature: 0.4, maxTokens: 1500, timeout: 30000 }
+        );
+
+        if (draft) {
+          return { type: 'study_plan_draft', draft: draft.substring(0, 3000), message: 'Day la ban nhap Study Plan cua ban. Ban co the yeu cau chinh sua hoac luu lai.' };
+        }
+        return { error: 'AI khong phan hoi. Vui long thu lai.' };
+      } catch (e) {
+        return { error: 'Loi ket noi AI: ' + e.message };
+      }
+    },
+  },
+
+  get_advisor_history: {
+    description: 'Xem lich su tu van AI truoc day (cac phan tich ho so da thuc hien)',
+    params: {
+      limit: { type: 'number', description: 'So luong ket qua toi da', required: false },
+    },
+    handler: async function(params, profile) {
+      if (!profile || !profile.email) return { error: 'Can dang nhap de xem lich su tu van.' };
+      // Look up phone from student_profiles by email, then query advisor_cases
+      var phone = profile.phone || '';
+      if (!phone) {
+        var { data: sp } = await supabase
+          .from('student_profiles')
+          .select('phone')
+          .eq('email', profile.email)
+          .maybeSingle();
+        if (sp && sp.phone) phone = sp.phone;
+      }
+      if (!phone) return { error: 'Khong tim thay so dien thoai lien ket voi tai khoan.' };
+      var { data: cases } = await supabase
+        .from('advisor_cases')
+        .select('id, student_name, visa_type, top_schools, result, ai_advice, created_at')
+        .eq('student_phone', phone)
+        .order('created_at', { ascending: false })
+        .limit(params.limit || 10);
+      if (!cases || cases.length === 0) {
+        return { message: 'Ban chua co lich su tu van AI nao. Hay dung cong cu Phan tich ho so truoc.' };
+      }
+      return {
+        type: 'advisor_history',
+        cases: cases.map(function(c) {
+          return {
+            id: c.id, studentName: c.student_name || 'Khong ro',
+            visaType: c.visa_type || 'Khong ro',
+            schools: (c.top_schools || []).slice(0, 3).map(function(s) { return s.name || ''; }).filter(Boolean).join(', '),
+            result: c.result || 'pending',
+            advicePreview: (c.ai_advice || '').substring(0, 200),
+            createdAt: c.created_at,
+          };
+        }),
+      };
+    },
+  },
+
+  check_deadlines: {
+    description: 'Xem cac han nop giay to sap toi va nhac nho con dang do',
+    params: {},
+    handler: async function(params, profile) {
+      if (!profile || !profile.email) return { error: 'Can dang nhap de xem han nop giay to.' };
+      var { data: sp } = await supabase.from('student_profiles').select('id').eq('email', profile.email).maybeSingle();
+      if (!sp) return { error: 'Khong tim thay tai khoan.' };
+      var { data: reminders } = await supabase
+        .from('reminders')
+        .select('id, title, description, due_date, reminder_type, is_completed')
+        .eq('student_id', sp.id)
+        .order('due_date', { ascending: true });
+      if (!reminders || reminders.length === 0) {
+        return { message: 'Ban chua co nhac nho nao. Hay tao nhac nho bang tool set_reminder.' };
+      }
+      var now = new Date();
+      var typeLabels = {
+        document: 'Giay to', submission: 'Nop ho so', interview: 'Phong van',
+        health_check: 'Suc khoe', visa_appointment: 'Hen visa', other: 'Khac',
+      };
+      var rows = reminders.map(function(r) {
+        var due = new Date(r.due_date);
+        var daysLeft = Math.ceil((due - now) / (1000 * 60 * 60 * 24));
+        var statusColor = daysLeft < 0 ? '#dc2626' : daysLeft <= 7 ? '#d97706' : '#059669';
+        var statusText = daysLeft < 0 ? 'Qua han!' : daysLeft <= 7 ? 'Sap den han' : 'Con ' + daysLeft + ' ngay';
+        return {
+          id: r.id, title: r.title, description: r.description || '',
+          dueDate: r.due_date, type: typeLabels[r.reminder_type] || r.reminder_type,
+          daysLeft: daysLeft, statusColor: statusColor, statusText: statusText,
+          completed: r.is_completed,
+        };
+      });
+      var overdue = rows.filter(function(r) { return r.daysLeft < 0 && !r.completed; }).length;
+      var upcoming = rows.filter(function(r) { return r.daysLeft >= 0 && r.daysLeft <= 7 && !r.completed; }).length;
+      return {
+        type: 'deadlines',
+        reminders: rows,
+        summary: 'Co ' + rows.length + ' nhac nho',
+        warnings: overdue > 0 ? (overdue + ' nhac nho qua han!') : (upcoming > 0 ? (upcoming + ' nhac nho sap den han trong 7 ngay') : 'Khong co nhac nho nao sap den han'),
+      };
+    },
+  },
   get_checklist: {
     description: 'Xem checklist giấy tờ và tiến độ hồ sơ hiện tại',
     params: {},
