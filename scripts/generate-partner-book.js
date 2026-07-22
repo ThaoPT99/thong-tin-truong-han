@@ -901,7 +901,7 @@ async function main() {
           <span class="bc-card-desc">So sánh trường, công cụ tư vấn, cập nhật mới nhất</span>
           <span class="bc-card-link">thongtintruonghan.vercel.app →</span>
         </a>
-        <a class="bc-card" href="https://zalo.me/g/1oq8ngti4pcbfmxdbe9g" target="_blank">
+        <a class="bc-card" href="https://zalo.me/g/4x7gts4riwvmxthrcaaq" target="_blank">
           <span class="bc-card-icon">💬</span>
           <span class="bc-card-title">Cộng đồng Zalo</span>
           <span class="bc-card-desc">Cập nhật tuyển sinh, catalog, tư vấn trực tiếp</span>

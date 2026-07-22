@@ -324,7 +324,7 @@ function buildSchoolHtml(school, semesterInfo) {
       </div>
       <p class="zalo-popup-hint">Quét mã QR bằng ứng dụng Zalo trên điện thoại</p>
       <div class="zalo-popup-actions">
-        <a href="https://zalo.me/g/1oq8ngti4pcbfmxdbe9g" target="_blank" rel="noopener noreferrer" class="zalo-popup-join">Tham gia nhóm Zalo</a>
+        <a href="https://zalo.me/g/4x7gts4riwvmxthrcaaq" target="_blank" rel="noopener noreferrer" class="zalo-popup-join">Tham gia nhóm Zalo</a>
         <button type="button" class="zalo-popup-later">Để sau (12 giờ)</button>
       </div>
     </div>
