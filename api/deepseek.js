@@ -1366,19 +1366,20 @@ const STUDENT_TOOLS = {
   },
 
   get_tool_logs: {
-    description: 'Xem lịch sử các công cụ đã dùng: tra cứu trường, so sánh, gửi đơn, nhắc nhở... (dùng khi học sinh hỏi "tôi đã tìm trường gì trước đây?" hoặc "cho xem lại lịch sử")',
+    description: 'Xem lịch sử các công cụ đã dùng: tra cứu trường, so sánh, gửi đơn, nhắc nhở...',
     params: {
-      limit: { type: 'number', description: 'Số lượng bản ghi muốn xem (mặc định 5, tối đa 20)', required: false, default: 5 },
+      limit: { type: 'number', description: 'Số bản ghi muốn xem (mặc định 5, tối đa 20)', required: false, default: 5 },
     },
     handler: async function(params, profile) {
       if (!profile || !profile.email) return { error: 'Can dang nhap de xem lich su.' };
       var limit = Math.min((params && params.limit) || 5, 20);
-      var { data: logs } = await supabase
+      var { data: logs, error } = await supabase
         .from('student_tool_logs')
         .select('tool_name, params, result_summary, result_count, success, user_message, created_at')
         .eq('student_email', profile.email)
         .order('created_at', { ascending: false })
         .limit(limit);
+      if (error) return { error: 'Loi truy van lich su: ' + error.message };
       if (!logs || logs.length === 0) return { message: 'Chua co lich su su dung cong cu.' };
       return {
         logs: logs.map(function(l) {
