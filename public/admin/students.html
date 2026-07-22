@@ -123,32 +123,63 @@
     </div>
 
     <div class="content-area">
-      <div class="card">
-        <div class="card-header">
-          <h3>Danh sách học sinh đã tư vấn</h3>
-          <div class="toolbar">
-            <div class="student-filters">
-              <input type="text" id="search-input" placeholder="Tìm tên, SĐT, email..." oninput="applyFilters()">
-              <select id="status-filter" onchange="applyFilters()">
-                <option value="">Tất cả trạng thái</option>
-                <option value="new">Mới</option>
-                <option value="consulting">Đang tư vấn</option>
-                <option value="applied">Đã nộp hồ sơ</option>
-                <option value="waiting_visa">Chờ visa</option>
-                <option value="visa_approved">Đã đỗ visa</option>
-                <option value="visa_rejected">Trượt visa</option>
-                <option value="enrolled">Đã nhập học</option>
-              </select>
-              <button class="btn btn-primary btn-sm" onclick="showCreateModal()">+ Thêm học sinh</button>
+      <!-- Tab: CRM vs Advisor Submissions -->
+      <div class="admin-tabs" style="display:flex;gap:0;margin-bottom:16px;border-bottom:2px solid var(--gray-200);">
+        <button type="button" class="admin-tab active" data-tab="crm" style="padding:8px 18px;border:none;background:none;font-weight:700;font-size:0.9rem;cursor:pointer;color:var(--primary);border-bottom:2px solid var(--primary);margin-bottom:-2px;">
+          Danh sách CRM
+        </button>
+        <button type="button" class="admin-tab" data-tab="advisor" style="padding:8px 18px;border:none;background:none;font-weight:600;font-size:0.9rem;cursor:pointer;color:var(--gray-500);">
+          HS tu gui form
+        </button>
+      </div>
+
+      <!-- Tab: CRM -->
+      <div class="admin-tab-content" id="tab-crm">
+        <div class="card">
+          <div class="card-header">
+            <h3>Danh sách học sinh đã tư vấn</h3>
+            <div class="toolbar">
+              <div class="student-filters">
+                <input type="text" id="search-input" placeholder="Tìm tên, SĐT, email..." oninput="applyFilters()">
+                <select id="status-filter" onchange="applyFilters()">
+                  <option value="">Tất cả trạng thái</option>
+                  <option value="new">Mới</option>
+                  <option value="consulting">Đang tư vấn</option>
+                  <option value="applied">Đã nộp hồ sơ</option>
+                  <option value="waiting_visa">Chờ visa</option>
+                  <option value="visa_approved">Đã đỗ visa</option>
+                  <option value="visa_rejected">Trượt visa</option>
+                  <option value="enrolled">Đã nhập học</option>
+                </select>
+                <button class="btn btn-primary btn-sm" onclick="showCreateModal()">+ Thêm học sinh</button>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div id="student-list" class="student-grid">
+              <div class="loading-state"><div class="spinner"></div> Đang tải...</div>
+            </div>
+            <div id="student-empty" class="empty-state" style="display:none">
+              <p>Không tìm thấy học sinh nào.</p>
             </div>
           </div>
         </div>
-        <div class="card-body">
-          <div id="student-list" class="student-grid">
-            <div class="loading-state"><div class="spinner"></div> Đang tải...</div>
+      </div>
+
+      <!-- Tab: Advisor Submissions -->
+      <div class="admin-tab-content" id="tab-advisor" style="display:none">
+        <div class="card">
+          <div class="card-header">
+            <h3>Học sinh tự gửi thông tin từ form Tư vấn</h3>
+            <p style="font-size:0.85rem;color:var(--gray-400);margin-top:4px;">Khi học sinh điền form Tư vấn chọn trường, dữ liệu được tự động lưu xuống đây.</p>
           </div>
-          <div id="student-empty" class="empty-state" style="display:none">
-            <p>Không tìm thấy học sinh nào.</p>
+          <div class="card-body">
+            <div id="advisor-submissions" class="student-grid">
+              <div class="loading-state"><div class="spinner"></div> Đang tải...</div>
+            </div>
+            <div id="advisor-empty" class="empty-state" style="display:none">
+              <p>Chưa có học sinh nào gửi thông tin từ form Tư vấn.</p>
+            </div>
           </div>
         </div>
       </div>
@@ -499,6 +530,108 @@ document.querySelectorAll('.modal-overlay').forEach(function(el) {
     if (e.target === e.currentTarget) closeModal(this.id);
   });
 });
+
+// ─── Tab switching ───
+document.querySelectorAll('.admin-tab').forEach(function(tab) {
+  tab.addEventListener('click', function() {
+    var tabName = this.dataset.tab;
+    document.querySelectorAll('.admin-tab').forEach(function(t) {
+      t.classList.remove('active');
+      t.style.color = t === tab ? 'var(--primary)' : 'var(--gray-500)';
+      t.style.borderBottom = t === tab ? '2px solid var(--primary)' : 'none';
+      t.style.fontWeight = t === tab ? '700' : '600';
+    });
+    document.querySelectorAll('.admin-tab-content').forEach(function(c) {
+      c.style.display = c.id === 'tab-' + tabName ? 'block' : 'none';
+    });
+    // Load advisor submissions when switching to that tab
+    if (tabName === 'advisor') {
+      loadAdvisorSubmissions();
+    }
+  });
+});
+
+// ─── Advisor Submissions ───
+var advisorSubmissionsData = [];
+
+async function loadAdvisorSubmissions() {
+  var container = document.getElementById('advisor-submissions');
+  var empty = document.getElementById('advisor-empty');
+  if (!container) return;
+  
+  container.innerHTML = '<div class="loading-state"><div class="spinner"></div> Dang tai...</div>';
+  empty.style.display = 'none';
+  
+  try {
+    var res = await api('GET', '/admin/students?view=advisor-submissions');
+    advisorSubmissionsData = res.data || [];
+    renderAdvisorSubmissions(advisorSubmissionsData);
+  } catch (err) {
+    container.innerHTML = '<div class="empty-state" style="color:var(--danger)">Loi: ' + escapeHtml(err.message) + '</div>';
+  }
+}
+
+function formatGender(g) {
+  if (g === 'male') return 'Nam';
+  if (g === 'female') return 'Nu';
+  return '';
+}
+
+function formatKorean(k) {
+  var labels = { none: 'Chua co', sejong2b: 'Sejong 2B', topik2: 'TOPIK 2', topik3: 'TOPIK 3+' };
+  return labels[k] || k;
+}
+
+function renderAdvisorSubmissions(data) {
+  var container = document.getElementById('advisor-submissions');
+  var empty = document.getElementById('advisor-empty');
+  
+  if (!data || data.length === 0) {
+    container.style.display = 'none';
+    empty.style.display = 'block';
+    return;
+  }
+  
+  container.style.display = 'grid';
+  empty.style.display = 'none';
+  
+  container.innerHTML = data.map(function(s) {
+    var profile = s.student_profiles || {};
+    var priorities = (s.priorities || []).map(function(p) {
+      var labels = { visa: 'Visa', cost: 'Chi phi', job: 'Viec lam', e7: 'E7', prestige: 'Uy tin', 'low-study': 'Hoc it' };
+      return labels[p] || p;
+    }).join(', ') || 'Khong chon';
+    var topSchools = '';
+    if (s.top_schools && s.top_schools.length > 0) {
+      topSchools = s.top_schools.map(function(t) { return t.name + ' (' + t.score + '%)'; }).join(', ');
+    }
+    var sourceLabel = s.source === 'ai_advisor' ? 'AI Tu van' : 'Phan tich tu dong';
+    
+    return '<div class="student-card" style="cursor:default">' +
+      '<div>' +
+        '<div class="s-name">' + escapeHtml(profile.email || 'Chua co email') + '</div>' +
+        '<div class="s-meta">' +
+          (profile.full_name ? '<span>' + escapeHtml(profile.full_name) + '</span>' : '') +
+          (s.gender ? '<span>' + formatGender(s.gender) + '</span>' : '') +
+          (s.age ? '<span>' + s.age + 't</span>' : '') +
+          (s.gpa ? '<span>GPA ' + s.gpa + '</span>' : '') +
+          (s.absences ? '<span>Nghi ' + s.absences + ' buoi</span>' : '') +
+        '</div>' +
+        '<div class="s-meta">' +
+          '<span>Tieng Han: ' + formatKorean(s.korean_level) + '</span>' +
+          (s.visa_fail === 'yes' ? '<span>Da truot visa</span>' : '') +
+          (s.region !== 'any' ? '<span>KV: ' + escapeHtml(s.region) + '</span>' : '') +
+        '</div>' +
+        (topSchools ? '<div class="s-school">Top truong: ' + topSchools + '</div>' : '') +
+        '<div class="s-next">' + sourceLabel + ' - ' + new Date(s.created_at).toLocaleDateString('vi-VN') + '</div>' +
+      '</div>' +
+      '<div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:4px;">' +
+        '<span class="s-status status-new">' + escapeHtml(s.visa_type || 'D2-6') + '</span>' +
+        '<span style="font-size:0.75rem;color:var(--gray-400);">' + (s.priorities || []).length + ' uu tien</span>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
 
 loadAll();
 </script>

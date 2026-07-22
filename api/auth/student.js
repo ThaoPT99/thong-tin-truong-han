@@ -283,6 +283,9 @@ module.exports = async (req, res) => {
       case 'reminders-create': return await handleReminderCreate(req, res);
       case 'reminders-complete': return await handleReminderComplete(req, res);
       case 'reminders-delete': return await handleReminderDelete(req, res);
+      // ═══ Advisor Data (lưu thông tin từ form Tư vấn) ═══
+      case 'save-advisor-data': return await handleSaveAdvisorData(req, res);
+      case 'load-advisor-data': return await handleLoadAdvisorData(req, res);
       // ═══ Phase 2: Document upload ═══
       case 'document-upload': return await handleDocumentUpload(req, res);
       default:
@@ -828,6 +831,77 @@ async function handleReminderDelete(req, res) {
   } catch (err) {
     console.error('Reminder delete error:', err);
     return res.status(500).json({ error: 'Failed to delete reminder' });
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// Advisor Data: lưu thông tin từ form Tư vấn chọn trường
+// ════════════════════════════════════════════════════════════
+
+async function handleSaveAdvisorData(req, res) {
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+
+  const auth = req.headers.authorization;
+  if (!auth || !auth.startsWith('Bearer ')) return res.status(401).json({ error: 'Missing token' });
+  const token = auth.split(' ')[1];
+
+  try {
+    const profileId = await getProfileIdFromToken(token);
+    if (!profileId) return res.status(404).json({ error: 'Profile not found' });
+
+    const data = req.body || {};
+
+    const { data: submission, error } = await supabase
+      .from('student_advisor_submissions')
+      .insert({
+        student_profile_id: profileId,
+        visa_type: data.visaType || 'D2-6',
+        gender: data.gender || null,
+        age: data.age || 0,
+        gpa: data.gpa || null,
+        absences: data.absences || 0,
+        korean_level: data.korean || 'none',
+        visa_fail: data.visaFail || 'no',
+        region: data.region || 'any',
+        budget: data.budget || 'medium',
+        priorities: data.priorities || [],
+        top_schools: data.topSchools ? JSON.parse(JSON.stringify(data.topSchools)) : null,
+        analysis_result: data.analysisResult || null,
+        source: data.source || 'advisor_form',
+      })
+      .select('id, created_at')
+      .single();
+
+    if (error) throw error;
+    return res.status(201).json({ success: true, submission });
+  } catch (err) {
+    console.error('Save advisor data error:', err);
+    return res.status(500).json({ error: 'Failed to save advisor data' });
+  }
+}
+
+async function handleLoadAdvisorData(req, res) {
+  if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
+
+  const auth = req.headers.authorization;
+  if (!auth || !auth.startsWith('Bearer ')) return res.status(401).json({ error: 'Missing token' });
+  const token = auth.split(' ')[1];
+
+  try {
+    const profileId = await getProfileIdFromToken(token);
+    if (!profileId) return res.json({ success: true, submissions: [] });
+
+    const { data: submissions, error } = await supabase
+      .from('student_advisor_submissions')
+      .select('*')
+      .eq('student_profile_id', profileId)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return res.json({ success: true, submissions: submissions || [] });
+  } catch (err) {
+    console.error('Load advisor data error:', err);
+    return res.status(500).json({ error: 'Failed to load advisor data' });
   }
 }
 

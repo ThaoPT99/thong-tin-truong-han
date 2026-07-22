@@ -255,7 +255,7 @@ function bindAdvisorEvents(container) {
     regionSelect.dataset.populated = "true";
   }
 
-  form.addEventListener("submit", (event) => {
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
     const profile = readAdvisorForm(form);
     const results = analyzeSchools(profile);
@@ -264,6 +264,8 @@ function bindAdvisorEvents(container) {
     if (typeof window.trackAnalytics === 'function') {
       window.trackAnalytics('event', { eventType: 'advisor_analyze', eventData: { region: profile.region, visaType: profile.visaType, priorities: profile.priorities } });
     }
+    // Auto-save to database if logged in
+    await saveAdvisorDataToDB(profile, results);
   });
   reset.addEventListener("click", () => {
     form.reset();
@@ -314,6 +316,8 @@ function bindAdvisorEvents(container) {
             .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
             .replace(/<br>- /g, '<br>• ');
           aiResponse.innerHTML = safeText;
+          // Auto-save AI data to DB
+          await saveAdvisorDataToDB(profile, null, data.advice, 'ai_advisor');
         } else {
           aiResponse.textContent = 'Lỗi: ' + (data.error || 'Không nhận được phản hồi');
         }
@@ -655,6 +659,57 @@ function renderAdvisorCard(item) {
       <button type="button" class="advisor-open-school" data-open-school="${item.id}">Xem chi tiết trường</button>
     </article>
   `;
+}
+
+// ─── Auto-save advisor data to DB ───
+async function saveAdvisorDataToDB(profile, results, analysisResult, source) {
+  // Chỉ lưu khi có token (đã đăng nhập)
+  var token = null;
+  try { token = localStorage.getItem('student_token'); } catch(e) {}
+  if (!token) return;
+  
+  // Build top schools from results
+  var topSchools = null;
+  if (results && results.length > 0) {
+    topSchools = results.slice(0, 3).map(function(item) {
+      return {
+        id: item.id,
+        name: item.school ? item.school.name : '',
+        score: item.score,
+        level: item.level
+      };
+    });
+  }
+  
+  try {
+    var body = {
+      visaType: profile.visaType,
+      gender: profile.gender,
+      age: profile.age,
+      gpa: profile.gpa,
+      absences: profile.absences,
+      korean: profile.korean,
+      visaFail: profile.visaFail,
+      region: profile.region,
+      budget: profile.budget,
+      priorities: profile.priorities,
+      topSchools: topSchools,
+      analysisResult: analysisResult || null,
+      source: source || 'advisor_form'
+    };
+    
+    await fetch('/api/auth/student?action=save-advisor-data', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      },
+      body: JSON.stringify(body)
+    });
+  } catch (err) {
+    // Silent fail — không ảnh hưởng UX
+    console.warn('Save advisor data error:', err.message);
+  }
 }
 
 // ─── Expose for testing ───
