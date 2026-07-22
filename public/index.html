@@ -549,6 +549,11 @@
           document.getElementById('authBtnText').textContent = data.user.full_name || data.user.email;
           document.getElementById('authBtn').classList.add('is-logged-in');
           closeAuthModal();
+          // Reload tab content để cập nhật trạng thái đã đăng nhập
+          var activeTab = document.querySelector('.tab-btn.active');
+          if (activeTab && typeof window.showSchool === 'function') {
+            window.showSchool(activeTab.dataset.school);
+          }
         } else {
           errorEl.textContent = data.error || 'Đăng nhập thất bại';
           errorEl.classList.add('show');
@@ -613,6 +618,11 @@
           document.getElementById('authBtnText').textContent = data.user.full_name || data.user.email;
           document.getElementById('authBtn').classList.add('is-logged-in');
           closeAuthModal();
+          // Reload tab content để cập nhật trạng thái đã đăng nhập
+          var activeTab = document.querySelector('.tab-btn.active');
+          if (activeTab && typeof window.showSchool === 'function') {
+            window.showSchool(activeTab.dataset.school);
+          }
         } else {
           errorEl.textContent = data.error || 'Đăng ký thất bại';
           errorEl.classList.add('show');
