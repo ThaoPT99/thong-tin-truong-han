@@ -1,35 +1,9 @@
 <svg width="400" height="140" viewBox="0 0 400 140" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Background card -->
-  <rect width="400" height="140" rx="32" fill="#08223F"/>
-
-  <!-- Icon: Document with compass needle -->
-  <g transform="translate(24,20)">
-    <!-- Document body -->
-    <rect x="4" y="4" width="72" height="92" rx="12" fill="url(#docBg)" stroke="url(#docBorder)" stroke-width="2"/>
-    <!-- Folded corner -->
-    <path d="M52 4V24C52 28.4 55.6 32 60 32H76" fill="url(#foldGrad)" stroke="#20E3B2" stroke-width="1.5"/>
-    <!-- Content lines -->
-    <rect x="16" y="38" width="48" height="4" rx="2" fill="rgba(255,255,255,0.5)"/>
-    <rect x="16" y="48" width="40" height="4" rx="2" fill="rgba(255,255,255,0.35)"/>
-    <rect x="16" y="58" width="44" height="4" rx="2" fill="rgba(255,255,255,0.35)"/>
-    <rect x="16" y="68" width="32" height="4" rx="2" fill="rgba(255,255,255,0.35)"/>
-    <!-- Compass/star -->
-    <path d="M40 14L43.5 22.5L52 24.5L46 30.5L47.5 39L40 35L32.5 39L34 30.5L28 24.5L36.5 22.5L40 14Z" fill="#FBBF24"/>
-    <!-- Check mark -->
-    <path d="M28 80L36 88L52 72" stroke="#20E3B2" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-  </g>
-
-  <!-- Main text: H? S? Du H?c -->
-  <text x="130" y="48" fill="white" font-family="'Be Vietnam Pro', Arial, sans-serif" font-size="30" font-weight="800" letter-spacing="-0.5">HỒ SƠ DU HỌC</text>
-
-  <!-- Subtitle badge -->
-  <rect x="128" y="66" width="248" height="26" rx="13" fill="rgba(45,212,191,0.12)" stroke="rgba(153,246,228,0.2)" stroke-width="1"/>
-  <text x="252" y="84" text-anchor="middle" fill="#CCFBF1" font-family="'Be Vietnam Pro', Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="0.5">TỰ LÀM HỒ SƠ • KỲ THÁNG 3/2027</text>
-
-  <!-- Small D26 footnote -->
-  <text x="252" y="112" text-anchor="middle" fill="rgba(153,246,228,0.4)" font-family="'Be Vietnam Pro', Arial, sans-serif" font-size="9" font-weight="600" letter-spacing="1">D26</text>
-
   <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800;900&display=swap');
+      text { font-family: 'Be Vietnam Pro', Arial, sans-serif; }
+    </style>
     <linearGradient id="docBg" x1="4" y1="4" x2="76" y2="96" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#20E3B2"/>
       <stop offset="0.5" stop-color="#2F80ED"/>
@@ -44,4 +18,29 @@
       <stop offset="1" stop-color="#1E3A5F"/>
     </linearGradient>
   </defs>
+
+  <!-- Background card -->
+  <rect width="400" height="140" rx="32" fill="#08223F"/>
+
+  <!-- Icon: Document with compass needle -->
+  <g transform="translate(24,20)">
+    <rect x="4" y="4" width="72" height="92" rx="12" fill="url(#docBg)" stroke="url(#docBorder)" stroke-width="2"/>
+    <path d="M52 4V24C52 28.4 55.6 32 60 32H76" fill="url(#foldGrad)" stroke="#20E3B2" stroke-width="1.5"/>
+    <rect x="16" y="38" width="48" height="4" rx="2" fill="rgba(255,255,255,0.5)"/>
+    <rect x="16" y="48" width="40" height="4" rx="2" fill="rgba(255,255,255,0.35)"/>
+    <rect x="16" y="58" width="44" height="4" rx="2" fill="rgba(255,255,255,0.35)"/>
+    <rect x="16" y="68" width="32" height="4" rx="2" fill="rgba(255,255,255,0.35)"/>
+    <path d="M40 14L43.5 22.5L52 24.5L46 30.5L47.5 39L40 35L32.5 39L34 30.5L28 24.5L36.5 22.5L40 14Z" fill="#FBBF24"/>
+    <path d="M28 80L36 88L52 72" stroke="#20E3B2" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- Main text: H? S? Du H?c -->
+  <text x="128" y="46" fill="white" font-size="30" font-weight="800" letter-spacing="-0.5">HỒ SƠ DU HỌC</text>
+
+  <!-- Subtitle badge -->
+  <rect x="128" y="64" width="248" height="26" rx="13" fill="rgba(45,212,191,0.12)" stroke="rgba(153,246,228,0.2)" stroke-width="1"/>
+  <text x="252" y="82" text-anchor="middle" fill="#CCFBF1" font-size="11" font-weight="700" letter-spacing="0.5">TỰ LÀM HỒ SƠ • KỲ THÁNG 3/2027</text>
+
+  <!-- Bottom hint: purpose -->
+  <text x="128" y="112" fill="rgba(153,246,228,0.5)" font-size="10" font-weight="600" letter-spacing="0.3">Công cụ hỗ trợ tự làm hồ sơ du học Hàn Quốc</text>
 </svg>
