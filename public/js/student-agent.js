@@ -50,7 +50,7 @@
       '<div id="sa-panel" class="sa-panel">' +
         '<div class="sa-header">' +
           '<div class="sa-header-left">' +
-            '<div class="sa-avatar">🤖</div>' +
+            '<div class="sa-avatar">AI</div>' +
             '<div>' +
               '<div class="sa-header-title">Trợ lý cá nhân</div>' +
               '<div class="sa-header-status">Online</div>' +
@@ -63,13 +63,13 @@
         '<div id="sa-messages" class="sa-messages">' +
           '<div class="sa-welcome">' +
             '<div class="sa-bubble sa-bubble-ai">' +
-              '<div class="sa-bubble-content">👋 Chào bạn! Tôi là trợ lý AI cá nhân của bạn.<br><br>' +
+              '<div class="sa-bubble-content">Chào bạn! Tôi là trợ lý AI cá nhân của bạn.<br><br>' +
               'Tôi có thể:<br>' +
-              '• 📋 Xem/Sửa hồ sơ của bạn<br>' +
-              '• ✅ Cập nhật checklist giấy tờ<br>' +
-              '• 🏫 Tra cứu thông tin trường<br>' +
-              '• 📝 Soạn Study Plan / Giải trình<br>' +
-              '• ⏰ Xem nhắc nhở<br><br>' +
+              '• Xem/Sửa hồ sơ của bạn<br>' +
+              '• Cập nhật checklist giấy tờ<br>' +
+              '• Tra cứu thông tin trường<br>' +
+              '• Soạn Study Plan / Giải trình<br>' +
+              '• Xem nhắc nhở<br><br>' +
               '<i>VD: "Cập nhật GPA của tôi lên 7.5"</i></div>' +
             '</div>' +
           '</div>' +
@@ -168,23 +168,23 @@
 
   // ─── Render school cards (for search_schools / list_by_criteria) ───
   function renderSchoolCards(schools, title) {
-    if (!schools || schools.length === 0) return '❌ Không tìm thấy trường nào phù hợp.';
+    if (!schools || schools.length === 0) return 'Không tìm thấy trường nào phù hợp.';
     var html = '<div style="background:#f0f7ff;border-radius:12px;padding:12px;margin:8px 0;font-size:13px;line-height:1.5">';
-    html += '<div style="font-weight:700;color:#1a56db;margin-bottom:8px;font-size:14px">🏫 ' + escapeHTML(title || 'Danh sách trường') + '</div>';
+    html += '<div style="font-weight:700;color:#1a56db;margin-bottom:8px;font-size:14px">' + escapeHTML(title || 'Danh sách trường') + '</div>';
     for (var i = 0; i < schools.length; i++) {
       var s = schools[i];
       html += '<div style="background:#fff;border-radius:8px;padding:10px 12px;margin-bottom:6px;border:1px solid #e5e7eb">';
       html += '<div style="font-weight:600;color:#111">' + escapeHTML(s.name || '') + (s.nameKr ? ' <span style="color:#6b7280;font-weight:400">(' + escapeHTML(s.nameKr) + ')</span>' : '') + '</div>';
       html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-top:6px;color:#4b5563;font-size:12px">';
-      if (s.location) html += '<div>📍 ' + escapeHTML(s.location) + '</div>';
-      if (s.region) html += '<div>🗺️ ' + escapeHTML(s.region) + '</div>';
-      if (s.system) html += '<div>📚 ' + escapeHTML(s.system) + '</div>';
-      if (s.tuition) html += '<div>💰 ' + escapeHTML(s.tuition) + '</div>';
-      if (s.ktx) html += '<div>🏠 ' + escapeHTML(s.ktx) + '</div>';
-      if (s.quota) html += '<div>🎯 Chỉ tiêu: ' + escapeHTML(s.quota) + '</div>';
+      if (s.location) html += '<div>' + escapeHTML(s.location) + '</div>';
+      if (s.region) html += '<div>' + escapeHTML(s.region) + '</div>';
+      if (s.system) html += '<div>' + escapeHTML(s.system) + '</div>';
+      if (s.tuition) html += '<div>' + escapeHTML(s.tuition) + '</div>';
+      if (s.ktx) html += '<div>' + escapeHTML(s.ktx) + '</div>';
+      if (s.quota) html += '<div>' + escapeHTML(s.quota) + '</div>';
       html += '</div>';
       if (s.intro) html += '<div style="color:#6b7280;font-size:11px;margin-top:4px;font-style:italic">' + escapeHTML(s.intro) + '</div>';
-      if (s.slug) html += '<div style="margin-top:4px"><a href="/?school=' + encodeURIComponent(s.slug) + '" target="_blank" style="color:#1a56db;font-size:11px;text-decoration:none">🔗 Xem chi tiết →</a></div>';
+      if (s.slug) html += '<div style="margin-top:4px"><a href="/?school=' + encodeURIComponent(s.slug) + '" target="_blank" style="color:#1a56db;font-size:11px;text-decoration:none">Xem chi tiết →</a></div>';
       html += '</div>';
     }
     html += '</div>';
@@ -193,24 +193,24 @@
 
   // ─── Render school detail (for get_school_detail) ───
   function renderSchoolDetail(school) {
-    if (!school) return '❌ Không tìm thấy trường này.';
+    if (!school) return 'Không tìm thấy trường này.';
     var ap = school.advisorProfile || {};
     var html = '<div style="background:#f0f7ff;border-radius:12px;padding:12px;margin:8px 0;font-size:13px;line-height:1.5">';
-    html += '<div style="font-weight:700;color:#1a56db;margin-bottom:8px;font-size:14px">🏫 ' + escapeHTML(school.name) + (school.nameKr ? ' (' + escapeHTML(school.nameKr) + ')' : '') + '</div>';
+    html += '<div style="font-weight:700;color:#1a56db;margin-bottom:8px;font-size:14px">' + escapeHTML(school.name) + (school.nameKr ? ' (' + escapeHTML(school.nameKr) + ')' : '') + '</div>';
     // Basic info grid
     html += '<div style="background:#fff;border-radius:8px;padding:10px 12px;border:1px solid #e5e7eb;margin-bottom:6px">';
     html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;color:#4b5563;font-size:12px">';
-    if (school.location) html += '<div>📍 ' + escapeHTML(school.location) + '</div>';
-    if (school.region) html += '<div>🗺️ ' + escapeHTML(school.region) + '</div>';
-    if (school.system) html += '<div>📚 ' + escapeHTML(school.system) + '</div>';
-    if (school.tuition) html += '<div>💰 ' + escapeHTML(school.tuition) + '</div>';
-    if (school.ktx) html += '<div>🏠 ' + escapeHTML(school.ktx) + '</div>';
-    if (school.quota) html += '<div>🎯 Chỉ tiêu: ' + escapeHTML(school.quota) + '</div>';
+    if (school.location) html += '<div>' + escapeHTML(school.location) + '</div>';
+    if (school.region) html += '<div>' + escapeHTML(school.region) + '</div>';
+    if (school.system) html += '<div>' + escapeHTML(school.system) + '</div>';
+    if (school.tuition) html += '<div>' + escapeHTML(school.tuition) + '</div>';
+    if (school.ktx) html += '<div>' + escapeHTML(school.ktx) + '</div>';
+    if (school.quota) html += '<div>' + escapeHTML(school.quota) + '</div>';
     html += '</div></div>';
     // Conditions
     if (school.conditions && school.conditions.length > 0) {
       html += '<div style="background:#fff;border-radius:8px;padding:10px 12px;border:1px solid #e5e7eb;margin-bottom:6px">';
-      html += '<div style="font-weight:600;color:#111;font-size:12px;margin-bottom:4px">📋 Điều kiện</div>';
+      html += '<div style="font-weight:600;color:#111;font-size:12px;margin-bottom:4px">Điều kiện</div>';
       html += '<ul style="margin:0;padding-left:16px;color:#4b5563;font-size:12px">';
       for (var ci = 0; ci < school.conditions.length; ci++) {
         html += '<li>' + escapeHTML(school.conditions[ci]) + '</li>';
@@ -236,34 +236,34 @@
     // Advisor info
     if (ap.visaChance || ap.jobOpportunity || ap.costLevel) {
       html += '<div style="background:#fff;border-radius:8px;padding:10px 12px;border:1px solid #e5e7eb;margin-bottom:6px">';
-      html += '<div style="font-weight:600;color:#111;font-size:12px;margin-bottom:4px">📊 Đánh giá</div>';
+      html += '<div style="font-weight:600;color:#111;font-size:12px;margin-bottom:4px">Đánh giá</div>';
       html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;color:#4b5563;font-size:12px">';
-      if (ap.visaChance) html += '<div>🛂 Visa: ' + ap.visaChance + '/5</div>';
-      if (ap.jobOpportunity) html += '<div>💼 Việc làm: ' + ap.jobOpportunity + '/5</div>';
-      if (ap.costLevel) html += '<div>💰 Chi phí: ' + ap.costLevel + '/5</div>';
-      if (ap.e7Opportunity) html += '<div>🔑 E7: ' + ap.e7Opportunity + '/5</div>';
+      if (ap.visaChance) html += '<div>Visa: ' + ap.visaChance + '/5</div>';
+      if (ap.jobOpportunity) html += '<div>Việc làm: ' + ap.jobOpportunity + '/5</div>';
+      if (ap.costLevel) html += '<div>Chi phí: ' + ap.costLevel + '/5</div>';
+      if (ap.e7Opportunity) html += '<div>E7: ' + ap.e7Opportunity + '/5</div>';
       html += '</div></div>';
     }
-    if (school.slug) html += '<div style="text-align:center;margin-top:6px"><a href="/?school=' + encodeURIComponent(school.slug) + '" target="_blank" style="color:#1a56db;font-size:12px;text-decoration:none;font-weight:500">🔗 Xem trên web →</a></div>';
+    if (school.slug) html += '<div style="text-align:center;margin-top:6px"><a href="/?school=' + encodeURIComponent(school.slug) + '" target="_blank" style="color:#1a56db;font-size:12px;text-decoration:none;font-weight:500">Xem trên web →</a></div>';
     html += '</div>';
     return html;
   }
 
   // ─── Render compare table (for compare_schools) ───
   function renderCompareTable(data) {
-    if (!data || data.error) return '❌ ' + escapeHTML(data.error || 'Không thể so sánh');
+    if (!data || data.error) return 'Lỗi: ' + escapeHTML(data.error || 'Không thể so sánh');
     var s1 = data.school1, s2 = data.school2;
-    if (!s1 || !s2) return '❌ Không tìm thấy đủ thông tin để so sánh.';
+    if (!s1 || !s2) return 'Không tìm thấy đủ thông tin để so sánh.';
     var rows = [
-      { label: '📍 Vị trí', v1: s1.location, v2: s2.location },
-      { label: '🗺️ Khu vực', v1: s1.region, v2: s2.region },
-      { label: '📚 Hệ', v1: s1.system, v2: s2.system },
-      { label: '💰 Học phí', v1: s1.tuition, v2: s2.tuition },
-      { label: '🏠 KTX', v1: s1.ktx, v2: s2.ktx },
-      { label: '🎯 Chỉ tiêu', v1: s1.quota, v2: s2.quota },
+      { label: 'Vị trí', v1: s1.location, v2: s2.location },
+      { label: 'Khu vực', v1: s1.region, v2: s2.region },
+      { label: 'Hệ', v1: s1.system, v2: s2.system },
+      { label: 'Học phí', v1: s1.tuition, v2: s2.tuition },
+      { label: 'KTX', v1: s1.ktx, v2: s2.ktx },
+      { label: 'Chỉ tiêu', v1: s1.quota, v2: s2.quota },
     ];
     var html = '<div style="background:#f0f7ff;border-radius:12px;padding:12px;margin:8px 0;font-size:12px;line-height:1.5">';
-    html += '<div style="font-weight:700;color:#1a56db;margin-bottom:8px;font-size:13px">⚖️ So sánh: ' + escapeHTML(s1.name) + ' vs ' + escapeHTML(s2.name) + '</div>';
+    html += '<div style="font-weight:700;color:#1a56db;margin-bottom:8px;font-size:13px">So sánh: ' + escapeHTML(s1.name) + ' vs ' + escapeHTML(s2.name) + '</div>';
     // Header
     html += '<div style="display:grid;grid-template-columns:1fr 1.2fr 1.2fr;gap:4px;background:#dbeafe;border-radius:6px;padding:6px 8px;font-weight:600;color:#1e40af;margin-bottom:4px">';
     html += '<div></div><div style="text-align:center">' + escapeHTML(s1.name) + '</div><div style="text-align:center">' + escapeHTML(s2.name) + '</div>';
@@ -281,48 +281,48 @@
     // Conditions (show unique differences)
     if (s1.conditions && s2.conditions) {
       html += '<div style="margin-top:6px;padding:6px 8px;background:#fff;border-radius:6px;border:1px solid #e5e7eb">';
-      html += '<div style="font-weight:600;color:#111;font-size:11px;margin-bottom:3px">📋 Điều kiện:</div>';
+      html += '<div style="font-weight:600;color:#111;font-size:11px;margin-bottom:3px">Điều kiện:</div>';
       html += '<div style="display:grid;grid-template-columns:1fr 1.2fr 1.2fr;gap:4px;font-size:11px;color:#4b5563">';
       html += '<div></div><div>' + escapeHTML(s1.conditions.slice(0, 3).join('; ')) + '</div>';
       html += '<div>' + escapeHTML(s2.conditions.slice(0, 3).join('; ')) + '</div>';
       html += '</div></div>';
     }
-    html += '<div style="text-align:center;margin-top:6px"><a href="/?compare=' + encodeURIComponent(s1.slug) + ',' + encodeURIComponent(s2.slug) + '" target="_blank" style="color:#1a56db;font-size:11px;text-decoration:none;font-weight:500">🔗 Xem so sánh trên web →</a></div>';
+    html += '<div style="text-align:center;margin-top:6px"><a href="/?compare=' + encodeURIComponent(s1.slug) + ',' + encodeURIComponent(s2.slug) + '" target="_blank" style="color:#1a56db;font-size:11px;text-decoration:none;font-weight:500">Xem so sánh trên web →</a></div>';
     html += '</div>';
     return html;
   }
 
   // ─── Render apply result (for apply_school) ───
   function renderApplyResult(data) {
-    if (!data || data.error) return '❌ ' + escapeHTML(data.error || 'Không thể tạo đơn');
+    if (!data || data.error) return 'Lỗi: ' + escapeHTML(data.error || 'Không thể tạo đơn');
     if (!data.application && data.message) return escapeHTML(data.message);
-    if (!data.application && !data.message) return '✅ Đã xử lý yêu cầu của bạn!';
+    if (!data.application && !data.message) return 'Đã xử lý yêu cầu của bạn!';
     var app = data.application;
     var statusColors = { 'draft': '#6b7280', 'submitted': '#2563eb', 'reviewing': '#d97706', 'approved': '#059669', 'rejected': '#dc2626' };
     var color = statusColors[app.statusRaw] || statusColors[app.status] || '#6b7280';
     var html = '<div style="background:#f0f7ff;border-radius:12px;padding:12px;margin:8px 0;font-size:13px;line-height:1.5">';
-    html += '<div style="font-weight:700;color:#1a56db;margin-bottom:6px;font-size:14px">📨 Đơn đăng ký</div>';
+    html += '<div style="font-weight:700;color:#1a56db;margin-bottom:6px;font-size:14px">Đơn đăng ký</div>';
     html += '<div style="background:#fff;border-radius:8px;padding:10px 12px;border:1px solid #e5e7eb">';
     html += '<div style="font-weight:600;color:#111;margin-bottom:4px">' + escapeHTML(app.schoolName || 'Đã gửi đơn') + '</div>';
-    html += '<div style="color:#4b5563;font-size:12px">👤 Học sinh: ' + escapeHTML(app.studentName || '') + '</div>';
+    html += '<div style="color:#4b5563;font-size:12px">Học sinh: ' + escapeHTML(app.studentName || '') + '</div>';
     html += '<div style="display:flex;align-items:center;gap:6px;margin-top:6px">';
     html += '<span style="background:' + color + ';color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:500">' + escapeHTML(app.status || 'Đã tạo') + '</span>';
-    html += '<span style="color:#9ca3af;font-size:11px">📅 ' + (app.createdAt ? new Date(app.createdAt).toLocaleDateString('vi-VN') : '') + '</span>';
+    html += '<span style="color:#9ca3af;font-size:11px">' + (app.createdAt ? new Date(app.createdAt).toLocaleDateString('vi-VN') : '') + '</span>';
     html += '</div>';
     if (data.message) html += '<div style="color:#059669;font-size:12px;margin-top:6px;font-weight:500">' + escapeHTML(data.message) + '</div>';
     html += '</div>';
-    html += '<div style="text-align:center;margin-top:6px"><span style="color:#6b7280;font-size:11px">📌 Xem chi tiết trong tab "📨 Gửi đơn"</span></div>';
+    html += '<div style="text-align:center;margin-top:6px"><span style="color:#6b7280;font-size:11px">Xem chi tiết trong tab Gửi đơn</span></div>';
     html += '</div>';
     return html;
   }
 
   // ─── Render applications list (for get_applications) ───
   function renderApplicationsList(data) {
-    if (!data || data.error) return '❌ ' + escapeHTML(data.error || 'Không thể lấy danh sách');
+    if (!data || data.error) return 'Lỗi: ' + escapeHTML(data.error || 'Không thể lấy danh sách');
     if (data.message) return escapeHTML(data.message);
-    if (!data.applications || data.applications.length === 0) return '📭 Bạn chưa có đơn đăng ký nào.';
+    if (!data.applications || data.applications.length === 0) return 'Bạn chưa có đơn đăng ký nào.';
     var html = '<div style="background:#f0f7ff;border-radius:12px;padding:12px;margin:8px 0;font-size:13px;line-height:1.5">';
-    html += '<div style="font-weight:700;color:#1a56db;margin-bottom:8px;font-size:14px">📨 Danh sách đơn (' + data.applications.length + ')</div>';
+    html += '<div style="font-weight:700;color:#1a56db;margin-bottom:8px;font-size:14px">Danh sách đơn (' + data.applications.length + ')</div>';
     var statusColors = { 'draft': '#6b7280', 'submitted': '#2563eb', 'reviewing': '#d97706', 'approved': '#059669', 'rejected': '#dc2626' };
     var findColor = function(s) {
       for (var k in statusColors) { if (s && s.toLowerCase().includes(k)) return statusColors[k]; }
@@ -333,23 +333,23 @@
       var c = findColor(a.statusRaw || a.status);
       html += '<div style="background:#fff;border-radius:8px;padding:10px 12px;margin-bottom:6px;border:1px solid #e5e7eb">';
       html += '<div style="font-weight:600;color:#111;font-size:13px">' + escapeHTML(a.schoolName || 'Chưa rõ') + '</div>';
-      html += '<div style="color:#4b5563;font-size:12px;margin-top:2px">👤 ' + escapeHTML(a.studentName || '') + '</div>';
+      html += '<div style="color:#4b5563;font-size:12px;margin-top:2px">' + escapeHTML(a.studentName || '') + '</div>';
       html += '<div style="display:flex;align-items:center;gap:8px;margin-top:4px">';
       html += '<span style="background:' + c + ';color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:500">' + escapeHTML(a.status || '—') + '</span>';
-      if (a.createdAt) html += '<span style="color:#9ca3af;font-size:11px">📅 ' + new Date(a.createdAt).toLocaleDateString('vi-VN') + '</span>';
+      if (a.createdAt) html += '<span style="color:#9ca3af;font-size:11px">' + new Date(a.createdAt).toLocaleDateString('vi-VN') + '</span>';
       html += '</div></div>';
     }
-    html += '<div style="text-align:center;margin-top:4px"><span style="color:#6b7280;font-size:11px">📌 Chi tiết: tab "📨 Gửi đơn" trên web</span></div>';
+    html += '<div style="text-align:center;margin-top:4px"><span style="color:#6b7280;font-size:11px">Chi tiết: tab Gửi đơn trên web</span></div>';
     html += '</div>';
     return html;
   }
 
   // ─── Render interview result (for interview_simulator) ───
   function renderInterviewResult(data) {
-    if (!data || data.error) return '❌ ' + escapeHTML(data.error || 'Khong the bat dau phong van');
+    if (!data || data.error) return 'Lỗi: ' + escapeHTML(data.error || 'Không thể bắt đầu phỏng vấn');
     if (data.type === 'interview_question') {
       return '<div style="background:#f0f7ff;border-radius:12px;padding:12px;margin:8px 0;font-size:13px;line-height:1.5">' +
-        '<div style="font-weight:700;color:#1a56db;margin-bottom:6px;font-size:14px">🎤 Phong van visa - Cau ' + (data.questionNumber || 1) + '/' + (data.totalQuestions || 6) + '</div>' +
+        '<div style="font-weight:700;color:#1a56db;margin-bottom:6px;font-size:14px">Phỏng vấn visa - Câu ' + (data.questionNumber || 1) + '/' + (data.totalQuestions || 6) + '</div>' +
         '<div style="background:#fff;border-radius:8px;padding:12px;border:1px solid #e5e7eb">' +
         '<div style="font-size:14px;color:#111;margin-bottom:6px">' + escapeHTML(data.question || '') + '</div>' +
         (data.message ? '<div style="color:#059669;font-size:12px;font-style:italic">' + escapeHTML(data.message) + '</div>' : '') +
@@ -357,7 +357,7 @@
     }
     if (data.type === 'interview_answer') {
       return '<div style="background:#fef9ef;border-radius:12px;padding:12px;margin:8px 0;font-size:13px;line-height:1.5">' +
-        '<div style="font-weight:600;color:#d97706;margin-bottom:4px;font-size:13px">📊 Danh gia cua KVAC</div>' +
+        '<div style="font-weight:600;color:#d97706;margin-bottom:4px;font-size:13px">Đánh giá của KVAC</div>' +
         '<div style="background:#fff;border-radius:8px;padding:10px 12px;border:1px solid #fde68a;color:#4b5563">' +
         escapeHTML(data.feedback || '') +
         '</div>' +
@@ -366,7 +366,7 @@
     }
     if (data.type === 'interview_complete') {
       return '<div style="background:#f0fdf4;border-radius:12px;padding:12px;margin:8px 0;font-size:13px;line-height:1.5">' +
-        '<div style="font-weight:700;color:#059669;margin-bottom:6px;font-size:14px">✅ Hoan thanh phong van!</div>' +
+        '<div style="font-weight:700;color:#059669;margin-bottom:6px;font-size:14px">Hoàn thành phỏng vấn!</div>' +
         '<div style="background:#fff;border-radius:8px;padding:10px 12px;border:1px solid #bbf7d0;color:#4b5563">' +
         escapeHTML(data.feedback || 'Cam on ban da tham gia!') +
         '</div>' +
@@ -379,7 +379,7 @@
 
   // ─── Render document status (for upload_document) ───
   function renderDocumentStatus(data) {
-    if (!data || data.error) return '❌ ' + escapeHTML(data.error || 'Khong the kiem tra');
+    if (!data || data.error) return 'Lỗi: ' + escapeHTML(data.error || 'Không thể kiểm tra');
     if (data.type !== 'document_status') {
       if (data.message) return escapeHTML(data.message);
       return '';
@@ -387,7 +387,7 @@
     var docs = data.documents || [];
     if (docs.length === 0) return 'Khong co giay to nao.';
     var html = '<div style="background:#f0f7ff;border-radius:12px;padding:12px;margin:8px 0;font-size:13px;line-height:1.5">';
-    html += '<div style="font-weight:700;color:#1a56db;margin-bottom:6px;font-size:14px">📄 Trang thai giay to</div>';
+    html += '<div style="font-weight:700;color:#1a56db;margin-bottom:6px;font-size:14px">Trạng thái giấy tờ</div>';
     html += '<div style="font-weight:500;color:#059669;margin-bottom:8px;font-size:12px">' + escapeHTML(data.summary || '') + '</div>';
     for (var i = 0; i < docs.length; i++) {
       var d = docs[i];
@@ -404,24 +404,24 @@
 
   // ─── Render reminder result (for set_reminder) ───
   function renderReminderResult(data) {
-    if (!data || data.error) return '❌ ' + escapeHTML(data.error || 'Không thể tạo nhắc nhở');
+    if (!data || data.error) return 'Lỗi: ' + escapeHTML(data.error || 'Không thể tạo nhắc nhở');
     if (!data.reminder && data.message) return escapeHTML(data.message);
-    if (!data.reminder && !data.message) return '✅ Đã xử lý!';
+    if (!data.reminder && !data.message) return 'Đã xử lý!';
     var r = data.reminder;
     var typeLabels = {
-      document: '📄 Giấy tờ', submission: '📨 Nộp hồ sơ',
-      interview: '🎤 Phỏng vấn', health_check: '🏥 Sức khỏe',
-      visa_appointment: '🛂 Hẹn visa', other: '📌 Khác',
+      document: 'Giấy tờ', submission: 'Nộp hồ sơ',
+      interview: 'Phỏng vấn', health_check: 'Sức khỏe',
+      visa_appointment: 'Hẹn visa', other: 'Khác',
     };
-    var label = typeLabels[r.type] || '📌 Nhắc nhở';
+    var label = typeLabels[r.type] || 'Nhắc nhở';
     var html = '<div style="background:#fef9ef;border-radius:12px;padding:12px;margin:8px 0;font-size:13px;line-height:1.5">';
-    html += '<div style="font-weight:700;color:#d97706;margin-bottom:6px;font-size:14px">⏰ Nhắc nhở mới</div>';
+    html += '<div style="font-weight:700;color:#d97706;margin-bottom:6px;font-size:14px">Nhắc nhở mới</div>';
     html += '<div style="background:#fff;border-radius:8px;padding:10px 12px;border:1px solid #fde68a">';
     html += '<div style="font-weight:600;color:#111;margin-bottom:2px">' + label + ': ' + escapeHTML(r.title || '') + '</div>';
-    html += '<div style="color:#d97706;font-weight:500;margin-top:4px">📅 Hạn: ' + escapeHTML(r.dueDate || '') + '</div>';
+    html += '<div style="color:#d97706;font-weight:500;margin-top:4px">Hạn: ' + escapeHTML(r.dueDate || '') + '</div>';
     if (data.message) html += '<div style="color:#059669;font-size:12px;margin-top:4px">' + escapeHTML(data.message) + '</div>';
     html += '</div>';
-    html += '<div style="text-align:center;margin-top:6px"><span style="color:#6b7280;font-size:11px">📌 Xem trong tab "📨 Gửi đơn"</span></div>';
+    html += '<div style="text-align:center;margin-top:6px"><span style="color:#6b7280;font-size:11px">Xem trong tab Gửi đơn</span></div>';
     html += '</div>';
     return html;
   }
@@ -585,14 +585,14 @@
       } else {
         messages.push({
           role: 'assistant',
-          content: '❌ Xin lỗi, đã có lỗi xảy ra. Vui lòng thử lại sau!',
+          content: 'Xin lỗi, đã có lỗi xảy ra. Vui lòng thử lại sau!',
         });
       }
     } catch (err) {
       hideLoading();
       messages.push({
         role: 'assistant',
-        content: '❌ Mất kết nối. Vui lòng kiểm tra internet và thử lại.',
+        content: 'Mất kết nối. Vui lòng kiểm tra internet và thử lại.',
       });
     }
 

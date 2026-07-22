@@ -790,7 +790,7 @@
     // ─── Build HTML ───
     let html = `
       <div class="cl-analysis">
-        <h3>📊 Phân tích hồ sơ của bạn</h3>
+        <h3>Phân tích hồ sơ của bạn</h3>
         <p class="cl-form-desc">Hệ thống đã phân tích hồ sơ theo <strong>6 nhóm</strong> — xác định điểm mạnh, điểm yếu, rủi ro và đề xuất hành động.</p>
 
         <!-- OVERALL SCORE -->`;
@@ -824,14 +824,14 @@
           </div>
 
           <div class="pa-decisions">
-            <div class="pa-decisions-title">📋 Quyết định sau phân tích:</div>
+            <div class="pa-decisions-title">Quyết định sau phân tích:</div>
             <ul class="pa-decisions-list">
               ${overall.decisions.map(function(d) { return '<li>' + escapeHtml(d) + '</li>'; }).join('')}
             </ul>
           </div>
 
           <div class="pa-top-actions">
-            <div class="pa-top-actions-title">🎯 Hành động ưu tiên:</div>
+            <div class="pa-top-actions-title">Hành động ưu tiên:</div>
             <ol class="pa-top-actions-list">
               ${overall.topActions.map(function(a) { return '<li>' + escapeHtml(a) + '</li>'; }).join('')}
             </ol>
@@ -863,7 +863,7 @@
         <!-- PROFILE SUMMARY -->
         <div class="pa-profile-summary">
           <div class="pa-profile-summary-header" onclick="window.paToggleProfile()">
-            <span>📄 Hồ sơ của bạn</span>
+            <span>Hồ sơ của bạn</span>
             <span class="pa-toggle-icon" id="pa-toggle-icon">▼</span>
           </div>
           <div class="pa-profile-summary-body" id="pa-profile-body">
@@ -917,13 +917,13 @@
 
       // Strengths
       if (group.strengths.length > 0) {
-        html += '<div class="pa-sub-section pa-section-strength"><div class="pa-sub-title">✅ Điểm mạnh</div><ul>' +
+        html += '<div class="pa-sub-section pa-section-strength"><div class="pa-sub-title">Điểm mạnh</div><ul>' +
           group.strengths.map(function(s) { return '<li>' + escapeHtml(s) + '</li>'; }).join('') + '</ul></div>';
       }
 
       // Weaknesses
       if (group.weaknesses.length > 0) {
-        html += '<div class="pa-sub-section pa-section-weakness"><div class="pa-sub-title">⚠️ Điểm yếu</div><ul>' +
+        html += '<div class="pa-sub-section pa-section-weakness"><div class="pa-sub-title">Điểm yếu</div><ul>' +
           group.weaknesses.map(function(w) { return '<li>' + escapeHtml(w) + '</li>'; }).join('') + '</ul></div>';
       }
 
@@ -935,13 +935,13 @@
 
       // Missing evidence
       if (group.missingEvidence.length > 0) {
-        html += '<div class="pa-sub-section pa-section-missing"><div class="pa-sub-title">📋 Chứng cứ còn thiếu</div><ul>' +
+        html += '<div class="pa-sub-section pa-section-missing"><div class="pa-sub-title">Chứng cứ còn thiếu</div><ul>' +
           group.missingEvidence.map(function(m) { return '<li>' + escapeHtml(m) + '</li>'; }).join('') + '</ul></div>';
       }
 
       // Actions
       if (group.actions.length > 0) {
-        html += '<div class="pa-sub-section pa-section-action"><div class="pa-sub-title">🎯 Hành động đề xuất</div><ol>' +
+        html += '<div class="pa-sub-section pa-section-action"><div class="pa-sub-title">Hành động đề xuất</div><ol>' +
           group.actions.map(function(a) { return '<li>' + escapeHtml(a) + '</li>'; }).join('') + '</ol></div>';
       }
 
@@ -962,7 +962,7 @@
               </div>
             </div>
             <button type="button" class="btn btn-primary pa-ai-btn" id="pa-ai-btn" onclick="window.runAIAnalysis()">
-              🤖 Phân tích bằng AI
+              Phân tích bằng AI
             </button>
           </div>
           <div id="pa-ai-results" class="pa-ai-results" style="display:none">
@@ -975,7 +975,7 @@
 
         <div class="cl-nav">
           <button type="button" class="btn btn-primary btn-lg" onclick="window.clNextStep()">
-            📋 Xem checklist cá nhân →
+            Xem checklist cá nhân →
           </button>
         </div>
       </div>
@@ -1010,7 +1010,7 @@
       if (!btn || !results) return;
 
       btn.disabled = true;
-      btn.textContent = '⏳ Đang phân tích...';
+      btn.textContent = 'Đang phân tích...';
       results.style.display = 'block';
       if (loading) loading.style.display = 'flex';
 
@@ -1023,9 +1023,9 @@
         if (loading) loading.style.display = 'none';
 
         if (analysis.error) {
-          results.innerHTML += '<div class="pa-ai-content"><div class="pa-ai-error">❌ ' + escapeHtml(analysis.error) + '</div></div>';
+          results.innerHTML += '<div class="pa-ai-content"><div class="pa-ai-error">' + escapeHtml(analysis.error) + '</div></div>';
           btn.disabled = false;
-          btn.textContent = '🤖 Thử lại';
+          btn.textContent = 'Thử lại';
           return;
         }
 
@@ -1033,7 +1033,7 @@
           // Fallback: hiển thị text raw
           results.innerHTML += '<div class="pa-ai-content"><div class="pa-ai-raw">' + escapeHtml(analysis.rawText).replace(/\n/g, '<br>') + '</div></div>';
           btn.disabled = false;
-          btn.textContent = '✅ Phân tích xong';
+          btn.textContent = 'Phân tích xong';
           return;
         }
 
@@ -1041,12 +1041,12 @@
         var content = renderAIAnalysisResults(analysis);
         results.innerHTML += '<div class="pa-ai-content">' + content + '</div>';
         btn.disabled = false;
-        btn.textContent = '✅ Đã phân tích';
+        btn.textContent = 'Đã phân tích';
       } catch (err) {
         if (loading) loading.style.display = 'none';
-        results.innerHTML += '<div class="pa-ai-content"><div class="pa-ai-error">❌ Lỗi: ' + escapeHtml(err.message || 'Không thể kết nối') + '</div></div>';
+        results.innerHTML += '<div class="pa-ai-content"><div class="pa-ai-error">Lỗi: ' + escapeHtml(err.message || 'Không thể kết nối') + '</div></div>';
         btn.disabled = false;
-        btn.textContent = '🤖 Thử lại';
+        btn.textContent = 'Thử lại';
       }
     };
 
@@ -1055,7 +1055,7 @@
       var groups = analysis.groups || [];
       var overall = analysis.overall || {};
 
-      var html = '<div class="pa-ai-header-badge">📊 Kết quả phân tích từ AI</div>';
+      var html = '<div class="pa-ai-header-badge">Kết quả phân tích từ AI</div>';
 
       if (overall.score !== undefined) {
         var scoreColor = overall.score >= 80 ? '#059669' : overall.score >= 60 ? '#d97706' : overall.score >= 40 ? '#dc2626' : '#991b1b';
@@ -1065,13 +1065,13 @@
         html += '<div class="pa-ai-label" style="color:' + scoreColor + '">' + escapeHtml(overall.label || '') + '</div>';
         if (overall.summary) html += '<div class="pa-ai-summary">' + escapeHtml(overall.summary) + '</div>';
         if (overall.decisions && overall.decisions.length > 0) {
-          html += '<div class="pa-ai-decisions-title">📋 Quyết định:</div>';
+          html += '<div class="pa-ai-decisions-title">Quyết định:</div>';
           html += '<ul class="pa-ai-decisions">';
           overall.decisions.forEach(function(d) { html += '<li>' + escapeHtml(d) + '</li>'; });
           html += '</ul>';
         }
         if (overall.topActions && overall.topActions.length > 0) {
-          html += '<div class="pa-ai-actions-title">🎯 Hành động:</div>';
+          html += '<div class="pa-ai-actions-title">Hành động:</div>';
           html += '<ol class="pa-ai-actions">';
           overall.topActions.forEach(function(a) { html += '<li>' + escapeHtml(a) + '</li>'; });
           html += '</ol>';
@@ -1086,13 +1086,13 @@
         groups.forEach(function(g) {
           if (!g.strengths && !g.weaknesses && !g.risks && !g.missingEvidence && !g.actions) return;
           html += '<div class="pa-ai-group">';
-          html += '<div class="pa-ai-group-header"><span>' + (g.icon || '📌') + '</span> <strong>' + escapeHtml(g.group || '') + '</strong></div>';
+          html += '<div class="pa-ai-group-header"><strong>' + escapeHtml(g.group || '') + '</strong></div>';
           if (g.strengths && g.strengths.length > 0) {
-            html += '<div class="pa-ai-sub ai-strength"><span class="pa-ai-sub-label">✅ Điểm mạnh</span><ul>' +
+            html += '<div class="pa-ai-sub ai-strength"><span class="pa-ai-sub-label">Điểm mạnh</span><ul>' +
               g.strengths.map(function(s) { return '<li>' + escapeHtml(s) + '</li>'; }).join('') + '</ul></div>';
           }
           if (g.weaknesses && g.weaknesses.length > 0) {
-            html += '<div class="pa-ai-sub ai-weakness"><span class="pa-ai-sub-label">⚠️ Điểm yếu</span><ul>' +
+            html += '<div class="pa-ai-sub ai-weakness"><span class="pa-ai-sub-label">Điểm yếu</span><ul>' +
               g.weaknesses.map(function(w) { return '<li>' + escapeHtml(w) + '</li>'; }).join('') + '</ul></div>';
           }
           if (g.risks && g.risks.length > 0) {
@@ -1100,11 +1100,11 @@
               g.risks.map(function(r) { return '<li>' + escapeHtml(r) + '</li>'; }).join('') + '</ul></div>';
           }
           if (g.missingEvidence && g.missingEvidence.length > 0) {
-            html += '<div class="pa-ai-sub ai-missing"><span class="pa-ai-sub-label">📋 Thiếu</span><ul>' +
+            html += '<div class="pa-ai-sub ai-missing"><span class="pa-ai-sub-label">Thiếu</span><ul>' +
               g.missingEvidence.map(function(m) { return '<li>' + escapeHtml(m) + '</li>'; }).join('') + '</ul></div>';
           }
           if (g.actions && g.actions.length > 0) {
-            html += '<div class="pa-ai-sub ai-action"><span class="pa-ai-sub-label">🎯 Hành động</span><ol>' +
+            html += '<div class="pa-ai-sub ai-action"><span class="pa-ai-sub-label">Hành động</span><ol>' +
               g.actions.map(function(a) { return '<li>' + escapeHtml(a) + '</li>'; }).join('') + '</ol></div>';
           }
           html += '</div>';
@@ -1712,12 +1712,12 @@
         
         toast(' Đã tạo ' + (type === 'study_plan' ? 'Study Plan' : 'bản giải trình') + ' thành công!');
       } else {
-        if (resultText) resultText.textContent = '❌ ' + (data.error || 'Lỗi kết nối AI, vui lòng thử lại sau.');
+        if (resultText) resultText.textContent = (data.error || 'Lỗi kết nối AI, vui lòng thử lại sau.');
       }
     } catch (err) {
       if (loading) loading.style.display = 'none';
       if (result) result.style.display = '';
-      if (resultText) resultText.textContent = '❌ ' + err.message;
+      if (resultText) resultText.textContent = err.message;
     }
   };
 
@@ -1932,12 +1932,12 @@
         renderReviewResult(data.review);
       } else {
         if (inputStep) inputStep.style.display = '';
-        toast('❌ ' + (data.error || 'Lỗi kết nối AI, vui lòng thử lại sau.'));
+        toast((data.error || 'Lỗi kết nối AI, vui lòng thử lại sau.'));
       }
     } catch (err) {
       if (loadingEl) loadingEl.style.display = 'none';
       if (inputStep) inputStep.style.display = '';
-      toast('❌ Lỗi: ' + err.message);
+      toast('Lỗi: ' + err.message);
     }
   };
 
@@ -2081,13 +2081,13 @@
           toast(' Da tao Study Plan cai thien!');
         }
       } else {
-        toast('❌ ' + (data.error || 'Khong the tao lai.'));
+        toast((data.error || 'Không thể tạo lại.'));
         if (resultEl) resultEl.style.display = '';
       }
     } catch (err) {
       if (loadingEl) loadingEl.style.display = 'none';
       if (resultEl) resultEl.style.display = '';
-      toast('❌ Loi: ' + err.message);
+      toast('Lỗi: ' + err.message);
     }
   };
 
@@ -2245,7 +2245,7 @@
   window.clExportChecklist = async function() {
     if (!checklist) return;
     if (_pdfLoading) {
-      toast('⏳ Đang tạo PDF, vui lòng đợi...');
+      toast('Đang tạo PDF, vui lòng đợi...');
       return;
     }
     _pdfLoading = true;
@@ -2280,7 +2280,7 @@
       toast(' Đã tải PDF — ' + opt.filename);
     } catch (err) {
       console.error('PDF export error:', err);
-      toast('❌ Lỗi tạo PDF: ' + (err.message || 'Không xác định'));
+      toast('Lỗi tạo PDF: ' + (err.message || 'Không xác định'));
 
       // Fallback: copy text to clipboard
       let fallbackText = ' CHECKLIST CÁ NHÂN HOÁ\n';
@@ -2542,7 +2542,7 @@
     var btn = document.getElementById('rm-create-btn');
     if (!btn) return;
     btn.disabled = true;
-    btn.textContent = '⏳ Đang tạo...';
+    btn.textContent = 'Đang tạo...';
 
     var items = window._rmItems || [];
     var checkboxes = document.querySelectorAll('.rm-checkbox');
@@ -2808,11 +2808,11 @@
             toast(' Upload thành công: ' + escapeHtml(file.name));
           }
         } else {
-          toast('❌ Upload thất bại: ' + (data.error || 'Lỗi không xác định'));
+          toast('Upload thất bại: ' + (data.error || 'Lỗi không xác định'));
         }
         if (fileInputEl) fileInputEl.value = '';
       } catch (err) {
-        toast('❌ Lỗi kết nối: ' + err.message);
+        toast('Lỗi kết nối: ' + err.message);
         if (fileInputEl) fileInputEl.value = '';
       }
     };

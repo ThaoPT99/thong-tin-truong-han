@@ -9,13 +9,13 @@
 
   // ─── Categories ───
   const CATEGORIES = [
-    { id: 'all', label: 'Tất cả', icon: '📚' },
-    { id: 'visa', label: 'Visa & Quy định', icon: '🛂' },
-    { id: 'documents', label: 'Giấy tờ & Hồ sơ', icon: '📄' },
-    { id: 'finance', label: 'Tài chính', icon: '💰' },
-    { id: 'study-plan', label: 'Study Plan', icon: '✍️' },
-    { id: 'process', label: 'Quy trình', icon: '📋' },
-    { id: 'schools', label: 'Trường & Khu vực', icon: '🏫' },
+    { id: 'all', label: 'Tất cả' },
+    { id: 'visa', label: 'Visa & Quy định' },
+    { id: 'documents', label: 'Giấy tờ & Hồ sơ' },
+    { id: 'finance', label: 'Tài chính' },
+    { id: 'study-plan', label: 'Study Plan' },
+    { id: 'process', label: 'Quy trình' },
+    { id: 'schools', label: 'Trường & Khu vực' },
   ];
 
   // ─── Init ───
@@ -33,7 +33,7 @@
       renderPage(container, articlesCache, faqs);
     }).catch(function() {
       // Fallback: show empty state
-      container.innerHTML = '<div class="kb-empty"><p>❌ Không thể tải dữ liệu. Vui lòng thử lại sau.</p></div>';
+      container.innerHTML = '<div class="kb-empty"><p>Không thể tải dữ liệu. Vui lòng thử lại sau.</p></div>';
     });
   };
 
@@ -45,7 +45,7 @@
         <div class="kb-hero">
           <div>
             <p class="advisor-kicker">Tài nguyên hữu ích</p>
-            <h2>📚 Kiến thức du học Hàn Quốc</h2>
+            <h2>Kiến thức du học Hàn Quốc</h2>
             <p class="kb-hero-desc">
               Tổng hợp kiến thức về visa, giấy tờ, tài chính và quy trình du học Hàn Quốc.
               Tất cả thông tin được cập nhật theo quy định mới nhất.
@@ -62,7 +62,7 @@
 
         <!-- Tabs: Articles / FAQ -->
         <div class="kb-tabs">
-          <button type="button" class="kb-tab ${currentView === 'articles' ? 'active' : ''}" onclick="window._kbSwitchView('articles')">📝 Bài viết</button>
+          <button type="button" class="kb-tab ${currentView === 'articles' ? 'active' : ''}" onclick="window._kbSwitchView('articles')">Bài viết</button>
           <button type="button" class="kb-tab ${currentView === 'faq' ? 'active' : ''}" onclick="window._kbSwitchView('faq')">❓ Hỏi đáp (${faqs.length})</button>
         </div>
 
@@ -326,7 +326,7 @@
   // ─── Helpers ───
   function getCatIcon(cat) {
     const found = CATEGORIES.find(function(c) { return c.id === cat; });
-    return found ? found.icon : '📄';
+    return '';
   }
 
   function getCatLabel(cat) {

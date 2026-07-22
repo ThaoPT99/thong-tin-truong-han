@@ -59,12 +59,12 @@
           <div class="ai-chat-welcome">
             <div class="ai-chat-bubble ai-chat-bubble-ai">
               <div class="ai-chat-bubble-content">
-                👋 Chào bạn! Tôi là trợ lý AI của <b>Thông Tin Trường Hàn</b>.<br><br>
+                Chào bạn! Tôi là trợ lý AI của <b>Thông Tin Trường Hàn</b>.<br><br>
                 Bạn có thể hỏi tôi về:<br>
-                • 🏫 Thông tin trường (học phí, KTX, điều kiện)<br>
-                • 📝 Checklist visa D2-6<br>
-                • 🎤 Phỏng vấn visa<br>
-                • 📍 Khu vực, hệ học<br><br>
+                • Thông tin trường (học phí, KTX, điều kiện)<br>
+                • Checklist visa D2-6<br>
+                • Phỏng vấn visa<br>
+                • Khu vực, hệ học<br><br>
                 <i>Ví dụ: "Trường Osan học phí bao nhiêu?"</i>
               </div>
             </div>
@@ -81,10 +81,10 @@
             </button>
           </div>
           <div class="ai-chat-suggestions">
-            <button type="button" data-quick="Trường Osan học phí bao nhiêu?">🏫 Osan</button>
-            <button type="button" data-quick="Checklist visa D2-6 gồm những gì?">📝 Checklist</button>
-            <button type="button" data-quick="Chứng minh tài chính du học Hàn cần bao nhiêu tiền?">💰 Tài chính</button>
-            <button type="button" data-quick="Quy trình xin visa du học Hàn Quốc như thế nào?">📋 Quy trình</button>
+            <button type="button" data-quick="Trường Osan học phí bao nhiêu?">Osan</button>
+            <button type="button" data-quick="Checklist visa D2-6 gồm những gì?">Checklist</button>
+            <button type="button" data-quick="Chứng minh tài chính du học Hàn cần bao nhiêu tiền?">Tài chính</button>
+            <button type="button" data-quick="Quy trình xin visa du học Hàn Quốc như thế nào?">Quy trình</button>
           </div>
         </div>
       </div>
@@ -172,14 +172,14 @@
       } else {
         messages.push({
           role: 'assistant',
-          content: '❌ Xin lỗi, đã có lỗi xảy ra. Vui lòng thử lại sau!',
+          content: 'Xin lỗi, đã có lỗi xảy ra. Vui lòng thử lại sau!',
         });
       }
     } catch (err) {
       hideLoading();
       messages.push({
         role: 'assistant',
-        content: '❌ Mất kết nối. Vui lòng kiểm tra internet và thử lại.',
+        content: 'Mất kết nối. Vui lòng kiểm tra internet và thử lại.',
       });
     }
 

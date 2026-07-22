@@ -1,4 +1,4 @@
-// interview.js — 🎤 Interview Simulator: mo phong phong van visa KVAC
+// interview.js — Interview Simulator: mo phong phong van visa KVAC
 (function() {
   'use strict';
 
@@ -12,34 +12,34 @@
     overlay.innerHTML = `
       <div class="int-modal">
         <div class="cl-ai-modal-header">
-          <h3>🎤 Luyên phỏng vấn visa KVAC</h3>
+          <h3>Luyện phỏng vấn visa KVAC</h3>
           <button type="button" class="cl-ai-close" onclick="window.clCloseInterview(this)">&times;</button>
         </div>
         <div class="int-body">
           <!-- Setup -->
           <div id="int-setup" class="int-setup">
-            <div class="int-setup-icon">🎤</div>
+            <div class="int-setup-icon">IV</div>
             <h4>Mô phỏng phỏng vấn visa Hàn Quốc</h4>
             <p style="color:#64748b;font-size:.85rem;line-height:1.5;margin-bottom:1.25rem;">
               AI sẽ đóng vai nhân viên KVAC phỏng vấn bạn. Trả lời tự nhiên và nhận đánh giá sau mỗi câu trả lời.
             </p>
             <div class="int-info">
               <div class="int-info-item">
-                <span class="int-info-icon">🛂</span>
+                <span class="int-info-icon"></span>
                 <div>
                   <strong>Loại visa</strong>
                   <span id="int-visa-label">D-4-1 (Học tiếng Hàn)</span>
                 </div>
               </div>
               <div class="int-info-item">
-                <span class="int-info-icon">📝</span>
+                <span class="int-info-icon"></span>
                 <div>
                   <strong>Số câu hỏi</strong>
                   <span>5-7 câu</span>
                 </div>
               </div>
               <div class="int-info-item">
-                <span class="int-info-icon">⏱️</span>
+                <span class="int-info-icon"></span>
                 <div>
                   <strong>Thời gian</strong>
                   <span>5-10 phút</span>
@@ -91,11 +91,11 @@
             </div>
             <div class="int-summary-grid">
               <div class="int-summary-section">
-                <h4>✅ Điểm mạnh</h4>
+                <h4>Điểm mạnh</h4>
                 <ul id="int-strengths"></ul>
               </div>
               <div class="int-summary-section">
-                <h4>⚠️ Cần cải thiện</h4>
+                <h4>Cần cải thiện</h4>
                 <ul id="int-weaknesses"></ul>
               </div>
             </div>
@@ -105,7 +105,7 @@
             </div>
             <div class="int-actions">
               <button type="button" class="btn btn-primary" onclick="window.clRestartInterview()">🔄 Làm lại</button>
-              <button type="button" class="btn btn-outline" onclick="window.clCopyInterviewResult()">📋 Copy kết quả</button>
+              <button type="button" class="btn btn-outline" onclick="window.clCopyInterviewResult()">Copy kết quả</button>
               <button type="button" class="btn btn-outline" onclick="window.clCloseInterview(this)">Đóng</button>
             </div>
           </div>
@@ -133,7 +133,7 @@
     _interviewState = { history: [], profile: userProfile || {}, visaType: visaType, totalScore: 0, answerCount: 0 };
     _isProcessing = true;
 
-    addMessage('ai', 'Xin chào, tôi là nhân viên KVAC. Tôi sẽ phỏng vấn bạn về hồ sơ du học Hàn Quốc. Hãy trả lời tự nhiên và trung thực nhé! 😊', 'system');
+    addMessage('ai', 'Xin chào, tôi là nhân viên KVAC. Tôi sẽ phỏng vấn bạn về hồ sơ du học Hàn Quốc. Hãy trả lời tự nhiên và trung thực nhé!', 'system');
 
     try {
       var fetchFn = window.fetchWithAuth || fetch;
@@ -159,10 +159,10 @@
         }
         enableInput();
       } else {
-        addMessage('ai', '❌ Lỗi kết nối AI. Vui lòng thử lại sau.', 'error');
+        addMessage('ai', 'Lỗi kết nối AI. Vui lòng thử lại sau.', 'error');
       }
     } catch (err) {
-      addMessage('ai', '❌ Lỗi: ' + escapeHtml(err.message), 'error');
+      addMessage('ai', 'Lỗi: ' + escapeHtml(err.message), 'error');
     }
 
     _isProcessing = false;
@@ -218,7 +218,7 @@
           _interviewState.questionNumber = qNum;
 
           if (data.interview.feedback) {
-            addMessage('ai-feedback', '📊 ' + escapeHtml(data.interview.feedback) + (data.interview.score ? ' (Điểm: ' + data.interview.score + '/10)' : ''), 'feedback');
+            addMessage('ai-feedback', escapeHtml(data.interview.feedback) + (data.interview.score ? ' (Điểm: ' + data.interview.score + '/10)' : ''), 'feedback');
             _interviewState.totalScore += data.interview.score || 0;
             _interviewState.answerCount++;
           }
@@ -239,12 +239,12 @@
           }
           enableInput();
         } else {
-          addMessage('ai', '❌ Lỗi kết nối AI. Vui lòng thử lại.', 'error');
+          addMessage('ai', 'Lỗi kết nối AI. Vui lòng thử lại.', 'error');
           enableInput();
         }
       } catch (err) {
         hideLoading();
-        addMessage('ai', '❌ Lỗi: ' + escapeHtml(err.message), 'error');
+        addMessage('ai', 'Lỗi: ' + escapeHtml(err.message), 'error');
         enableInput();
       }
     }
@@ -290,9 +290,9 @@
         if (fill) fill.setAttribute('stroke', color);
 
         var title = document.getElementById('int-summary-title');
-        if (score >= 8) title.textContent = '🌟 Xuất sắc! Bạn đã trả lời rất tốt.';
-        else if (score >= 6) title.textContent = '👍 Khá tốt! Còn một số điểm cần cải thiện.';
-        else if (score >= 4) title.textContent = '📝 Tạm ổn, cần luyện tập thêm.';
+        if (score >= 8) title.textContent = 'Xuất sắc! Bạn đã trả lời rất tốt.';
+        else if (score >= 6) title.textContent = 'Khá tốt! Còn một số điểm cần cải thiện.';
+        else if (score >= 4) title.textContent = 'Tạm ổn, cần luyện tập thêm.';
         else title.textContent = '🔴 Cần cải thiện nhiều. Hãy luyện tập thêm nhé!';
 
         document.getElementById('int-summary-feedback').textContent = s.overallFeedback || '';
@@ -302,10 +302,10 @@
         fillList('int-weaknesses', s.weaknesses);
         fillList('int-tips', s.tips);
       } else {
-        document.getElementById('int-summary-feedback').textContent = '❌ ' + (data.error || 'Khong the tong ket.');
+        document.getElementById('int-summary-feedback').textContent = 'Lỗi: ' + (data.error || 'Không thể tổng kết.');
       }
     } catch (err) {
-      document.getElementById('int-summary-feedback').textContent = '❌ Loi: ' + err.message;
+      document.getElementById('int-summary-feedback').textContent = 'Lỗi: ' + err.message;
     }
   }
 
@@ -317,8 +317,8 @@
     div.className = 'int-msg int-msg-' + (type || role);
 
     var avatar = '';
-    if (role === 'user') avatar = '<div class="int-avatar int-avatar-user">👤</div>';
-    else if (role === 'ai' || role === 'ai-feedback') avatar = '<div class="int-avatar int-avatar-ai">🎤</div>';
+    if (role === 'user') avatar = '<div class="int-avatar int-avatar-user">U</div>';
+    else if (role === 'ai' || role === 'ai-feedback') avatar = '<div class="int-avatar int-avatar-ai">AI</div>';
 
     div.innerHTML = avatar + '<div class="int-bubble">' + content + '</div>';
     container.appendChild(div);
@@ -332,7 +332,7 @@
     if (existing) return;
     var div = document.createElement('div');
     div.className = 'int-msg int-msg-ai int-loading';
-    div.innerHTML = '<div class="int-avatar int-avatar-ai">🎤</div><div class="int-bubble"><span class="ai-chat-dots"><span></span><span></span><span></span></span></div>';
+    div.innerHTML = '<div class="int-avatar int-avatar-ai">AI</div><div class="int-bubble"><span class="ai-chat-dots"><span></span><span></span><span></span></span></div>';
     container.appendChild(div);
     container.scrollTop = container.scrollHeight;
   }
@@ -415,7 +415,7 @@
       }
     });
     navigator.clipboard.writeText(text).then(function() {
-      if (typeof toast === 'function') toast('📋 Da copy ket qua!');
+      if (typeof toast === 'function') toast('Đã copy kết quả!');
     });
   };
 

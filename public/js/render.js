@@ -47,9 +47,9 @@ function listToInline(items, limit = 3) {
 
 function renderContactInfo(s) {
   var parts = [];
-  if (s.address) parts.push('<span class="contact-line">📍 ' + escapeHtml(s.address) + '</span>');
-  if (s.phone) parts.push('<span class="contact-line">📞 ' + escapeHtml(s.phone) + '</span>');
-  if (s.email) parts.push('<span class="contact-line">📧 <a href="mailto:' + escapeHtml(s.email) + '">' + escapeHtml(s.email) + '</a></span>');
+  if (s.address) parts.push('<span class="contact-line">' + escapeHtml(s.address) + '</span>');
+  if (s.phone) parts.push('<span class="contact-line">' + escapeHtml(s.phone) + '</span>');
+  if (s.email) parts.push('<span class="contact-line"><a href="mailto:' + escapeHtml(s.email) + '">' + escapeHtml(s.email) + '</a></span>');
   return parts.length > 0 ? parts.join('<br>') : '<span class="muted-empty">Đang cập nhật</span>';
 }
 
@@ -235,8 +235,8 @@ function renderSchool(schoolId) {
         </div>
         <div class="detail-actions">
           <button type="button" class="copy-school-info" data-school-id="${escapeHtml(schoolId)}">Copy thông tin</button>
-          <button type="button" class="copy-school-zalo" data-school-id="${escapeHtml(schoolId)}">📱 Copy Zalo</button>
-          <button type="button" class="zalo-ai-btn" data-school-id="${escapeHtml(schoolId)}">🤖 Soạn Zalo AI</button>
+          <button type="button" class="copy-school-zalo" data-school-id="${escapeHtml(schoolId)}">Copy Zalo</button>
+          <button type="button" class="zalo-ai-btn" data-school-id="${escapeHtml(schoolId)}">Soạn Zalo AI</button>
           <button type="button" class="copy-school-link" data-school-id="${escapeHtml(schoolId)}">Copy link</button>
           <button type="button" class="open-zalo-detail">Tư vấn Zalo</button>
         </div>
@@ -370,7 +370,7 @@ function renderSchoolsDirectory() {
         <div>
           <p class="advisor-kicker">Danh sách trường</p>
           <h2>${schools.length} trường tuyển sinh</h2>
-          <p>Chọn tên trường để xem thông tin chi tiết về điều kiện, học phí, hồ sơ, ký túc xá và tài liệu liên quan.</p>
+          <p>Chọn tên trường để xem thông tin chi tiết, so sánh và chuẩn bị hồ sơ du học.</p>
         </div>
         <div class="directory-tools">
           <div style="position:relative;">
@@ -528,7 +528,7 @@ function bindSchoolsDirectory(container) {
     intents.tags.forEach(function(t) {
       let label = t;
       INTENT_MAP.tag.some(function(r) { if (r.value === t) { label = r.label; return true; } });
-      chips.push('<span class="smart-chip smart-chip-tag"><span class="smart-chip-label">⚡ </span>' + escapeHtml(label) + '</span>');
+      chips.push('<span class="smart-chip smart-chip-tag">' + escapeHtml(label) + '</span>');
     });
     chipsContainer.innerHTML = chips.join('');
   }
@@ -742,8 +742,8 @@ function renderCompare() {
         <select class="compare-select" data-index="2">${options}</select>
       </div>
       <div class="compare-actions">
-        <button type="button" class="btn btn-primary" id="compare-copy-link">🔗 Copy link so sánh</button>
-        <button type="button" class="btn btn-outline" id="compare-export">📄 Xuất PDF</button>
+        <button type="button" class="btn btn-primary" id="compare-copy-link">Copy link so sánh</button>
+        <button type="button" class="btn btn-outline" id="compare-export">Xuất PDF</button>
       </div>
       <div id="compare-result"></div>
     </section>
@@ -881,7 +881,7 @@ function getSchoolZaloText(school) {
   const regionName = rules && rules.region ? (window.REGION_LABELS && window.REGION_LABELS[rules.region] ? window.REGION_LABELS[rules.region].charAt(0).toUpperCase() + window.REGION_LABELS[rules.region].slice(1) : rules.region) : '';
   const line = String.prototype.padEnd ? ''.padEnd(30, '\u2500') : '──────────────────────────────';
   return [
-    '📋 TU VAN DU HOC HAN QUOC',
+    'TU VAN DU HOC HAN QUOC',
     line,
     '• Truong: ' + (school.name || '') + (school.nameKr ? ' (' + school.nameKr + ')' : ''),
     school.nameEn ? '• Ten tieng Anh: ' + school.nameEn : '',
@@ -890,8 +890,8 @@ function getSchoolZaloText(school) {
     school.tuition ? '• Hoc phi: ' + String(school.tuition).replace(/\n+/g, ' ').substring(0, 200) : '',
     school.ktx ? '• Ky tuc xa: ' + String(school.ktx).replace(/\n+/g, ' ').substring(0, 200) : '',
     '',
-    '📞 Can tu van? LH Zalo',
-    '🌐 ' + location.origin + location.pathname + '?school=' + encodeURIComponent(school.id)
+    'Can tu van? LH Zalo',
+    'Web: ' + location.origin + location.pathname + '?school=' + encodeURIComponent(school.id)
   ].filter(Boolean).join("\n");
 }
 
@@ -970,7 +970,7 @@ function bindSchoolDetail(container, schoolId) {
   if (zaloAiBtn) {
     zaloAiBtn.addEventListener("click", async function() {
       this.disabled = true;
-      this.textContent = '⏳ Đang soạn...';
+      this.textContent = 'Đang soạn...';
       try {
         const res = await fetch('/api/deepseek?action=generate-zalo', {
           method: 'POST',
@@ -980,23 +980,23 @@ function bindSchoolDetail(container, schoolId) {
         const data = await res.json();
         if (data.success && data.zaloText) {
           await navigator.clipboard.writeText(data.zaloText);
-          showCopyToast(container, '✅ Đã copy nội dung AI vào clipboard!');
+          showCopyToast(container, 'Đã copy nội dung AI vào clipboard!');
         } else {
           // Fallback: dùng text cũ
           await navigator.clipboard.writeText(getSchoolZaloText(school));
-          showCopyToast(container, '⚠️ AI không phản hồi, đã copy text mặc định');
+          showCopyToast(container, 'AI không phản hồi, đã copy text mặc định');
         }
       } catch (err) {
         // Fallback
         try {
           await navigator.clipboard.writeText(getSchoolZaloText(school));
-          showCopyToast(container, '⚠️ Lỗi kết nối AI, đã copy text mặc định');
+          showCopyToast(container, 'Lỗi kết nối AI, đã copy text mặc định');
         } catch (e) {
-          showCopyToast(container, '❌ Lỗi: ' + e.message);
+          showCopyToast(container, 'Lỗi: ' + e.message);
         }
       } finally {
         this.disabled = false;
-        this.textContent = '🤖 Soạn Zalo AI';
+        this.textContent = 'Soạn Zalo AI';
       }
     });
   }
@@ -1120,7 +1120,7 @@ function renderCompareResult(container) {
         <thead>
           <tr>
             <th>Tiêu chí</th>
-            ${schools.map(s => `<th>${escapeHtml(s.name)} ${winners[s.id] ? `<span class="winner-badge" title="Thắng ${winners[s.id].join(', ')}">🏆</span>` : ''}</th>`).join("")}
+            ${schools.map(s => `<th>${escapeHtml(s.name)} ${winners[s.id] ? `<span class="winner-badge" title="Thắng ${winners[s.id].join(', ')}">*</span>` : ''}</th>`).join("")}
           </tr>
         </thead>
         <tbody>
@@ -1252,7 +1252,7 @@ function renderCostCalculator() {
       </div>
       <div class="cost-calc-body">
         <div class="cost-calc-form">
-          <h3>📋 Thông tin đầu vào</h3>
+          <h3>Thông tin đầu vào</h3>
           <div class="cost-calc-field">
             <label for="cost-school">Trường</label>
             <select id="cost-school">${options}</select>
@@ -1291,7 +1291,7 @@ function renderCostCalculator() {
           </div>
         </div>
         <div class="cost-calc-result">
-          <h3>💰 Dự toán chi phí</h3>
+          <h3>Dự toán chi phí</h3>
           <table class="cost-table">
             <thead>
               <tr>
@@ -1339,7 +1339,7 @@ function renderCostCalculator() {
             </tbody>
           </table>
           <div class="cost-note">
-            ⚠️ Đây là ước tính tham khảo dựa trên dữ liệu trường và các khoản phí thông thường. 
+            Đây là ước tính tham khảo dựa trên dữ liệu trường và các khoản phí thông thường. 
             Chi phí thực tế có thể thay đổi theo từng trường, kỳ tuyển sinh và nhu cầu cá nhân.
           </div>
         </div>

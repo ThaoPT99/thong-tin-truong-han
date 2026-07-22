@@ -54,7 +54,7 @@
    * 1. Nhân thân — Tuổi, giới tính, quê quán, tình trạng hôn nhân
    */
   function analyzePersonal(profile) {
-    var result = { group: 'Nhân thân', icon: '👤', strengths: [], weaknesses: [], risks: [], missingEvidence: [], actions: [] };
+    var result = { group: 'Nhân thân', strengths: [], weaknesses: [], risks: [], missingEvidence: [], actions: [] };
     var age = getAge(profile);
     var gender = profile.gender;
 
@@ -104,7 +104,7 @@
    * 2. Học vấn — Trình độ, GPA, năm tốt nghiệp, TOPIK, IELTS
    */
   function analyzeEducation(profile) {
-    var result = { group: 'Học vấn', icon: '🎓', strengths: [], weaknesses: [], risks: [], missingEvidence: [], actions: [] };
+    var result = { group: 'Học vấn', strengths: [], weaknesses: [], risks: [], missingEvidence: [], actions: [] };
     var gpa = profile.gpa;
     var koreanLevel = profile.koreanLevel;
     var visaType = profile.visaType || 'D-4-1';
@@ -184,7 +184,7 @@
    * 3. Kinh nghiệm làm việc — Đã đi làm? HĐLĐ? BHXH?
    */
   function analyzeWork(profile) {
-    var result = { group: 'Kinh nghiệm', icon: '💼', strengths: [], weaknesses: [], risks: [], missingEvidence: [], actions: [] };
+    var result = { group: 'Kinh nghiệm', strengths: [], weaknesses: [], risks: [], missingEvidence: [], actions: [] };
 
     if (profile.hasWorkExperience) {
       // Có kinh nghiệm làm việc
@@ -225,7 +225,7 @@
    * 4. Tài chính — Người bảo trợ, thu nhập, sổ tiết kiệm
    */
   function analyzeFinance(profile) {
-    var result = { group: 'Tài chính', icon: '💰', strengths: [], weaknesses: [], risks: [], missingEvidence: [], actions: [] };
+    var result = { group: 'Tài chính', strengths: [], weaknesses: [], risks: [], missingEvidence: [], actions: [] };
     var visaType = profile.visaType || 'D-4-1';
     var minSavings = getMinSavings(visaType);
     var savings = profile.savingsAmount || 0;
@@ -271,7 +271,7 @@
    * 5. Lịch sử nhập cảnh — Đã từng xin visa? Trượt visa? Xuất cảnh?
    */
   function analyzeImmigration(profile) {
-    var result = { group: 'Nhập cảnh', icon: '🛂', strengths: [], weaknesses: [], risks: [], missingEvidence: [], actions: [] };
+    var result = { group: 'Nhập cảnh', strengths: [], weaknesses: [], risks: [], missingEvidence: [], actions: [] };
 
     // Trượt visa
     if (profile.hasVisaRejection) {
@@ -359,7 +359,7 @@
     if (totalScore >= 80) {
       level = 'low';
       color = '#059669';
-      label = '✅ Hồ sơ tốt';
+      label = 'Hồ sơ tốt';
     } else if (totalScore >= 60) {
       level = 'medium';
       color = '#d97706';
@@ -371,7 +371,7 @@
     } else {
       level = 'critical';
       color = '#991b1b';
-      label = '❌ Hồ sơ rủi ro cao';
+      label = 'Hồ sơ rủi ro cao';
     }
 
     // Quyết định sau phân tích

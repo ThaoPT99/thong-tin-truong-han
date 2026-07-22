@@ -102,7 +102,7 @@ function getAdvisorTemplate() {
       </div>
 
       <div class="advisor-quick-input">
-        <label style="font-size:0.82rem;font-weight:700;color:#475569;display:block;margin-bottom:4px;">⚡ Nhập nhanh hồ sơ</label>
+        <label style="font-size:0.82rem;font-weight:700;color:#475569;display:block;margin-bottom:4px;">Nhập nhanh hồ sơ</label>
         <div style="display:flex;gap:8px;">
           <input type="text" id="advisor-quick-input" placeholder="VD: nữ, 20t, GPA 6.0, topik 2" style="flex:1;min-height:2.55rem;padding:0.5rem 0.7rem;border:1px solid #dbe3ee;border-radius:8px;background:#fff;font:inherit;font-size:0.9rem;">
           <button type="button" id="advisor-quick-btn" style="min-height:2.55rem;padding:0.5rem 0.9rem;border:none;border-radius:8px;background:#2563eb;color:#fff;font:inherit;font-weight:700;cursor:pointer;">🔍 Điền</button>
@@ -191,7 +191,7 @@ function getAdvisorTemplate() {
 
         <div class="advisor-actions">
           <button type="submit" class="advisor-submit">Phân tích hồ sơ</button>
-          <button type="button" class="advisor-ai-btn" id="advisor-ai-btn">🤖 AI Tư vấn</button>
+          <button type="button" class="advisor-ai-btn" id="advisor-ai-btn">AI Tư vấn</button>
           <button type="button" class="advisor-reset">Nhập lại</button>
         </div>
         <div id="advisor-ai-response" class="advisor-ai-response" style="display:none;margin-top:1rem;padding:1rem;border:2px solid #2563eb;border-radius:12px;background:#eff6ff;white-space:pre-wrap;line-height:1.7;font-size:0.92rem;"></div>
@@ -286,9 +286,9 @@ function bindAdvisorEvents(container) {
     aiBtn.addEventListener("click", async function() {
       const profile = readAdvisorForm(form);
       aiBtn.disabled = true;
-      aiBtn.textContent = '⏳ Đang phân tích...';
+      aiBtn.textContent = 'Đang phân tích...';
       aiResponse.style.display = 'block';
-      aiResponse.textContent = '⏳ Đang gọi AI phân tích hồ sơ...';
+      aiResponse.textContent = 'Đang gọi AI phân tích hồ sơ...';
 
       try {
         const res = await fetch('/api/deepseek?action=advisor', {
@@ -315,13 +315,13 @@ function bindAdvisorEvents(container) {
             .replace(/<br>- /g, '<br>• ');
           aiResponse.innerHTML = safeText;
         } else {
-          aiResponse.textContent = '❌ Lỗi: ' + (data.error || 'Không nhận được phản hồi');
+          aiResponse.textContent = 'Lỗi: ' + (data.error || 'Không nhận được phản hồi');
         }
       } catch (err) {
-        aiResponse.textContent = '❌ Lỗi kết nối: ' + err.message;
+        aiResponse.textContent = 'Lỗi kết nối: ' + err.message;
       } finally {
         aiBtn.disabled = false;
-        aiBtn.textContent = '🤖 AI Tư vấn';
+        aiBtn.textContent = 'AI Tư vấn';
       }
     });
   }

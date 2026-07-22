@@ -70,7 +70,7 @@ window.escapeHtml = function(str) {
 
         var notice = document.createElement('div');
         notice.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:9999;background:#dc2626;color:#fff;padding:12px 24px;border-radius:10px;font-size:.85rem;font-weight:600;box-shadow:0 4px 16px rgba(220,38,38,0.3);text-align:center;max-width:400px;';
-        notice.innerHTML = '⚠️ Location access was denied. <a href="https://support.google.com/chrome/answer/142065" target="_blank" rel="noopener" style="color:#fde68a;font-weight:700;">Enable it in Chrome settings</a> for precise results.';
+        notice.innerHTML = 'Location access was denied. <a href="https://support.google.com/chrome/answer/142065" target="_blank" rel="noopener" style="color:#fde68a;font-weight:700;">Enable it in Chrome settings</a> for precise results.';
         document.body.appendChild(notice);
         setTimeout(function() {
           notice.style.transition = 'opacity .5s';
@@ -132,8 +132,8 @@ window.escapeHtml = function(str) {
     var hint = document.createElement('div');
     hint.id = 'geo-denied-hint';
     hint.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:9999;background:#fef3c7;color:#92400e;padding:10px 20px;font-size:.85rem;text-align:center;border-top:2px solid #f59e0b;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;';
-    hint.innerHTML = '🔒 <span>Location access is blocked. <a href="https://support.google.com/chrome/answer/142065" target="_blank" rel="noopener" style="color:#1d4ed8;font-weight:600;">Enable in Chrome settings</a> for precise results. Using approximate location instead.</span>'
-      + '<button id="geo-dismiss-hint" style="background:none;border:none;color:#92400e;font-size:1.2rem;cursor:pointer;padding:0 4px;line-height:1;">✕</button>';
+    hint.innerHTML = '<span>Location access is blocked. <a href="https://support.google.com/chrome/answer/142065" target="_blank" rel="noopener" style="color:#1d4ed8;font-weight:600;">Enable in Chrome settings</a> for precise results. Using approximate location instead.</span>'
+      + '<button id="geo-dismiss-hint" style="background:none;border:none;color:#92400e;font-size:1.2rem;cursor:pointer;padding:0 4px;line-height:1;">X</button>';
     document.body.appendChild(hint);
     setTimeout(function() {
       document.getElementById('geo-dismiss-hint')?.addEventListener('click', function() {
@@ -148,7 +148,7 @@ window.escapeHtml = function(str) {
   var banner = document.createElement('div');
   banner.id = 'geo-banner';
   banner.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:9999;background:linear-gradient(135deg,#1e3a5f,#2d5a87);color:#fff;padding:24px 32px;display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap;font-size:1.1rem;box-shadow:0 -8px 32px rgba(0,0,0,0.3);border-top:3px solid #60a5fa;';
-  banner.innerHTML = '<div style="display:flex;align-items:center;gap:12px;flex:1;min-width:200px;"><span style="font-size:2rem;line-height:1;">📍</span><div><div style="font-weight:700;font-size:1.15rem;margin-bottom:2px;">Please allow location access</div><div style="font-size:.88rem;opacity:.8;">We use your precise location to find schools near you and provide accurate information</div></div></div>'
+  banner.innerHTML = '<div style="display:flex;align-items:center;gap:12px;flex:1;min-width:200px;"><div><div style="font-weight:700;font-size:1.15rem;margin-bottom:2px;">Please allow location access</div><div style="font-size:.88rem;opacity:.8;">We use your precise location to find schools near you and provide accurate information</div></div></div>'
     + '<button id="geo-yes" style="padding:14px 36px;border:none;border-radius:10px;background:#2563eb;color:#fff;font-weight:700;cursor:pointer;font-size:1.05rem;box-shadow:0 4px 12px rgba(37,99,235,0.4);transition:all .15s;white-space:nowrap;" onmouseover="this.style.background=\'#1d4ed8\'" onmouseout="this.style.background=\'#2563eb\'">Allow location</button>';
   banner.style.transform = 'translateY(100%)';
   banner.style.transition = 'transform .5s ease';
