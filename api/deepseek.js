@@ -1365,6 +1365,34 @@ const STUDENT_TOOLS = {
     },
   },
 
+  get_tool_logs: {
+    description: 'Xem lịch sử các công cụ đã dùng: tra cứu trường, so sánh, gửi đơn, nhắc nhở... (dùng khi học sinh hỏi "tôi đã tìm trường gì trước đây?" hoặc "cho xem lại lịch sử")',
+    params: {
+      limit: { type: 'number', description: 'Số lượng bản ghi muốn xem (mặc định 5, tối đa 20)', required: false, default: 5 },
+    },
+    handler: async function(params, profile) {
+      if (!profile || !profile.email) return { error: 'Can dang nhap de xem lich su.' };
+      var limit = Math.min((params && params.limit) || 5, 20);
+      var { data: logs } = await supabase
+        .from('student_tool_logs')
+        .select('tool_name, params, result_summary, result_count, success, user_message, created_at')
+        .eq('student_email', profile.email)
+        .order('created_at', { ascending: false })
+        .limit(limit);
+      if (!logs || logs.length === 0) return { message: 'Chua co lich su su dung cong cu.' };
+      return {
+        logs: logs.map(function(l) {
+          return {
+            tool: l.tool_name,
+            result: l.result_summary,
+            userMessage: l.user_message ? l.user_message.substring(0, 100) : null,
+            time: l.created_at,
+          };
+        }),
+      };
+    },
+  },
+
   apply_school: {
     description: 'Gửi đơn đăng ký nhập học vào một trường Hàn Quốc',
     params: {
@@ -1668,6 +1696,11 @@ function summarizeToolResult(toolName, result) {
         var items = (result && Array.isArray(result)) ? result.length : (result && result.items ? result.items.length : 0);
         return 'Checklist: ' + items + ' mục';
       }
+      case 'get_tool_logs': {
+        var logs = (result && result.logs) ? result.logs : [];
+        var toolNames = logs.map(function(l) { return l.tool; }).filter(Boolean).join(', ');
+        return logs.length + ' lần gần đây' + (toolNames ? ': ' + toolNames : '');
+      }
       default: {
         if (result && typeof result === 'object') {
           if (result.message) return result.message;
@@ -1755,7 +1788,10 @@ function buildToolsSystemPrompt() {
   lines.push('- Nếu học sinh muốn TÌM trường cụ thể → dùng search_schools hoặc list_by_criteria');
   lines.push('- Nếu học sinh muốn XEM CHI TIẾT trường → dùng get_school_detail');
   lines.push('- Nếu học sinh muốn SO SÁNH trường → dùng compare_schools');
+  lines.push('- Nếu học sinh muốn XEM LỊCH SỬ đã tra cứu/gửi đơn/tạo nhắc nhở → dùng get_tool_logs');
   lines.push('- Nếu học sinh hỏi về hồ sơ/checklist/sửa thông tin → KHÔNG cần tool, trả lời trực tiếp');
+  lines.push('');
+  lines.push('GHI CHÚ: Mỗi tool call đều được tự động ghi log xuống database. Học sinh có thể hỏi "tôi đã tìm trường gì trước đây?" và bạn dùng get_tool_logs để trả lời.');
   return lines.join('\n');
 }
 
