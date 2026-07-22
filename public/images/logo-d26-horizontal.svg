@@ -1,17 +1,14 @@
 <svg width="1400" height="420" viewBox="0 0 1400 420" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <!-- Background gradient -->
     <linearGradient id="bgGrad" x1="0" y1="0" x2="1400" y2="420" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#071B34"/>
       <stop offset="1" stop-color="#08223F"/>
     </linearGradient>
-    <!-- Icon gradient -->
     <linearGradient id="iconGrad" x1="48" y1="48" x2="371" y2="371" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#20E3B2"/>
       <stop offset="0.5" stop-color="#2F80ED"/>
       <stop offset="1" stop-color="#8B5CF6"/>
     </linearGradient>
-    <!-- Compass glow -->
     <radialGradient id="glow" cx="210" cy="210" r="180" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#FBBF24" stop-opacity="0.15"/>
       <stop offset="1" stop-color="#FBBF24" stop-opacity="0"/>
@@ -20,8 +17,6 @@
 
   <!-- Background -->
   <rect width="1400" height="420" rx="86" fill="url(#bgGrad)"/>
-
-  <!-- Border -->
   <rect x="2" y="2" width="1396" height="416" rx="84" fill="none" stroke="#1E3A5F" stroke-width="2"/>
 
   <!-- Icon container -->
@@ -29,47 +24,41 @@
 
   <!-- Document icon -->
   <g transform="translate(128,100)">
-    <!-- Document body -->
     <rect x="4" y="6" width="168" height="220" rx="24" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.4)" stroke-width="3"/>
-    <!-- Folded corner -->
     <path d="M130 6V42C130 50.8 137.2 58 146 58H176" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
-    <!-- Content lines -->
     <rect x="28" y="72" width="120" height="8" rx="4" fill="rgba(255,255,255,0.45)"/>
     <rect x="28" y="92" width="96" height="8" rx="4" fill="rgba(255,255,255,0.3)"/>
     <rect x="28" y="112" width="108" height="8" rx="4" fill="rgba(255,255,255,0.3)"/>
     <rect x="28" y="132" width="72" height="8" rx="4" fill="rgba(255,255,255,0.3)"/>
     <rect x="28" y="160" width="120" height="8" rx="4" fill="rgba(255,255,255,0.45)"/>
     <rect x="28" y="180" width="96" height="8" rx="4" fill="rgba(255,255,255,0.3)"/>
-    <!-- Star compass -->
     <path d="M88 30L97 48L116 52L103 64L106 84L88 74L70 84L73 64L60 52L79 48L88 30Z" fill="#FBBF24"/>
-    <!-- Check mark -->
     <path d="M58 192L82 216L118 178" stroke="#20E3B2" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
   </g>
 
-  <!-- Glow effect -->
   <circle cx="210" cy="210" r="180" fill="url(#glow)"/>
 
-  <!-- Brand: D26 -->
-  <text x="458" y="200" fill="white" font-family="'Be Vietnam Pro', 'Arial Black', Arial, sans-serif" font-size="132" font-weight="900" letter-spacing="-12">D26</text>
+  <!-- Main headline: H? S? Du H?c -->
+  <text x="458" y="190" fill="white" font-family="'Be Vietnam Pro', 'Arial Black', Arial, sans-serif" font-size="110" font-weight="900" letter-spacing="-6">HỒ SƠ</text>
+  <text x="458" y="282" fill="white" font-family="'Be Vietnam Pro', 'Arial Black', Arial, sans-serif" font-size="110" font-weight="900" letter-spacing="-6">DU HỌC</text>
 
-  <!-- Tagline -->
-  <rect x="456" y="234" width="240" height="60" rx="30" fill="rgba(153,246,228,0.1)" stroke="rgba(153,246,228,0.2)" stroke-width="2"/>
-  <text x="576" y="274" text-anchor="middle" fill="#99F6E4" font-family="'Be Vietnam Pro', Arial, sans-serif" font-size="30" font-weight="800" letter-spacing="3">HỒ SƠ DU HỌC</text>
+  <!-- Tagline pill -->
+  <rect x="456" y="308" width="280" height="50" rx="25" fill="rgba(153,246,228,0.1)" stroke="rgba(153,246,228,0.2)" stroke-width="2"/>
+  <text x="596" y="340" text-anchor="middle" fill="#99F6E4" font-family="'Be Vietnam Pro', Arial, sans-serif" font-size="22" font-weight="800" letter-spacing="2">TỰ LÀM HỒ SƠ</text>
 
-  <!-- Line separator -->
-  <line x1="740" y1="100" x2="740" y2="320" stroke="#1E3A5F" stroke-width="3" stroke-dasharray="12 8"/>
+  <!-- Separator -->
+  <line x1="800" y1="90" x2="800" y2="330" stroke="#1E3A5F" stroke-width="3" stroke-dasharray="12 8"/>
 
-  <!-- Right side: Value proposition -->
-  <text x="800" y="172" fill="#CCFBF1" font-family="'Be Vietnam Pro', Arial, sans-serif" font-size="28" font-weight="600" letter-spacing="1">TỰ LÀM HỒ SƠ</text>
-  <text x="800" y="220" fill="#60A5FA" font-family="'Be Vietnam Pro', Arial, sans-serif" font-size="24" font-weight="700" letter-spacing="2">KỲ THÁNG 3/2027</text>
+  <!-- Value props -->
+  <text x="860" y="148" fill="#CCFBF1" font-family="'Be Vietnam Pro', Arial, sans-serif" font-size="26" font-weight="600" letter-spacing="1">Tra cứu trường</text>
+  <text x="860" y="186" fill="#94A3B8" font-family="'Be Vietnam Pro', Arial, sans-serif" font-size="16" font-weight="400">Danh sách trường Hàn Quốc</text>
 
-  <!-- Descriptor badges -->
-  <rect x="800" y="258" width="140" height="42" rx="21" fill="rgba(45,212,191,0.12)"/>
-  <text x="870" y="286" text-anchor="middle" fill="#5EEAD4" font-family="'Be Vietnam Pro', Arial, sans-serif" font-size="17" font-weight="700">Tra cứu</text>
+  <text x="860" y="240" fill="#60A5FA" font-family="'Be Vietnam Pro', Arial, sans-serif" font-size="26" font-weight="600" letter-spacing="1">So sánh lựa chọn</text>
+  <text x="860" y="278" fill="#94A3B8" font-family="'Be Vietnam Pro', Arial, sans-serif" font-size="16" font-weight="400">Chi phí, khu vực, điều kiện</text>
 
-  <rect x="958" y="258" width="140" height="42" rx="21" fill="rgba(96,165,250,0.12)"/>
-  <text x="1028" y="286" text-anchor="middle" fill="#93C5FD" font-family="'Be Vietnam Pro', Arial, sans-serif" font-size="17" font-weight="700">So sánh</text>
+  <text x="860" y="332" fill="#FCD34D" font-family="'Be Vietnam Pro', Arial, sans-serif" font-size="26" font-weight="600" letter-spacing="1">Chuẩn bị hồ sơ</text>
+  <text x="860" y="370" fill="#94A3B8" font-family="'Be Vietnam Pro', Arial, sans-serif" font-size="16" font-weight="400">Checklist + AI tư vấn</text>
 
-  <rect x="1116" y="258" width="200" height="42" rx="21" fill="rgba(251,191,36,0.12)"/>
-  <text x="1216" y="286" text-anchor="middle" fill="#FCD34D" font-family="'Be Vietnam Pro', Arial, sans-serif" font-size="17" font-weight="700">Chuẩn bị hồ sơ</text>
+  <!-- Small D26 -->
+  <text x="1330" y="390" text-anchor="end" fill="rgba(153,246,228,0.3)" font-family="Arial, sans-serif" font-size="16" font-weight="600" letter-spacing="2">D26</text>
 </svg>
