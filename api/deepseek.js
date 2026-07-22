@@ -1044,6 +1044,463 @@ HƯỚNG DẪN TRẢ LỜI:
     });
   }
 }  // ═══════════════════════════════════════════════════
+// ─── TOOL CALLING — Definitions for Student Agent ───
+// Phase 1: search schools, get detail, compare, update profile, checklist, filter
+// ═══════════════════════════════════════════════════
+
+const STUDENT_TOOLS = {
+  search_schools: {
+    description: 'Tìm kiếm trường Hàn Quốc theo tên, khu vực hoặc hệ đào tạo',
+    params: {
+      query: { type: 'string', description: 'Tên trường cần tìm (có thể không đầy đủ)', required: true },
+      region: { type: 'string', description: 'Lọc theo khu vực: seoul, near-seoul, busan, gyeonggi, incheon, gwangju, gangwon,...', required: false },
+      system: { type: 'string', description: 'Hệ đào tạo: D2-6 hoặc D4-1', required: false },
+      limit: { type: 'number', description: 'Số kết quả tối đa (mặc định 5)', required: false, default: 5 },
+    },
+    handler: async function(params) {
+      var q = supabase.from('schools').select('id, slug, name, name_kr, system, location, region, tuition, ktx, quota, intro');
+      if (params.query) q = q.or('name.ilike.%' + params.query + '%,name_kr.ilike.%' + params.query + '%,slug.ilike.%' + params.query + '%');
+      if (params.region) q = q.eq('region', params.region);
+      if (params.system) q = q.eq('visa_type', params.system);
+      if (params.limit) q = q.limit(Math.min(params.limit, 10));
+      else q = q.limit(5);
+      var { data } = await q;
+      return (data || []).map(function(s) {
+        return {
+          id: s.id, slug: s.slug, name: s.name, nameKr: s.name_kr,
+          system: s.system, location: s.location, region: s.region,
+          tuition: s.tuition, ktx: s.ktx, quota: s.quota, intro: s.intro,
+        };
+      });
+    },
+  },
+
+  get_school_detail: {
+    description: 'Xem chi tiết 1 trường: học phí, KTX, điều kiện, chuyên ngành, ưu điểm',
+    params: {
+      slug: { type: 'string', description: 'Slug của trường (VD: osan, induk)', required: true },
+    },
+    handler: async function(params) {
+      var { data: school } = await supabase
+        .from('schools')
+        .select('*, school_conditions(text), school_majors(text), school_advantages(text), school_conversions(text), school_documents(text), school_partners(code, name)')
+        .eq('slug', params.slug)
+        .single();
+      if (!school) return null;
+      var { data: ap } = await supabase
+        .from('school_advisor_profiles')
+        .select('*')
+        .eq('school_id', school.id)
+        .maybeSingle();
+      return {
+        id: school.id, slug: school.slug, name: school.name, nameKr: school.name_kr, nameEn: school.name_en,
+        system: school.system, location: school.location, region: school.region,
+        tuition: school.tuition, ktx: school.ktx, quota: school.quota,
+        website: school.website, catalogUrl: school.catalog_url, intro: school.intro,
+        conditions: (school.school_conditions || []).map(function(c) { return c.text; }),
+        majors: (school.school_majors || []).map(function(m) { return m.text; }),
+        advantages: (school.school_advantages || []).map(function(a) { return a.text; }),
+        conversions: (school.school_conversions || []).map(function(c) { return c.text; }),
+        documents: (school.school_documents || []).map(function(d) { return d.text; }),
+        advisorProfile: ap ? {
+          gender: ap.gender, costLevel: ap.cost_level, visaChance: ap.visa_chance,
+          jobOpportunity: ap.job_opportunity, e7Opportunity: ap.e7_opportunity,
+          region: ap.region, tags: ap.tags, notes: ap.notes,
+        } : null,
+      };
+    },
+  },
+
+  compare_schools: {
+    description: 'So sánh 2 trường Hàn Quốc',
+    params: {
+      slug1: { type: 'string', description: 'Slug trường thứ nhất', required: true },
+      slug2: { type: 'string', description: 'Slug trường thứ hai', required: true },
+    },
+    handler: async function(params) {
+      var { data: schools } = await supabase
+        .from('schools')
+        .select('*, school_conditions(text), school_majors(text), school_advantages(text)')
+        .in('slug', [params.slug1, params.slug2]);
+      if (!schools || schools.length < 2) return { error: 'Không tìm thấy đủ 2 trường' };
+      var [s1, s2] = schools;
+      var formatOne = function(s) {
+        return {
+          name: s.name, nameKr: s.name_kr, slug: s.slug,
+          system: s.system, location: s.location, region: s.region,
+          tuition: s.tuition, ktx: s.ktx, quota: s.quota,
+          conditions: (s.school_conditions || []).map(function(c) { return c.text; }),
+          majors: (s.school_majors || []).slice(0, 8).map(function(m) { return m.text; }),
+          advantages: (s.school_advantages || []).map(function(a) { return a.text; }),
+        };
+      };
+      return { school1: formatOne(s1), school2: formatOne(s2) };
+    },
+  },
+
+
+
+  interview_simulator: {
+    description: 'Luyen phong van visa KVAC voi AI. Dung tool nay khi hoc sinh muon luyen phong van.',
+    params: {
+      action: { type: 'string', description: 'start (bat dau) hoac answer (tra loi cau hoi)', required: true },
+      answer: { type: 'string', description: 'Cau tra loi cua hoc sinh (chi can khi action=answer)', required: false },
+    },
+    handler: async function(params, profile) {
+      var vt = profile.visaType || 'D4-1';
+      var p = {
+        fullName: profile.fullName || 'Hoc sinh', visaType: vt,
+        educationLevel: profile.educationLevel || 'THPT', koreanLevel: profile.koreanLevel || 'none',
+        gpa: profile.gpa || null, hasVisaRejection: profile.hasVisaRejection || false,
+        gapYears: profile.gapYears || 0, chosenSchool: profile.chosenSchool || '', chosenMajor: profile.chosenMajor || '',
+      };
+      var topics = {
+        'D4-1': ['Gioi thieu ban than va muc dich du hoc','Ly do chon Han Quoc de hoc tieng','Tai sao khong hoc tieng Han o Viet Nam?','Ke hoach hoc tieng cu the va muc tieu TOPIK','Sau khi hoc tieng xong du dinh lam gi?','Tai chinh va nguoi bao lanh'],
+        'D2-6': ['Gioi thieu ban than va muc dich du hoc','Ly do chon Han Quoc','Tai sao chon truong va nganh nay?','Ke hoach hoc tap cu the tu tung hoc ky','Tai chinh va nguoi bao lanh','Du dinh sau khi tot nghiep'],
+      };
+      var interviewTopics = topics[vt] || topics['D4-1'];
+      if (params.action === 'start') {
+        var topicsText = interviewTopics.map(function(t, i) { return (i+1) + '. ' + t; }).join('\n');
+        var sys = 'Ban la nhan vien phong van visa Han Quoc tai KVAC. Phong van hs xin visa ' + vt + '.\nTHONG TIN HS: ' + p.fullName + ', ' + (p.educationLevel === 'university' ? 'DH' : 'THPT') + (p.gpa ? ', GPA: ' + p.gpa : '') + ', Tieng Han: ' + p.koreanLevel + (p.chosenSchool ? ', Truong: ' + p.chosenSchool : '') + (p.chosenMajor ? ', Nganh: ' + p.chosenMajor : '') + (p.hasVisaRejection ? ', DA truot visa' : '') + '\nCAC CAU HOI:\n' + topicsText + '\nHay bat dau bang cau hoi DAU TIEN. Chi hoi 1 cau, bang tieng Viet.';
+        var result = await callDeepSeek([{ role: 'system', content: sys }, { role: 'user', content: 'Hoi cau hoi dau tien.' }], { temperature: 0.5, maxTokens: 400, timeout: 15000 });
+        if (!result) return { error: 'AI khong phan hoi, vui long thu lai.' };
+        return { type: 'interview_question', questionNumber: 1, totalQuestions: interviewTopics.length, question: result.replace(/```[sS]*?```/g, '').trim(), message: 'Toi se phong van ban. Hay tra loi tu nhien nhe!' };
+      }
+      if (params.action === 'answer') {
+        var sys2 = 'Ban la nhan vien phong van visa Han Quoc tai KVAC. Danh gia cau tra loi cua hs.\nHS: ' + p.fullName + ', visa ' + vt + '\nCAU TRA LOI: "' + (params.answer || '') + '"\nNHIEM VU: 1. Danh gia (2-3 cau, tinh than xay dung) 2. Hoi cau tiep theo (chi 1 cau) 3. Neu het, bao KET_THUC';
+        var result2 = await callDeepSeek([{ role: 'system', content: sys2 }, { role: 'user', content: 'Danh gia va hoi cau tiep theo.' }], { temperature: 0.4, maxTokens: 500, timeout: 15000 });
+        if (!result2) return { error: 'AI khong phan hoi.' };
+        var cleaned = result2.replace(/```[sS]*?```/g, '').trim();
+        if (cleaned.includes('KET_THUC') || cleaned.includes('ket thuc')) {
+          return { type: 'interview_complete', feedback: cleaned.replace('KET_THUC', '').trim(), message: 'Cam on ban da tham gia phong van!' };
+        }
+        return { type: 'interview_answer', feedback: cleaned, message: 'Hay tra loi cau hoi tiep theo!' };
+      }
+      return { error: 'Action khong hop le.' };
+    },
+  },
+
+  upload_document: {
+    description: 'Kiem tra trang thai giay to ho so can chuan bi',
+    params: {
+      docType: { type: 'string', description: 'De trong de xem tat ca, hoac nhap ten giay to', required: false },
+    },
+    handler: async function(params, profile) {
+      if (!profile || !profile.email) return { error: 'Can dang nhap de kiem tra giay to.' };
+      var { data: sp } = await supabase.from('student_profiles').select('id').eq('email', profile.email).maybeSingle();
+      if (!sp) return { error: 'Khong tim thay tai khoan.' };
+      var { data: docs } = await supabase.from('student_documents').select('doc_type, status, file_url').eq('student_id', sp.id);
+      var docMap = {};
+      for (var di = 0; di < (docs || []).length; di++) docMap[docs[di].doc_type] = docs[di];
+      var required = [
+        { type: 'passport', label: 'Ho chieu' }, { type: 'id_card', label: 'CCCD/CMND' },
+        { type: 'photo', label: 'Anh 3.5x4.5' }, { type: 'household_registration', label: 'So ho khau' },
+        { type: 'birth_certificate', label: 'Giay khai sinh' }, { type: 'diploma', label: 'Bang THPT' },
+        { type: 'transcript', label: 'Hoc ba' }, { type: 'admission_letter', label: 'Thu nhap hoc' },
+        { type: 'savings_book', label: 'So tiet kiem' }, { type: 'bank_statement', label: 'Xac nhan so du' },
+        { type: 'income_proof', label: 'Giay to thu nhap' }, { type: 'health_check', label: 'Kham lao phoi' },
+        { type: 'study_plan', label: 'Study Plan' },
+      ];
+      var statusLabels = { 'not_ready': 'Chua co', 'ready': 'Da co', 'translated': 'Da dich', 'notarized': 'Da cong chung', 'legalized': 'Da hop phap hoa', 'uploaded': 'Da upload' };
+      var statusColors = { 'not_ready': '#dc2626', 'ready': '#2563eb', 'translated': '#7c3aed', 'notarized': '#7c3aed', 'legalized': '#059669', 'uploaded': '#059669' };
+      var filtered = required;
+      if (params.docType) {
+        var dt = params.docType.toLowerCase();
+        filtered = required.filter(function(d) { return d.type.includes(dt) || d.label.toLowerCase().includes(dt); });
+      }
+      var result = filtered.map(function(doc) {
+        var ex = docMap[doc.type];
+        var s = ex ? ex.status : 'not_ready';
+        return { type: doc.type, label: doc.label, status: statusLabels[s] || s, statusRaw: s, color: statusColors[s] || '#6b7280', hasFile: !!(ex && ex.file_url) };
+      });
+      var ready = result.filter(function(d) { return d.statusRaw === 'uploaded' || d.statusRaw === 'legalized'; }).length;
+      return { type: 'document_status', documents: result, summary: ready + '/' + result.length + ' giay to da san sang', message: ready === result.length ? 'Tat ca giay to da san sang!' : 'Con ' + (result.length - ready) + ' giay to can chuan bi.' };
+    },
+  },
+
+  get_checklist: {
+    description: 'Xem checklist giấy tờ và tiến độ hồ sơ hiện tại',
+    params: {},
+    handler: async function() {
+      return { message: 'Hãy yêu cầu cụ thể: "Mục A1 còn thiếu gì?" hoặc "Tôi cần chuẩn bị giấy tờ gì?"' };
+    },
+  },
+
+  apply_school: {
+    description: 'Gửi đơn đăng ký nhập học vào một trường Hàn Quốc',
+    params: {
+      schoolName: { type: 'string', description: 'Tên trường muốn gửi đơn', required: true },
+      fullName: { type: 'string', description: 'Họ tên đầy đủ (tiếng Việt)', required: true },
+      phone: { type: 'string', description: 'Số điện thoại', required: false },
+      email: { type: 'string', description: 'Email', required: false },
+      major: { type: 'string', description: 'Ngành/chuyên ngành muốn học', required: false },
+    },
+    handler: async function(params, profile) {
+      // Look up student by email from profile
+      if (!profile || !profile.email) return { error: 'Cần đăng nhập để gửi đơn. Vui lòng nhập email trong hồ sơ.' };
+      var { data: studentProfile } = await supabase
+        .from('student_profiles')
+        .select('id')
+        .eq('email', profile.email)
+        .maybeSingle();
+      if (!studentProfile) return { error: 'Không tìm thấy thông tin tài khoản. Vui lòng đăng nhập lại.' };
+      var profileId = studentProfile.id;
+
+      // Look up school by name
+      var schoolQuery = params.schoolName || '';
+      var { data: schools } = await supabase
+        .from('schools')
+        .select('id, name, slug')
+        .or('name.ilike.%' + schoolQuery + '%,name_kr.ilike.%' + schoolQuery + '%')
+        .limit(3);
+      var schoolId = (schools && schools.length > 0) ? schools[0].id : null;
+
+      // Check for duplicate
+      if (schoolId) {
+        var { data: existing } = await supabase
+          .from('school_applications')
+          .select('id')
+          .eq('student_profile_id', profileId)
+          .eq('school_id', schoolId)
+          .maybeSingle();
+        if (existing) {
+          var schoolName = schools[0].name || params.schoolName;
+          return { error: 'Bạn đã gửi đơn vào ' + schoolName + ' trước đó rồi! Vào mục "📨 Gửi đơn" để xem chi tiết.' };
+        }
+      }
+
+      var insertData = {
+        student_profile_id: profileId,
+        full_name: params.fullName || '',
+        phone: params.phone || '',
+        email: params.email || profile.email || '',
+        school_id: schoolId || null,
+        status: 'draft',
+      };
+
+      var { data: app, error } = await supabase
+        .from('school_applications')
+        .insert(insertData)
+        .select('id, full_name, status, created_at')
+        .single();
+
+      if (error) return { error: 'Lỗi tạo đơn: ' + (error.message || 'Không xác định') };
+
+      var targetSchool = schools && schools.length > 0 ? schools[0].name : (params.schoolName || 'Chưa xác định');
+      return {
+        success: true,
+        application: {
+          id: app.id, studentName: app.full_name, schoolName: targetSchool,
+          status: app.status, createdAt: app.created_at,
+        },
+        message: '✅ Đã tạo đơn thành công! Vào tab "📨 Gửi đơn" để theo dõi.',
+      };
+    },
+  },
+
+  get_applications: {
+    description: 'Xem danh sách đơn đăng ký nhập học đã gửi và trạng thái',
+    params: {},
+    handler: async function(params, profile) {
+      if (!profile || !profile.email) return { error: 'Cần đăng nhập để xem đơn đăng ký.' };
+      var { data: studentProfile } = await supabase
+        .from('student_profiles')
+        .select('id')
+        .eq('email', profile.email)
+        .maybeSingle();
+      if (!studentProfile) return { error: 'Không tìm thấy thông tin tài khoản.' };
+
+      var { data: apps } = await supabase
+        .from('school_applications')
+        .select('id, full_name, status, created_at, updated_at, school_id')
+        .eq('student_profile_id', studentProfile.id)
+        .order('created_at', { ascending: false });
+
+      if (!apps || apps.length === 0) {
+        return { message: 'Bạn chưa gửi đơn nào. Nói "Gửi đơn vào trường..." để bắt đầu!' };
+      }
+
+      // Fetch school names
+      var schoolIds = apps.map(function(a) { return a.school_id; }).filter(Boolean);
+      var { data: schools } = schoolIds.length > 0 ? await supabase
+        .from('schools').select('id, name').in('id', schoolIds) : { data: [] };
+      var schoolMap = {};
+      for (var si = 0; si < (schools || []).length; si++) {
+        schoolMap[schools[si].id] = schools[si].name;
+      }
+
+      var statusLabels = {
+        draft: '📝 Nháp', submitted: '📨 Đã nộp', reviewing: '🔄 Đang xét',
+        approved: '✅ Đã duyệt', rejected: '❌ Bị từ chối',
+      };
+
+      return {
+        applications: (apps || []).map(function(a) {
+          return {
+            id: a.id, studentName: a.full_name,
+            schoolName: schoolMap[a.school_id] || 'Chưa rõ',
+            status: statusLabels[a.status] || a.status,
+            statusRaw: a.status, createdAt: a.created_at,
+          };
+        }),
+      };
+    },
+  },
+
+  set_reminder: {
+    description: 'Tạo nhắc nhở cho một hạng mục giấy tờ hoặc sự kiện',
+    params: {
+      title: { type: 'string', description: 'Tiêu đề nhắc nhở (VD: "Nộp sổ TK", "Đặt lịch KVAC")', required: true },
+      dueDate: { type: 'string', description: 'Ngày hạn (YYYY-MM-DD)', required: true },
+      description: { type: 'string', description: 'Mô tả chi tiết', required: false },
+      reminderType: { type: 'string', description: 'Loại: document, submission, interview, health_check, visa_appointment, other', required: false },
+    },
+    handler: async function(params, profile) {
+      if (!profile || !profile.email) return { error: 'Cần đăng nhập để tạo nhắc nhở.' };
+      var { data: studentProfile } = await supabase
+        .from('student_profiles')
+        .select('id')
+        .eq('email', profile.email)
+        .maybeSingle();
+      if (!studentProfile) return { error: 'Không tìm thấy thông tin tài khoản.' };
+
+      // Validate date
+      var dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+      if (!dateRegex.test(params.dueDate)) return { error: 'Ngày hạn không đúng định dạng. VD: 2026-09-15' };
+
+      var typeMap = {
+        'giấy tờ': 'document', 'hồ sơ': 'document', 'giấy': 'document',
+        'sổ tk': 'document', 'sổ tiết kiệm': 'document',
+        'nộp': 'submission', 'kvac': 'visa_appointment', 'hẹn': 'visa_appointment',
+        'sức khỏe': 'health_check', 'khám': 'health_check', 'lao phổi': 'health_check',
+        'phỏng vấn': 'interview', 'visa': 'visa_appointment',
+      };
+      var rType = params.reminderType || 'other';
+      var titleLower = (params.title || '').toLowerCase();
+      for (var key in typeMap) {
+        if (titleLower.includes(key)) { rType = typeMap[key]; break; }
+      }
+
+      var { data: reminder, error } = await supabase
+        .from('reminders')
+        .insert({
+          student_id: studentProfile.id,
+          title: params.title,
+          description: params.description || '',
+          due_date: params.dueDate,
+          reminder_type: rType,
+        })
+        .select('id, title, due_date, reminder_type')
+        .single();
+
+      if (error) return { error: 'Lỗi tạo nhắc nhở: ' + (error.message || 'Không xác định') };
+
+      return {
+        success: true,
+        reminder: {
+          id: reminder.id, title: reminder.title,
+          dueDate: reminder.due_date, type: reminder.reminder_type,
+        },
+        message: '✅ Đã tạo nhắc nhở "' + reminder.title + '" hạn ngày ' + reminder.due_date + '!',
+      };
+    },
+  },
+
+  list_by_criteria: {
+    description: 'Lọc trường theo tiêu chí: khu vực, chi phí, hệ đào tạo, giới tính',
+    params: {
+      region: { type: 'string', description: 'Khu vực: seoul, near-seoul, busan, gyeonggi,...', required: false },
+      system: { type: 'string', description: 'Hệ: D2-6 hoặc D4-1', required: false },
+      gender: { type: 'string', description: 'Giới tính tuyển sinh: female (chỉ nữ), all (nam/nữ)', required: false },
+      limit: { type: 'number', description: 'Số kết quả tối đa (mặc định 5)', required: false, default: 5 },
+    },
+    handler: async function(params) {
+      var q = supabase.from('schools').select('id, slug, name, name_kr, system, location, region, tuition, ktx, visa_type');
+      if (params.region) q = q.eq('region', params.region);
+      if (params.system) q = q.eq('visa_type', params.system);
+      q = q.limit(Math.min(params.limit || 5, 10));
+      var { data: schools } = await q;
+      var schoolIds = (schools || []).map(function(s) { return s.id; });
+      var { data: profiles } = schoolIds.length > 0 ? await supabase
+        .from('school_advisor_profiles')
+        .select('school_id, gender, cost_level, visa_chance, job_opportunity, region, tags')
+        .in('school_id', schoolIds) : { data: [] };
+      var profileMap = {};
+      for (var i = 0; i < (profiles || []).length; i++) {
+        profileMap[profiles[i].school_id] = profiles[i];
+      }
+      var filtered = (schools || []).filter(function(s) {
+        var ap = profileMap[s.id];
+        if (params.gender === 'female' && ap && ap.gender !== 'female') return false;
+        if (params.gender === 'all' && ap && ap.gender === 'female') return false;
+        return true;
+      });
+      return filtered.map(function(s) {
+        var ap = profileMap[s.id] || {};
+        return {
+          slug: s.slug, name: s.name, nameKr: s.name_kr, system: s.system,
+          location: s.location, region: s.region,
+          tuition: s.tuition, ktx: s.ktx, visaType: s.visa_type,
+          gender: ap.gender || 'all', costLevel: ap.cost_level || null,
+          visaChance: ap.visa_chance || null,
+        };
+      });
+    },
+  },
+};
+
+// ─── Execute a tool call ───
+async function executeStudentTool(toolName, params, profile) {
+  var tool = STUDENT_TOOLS[toolName];
+  if (!tool) return { error: 'Tool không tồn tại: ' + toolName };
+  try {
+    var result = await tool.handler(params || {}, profile || {});
+    return { success: true, result: result };
+  } catch (e) {
+    console.error('Tool execution error [' + toolName + ']:', e.message);
+    return { error: e.message || 'Lỗi thực thi tool' };
+  }
+}
+
+// ─── Build tool description for system prompt ───
+function buildToolsSystemPrompt() {
+  var lines = ['\n\n=== CÔNG CỤ SẴN CÓ ==='];
+  lines.push('Bạn có thể dùng các công cụ sau để tra cứu dữ liệu thực tế thay vì tự suy luận:');
+  lines.push('');
+  Object.keys(STUDENT_TOOLS).forEach(function(key) {
+    var tool = STUDENT_TOOLS[key];
+    lines.push('• ' + key + ' — ' + tool.description);
+    var paramKeys = Object.keys(tool.params || {});
+    if (paramKeys.length > 0) {
+      lines.push('  Tham số: ' + paramKeys.map(function(p) {
+        var info = tool.params[p];
+        return p + (info.required ? ' (bắt buộc)' : ' (tùy chọn)');
+      }).join(', '));
+    }
+  });
+  lines.push('');
+  lines.push('CÁCH DÙNG:');
+  lines.push('Khi học sinh yêu cầu tra cứu thông tin (tìm trường, xem chi tiết, so sánh, lọc...), hãy trả lời bằng cách xuất dòng sau:');
+  lines.push('---TOOL_CALL:tên_tool---');
+  lines.push('{"param1": "value1", "param2": "value2"}');
+  lines.push('---END TOOL---');
+  lines.push('');
+  lines.push('Ví dụ: Khi học sinh hỏi "Tìm trường Osan", bạn xuất:');
+  lines.push('---TOOL_CALL:search_schools---');
+  lines.push('{"query": "Osan"}');
+  lines.push('---END TOOL---');
+  lines.push('Sau đó tôi sẽ chạy tool và trả kết quả cho bạn để trả lời học sinh.');
+  lines.push('');
+  lines.push('QUY TẮC QUAN TRỌNG:');
+  lines.push('- Nếu học sinh muốn SỬA thông tin hồ sơ → dùng tool update_profile (hoặc action cũ nếu cần)');
+  lines.push('- Nếu học sinh muốn TÌM trường cụ thể → dùng search_schools hoặc list_by_criteria');
+  lines.push('- Nếu học sinh muốn XEM CHI TIẾT trường → dùng get_school_detail');
+  lines.push('- Nếu học sinh muốn SO SÁNH trường → dùng compare_schools');
+  lines.push('- Nếu học sinh hỏi về hồ sơ/checklist/sửa thông tin → KHÔNG cần tool, trả lời trực tiếp');
+  return lines.join('\n');
+}
+
+// ═══════════════════════════════════════════════════
 // ─── Action: Student Agent (action=student-agent)
 // Personal AI Agent cho học sinh đã đăng nhập — chat + thao tác dữ liệu
 // ═══════════════════════════════════════════════════
@@ -1119,6 +1576,8 @@ async function handleStudentAgent(req, res) {
       }).join('\n');
     }
 
+    const toolPrompt = buildToolsSystemPrompt();
+
     const systemPrompt = `Bạn là Trợ lý AI Cá nhân cho học sinh làm hồ sơ du học Hàn Quốc.
 
 NHIỆM VỤ CỦA BẠN:
@@ -1127,6 +1586,7 @@ Bạn là trợ lý cá nhân, có thể:
 2. XEM và SỬA thông tin hồ sơ của học sinh (dùng hồ sơ bên dưới)
 3. HƯỚNG DẪN học sinh từng bước làm hồ sơ
 4. GỢI Ý trường phù hợp dựa trên hồ sơ
+5. Dùng CÔNG CỤ để tra cứu dữ liệu thực tế từ database
 
 QUY TẮC:
 - Trả lời bằng tiếng Việt, thân thiện, ngắn gọn
@@ -1142,6 +1602,9 @@ QUY TẮC:
 - Nếu chỉ hỏi đáp thông thường, KHÔNG cần gửi action
 - Dùng emoji nhẹ nhàng
 - LUÔN xưng hô "bạn" - "tôi"
+- KHÔNG dùng tool nếu câu hỏi đơn giản không cần tra cứu
+- Nếu dùng tool → CHỈ xuất tool call, KHÔNG trả lời thêm. Sau khi có kết quả tool, tôi sẽ trả lời.
+${toolPrompt}
 ${profileSummary}
 ${schoolSummary}
 ${convHistory}`;
@@ -1155,10 +1618,32 @@ ${convHistory}`;
       return res.json({ success: false, reply: 'Xin lỗi, tôi chưa có câu trả lời. Vui lòng thử lại!' });
     }
 
-    // ─── Parse action from response ───
+    // ─── Parse actions from response ───
     var reply = answer;
     var updatedProfile = null;
     var updatedChecklist = null;
+    var toolResults = null;
+
+    // Check for tool calls first (highest priority)
+    var toolMatch = answer.match(/---TOOL_CALL:([a-z_]+)---\n?([\s\S]*?)---END TOOL---/);
+    if (toolMatch) {
+      var toolName = toolMatch[1].trim();
+      var toolParams = {};
+      try {
+        toolParams = JSON.parse(toolMatch[2].trim()) || {};
+      } catch (e) {
+        console.error('Parse tool params error:', e.message);
+      }
+      var execResult = await executeStudentTool(toolName, toolParams, studentProfile);
+      if (execResult.success && execResult.result) {
+        toolResults = { tool: toolName, params: toolParams, data: execResult.result };
+        // Preserve any introductory text the AI wrote before the tool call
+        reply = answer.substring(0, toolMatch.index).trim();
+      } else {
+        var errMsg = (execResult && execResult.error) || 'Không tìm thấy kết quả';
+        reply = '❌ Lỗi khi tra cứu: ' + errMsg;
+      }
+    }
 
     var profileMatch = answer.match(/---ACTION:update_profile---([\s\S]*?)---END ACTION---/);
     if (profileMatch) {
@@ -1182,9 +1667,10 @@ ${convHistory}`;
 
     return res.json({
       success: true,
-      reply: reply || '✅ Đã xử lý yêu cầu của bạn!',
+      reply: reply || (toolResults ? '🔍 Đang tra cứu...' : '✅ Đã xử lý yêu cầu của bạn!'),
       updatedProfile: updatedProfile,
       updatedChecklist: updatedChecklist,
+      toolResults: toolResults,
     });
   } catch (err) {
     console.error('Student agent error:', err);

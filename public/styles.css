@@ -3489,11 +3489,11 @@ html {
         padding: 0;
     }
 
-    /* Hide main nav tabs in sidebar on mobile — they're in .mobile-tab-bar now */
-    /* Only hide DIRECT children of .tabs-inner, not submenu items */
+    /* Show ALL main nav tabs in sidebar on mobile too */
+    /* The .mobile-tab-bar at top acts as quick-access, sidebar shows full menu */
     .app-sidebar .tabs-inner > .tab-btn[data-school],
     .app-sidebar .tabs-inner > .sidebar-divider {
-        display: none;
+        display: flex;
     }
     .app-sidebar .school-tabs {
         margin-top: 1rem;
@@ -4849,6 +4849,13 @@ html {
     }
     .sidebar-submenu {
         padding-left: 0.5rem;
+    }
+    /* Expand Tiện ích submenu by default on mobile */
+    .sidebar-submenu.hidden {
+        display: flex !important;
+    }
+    .sidebar-toggle-btn .sidebar-chevron {
+        display: none;
     }
     .sidebar-submenu .tab-btn {
         font-size: 0.82rem !important;
