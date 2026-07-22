@@ -2689,6 +2689,58 @@ async function handleAnalyticsAdmin(req) {
     const tests = testDefs.map(def => { const aCount = assignByTest[def.key]?.a || 0; const bCount = assignByTest[def.key]?.b || 0; let aConv = 0, bConv = 0; if (def.key === 'zalo-fab') { aConv = zaloByVariant.a || 0; bConv = zaloByVariant.b || 0; } const aRate = aCount > 0 ? ((aConv / aCount) * 100).toFixed(1) + '%' : '—'; const bRate = bCount > 0 ? ((bConv / bCount) * 100).toFixed(1) + '%' : '—'; let winner = null; if (aCount > 0 && bCount > 0 && def.convEvent) { const rateA = aConv / aCount; const rateB = bConv / bCount; if (rateA > rateB) winner = 'a'; else if (rateB > rateA) winner = 'b'; } return { key: def.key, name: def.name, convLabel: def.convLabel, aCount, bCount, total: aCount + bCount, aConv, bConv, aRate, bRate, winner }; });
     return { tests };
   }
+
+  // ─── view=conversion: Funnel chuyển đổi ───
+  if (view === 'conversion') {
+    const [
+      { count: totalViews },
+      { count: totalSessions },
+      { count: schoolDetailViews },
+      { count: compareViews },
+      { count: zaloPopupOpens },
+      { count: costCalcViews },
+      { count: applicationSubmits },
+      { data: advisorEvents },
+    ] = await Promise.all([
+      supabase.from('analytics_page_views').select('*', { count: 'exact', head: true }).gte('created_at', since),
+      supabase.from('analytics_sessions').select('*', { count: 'exact', head: true }).gte('started_at', since),
+      supabase.from('analytics_page_views').select('*', { count: 'exact', head: true }).gte('created_at', since).eq('page_type', 'school_detail'),
+      supabase.from('analytics_page_views').select('*', { count: 'exact', head: true }).gte('created_at', since).eq('page_type', 'compare'),
+      supabase.from('analytics_events').select('*', { count: 'exact', head: true }).gte('created_at', since).eq('event_type', 'zalo_popup_open'),
+      supabase.from('analytics_page_views').select('*', { count: 'exact', head: true }).gte('created_at', since).eq('page_type', 'cost'),
+      supabase.from('school_applications').select('*', { count: 'exact', head: true }).gte('created_at', since),
+      supabase.from('analytics_events').select('event_type').gte('created_at', since).in('event_type', ['advisor_form_open', 'advisor_analyze', 'advisor_save']),
+    ]);
+
+    // Count advisor events từ combined query
+    let advisorFormOpens = 0;
+    let advisorAnalyzeCount = 0;
+    let advisorSaveCount = 0;
+    for (const row of advisorEvents || []) {
+      if (row.event_type === 'advisor_form_open') advisorFormOpens++;
+      else if (row.event_type === 'advisor_analyze') advisorAnalyzeCount++;
+      else if (row.event_type === 'advisor_save') advisorSaveCount++;
+    }
+
+    const funnel = [
+      { stage: 'Lượt xem trang', count: totalViews || 0 },
+      { stage: 'Phiên truy cập', count: totalSessions || 0 },
+      { stage: 'Xem chi tiết trường', count: schoolDetailViews || 0 },
+      { stage: 'Xem so sánh', count: compareViews || 0 },
+      { stage: 'Tính chi phí', count: costCalcViews || 0 },
+      { stage: 'Mở popup Zalo', count: zaloPopupOpens || 0 },
+      { stage: 'Gửi đơn đăng ký', count: applicationSubmits || 0 },
+    ];
+
+    const advisorFunnel = [
+      { stage: 'Mở form tư vấn', count: advisorFormOpens },
+      { stage: 'AI phân tích hồ sơ', count: advisorAnalyzeCount },
+      { stage: 'Lưu kết quả', count: advisorSaveCount },
+    ];
+
+    return { funnel, advisorFunnel };
+  }
+
   return null;
 }
 
