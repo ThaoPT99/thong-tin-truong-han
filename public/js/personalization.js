@@ -101,61 +101,420 @@
 
 
   // ════════════════════════════════════════════
-  // #2: TIMELINE CÁ NHÂN HOÁ TỰ ĐỘNG
+  // #2: TIMELINE CÁ NHÂN HOÁ TỰ ĐỘNG (CẢI TIẾN)
   // ════════════════════════════════════════════
 
   /**
-   * Generate personalized timeline based on visa type and target semester
+   * Generate PERSONALIZED timeline based on ~11 factors từ profile học sinh
+   *
+   * Các yếu tố ảnh hưởng:
+   * 1. Loại visa → bộ milestone cơ bản khác nhau
+   * 2. Target semester → mốc đích, tính ngược
+   * 3. Trình độ Hàn/TOPIK → bỏ/thêm milestone học tiếng
+   * 4. Số tiền TK → bỏ/thêm milestone xoay vốn
+   * 5. Gap year → thêm task giải trình + thời gian
+   * 6. Trượt visa → thêm milestone giải trình
+   * 7. Kinh nghiệm làm việc → thêm task HĐLĐ
+   * 8. Học vấn → thêm task giấy tờ ĐH
+   * 9. Tuổi → warning + task ràng buộc
+   * 10. Tự bảo lãnh → thêm task CMTC tự thân
+   * 11. Khu vực → warning nếu vùng rủi ro
    */
   function generateTimeline(profile) {
-    if (!profile) return [];
+    if (!profile) return { milestones: [], warnings: [] };
 
-    var visaType = profile.visaType || 'D-4-1';
     var now = new Date();
     var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    var visaType = profile.visaType || 'D-4-1';
+    var warnings = [];
 
-    // Target: default to next March or September
-    var targetYear = now.getFullYear();
-    var targetMonth = now.getMonth() < 6 ? 3 : 9; // March or September
-    if (now.getMonth() >= targetMonth - 2 && now.getMonth() <= targetMonth + 1) {
-      targetMonth = targetMonth === 3 ? 9 : 3;
-      if (targetMonth === 3) targetYear++;
+    // ─── Bước 1: Xác định target date ───
+    // Nếu profile có kỳ nhập học mong muốn → dùng nó
+    // Nếu không → tự suy: March hoặc September gần nhất còn 3+ tháng
+    var targetDate = getTargetDate(profile, today);
+    var daysToTarget = Math.ceil((targetDate - today) / (24 * 60 * 60 * 1000));
+    var monthsToTarget = daysToTarget / 30;
+
+    if (monthsToTarget < 3) {
+      warnings.push({ type: 'danger', icon: '🚨', text: 'Kỳ nhập học quá gần! Bạn chỉ còn ' + Math.round(monthsToTarget) + ' tháng. Cân nhắc đổi kỳ sau để có đủ thời gian chuẩn bị.' });
+    } else if (monthsToTarget < 6) {
+      warnings.push({ type: 'warning', icon: '⚠️', text: 'Thời gian chuẩn bị gấp (' + Math.round(monthsToTarget) + ' tháng). Nên ưu tiên các giấy tờ quan trọng trước.' });
     }
 
-    var targetDate = new Date(targetYear, targetMonth - 1, 1);
+    // ─── Bước 2: Xây dựng milestone base theo visa type ───
+    var milestones = buildBaseMilestones(visaType, profile);
 
-    var months = [
-      { label: 'Bắt đầu', offset: 0, icon: '🚀', tasks: ['Đăng ký tài khoản', 'Khai báo hồ sơ', 'Chọn trường dự định'] },
-      { label: 'Học tiếng Hàn', offset: 1, icon: '📖', tasks: ['Học Sejong 2B+', 'Thi TOPIK thử', 'Luyện giao tiếp'] },
-      { label: 'Mở sổ TK + Tài chính', offset: 1.5, icon: '💰', tasks: ['Mở sổ tiết kiệm', 'Chuẩn bị CMTC', 'Sao kê ngân hàng'] },
-      { label: 'Nộp hồ sơ trường', offset: 3, icon: '📋', tasks: ['Hoàn thiện hồ sơ', 'Nộp trường', 'Chờ thư mời'] },
-      { label: 'Nhận Admission', offset: 5, icon: '📩', tasks: ['Nhận thư mời', 'Đóng học phí', 'Nhận invoice'] },
-      { label: 'Dịch thuật + Công chứng', offset: 5.5, icon: '📄', tasks: ['Dịch thuật toàn bộ', 'Công chứng', 'Hợp pháp hoá'] },
-      { label: 'Nộp visa', offset: 7, icon: '🛂', tasks: ['Đặt lịch KVAC', 'Nộp hồ sơ', 'Phỏng vấn'] },
-      { label: 'Nhập học!', offset: 8.5, icon: '🎉', tasks: ['Nhận visa', 'Mua vé bay', 'Đặt KTX'] },
+    // ─── Bước 3: Áp dụng rules ───
+    // 3a. Trình độ tiếng Hàn / TOPIK
+    applyKoreanLevelRule(milestones, profile, warnings);
+
+    // 3b. Tài chính (sổ TK)
+    applyFinanceRule(milestones, profile, warnings);
+
+    // 3c. Gap year
+    applyGapYearRule(milestones, profile, warnings);
+
+    // 3d. Trượt visa
+    applyVisaRejectionRule(milestones, profile, warnings);
+
+    // 3e. Kinh nghiệm làm việc
+    applyWorkExperienceRule(milestones, profile);
+
+    // 3f. Học vấn đại học
+    applyEducationRule(milestones, profile);
+
+    // 3g. Tuổi
+    applyAgeRule(milestones, profile, warnings);
+
+    // 3h. Tự bảo lãnh
+    applySponsorRule(milestones, profile);
+
+    // 3i. Khu vực
+    applyRegionRule(milestones, profile, warnings);
+
+    // 3j. D4→D2 special
+    applyD4toD2Rules(milestones, profile);
+
+    // ─── Bước 4: Sắp xếp milestones theo offsetDays (tăng dần) ───
+    milestones.sort(function(a, b) { return a.offsetDays - b.offsetDays; });
+
+    // ─── Bước 5: Tính ngày thực tế từ target date ───
+    var timelineItems = calculateTimelineDates(milestones, targetDate, today);
+
+    return { milestones: timelineItems, warnings: warnings, targetDate: targetDate, monthsToTarget: Math.round(monthsToTarget) };
+  }
+
+  /**
+   * Xác định target date (kỳ nhập học)
+   */
+  function getTargetDate(profile, today) {
+    // Nếu profile có targetSemester -> ưu tiên
+    if (profile.targetYear && profile.targetMonth) {
+      return new Date(profile.targetYear, profile.targetMonth - 1, 1);
+    }
+    // Suy luận từ visa type (thường D-4-1 có kỳ linh hoạt hơn)
+    var year = today.getFullYear();
+    var month = today.getMonth() + 1;
+
+    // Tìm kỳ tới (tháng 3, 6, 9, 12) còn cách ít nhất 3 tháng
+    var candidateMonths = [3, 6, 9, 12];
+    // D-4-1 có thể nhập học tháng 3,6,9,12. D-2 thường chỉ tháng 3,9
+    if (profile.visaType === 'D-2' || profile.visaType === 'D-4-1') {
+      candidateMonths = [3, 9];
+    }
+
+    for (var i = 0; i < candidateMonths.length; i++) {
+      var m = candidateMonths[i];
+      var targetY = year;
+      if (m <= month) targetY = year + 1;
+      var d = new Date(targetY, m - 1, 1);
+      var diff = Math.ceil((d - today) / (24 * 60 * 60 * 1000));
+      if (diff > 60) { // Còn ít nhất 2 tháng
+        return d;
+      }
+    }
+    // Fallback: kỳ tháng 3 năm sau
+    return new Date(year + 1, 2, 1);
+  }
+
+  /**
+   * Xây dựng milestone base theo loại visa
+   */
+  function buildBaseMilestones(visaType, profile) {
+    var common = [
+      { id: 'start', label: 'Khai báo & Chọn trường', icon: '🚀', tasks: ['Đăng ký tài khoản', 'Khai báo hồ sơ cá nhân', 'Chọn 2-3 trường tiềm năng'], offsetDays: 180, always: true },
+      { id: 'passport', label: 'Làm hộ chiếu (nếu chưa có)', icon: '🛂', tasks: ['Chuẩn bị CCCD + ảnh 4x6', 'Nộp tại Phòng QLXNC', 'Nhận hộ chiếu sau 5-8 ngày'], offsetDays: 170, always: false, condition: true }, // Sẽ check sau
+      { id: 'language', label: 'Học & Thi tiếng Hàn', icon: '📖', tasks: ['Đăng ký lớp Sejong/TOPIK', 'Luyện đề', 'Thi lấy chứng chỉ'], offsetDays: 150, always: false },
+      { id: 'finance', label: 'Mở sổ TK & CMTC', icon: '💰', tasks: ['Mở sổ tiết kiệm', 'Chuẩn bị sao kê', 'Xác nhận số dư'], offsetDays: 120, always: false },
+      { id: 'school-app', label: 'Nộp hồ sơ trường', icon: '📋', tasks: ['Hoàn thiện hồ sơ theo yêu cầu', 'Nộp trường', 'Theo dõi kết quả'], offsetDays: 90, always: true },
+      { id: 'admission', label: 'Nhận Admission & Đóng học phí', icon: '📩', tasks: ['Nhận thư mời nhập học', 'Đóng học phí', 'Nhận invoice'], offsetDays: 60, always: true },
+      { id: 'translate', label: 'Dịch thuật & Công chứng', icon: '📄', tasks: ['Dịch thuật toàn bộ giấy tờ', 'Công chứng', 'Hợp pháp hoá lãnh sự'], offsetDays: 45, always: true },
+      { id: 'visa-app', label: 'Nộp visa tại KVAC', icon: '🛂', tasks: ['Đặt lịch hẹn KVAC', 'Nộp hồ sơ', 'Phỏng vấn (nếu có)'], offsetDays: 21, always: true },
+      { id: 'result', label: 'Nhận kết quả visa', icon: '✅', tasks: ['Theo dõi kết quả', 'Nhận passport có visa', 'Kiểm tra thông tin'], offsetDays: 7, always: true },
+      { id: 'depart', label: 'Nhập học! 🎉', icon: '🎉', tasks: ['Mua vé máy bay', 'Đặt KTX', 'Chuẩn bị hành lý'], offsetDays: 0, always: true },
     ];
 
-    // Adjust for D-2 (longer timeline)
+    // D-2: cần TOPIK 3+ và thư giới thiệu
     if (visaType === 'D-2') {
-      months[1].tasks = ['Học TOPIK 3+', 'Thi TOPIK chính thức', 'Xin thư giới thiệu'];
+      var langIdx = findMilestoneIndex(common, 'language');
+      if (langIdx !== -1) {
+        common[langIdx].tasks = ['Học TOPIK 3+', 'Thi TOPIK chính thức'];
+      }
+      var schoolIdx = findMilestoneIndex(common, 'school-app');
+      if (schoolIdx !== -1) {
+        common[schoolIdx].tasks.push('Xin thư giới thiệu từ trường THPT/ĐH');
+        common[schoolIdx].offsetDays = Math.max(common[schoolIdx].offsetDays, 120);
+      }
     }
 
-    // Adjust for D4→D2
+    // D4→D2: base hoàn toàn khác
     if (visaType === 'D4-to-D2') {
-      months = [
-        { label: 'Xác nhận hoàn tất D4', offset: 0, icon: '✅', tasks: ['Xin giấy hoàn tất', 'Xin bảng điểm', 'Xin chuyên cần'] },
-        { label: 'Nộp ĐH Hàn', offset: 1, icon: '🏫', tasks: ['Nộp hồ sơ ĐH', 'Thi TOPIK', 'Chờ kết quả'] },
-        { label: 'Giấy tờ tại Hàn', offset: 2.5, icon: '📋', tasks: ['ARC photo', 'Giấy khám sức khoẻ', 'C1-9 residence'] },
-        { label: 'Nộp Immigration', offset: 4, icon: '🛂', tasks: ['Đặt lịch Hi Korea', 'Nộp hồ sơ', 'Đóng phí'] },
-        { label: 'Chuyển đổi visa', offset: 5.5, icon: '🔄', tasks: ['Theo dõi online', 'Nhận ARC mới', 'Nhập học ĐH'] },
+      return [
+        { id: 'd4-complete', label: 'Xin giấy hoàn tất D4', icon: '✅', tasks: ['Xin giấy chứng nhận hoàn tất', 'Xin bảng điểm', 'Xin chuyên cần'], offsetDays: 150, always: true },
+        { id: 'd4-school', label: 'Nộp hồ sơ Đại học Hàn', icon: '🏫', tasks: ['Chọn trường ĐH', 'Nộp hồ sơ', 'Chờ kết quả'], offsetDays: 120, always: true },
+        { id: 'd4-docs', label: 'Giấy tờ tại Hàn Quốc', icon: '📋', tasks: ['Chụp lại ARC', 'Giấy khám sức khoẻ', 'Mẫu C1-9'], offsetDays: 60, always: true, locationNote: 'Chuẩn bị tại Hàn' },
+        { id: 'd4-immigration', label: 'Nộp Immigration', icon: '🛂', tasks: ['Đặt lịch Hi Korea', 'Nộp hồ sơ chuyển đổi', 'Đóng phí'], offsetDays: 30, always: true },
+        { id: 'd4-convert', label: 'Chuyển đổi visa thành công', icon: '🔄', tasks: ['Theo dõi online', 'Nhận ARC mới', 'Nhập học ĐH'], offsetDays: 7, always: true },
+        { id: 'd4-start', label: 'Bắt đầu học Đại học!', icon: '🎉', tasks: ['Check-in trường', 'Mua sách vở', 'Làm quen bạn mới'], offsetDays: 0, always: true },
       ];
     }
 
-    // Calculate actual dates
-    var timeline = months.map(function(m) {
-      var d = new Date(today);
-      d.setDate(d.getDate() + Math.round(m.offset * 30));
+    return common;
+  }
+
+  /**
+   * Rule 3a: Trình độ tiếng Hàn / TOPIK
+   */
+  function applyKoreanLevelRule(milestones, profile, warnings) {
+    var level = profile.koreanLevel || 'none';
+    var hasTopik = profile.hasTopik;
+    var topikGrade = parseInt(profile.topikGrade) || 0;
+
+    var langIdx = findMilestoneIndex(milestones, 'language');
+    if (langIdx === -1) return;
+
+    // Đã có TOPIK 3+ -> bỏ hẳn milestone học tiếng
+    if (hasTopik && topikGrade >= 3) {
+      milestones.splice(langIdx, 1);
+      warnings.push({ type: 'success', icon: '✅', text: 'Bạn đã có TOPIK ' + topikGrade + ', không cần thêm thời gian học tiếng!' });
+      return;
+    }
+
+    // Đã có TOPIK 2 -> học nhẹ nhàng 1 tháng
+    if (hasTopik && topikGrade === 2) {
+      milestones[langIdx].tasks = ['Ôn luyện lên TOPIK 3', 'Thi TOPIK cải thiện'];
+      milestones[langIdx].offsetDays = 120;
+      warnings.push({ type: 'info', icon: 'ℹ️', text: 'Bạn đã có TOPIK 2, chỉ cần ôn 1-2 tháng để lên TOPIK 3.' });
+      return;
+    }
+
+    // Sejong 2B -> cần 2-3 tháng
+    if (level === 'sejong2b') {
+      milestones[langIdx].tasks = ['Học cấp tốc để thi TOPIK', 'Luyện đề TOPIK 2-3', 'Thi thử online'];
+      milestones[langIdx].offsetDays = 150;
+      return;
+    }
+
+    // Beginner hoặc chưa học -> cần 4-5 tháng, ưu tiên sớm
+    if (level === 'beginner' || level === 'none') {
+      milestones[langIdx].tasks = ['Đăng ký lớp học tiếng Hàn cấp tốc', 'Học Sejong 1-2B', 'Thi TOPIK 2 làm mục tiêu'];
+      milestones[langIdx].offsetDays = 180;
+      warnings.push({ type: 'warning', icon: '⚠️', text: 'Bạn mới bắt đầu học tiếng Hàn. Cần ít nhất 4-5 tháng để đạt TOPIK 2. Hãy học ngay!' });
+      if (!hasTopik) {
+        milestones[langIdx].tasks.push('Đăng ký thi TOPIK');
+      }
+    }
+  }
+
+  /**
+   * Rule 3b: Tài chính (sổ tiết kiệm)
+   */
+  function applyFinanceRule(milestones, profile, warnings) {
+    var savings = profile.savingsAmount || 0;
+    var sponsorIsSelf = profile.sponsorIsSelf;
+    var finIdx = findMilestoneIndex(milestones, 'finance');
+    if (finIdx === -1) return;
+
+    if (savings >= 10000) {
+      // Đã đủ -> bỏ milestone mở sổ, chỉ để task xác nhận
+      milestones[finIdx].tasks = ['Xin xác nhận số dư từ ngân hàng', 'Sao kê 3-6 tháng gần nhất'];
+      milestones[finIdx].label = 'Xác nhận tài chính';
+      milestones[finIdx].icon = '✅';
+      milestones[finIdx].offsetDays = 45;
+      warnings.push({ type: 'success', icon: '✅', text: 'Sổ TK của bạn đã đủ (' + savings.toLocaleString() + ' USD)! Chỉ cần xin xác nhận số dư.' });
+    } else if (savings >= 5000) {
+      // Có nhưng thiếu -> thêm task bổ sung
+      milestones[finIdx].tasks = ['Bổ sung sổ TK lên 10,000+ USD', 'Mở thêm sổ nếu cần', 'Sao kê ngân hàng'];
+      milestones[finIdx].label = 'Bổ sung sổ tiết kiệm';
+      warnings.push({ type: 'warning', icon: '⚠️', text: 'Sổ TK hiện tại ' + savings.toLocaleString() + ' USD, cần bổ sung lên 10,000+ USD.' });
+    } else if (savings > 0 && savings < 5000) {
+      // Thiếu nhiều -> cảnh báo mạnh
+      milestones[finIdx].tasks = ['Xoay vốn để mở sổ TK 10,000+ USD', 'Liên hệ người thân hỗ trợ', 'Mở sổ TK tại ngân hàng'];
+      milestones[finIdx].offsetDays = 150;
+      milestones[finIdx].label = 'Xoay vốn & Mở sổ tiết kiệm';
+      warnings.push({ type: 'danger', icon: '🚨', text: 'Sổ TK của bạn còn rất thấp (' + savings.toLocaleString() + ' USD). Cần gấp 10,000+ USD. Cân nhắc lùi kỳ nhập học nếu chưa kịp xoay vốn.' });
+    } else {
+      // Chưa có gì
+      milestones[finIdx].tasks = ['Mở sổ tiết kiệm 10,000+ USD', 'Chọn ngân hàng phù hợp', 'Kỳ hạn tối thiểu 3 tháng'];
+      milestones[finIdx].offsetDays = 150;
+      warnings.push({ type: 'warning', icon: '⚠️', text: 'Bạn chưa khai báo sổ tiết kiệm. Cần mở sổ 10,000+ USD càng sớm càng tốt.' });
+    }
+
+    // Tự bảo lãnh -> thêm task
+    if (sponsorIsSelf) {
+      milestones[finIdx].tasks.push('Chuẩn bị CMCT nguồn thu nhập');
+    }
+  }
+
+  /**
+   * Rule 3c: Gap year
+   */
+  function applyGapYearRule(milestones, profile, warnings) {
+    var gapYears = profile.gapYears || 0;
+    if (gapYears <= 0.5) return; // Không có gap hoặc gap < 6 tháng
+
+    // Thêm task giải trình vào milestone nộp hồ sơ hoặc school-app
+    var schoolIdx = findMilestoneIndex(milestones, 'school-app');
+    if (schoolIdx !== -1) {
+      if (gapYears > 3) {
+        milestones[schoolIdx].tasks.push('Soạn giải trình gap year (' + Math.round(gapYears) + ' năm)');
+        milestones[schoolIdx].tasks.push('Xin xác nhận việc làm/thời gian (nếu có)');
+        milestones[schoolIdx].offsetDays = Math.max(milestones[schoolIdx].offsetDays, 120);
+        warnings.push({ type: 'warning', icon: '⚠️', text: 'Gap ' + Math.round(gapYears) + ' năm cần giải trình chi tiết. Chuẩn bị giấy tờ chứng minh hoạt động trong thời gian gap.' });
+      } else {
+        milestones[schoolIdx].tasks.push('Soạn giải trình gap year (' + Math.round(gapYears) + ' năm)');
+      }
+    }
+  }
+
+  /**
+   * Rule 3d: Trượt visa
+   */
+  function applyVisaRejectionRule(milestones, profile, warnings) {
+    if (!profile.hasVisaRejection) return;
+
+    // Thêm milestone riêng: Soạn giải trình trượt visa
+    var rejectionMilestone = {
+      id: 'rejection-explain',
+      label: 'Soạn giải trình trượt visa',
+      icon: '📝',
+      tasks: [
+        'Phân tích lý do trượt lần trước',
+        'Viết giải trình khắc phục',
+        'Bổ sung giấy tờ chứng minh thay đổi',
+      ],
+      offsetDays: 120,
+      always: true,
+    };
+    milestones.push(rejectionMilestone);
+
+    // Nếu có rejectionReason cụ thể -> thêm task
+    if (profile.rejectionReason) {
+      rejectionMilestone.tasks.push('Lưu ý: Lần trước trượt vì: ' + profile.rejectionReason);
+    }
+
+    warnings.push({ type: 'warning', icon: '⚠️', text: 'Bạn đã từng trượt visa. Cần chuẩn bị hồ sơ kỹ hơn, đặc biệt là giải trình khắc phục điểm yếu lần trước.' });
+  }
+
+  /**
+   * Rule 3e: Kinh nghiệm làm việc
+   */
+  function applyWorkExperienceRule(milestones, profile) {
+    if (!profile.hasWorkExperience) return;
+
+    var schoolIdx = findMilestoneIndex(milestones, 'school-app');
+    if (schoolIdx !== -1) {
+      milestones[schoolIdx].tasks.push('Xin xác nhận công việc/HĐLĐ');
+    }
+
+    if (profile.hasLaborContract) {
+      var translateIdx = findMilestoneIndex(milestones, 'translate');
+      if (translateIdx !== -1) {
+        milestones[translateIdx].tasks.push('Dịch công chứng HĐLĐ');
+      }
+    }
+  }
+
+  /**
+   * Rule 3f: Học vấn đại học
+   */
+  function applyEducationRule(milestones, profile) {
+    if (profile.educationLevel !== 'university') return;
+
+    var translateIdx = findMilestoneIndex(milestones, 'translate');
+    if (translateIdx !== -1) {
+      // Thêm task vào milestone dịch thuật
+      milestones[translateIdx].tasks.push('Dịch công chứng bằng Đại học');
+      milestones[translateIdx].tasks.push('Dịch công chứng bảng điểm ĐH');
+    }
+  }
+
+  /**
+   * Rule 3g: Tuổi
+   */
+  function applyAgeRule(milestones, profile, warnings) {
+    var age = getAgeFromProfile(profile) || 0;
+    if (age <= 25) return; // Tuổi lý tưởng, không cần điều chỉnh
+
+    if (age > 32) {
+      warnings.push({ type: 'danger', icon: '🚨', text: 'Bạn ' + age + ' tuổi - rủi ro visa cao hơn do tuổi. Cần hồ sơ chứng minh ràng buộc VN thật mạnh (gia đình, tài sản, công việc).' });
+      var langIdx = findMilestoneIndex(milestones, 'translate');
+      if (langIdx !== -1) {
+        milestones[langIdx].tasks.push('Bổ sung giấy tờ chứng minh ràng buộc VN');
+      }
+    } else if (age > 28) {
+      warnings.push({ type: 'info', icon: 'ℹ️', text: 'Bạn ' + age + ' tuổi. Nên tăng cường giấy tờ chứng minh sẽ về nước sau khi học.' });
+    }
+  }
+
+  /**
+   * Rule 3h: Bảo lãnh tài chính
+   */
+  function applySponsorRule(milestones, profile) {
+    if (!profile.sponsorIsSelf) return; // Có người bảo lãnh -> standard
+
+    var finIdx = findMilestoneIndex(milestones, 'finance');
+    if (finIdx !== -1) {
+      milestones[finIdx].tasks.push('Chuẩn bị CMCT nguồn thu nhập cá nhân');
+    }
+  }
+
+  /**
+   * Rule 3i: Khu vực (rủi ro cao)
+   */
+  function applyRegionRule(milestones, profile, warnings) {
+    var highRiskRegions = ['Nghệ An', 'Hà Tĩnh', 'Thanh Hoá', 'Thanh Hóa', 'Quảng Bình', 'Hải Phòng', 'Đắk Lắk'];
+    var region = profile.region || '';
+
+    var isHighRisk = highRiskRegions.some(function(r) {
+      return region.toLowerCase().includes(r.toLowerCase());
+    });
+
+    if (isHighRisk) {
+      warnings.push({ type: 'warning', icon: '⚠️', text: 'Khu vực ' + region + ' thuộc nhóm rủi ro cao. Cần hồ sơ chứng minh tài chính và ràng buộc về nước thật chặt.' });
+    }
+  }
+
+  /**
+   * Rule 3j: D4→D2 special
+   */
+  function applyD4toD2Rules(milestones, profile) {
+    if (profile.visaType !== 'D4-to-D2') return;
+
+    if (profile.currentLocation === 'korea') {
+      // Đang ở Hàn -> các mốc gần hơn
+      milestones.forEach(function(m) {
+        m.offsetDays = Math.max(7, m.offsetDays - 30);
+      });
+    }
+
+    // Thêm task nếu có kết quả học tập
+    if (profile.koreanStudyResult) {
+      var d4Idx = findMilestoneIndex(milestones, 'd4-complete');
+      if (d4Idx !== -1) {
+        milestones[d4Idx].tasks.push('Kết quả học tập D4: ' + profile.koreanStudyResult);
+      }
+    }
+  }
+
+  /**
+   * Tính ngày thực tế cho từng milestone từ target date
+   */
+  function calculateTimelineDates(milestones, targetDate, today) {
+    return milestones.map(function(m) {
+      // offsetDays = số ngày TRƯỚC target date
+      var d = new Date(targetDate);
+      d.setDate(d.getDate() - m.offsetDays);
+
+      // Nếu ngày đã qua -> tính từ hôm nay
+      if (d < today) {
+        d = new Date(today);
+        // Thêm padding 1-3 ngày để không bị trùng hôm nay
+        d.setDate(d.getDate() + 1);
+      }
+
       return {
+        id: m.id,
         label: m.label,
         icon: m.icon,
         date: d,
@@ -163,10 +522,100 @@
         tasks: m.tasks,
         isPast: d < today,
         isUpcoming: d >= today && d <= new Date(today.getTime() + 14 * 24 * 60 * 60 * 1000),
+        locationNote: m.locationNote || '',
       };
     });
+  }
 
-    return timeline;
+  /**
+   * Helper: tìm index của milestone theo id
+   */
+  function findMilestoneIndex(milestones, id) {
+    for (var i = 0; i < milestones.length; i++) {
+      if (milestones[i].id === id) return i;
+    }
+    return -1;
+  }
+
+  /**
+   * Render timeline HTML — hiển thị warnings + timeline dạng cột
+   */
+  function renderTimeline(container, result) {
+    if (!result || !result.milestones || result.milestones.length === 0) return;
+
+    var timeline = result.milestones;
+    var warnings = result.warnings || [];
+
+    var html = '<div class="cl-timeline-section">' +
+      '<div class="cl-timeline-header">' +
+      '<span class="cl-timeline-icon">📅</span>' +
+      '<div><h4>Lộ trình cá nhân của bạn</h4>' +
+      '<p>Dựa trên hồ sơ cá nhân (visa ' + escapeHtml(getChecklistProfile().visaType || 'D-4-1') + ') · Kỳ nhập học dự kiến: Tháng ' + ((result.targetDate || new Date()).getMonth() + 1) + '/' + ((result.targetDate || new Date()).getFullYear()) + '</p></div>' +
+      '</div>';
+
+    // Hiển thị warnings trước
+    if (warnings.length > 0) {
+      html += '<div class="cl-timeline-warnings">';
+      warnings.forEach(function(w) {
+        var bgColor = w.type === 'danger' ? '#fef2f2' : w.type === 'warning' ? '#fffbeb' : w.type === 'success' ? '#f0fdf4' : '#eff6ff';
+        var borderColor = w.type === 'danger' ? '#fecaca' : w.type === 'warning' ? '#fde68a' : w.type === 'success' ? '#bbf7d0' : '#bfdbfe';
+        html += '<div class="cl-timeline-warning" style="background:' + bgColor + ';border-left:4px solid ' + borderColor + '">' +
+          '<span>' + w.icon + '</span>' +
+          '<span>' + escapeHtml(w.text) + '</span></div>';
+      });
+      html += '</div>';
+    }
+
+    // Timeline
+    html += '<div class="cl-timeline">';
+    timeline.forEach(function(m) {
+      var cls = 'cl-timeline-item';
+      if (m.isPast) cls += ' is-past';
+      if (m.isUpcoming) cls += ' is-upcoming';
+      html += '<div class="' + cls + '">' +
+        '<div class="cl-timeline-dot">' + m.icon + '</div>' +
+        '<div class="cl-timeline-content">' +
+        '<div class="cl-timeline-title">' + escapeHtml(m.label) + '</div>' +
+        '<div class="cl-timeline-date">' + m.dateStr + (m.locationNote ? ' · ' + escapeHtml(m.locationNote) : '') + '</div>' +
+        '<ul class="cl-timeline-tasks">' +
+        m.tasks.map(function(t) { return '<li>' + escapeHtml(t) + '</li>'; }).join('') +
+        '</ul></div></div>';
+    });
+    html += '</div>';
+
+    // Nút tạo nhắc nhở
+    html += '<div class="cl-timeline-actions">' +
+      '<button type="button" class="btn btn-primary btn-sm" onclick="window.clAutoCreateReminders()">⏰ Tạo nhắc nhở tự động</button>' +
+      '</div></div>';
+
+    container.insertAdjacentHTML('afterbegin', html);
+
+    // Auto-create reminders function (giữ nguyên)
+    window.clAutoCreateReminders = function() {
+      var token = null;
+      try { token = localStorage.getItem('student_token'); } catch(e) {}
+      if (!token) { alert('Vui lòng đăng nhập để tạo nhắc nhở tự động!'); return; }
+
+      var count = 0;
+      timeline.forEach(function(m) {
+        if (m.isPast) return;
+        var fetchFn = window.fetchWithAuth || fetch;
+        fetchFn('/api/auth/student?action=reminders-create', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: m.label + ': ' + m.tasks[0],
+            dueDate: m.date.toISOString().split('T')[0],
+            reminderType: 'document',
+          }),
+        }).then(function(r) { return r.json(); }).then(function(d) {
+          if (d.success) count++;
+        }).catch(function() {});
+      });
+      setTimeout(function() {
+        alert('✅ Đã tạo ' + count + ' nhắc nhở tự động! Xem trong tab Gửi đơn.');
+      }, 500);
+    };
   }
 
   /**
@@ -905,13 +1354,13 @@
     // Hook into checklist view: add timeline (#2) + enhance items (#4)
     var checklistSection = document.querySelector('.cl-checklist');
     if (checklistSection) {
-      // Add timeline
+      // Add timeline (new format: returns { milestones, warnings, targetDate })
       var profile = getChecklistProfile();
       if (profile) {
-        var timeline = generateTimeline(profile);
+        var timelineResult = generateTimeline(profile);
         var overviewProgress = checklistSection.querySelector('.cl-overall-progress');
-        if (overviewProgress) {
-          renderTimeline(overviewProgress.parentElement, timeline);
+        if (overviewProgress && timelineResult.milestones.length > 0) {
+          renderTimeline(overviewProgress.parentElement, timelineResult);
         }
       }
 
@@ -957,8 +1406,10 @@
         if (profile) {
           var overviewProgress = checklistVisible.querySelector('.cl-overall-progress');
           if (overviewProgress) {
-            var timeline = generateTimeline(profile);
-            renderTimeline(overviewProgress.parentElement, timeline);
+            var timelineResult = generateTimeline(profile);
+            if (timelineResult.milestones.length > 0) {
+              renderTimeline(overviewProgress.parentElement, timelineResult);
+            }
           }
           renderSimilarCases(checklistVisible, profile);
         }
@@ -972,10 +1423,11 @@
   // EXPOSED TOOLS FOR STUDENT AGENT (Phase 1)
   // ════════════════════════════════════════════
 
-  // Expose functions for the AI chat agent to call
+  // Expose functions — generateTimeline trả về { milestones, warnings }
   window.personalization = {
     getSimilarCases: renderSimilarCases,
-    getTimeline: generateTimeline,
+    getTimeline: function(profile) { return generateTimeline(profile).milestones; },
+    getTimelineFull: generateTimeline,
     getStudyPlanBuilder: window.clOpenStudyPlanBuilder,
     getStudyPlanReviewer: window.clOpenStudyPlanReviewer,
     getSmartEnhancement: getSmartEnhancement,
