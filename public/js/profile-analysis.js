@@ -299,7 +299,7 @@
    * 6. Gia đình — Người thân tại Hàn? Người thân bất hợp pháp?
    */
   function analyzeFamily(profile) {
-    var result = { group: 'Gia đình', icon: '👨‍👩‍👧‍👧', strengths: [], weaknesses: [], risks: [], missingEvidence: [], actions: [] };
+    var result = { group: 'Gia đình', strengths: [], weaknesses: [], risks: [], missingEvidence: [], actions: [] };
 
     // Người thân bất hợp pháp
     if (profile.hasIllegalRelative) {

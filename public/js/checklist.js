@@ -905,7 +905,6 @@
         <div class="pa-group-card">
           <div class="pa-group-header" onclick="window.paToggleGroup(${idx})">
             <div class="pa-group-title">
-              <span class="pa-group-icon">${group.icon}</span>
               <span class="pa-group-name">${group.group}</span>
             </div>
             <div class="pa-group-meta">
@@ -929,7 +928,7 @@
 
       // Risks
       if (group.risks.length > 0) {
-        html += '<div class="pa-sub-section pa-section-risk"><div class="pa-sub-title">🚨 Rủi ro</div><ul>' +
+        html += '<div class="pa-sub-section pa-section-risk"><div class="pa-sub-title">Rủi ro</div><ul>' +
           group.risks.map(function(r) { return '<li>' + escapeHtml(r) + '</li>'; }).join('') + '</ul></div>';
       }
 
@@ -955,7 +954,7 @@
         <div class="pa-ai-section">
           <div class="pa-ai-header">
             <div class="pa-ai-header-left">
-              <span class="pa-ai-icon">🧠</span>
+              <span class="pa-ai-icon"></span>
               <div>
                 <div class="pa-ai-title">Phân tích bằng DeepSeek AI</div>
                 <div class="pa-ai-desc">AI sẽ phân tích sâu hồ sơ của bạn dựa trên framework 6 nhóm, đưa ra đánh giá chi tiết và đề xuất cá nhân hoá.</div>
@@ -968,7 +967,7 @@
           <div id="pa-ai-results" class="pa-ai-results" style="display:none">
             <div class="pa-ai-loading" id="pa-ai-loading">
               <div class="spinner"></div>
-              <span>🧠 AI đang phân tích hồ sơ của bạn...</span>
+              <span>AI đang phân tích hồ sơ của bạn...</span>
             </div>
           </div>
         </div>
@@ -1096,7 +1095,7 @@
               g.weaknesses.map(function(w) { return '<li>' + escapeHtml(w) + '</li>'; }).join('') + '</ul></div>';
           }
           if (g.risks && g.risks.length > 0) {
-            html += '<div class="pa-ai-sub ai-risk"><span class="pa-ai-sub-label">🚨 Rủi ro</span><ul>' +
+            html += '<div class="pa-ai-sub ai-risk"><span class="pa-ai-sub-label">Rủi ro</span><ul>' +
               g.risks.map(function(r) { return '<li>' + escapeHtml(r) + '</li>'; }).join('') + '</ul></div>';
           }
           if (g.missingEvidence && g.missingEvidence.length > 0) {
