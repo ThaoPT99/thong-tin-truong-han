@@ -123,12 +123,15 @@
     </div>
 
     <div class="content-area">
-      <!-- Tab: CRM vs Advisor Submissions -->
+      <!-- Tab: CRM vs Advisor Submissions vs Registered Accounts -->
       <div class="admin-tabs" style="display:flex;gap:0;margin-bottom:16px;border-bottom:2px solid var(--gray-200);">
         <button type="button" class="admin-tab active" data-tab="crm" style="padding:8px 18px;border:none;background:none;font-weight:700;font-size:0.9rem;cursor:pointer;color:var(--primary);border-bottom:2px solid var(--primary);margin-bottom:-2px;">
           Danh sách CRM
         </button>
-        <button type="button" class="admin-tab" data-tab="advisor" style="padding:8px 18px;border:none;background:none;font-weight:600;font-size:0.9rem;cursor:pointer;color:var(--gray-500);">
+        <button type="button" class="admin-tab" data-tab="accounts" style="padding:8px 18px;border:none;background:none;font-weight:600;font-size:0.9rem;cursor:pointer;color:var(--gray-500);">
+          Tai khoan da dang ky
+        </button>
+        <button type="button" class="admin-tab role-director" data-tab="advisor" style="padding:8px 18px;border:none;background:none;font-weight:600;font-size:0.9rem;cursor:pointer;color:var(--gray-500);">
           HS tu gui form
         </button>
       </div>
@@ -161,6 +164,24 @@
             </div>
             <div id="student-empty" class="empty-state" style="display:none">
               <p>Không tìm thấy học sinh nào.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Registered Accounts -->
+      <div class="admin-tab-content" id="tab-accounts" style="display:none">
+        <div class="card">
+          <div class="card-header">
+            <h3>Tai khoan khach hang da dang ky</h3>
+            <p style="font-size:0.85rem;color:var(--gray-400);margin-top:4px;">Danh sach tai khoan tu dang ky tren web. Yeu cau bat buoc: Ho ten + So dien thoai.</p>
+          </div>
+          <div class="card-body">
+            <div id="accounts-list" class="student-grid">
+              <div class="loading-state"><div class="spinner"></div> Dang tai...</div>
+            </div>
+            <div id="accounts-empty" class="empty-state" style="display:none">
+              <p>Chua co tai khoan nao dang ky.</p>
             </div>
           </div>
         </div>
@@ -544,12 +565,65 @@ document.querySelectorAll('.admin-tab').forEach(function(tab) {
     document.querySelectorAll('.admin-tab-content').forEach(function(c) {
       c.style.display = c.id === 'tab-' + tabName ? 'block' : 'none';
     });
-    // Load advisor submissions when switching to that tab
+    // Load data when switching tabs
     if (tabName === 'advisor') {
       loadAdvisorSubmissions();
+    } else if (tabName === 'accounts') {
+      loadRegisteredAccounts();
     }
   });
 });
+
+// ─── Registered Accounts ───
+var accountsData = [];
+
+async function loadRegisteredAccounts() {
+  var container = document.getElementById('accounts-list');
+  var empty = document.getElementById('accounts-empty');
+  if (!container) return;
+  
+  container.innerHTML = '<div class="loading-state"><div class="spinner"></div> Dang tai...</div>';
+  empty.style.display = 'none';
+  
+  try {
+    var res = await api('GET', '/admin/students?view=student-profiles');
+    accountsData = res.data || [];
+    renderRegisteredAccounts(accountsData);
+  } catch (err) {
+    container.innerHTML = '<div class="empty-state" style="color:var(--danger)">Loi: ' + escapeHtml(err.message) + '</div>';
+  }
+}
+
+function renderRegisteredAccounts(data) {
+  var container = document.getElementById('accounts-list');
+  var empty = document.getElementById('accounts-empty');
+  
+  if (!data || data.length === 0) {
+    container.style.display = 'none';
+    empty.style.display = 'block';
+    return;
+  }
+  
+  container.style.display = 'grid';
+  empty.style.display = 'none';
+  
+  container.innerHTML = data.map(function(p) {
+    var hasName = p.full_name && p.full_name.trim();
+    var hasPhone = p.phone && p.phone.trim();
+    return '<div class="student-card" style="cursor:default">' +
+      '<div>' +
+        '<div class="s-name">' + escapeHtml(p.email || 'Khong co email') + '</div>' +
+        '<div class="s-meta">' +
+          (hasName ? '<span>' + escapeHtml(p.full_name) + '</span>' : '<span style="color:var(--danger)">Thieu ten</span>') +
+          (hasPhone ? '<span>' + escapeHtml(p.phone) + '</span>' : '<span style="color:var(--danger)">Thieu SĐT</span>') +
+        '</div>' +
+        '<div class="s-school">' +
+          'Dang ky: ' + new Date(p.created_at).toLocaleDateString('vi-VN') +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
 
 // ─── Advisor Submissions ───
 var advisorSubmissionsData = [];

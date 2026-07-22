@@ -315,6 +315,12 @@ async function handleRegister(req, res) {
   if (!email || !password) {
     return res.status(400).json({ error: 'Email and password are required' });
   }
+  if (!fullName || !fullName.trim()) {
+    return res.status(400).json({ error: 'Vui lòng nhập họ tên' });
+  }
+  if (!phone || !phone.trim()) {
+    return res.status(400).json({ error: 'Vui lòng nhập số điện thoại' });
+  }
   if (password.length < 6) {
     return res.status(400).json({ error: 'Mật khẩu phải có ít nhất 6 ký tự' });
   }

@@ -321,8 +321,8 @@
                 <div id="registerError" class="auth-error"></div>
 
                 <div class="auth-field">
-                    <label for="regName">Họ tên</label>
-                    <input type="text" id="regName" placeholder="Nguyễn Văn A">
+                    <label for="regName">Họ tên <span class="required">*</span></label>
+                    <input type="text" id="regName" placeholder="Nguyễn Văn A" required>
                 </div>
 
                 <div class="auth-field">
@@ -336,8 +336,8 @@
                 </div>
 
                 <div class="auth-field">
-                    <label for="regPhone">Số điện thoại (tùy chọn)</label>
-                    <input type="tel" id="regPhone" placeholder="0978 xxx xxx">
+                    <label for="regPhone">Số điện thoại <span class="required">*</span></label>
+                    <input type="tel" id="regPhone" placeholder="0978 xxx xxx" required>
                 </div>
 
                 <button type="submit" class="auth-submit" id="registerSubmitBtn">
@@ -572,6 +572,16 @@
       var errorEl = document.getElementById('registerError');
       var btn = document.getElementById('registerSubmitBtn');
 
+      if (!name) {
+        errorEl.textContent = 'Vui lòng nhập họ tên';
+        errorEl.classList.add('show');
+        return;
+      }
+      if (!phone) {
+        errorEl.textContent = 'Vui lòng nhập số điện thoại';
+        errorEl.classList.add('show');
+        return;
+      }
       if (password.length < 6) {
         errorEl.textContent = 'Mật khẩu phải có ít nhất 6 ký tự';
         errorEl.classList.add('show');
