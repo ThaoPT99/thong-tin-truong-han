@@ -1,6 +1,7 @@
 // /api/auth/student.js — Student auth: register, login, verify, profile
 // Dùng Supabase Auth admin API (service_role key) + student_profiles table
 const { supabase, supabaseServiceKey, supabaseUrl } = require('../../lib/supabase');
+const { sendNewAdvisorSubmissionAlert } = require('../../lib/telegram');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback-dev-secret';
 
@@ -873,6 +874,24 @@ async function handleSaveAdvisorData(req, res) {
       .single();
 
     if (error) throw error;
+    
+    // Gửi thông báo Telegram cho admin
+    try {
+      await sendNewAdvisorSubmissionAlert({
+        email: data.email || null,
+        fullName: data.fullName || null,
+        gender: data.gender,
+        age: data.age,
+        gpa: data.gpa,
+        korean: data.korean,
+        region: data.region,
+        topSchools: data.topSchools || [],
+      });
+    } catch (notifErr) {
+      // Silent fail — không để lỗi notification ảnh hưởng response
+      console.warn('Send advisor notification error:', notifErr.message);
+    }
+    
     return res.status(201).json({ success: true, submission });
   } catch (err) {
     console.error('Save advisor data error:', err);

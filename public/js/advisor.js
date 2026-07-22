@@ -681,8 +681,21 @@ async function saveAdvisorDataToDB(profile, results, analysisResult, source) {
     });
   }
   
+  // Lấy thông tin user từ localStorage để gửi notification
+  var email = null, fullName = null;
+  try {
+    var userStr = localStorage.getItem('student_user');
+    if (userStr) {
+      var userData = JSON.parse(userStr);
+      email = userData.email || null;
+      fullName = userData.full_name || null;
+    }
+  } catch(e) {}
+  
   try {
     var body = {
+      email: email,
+      fullName: fullName,
       visaType: profile.visaType,
       gender: profile.gender,
       age: profile.age,
