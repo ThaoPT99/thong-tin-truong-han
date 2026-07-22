@@ -439,7 +439,7 @@ window.REGION_LABELS = {
     if (si && si.ky && si.nam) {
       const semesterTitle = 'Kỳ tháng ' + si.ky + '/' + si.nam;
       const sub = document.querySelector('.subtitle');
-      if (sub) sub.textContent = semesterTitle;
+      if (sub) sub.textContent = 'Visa D2-6 - ' + semesterTitle;
     }
   }
 

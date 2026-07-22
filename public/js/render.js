@@ -1937,8 +1937,8 @@ function showSchool(viewId) {
   const topbarTitle = document.querySelector('.app-topbar h2');
   if (topbarTitle) {
     topbarTitle.textContent = currentVisaType === 'D4-1'
-      ? 'Thông tin trường Visa D4-1'
-      : 'Thông tin trường Visa D2-6';
+      ? 'Tìm trường phù hợp với hồ sơ của bạn - Visa D4-1'
+      : 'Tìm trường phù hợp với hồ sơ của bạn';
   }
 
   document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
@@ -2093,9 +2093,9 @@ function init() {
     const ogTitle = document.getElementById("og-title");
     const ogDesc = document.getElementById("og-desc");
     if (ogTitle) ogTitle.content = `Thông tin trường Hàn - Kỳ tháng ${ky}/${nam}`;
-    if (ogDesc) ogDesc.content = `Kỳ tuyển sinh tháng ${ky}/${nam} - Thông tin trường Hàn`;
+    if (ogDesc) ogDesc.content = `Kỳ tháng ${ky}/${nam} - Tìm trường phù hợp, so sánh và chuẩn bị hồ sơ du học Hàn Quốc.`;
     const sub = document.querySelector(".subtitle");
-    if (sub) sub.textContent = `Kỳ tuyển sinh tháng ${ky}/${nam}`;
+    if (sub) sub.textContent = `Visa D2-6 - Kỳ tháng ${ky}/${nam}`;
   }
 
   const schoolCount = document.getElementById("topbar-school-count");
