@@ -772,79 +772,362 @@
   };
 
   // ══════════════════════════════════════════════
-  // STEP 5: Analysis (AI + Local)
+  // STEP 5: Analysis — PHÂN TÍCH 6 NHÓM THEO KB_ANALYSIS_FRAMEWORK
   // ══════════════════════════════════════════════
   function renderAnalysis(container) {
     const visaType = profile.visaType || 'D-4-1';
-    const template = window.CHECKLIST_DATA?.[visaType];
     const itemCount = checklist?.totalItems || 0;
     const requiredCount = checklist?.requiredItems || 0;
 
-    container.innerHTML = `
+    // Chạy phân tích 6 nhóm
+    const analysis = (typeof window.analyzeStudentProfile === 'function')
+      ? window.analyzeStudentProfile(profile)
+      : null;
+
+    const overall = analysis?.overall;
+    const groups = analysis?.groups || [];
+
+    // ─── Build HTML ───
+    let html = `
       <div class="cl-analysis">
-        <h3> Phân tích hồ sơ của bạn</h3>
-        <p class="cl-form-desc">Dựa trên thông tin bạn đã cung cấp, đây là tổng quan:</p>
+        <h3>📊 Phân tích hồ sơ của bạn</h3>
+        <p class="cl-form-desc">Hệ thống đã phân tích hồ sơ theo <strong>6 nhóm</strong> — xác định điểm mạnh, điểm yếu, rủi ro và đề xuất hành động.</p>
 
-        <div class="cl-analysis-summary">
-          <div class="cl-analysis-card">
-            <span class="cl-analysis-num">${itemCount}</span>
-            <span class="cl-analysis-label">giấy tờ cần chuẩn bị</span>
+        <!-- OVERALL SCORE -->`;
+
+    if (overall) {
+      const scoreColor = overall.color;
+      const scoreWidth = overall.score;
+      let scoreLevelClass = 'pa-level-' + overall.level;
+      html += `
+        <div class="pa-overall">
+          <div class="pa-overall-header">
+            <div class="pa-score-ring">
+              <svg viewBox="0 0 36 36" class="pa-score-svg">
+                <path class="pa-score-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                <path class="pa-score-fill" stroke="${scoreColor}" stroke-dasharray="${scoreWidth}, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                <text x="18" y="20.5" class="pa-score-text" fill="${scoreColor}">${scoreWidth}</text>
+              </svg>
+            </div>
+            <div class="pa-overall-info">
+              <div class="pa-overall-label ${scoreLevelClass}">${overall.label}</div>
+              <div class="pa-overall-sub">
+                <span class="pa-stat pa-stat-strong">${overall.summary.strengths} điểm mạnh</span>
+                <span class="pa-stat-sep">·</span>
+                <span class="pa-stat pa-stat-weak">${overall.summary.weaknesses} điểm yếu</span>
+                <span class="pa-stat-sep">·</span>
+                <span class="pa-stat pa-stat-risk">${overall.summary.risks} rủi ro</span>
+                <span class="pa-stat-sep">·</span>
+                <span class="pa-stat pa-stat-missing">${overall.summary.missing} thiếu</span>
+              </div>
+            </div>
           </div>
-          <div class="cl-analysis-card">
-            <span class="cl-analysis-num">${requiredCount}</span>
-            <span class="cl-analysis-label">giấy tờ bắt buộc</span>
+
+          <div class="pa-decisions">
+            <div class="pa-decisions-title">📋 Quyết định sau phân tích:</div>
+            <ul class="pa-decisions-list">
+              ${overall.decisions.map(function(d) { return '<li>' + escapeHtml(d) + '</li>'; }).join('')}
+            </ul>
           </div>
-          <div class="cl-analysis-card">
-            <span class="cl-analysis-num">${itemCount - requiredCount}</span>
-            <span class="cl-analysis-label">giấy tờ bổ sung theo hoàn cảnh</span>
+
+          <div class="pa-top-actions">
+            <div class="pa-top-actions-title">🎯 Hành động ưu tiên:</div>
+            <ol class="pa-top-actions-list">
+              ${overall.topActions.map(function(a) { return '<li>' + escapeHtml(a) + '</li>'; }).join('')}
+            </ol>
+          </div>
+        </div>`;
+    }
+
+    // ─── Số liệu checklist ───
+    html += `
+        <div class="pa-checklist-stats">
+          <div class="pa-stat-card">
+            <span class="pa-stat-num">${itemCount}</span>
+            <span class="pa-stat-label">giấy tờ cần chuẩn bị</span>
+          </div>
+          <div class="pa-stat-card">
+            <span class="pa-stat-num">${requiredCount}</span>
+            <span class="pa-stat-label">giấy tờ bắt buộc</span>
+          </div>
+          <div class="pa-stat-card">
+            <span class="pa-stat-num">${itemCount - requiredCount}</span>
+            <span class="pa-stat-label">giấy tờ bổ sung</span>
+          </div>
+          <div class="pa-stat-card">
+            <span class="pa-stat-num">${groups.length}</span>
+            <span class="pa-stat-label">nhóm phân tích</span>
           </div>
         </div>
 
-        <div class="cl-analysis-detail">
-          <h4> Hồ sơ của bạn:</h4>
-          <table class="cl-analysis-table">
-            <tr><td>Loại visa</td><td>${visaType}</td></tr>
-            <tr><td>Học vấn</td><td>${profile.educationLevel === 'university' ? 'Đại học' : 'THPT'}</td></tr>
-            <tr><td>Gap year</td><td>${profile.gapYears ? profile.gapYears + ' năm' : 'Không có'}</td></tr>
-            <tr><td>Đã từng trượt visa</td><td>${profile.hasVisaRejection ? '⚠ Có' : 'Không'}</td></tr>
-            <tr><td>Bảo lãnh tài chính</td><td>${profile.sponsorIsSelf ? 'Tự thân' : profile.sponsorRelation === 'parent' ? 'Cha/Mẹ' : 'Người thân khác'}</td></tr>
-            <tr><td>Tiếng Hàn</td><td>${profile.koreanLevel || 'Chưa có'}</td></tr>
-            ${profile.chosenSchool ? '<tr><td>Trường dự định</td><td>' + escapeHtml(profile.chosenSchool) + '</td></tr>' : ''}
-            ${profile.chosenMajor ? '<tr><td>Ngành dự định</td><td>' + escapeHtml(profile.chosenMajor) + '</td></tr>' : ''}
-            ${profile.hasTopik && profile.topikGrade ? '<tr><td>TOPIK</td><td>Topik ' + profile.topikGrade + '</td></tr>' : ''}
-            ${profile.ieltsScore ? '<tr><td>IELTS</td><td>' + profile.ieltsScore + '</td></tr>' : ''}
-            ${profile.hasWorkExperience && profile.workCompany ? '<tr><td>Kinh nghiệm làm việc</td><td>' + escapeHtml(profile.workCompany) + (profile.workPosition ? ' - ' + escapeHtml(profile.workPosition) : '') + '</td></tr>' : ''}
-          </table>
+        <!-- PROFILE SUMMARY -->
+        <div class="pa-profile-summary">
+          <div class="pa-profile-summary-header" onclick="window.paToggleProfile()">
+            <span>📄 Hồ sơ của bạn</span>
+            <span class="pa-toggle-icon" id="pa-toggle-icon">▼</span>
+          </div>
+          <div class="pa-profile-summary-body" id="pa-profile-body">
+            <table class="pa-profile-table">
+              <tr><td>Loại visa</td><td><strong>${visaType}</strong></td></tr>
+              <tr><td>Học vấn</td><td>${profile.educationLevel === 'university' ? 'Đại học/Cao đẳng' : 'THPT'}</td></tr>
+              <tr><td>Gap year</td><td>${profile.gapYears ? profile.gapYears + ' năm' : 'Không có'}</td></tr>
+              <tr><td>Trượt visa</td><td>${profile.hasVisaRejection ? '⚠ Có' : 'Không'}</td></tr>
+              <tr><td>Bảo lãnh</td><td>${profile.sponsorIsSelf ? 'Tự thân' : profile.sponsorRelation === 'parent' ? 'Cha/Mẹ' : 'Người thân'}</td></tr>
+              <tr><td>Tiếng Hàn</td><td>${profile.koreanLevel || 'Chưa có'}</td></tr>
+              ${profile.gpa ? '<tr><td>GPA</td><td>' + profile.gpa + '/10</td></tr>' : ''}
+              ${profile.chosenSchool ? '<tr><td>Trường dự định</td><td>' + escapeHtml(profile.chosenSchool) + '</td></tr>' : ''}
+              ${profile.chosenMajor ? '<tr><td>Ngành dự định</td><td>' + escapeHtml(profile.chosenMajor) + '</td></tr>' : ''}
+              ${profile.hasTopik && profile.topikGrade ? '<tr><td>TOPIK</td><td>' + profile.topikGrade + '</td></tr>' : ''}
+              ${profile.ieltsScore ? '<tr><td>IELTS</td><td>' + profile.ieltsScore + '</td></tr>' : ''}
+              ${profile.savingsAmount ? '<tr><td>Sổ tiết kiệm</td><td>' + profile.savingsAmount.toLocaleString() + ' USD</td></tr>' : ''}
+              ${profile.hasWorkExperience && profile.workCompany ? '<tr><td>Kinh nghiệm</td><td>' + escapeHtml(profile.workCompany) + (profile.workPosition ? ' - ' + escapeHtml(profile.workPosition) : '') + '</td></tr>' : ''}
+            </table>
+          </div>
         </div>
 
-        <div class="cl-analysis-risk">
-          <h4>⚠ Rủi ro phát hiện:</h4>
-          <ul>
-            ${profile.gapYears > 0.5 ? '<li> Bạn có gap year — cần giải trình khoảng trống thời gian</li>' : ''}
-            ${profile.hasVisaRejection ? '<li> Đã từng trượt visa — cần giải trình + nộp lại hồ sơ cũ</li>' : ''}
-            ${!profile.sponsorIsSelf ? '<li> Người bảo lãnh không phải tự thân — cần chứng minh quan hệ + thu nhập</li>' : ''}
-            ${(!profile.gpa || profile.gpa < 5) ? '<li> GPA thấp — có thể cần thư giới thiệu bổ sung</li>' : ''}
-            ${(profile.koreanLevel === 'none') ? '<li> Chưa có tiếng Hàn — nên học Sejong 2B hoặc TOPIK 1 trước</li>' : ''}
-            ${(profile.savingsAmount < getVisaMinSavings()) ? '<li> Sổ tiết kiệm dưới ' + getVisaMinSavings().toLocaleString() + ' USD — cần tăng lên mức tối thiểu cho ' + visaType + '</li>' : ''}
-            ${!profile.hasLaborContract && profile.hasWorkExperience ? '<li> Đã đi làm nhưng không có HĐLĐ — cần giấy xác nhận khác</li>' : ''}
-            ${(profile.gpa && profile.gpa >= 7) ? '<li> GPA tốt — điểm mạnh trong hồ sơ</li>' : ''}
-            ${(profile.koreanLevel && profile.koreanLevel !== 'none') ? '<li> Đã có nền tảng tiếng Hàn — lợi thế</li>' : ''}
-            ${profile.hasIllegalRelative ? '<li> Người thân cư trú bất hợp pháp — rủi ro cao, cần tư vấn riêng</li>' : ''}
-            ${visaType === 'D-2' && profile.koreanLevel !== 'topik3' && profile.koreanLevel !== 'topik4' ? '<li> D-2 thường yêu cầu TOPIK 3+ — nếu chưa đạt, cần kiểm tra kỹ điều kiện đầu vào của trường</li>' : ''}
-            ${visaType === 'D-2' && !profile.hasRecommendation ? '<li> D-2 cần 2 thư giới thiệu từ giáo viên — chuẩn bị sớm</li>' : ''}
-            ${visaType === 'D4-to-D2' && !profile.currentKoreanSchool ? '<li> Bạn chưa nhập trường tiếng đang học — cần bổ sung để xác nhận quá trình học</li>' : ''}
-            ${visaType === 'D4-to-D2' && profile.currentLocation === 'korea' ? '<li> Bạn đang ở Hàn — cần kiểm tra hạn visa D-4-1 hiện tại và thủ tục chuyển đổi tại Immigration</li>' : ''}
-            ${!profile.hasVisaRejection && profile.gapYears <= 0.5 && profile.sponsorIsSelf && (profile.gpa || 0) >= 5 ? '<li> Hồ sơ cơ bản ổn — không có rủi ro đặc biệt</li>' : ''}
-          </ul>
+        <!-- 6 GROUP ANALYSIS -->
+        <div class="pa-groups" id="pa-groups">`;
+
+    // Render từng nhóm
+    groups.forEach(function(group, idx) {
+      var hasContent = group.strengths.length > 0 || group.weaknesses.length > 0 || group.risks.length > 0 || group.missingEvidence.length > 0 || group.actions.length > 0;
+      if (!hasContent) return;
+
+      var groupScore = 10;
+      groupScore -= group.risks.length * 2;
+      groupScore -= group.weaknesses.length * 1;
+      groupScore += group.strengths.length * 1;
+      groupScore = Math.max(1, Math.min(10, groupScore));
+
+      var groupColor = groupScore >= 7 ? '#059669' : groupScore >= 5 ? '#d97706' : '#dc2626';
+
+      html += `
+        <div class="pa-group-card">
+          <div class="pa-group-header" onclick="window.paToggleGroup(${idx})">
+            <div class="pa-group-title">
+              <span class="pa-group-icon">${group.icon}</span>
+              <span class="pa-group-name">${group.group}</span>
+            </div>
+            <div class="pa-group-meta">
+              <span class="pa-group-score" style="color:${groupColor};background:${groupColor}18">${groupScore}/10</span>
+              <span class="pa-group-toggle">▼</span>
+            </div>
+          </div>
+          <div class="pa-group-body" id="pa-group-body-${idx}">`;
+
+      // Strengths
+      if (group.strengths.length > 0) {
+        html += '<div class="pa-sub-section pa-section-strength"><div class="pa-sub-title">✅ Điểm mạnh</div><ul>' +
+          group.strengths.map(function(s) { return '<li>' + escapeHtml(s) + '</li>'; }).join('') + '</ul></div>';
+      }
+
+      // Weaknesses
+      if (group.weaknesses.length > 0) {
+        html += '<div class="pa-sub-section pa-section-weakness"><div class="pa-sub-title">⚠️ Điểm yếu</div><ul>' +
+          group.weaknesses.map(function(w) { return '<li>' + escapeHtml(w) + '</li>'; }).join('') + '</ul></div>';
+      }
+
+      // Risks
+      if (group.risks.length > 0) {
+        html += '<div class="pa-sub-section pa-section-risk"><div class="pa-sub-title">🚨 Rủi ro</div><ul>' +
+          group.risks.map(function(r) { return '<li>' + escapeHtml(r) + '</li>'; }).join('') + '</ul></div>';
+      }
+
+      // Missing evidence
+      if (group.missingEvidence.length > 0) {
+        html += '<div class="pa-sub-section pa-section-missing"><div class="pa-sub-title">📋 Chứng cứ còn thiếu</div><ul>' +
+          group.missingEvidence.map(function(m) { return '<li>' + escapeHtml(m) + '</li>'; }).join('') + '</ul></div>';
+      }
+
+      // Actions
+      if (group.actions.length > 0) {
+        html += '<div class="pa-sub-section pa-section-action"><div class="pa-sub-title">🎯 Hành động đề xuất</div><ol>' +
+          group.actions.map(function(a) { return '<li>' + escapeHtml(a) + '</li>'; }).join('') + '</ol></div>';
+      }
+
+      html += '</div></div>';
+    });
+
+    html += `
+        </div>
+
+        <!-- AI ANALYSIS BUTTON -->
+        <div class="pa-ai-section">
+          <div class="pa-ai-header">
+            <div class="pa-ai-header-left">
+              <span class="pa-ai-icon">🧠</span>
+              <div>
+                <div class="pa-ai-title">Phân tích bằng DeepSeek AI</div>
+                <div class="pa-ai-desc">AI sẽ phân tích sâu hồ sơ của bạn dựa trên framework 6 nhóm, đưa ra đánh giá chi tiết và đề xuất cá nhân hoá.</div>
+              </div>
+            </div>
+            <button type="button" class="btn btn-primary pa-ai-btn" id="pa-ai-btn" onclick="window.runAIAnalysis()">
+              🤖 Phân tích bằng AI
+            </button>
+          </div>
+          <div id="pa-ai-results" class="pa-ai-results" style="display:none">
+            <div class="pa-ai-loading" id="pa-ai-loading">
+              <div class="spinner"></div>
+              <span>🧠 AI đang phân tích hồ sơ của bạn...</span>
+            </div>
+          </div>
         </div>
 
         <div class="cl-nav">
           <button type="button" class="btn btn-primary btn-lg" onclick="window.clNextStep()">
-             Xem checklist cá nhân →
+            📋 Xem checklist cá nhân →
           </button>
         </div>
       </div>
     `;
+
+    container.innerHTML = html;
+
+    // Gắn sự kiện toggle
+    window.paToggleGroup = function(idx) {
+      var body = document.getElementById('pa-group-body-' + idx);
+      if (body) {
+        body.classList.toggle('is-open');
+        var toggle = body.parentElement.querySelector('.pa-group-toggle');
+        if (toggle) toggle.textContent = body.classList.contains('is-open') ? '▲' : '▼';
+      }
+    };
+
+    window.paToggleProfile = function() {
+      var body = document.getElementById('pa-profile-body');
+      var icon = document.getElementById('pa-toggle-icon');
+      if (body) {
+        body.classList.toggle('is-open');
+        if (icon) icon.textContent = body.classList.contains('is-open') ? '▲' : '▼';
+      }
+    };
+
+    // ─── Run AI Analysis ───
+    window.runAIAnalysis = async function() {
+      var btn = document.getElementById('pa-ai-btn');
+      var results = document.getElementById('pa-ai-results');
+      var loading = document.getElementById('pa-ai-loading');
+      if (!btn || !results) return;
+
+      btn.disabled = true;
+      btn.textContent = '⏳ Đang phân tích...';
+      results.style.display = 'block';
+      if (loading) loading.style.display = 'flex';
+
+      var existingContent = results.querySelector('.pa-ai-content');
+      if (existingContent) existingContent.remove();
+
+      try {
+        var analysis = await window.analyzeWithAI(profile);
+
+        if (loading) loading.style.display = 'none';
+
+        if (analysis.error) {
+          results.innerHTML += '<div class="pa-ai-content"><div class="pa-ai-error">❌ ' + escapeHtml(analysis.error) + '</div></div>';
+          btn.disabled = false;
+          btn.textContent = '🤖 Thử lại';
+          return;
+        }
+
+        if (analysis.rawText) {
+          // Fallback: hiển thị text raw
+          results.innerHTML += '<div class="pa-ai-content"><div class="pa-ai-raw">' + escapeHtml(analysis.rawText).replace(/\n/g, '<br>') + '</div></div>';
+          btn.disabled = false;
+          btn.textContent = '✅ Phân tích xong';
+          return;
+        }
+
+        // Render AI analysis results
+        var content = renderAIAnalysisResults(analysis);
+        results.innerHTML += '<div class="pa-ai-content">' + content + '</div>';
+        btn.disabled = false;
+        btn.textContent = '✅ Đã phân tích';
+      } catch (err) {
+        if (loading) loading.style.display = 'none';
+        results.innerHTML += '<div class="pa-ai-content"><div class="pa-ai-error">❌ Lỗi: ' + escapeHtml(err.message || 'Không thể kết nối') + '</div></div>';
+        btn.disabled = false;
+        btn.textContent = '🤖 Thử lại';
+      }
+    };
+
+    // ─── Render AI Analysis Results ───
+    function renderAIAnalysisResults(analysis) {
+      var groups = analysis.groups || [];
+      var overall = analysis.overall || {};
+
+      var html = '<div class="pa-ai-header-badge">📊 Kết quả phân tích từ AI</div>';
+
+      if (overall.score !== undefined) {
+        var scoreColor = overall.score >= 80 ? '#059669' : overall.score >= 60 ? '#d97706' : overall.score >= 40 ? '#dc2626' : '#991b1b';
+        html += '<div class="pa-ai-overall">';
+        html += '<div class="pa-ai-score" style="color:' + scoreColor + '">' + overall.score + '/100</div>';
+        html += '<div class="pa-ai-overall-info">';
+        html += '<div class="pa-ai-label" style="color:' + scoreColor + '">' + escapeHtml(overall.label || '') + '</div>';
+        if (overall.summary) html += '<div class="pa-ai-summary">' + escapeHtml(overall.summary) + '</div>';
+        if (overall.decisions && overall.decisions.length > 0) {
+          html += '<div class="pa-ai-decisions-title">📋 Quyết định:</div>';
+          html += '<ul class="pa-ai-decisions">';
+          overall.decisions.forEach(function(d) { html += '<li>' + escapeHtml(d) + '</li>'; });
+          html += '</ul>';
+        }
+        if (overall.topActions && overall.topActions.length > 0) {
+          html += '<div class="pa-ai-actions-title">🎯 Hành động:</div>';
+          html += '<ol class="pa-ai-actions">';
+          overall.topActions.forEach(function(a) { html += '<li>' + escapeHtml(a) + '</li>'; });
+          html += '</ol>';
+        }
+        html += '</div></div>';
+      }
+
+      // Render các nhóm
+      if (groups.length > 0) {
+        html += '<div class="pa-ai-groups-title">🔍 Phân tích 6 nhóm:</div>';
+        html += '<div class="pa-ai-groups">';
+        groups.forEach(function(g) {
+          if (!g.strengths && !g.weaknesses && !g.risks && !g.missingEvidence && !g.actions) return;
+          html += '<div class="pa-ai-group">';
+          html += '<div class="pa-ai-group-header"><span>' + (g.icon || '📌') + '</span> <strong>' + escapeHtml(g.group || '') + '</strong></div>';
+          if (g.strengths && g.strengths.length > 0) {
+            html += '<div class="pa-ai-sub ai-strength"><span class="pa-ai-sub-label">✅ Điểm mạnh</span><ul>' +
+              g.strengths.map(function(s) { return '<li>' + escapeHtml(s) + '</li>'; }).join('') + '</ul></div>';
+          }
+          if (g.weaknesses && g.weaknesses.length > 0) {
+            html += '<div class="pa-ai-sub ai-weakness"><span class="pa-ai-sub-label">⚠️ Điểm yếu</span><ul>' +
+              g.weaknesses.map(function(w) { return '<li>' + escapeHtml(w) + '</li>'; }).join('') + '</ul></div>';
+          }
+          if (g.risks && g.risks.length > 0) {
+            html += '<div class="pa-ai-sub ai-risk"><span class="pa-ai-sub-label">🚨 Rủi ro</span><ul>' +
+              g.risks.map(function(r) { return '<li>' + escapeHtml(r) + '</li>'; }).join('') + '</ul></div>';
+          }
+          if (g.missingEvidence && g.missingEvidence.length > 0) {
+            html += '<div class="pa-ai-sub ai-missing"><span class="pa-ai-sub-label">📋 Thiếu</span><ul>' +
+              g.missingEvidence.map(function(m) { return '<li>' + escapeHtml(m) + '</li>'; }).join('') + '</ul></div>';
+          }
+          if (g.actions && g.actions.length > 0) {
+            html += '<div class="pa-ai-sub ai-action"><span class="pa-ai-sub-label">🎯 Hành động</span><ol>' +
+              g.actions.map(function(a) { return '<li>' + escapeHtml(a) + '</li>'; }).join('') + '</ol></div>';
+          }
+          html += '</div>';
+        });
+        html += '</div>';
+      }
+
+      return html;
+    }
+
+    // Mặc định mở nhóm đầu tiên
+    var firstBody = document.getElementById('pa-group-body-0');
+    if (firstBody) {
+      firstBody.classList.add('is-open');
+      var firstToggle = firstBody.parentElement.querySelector('.pa-group-toggle');
+      if (firstToggle) firstToggle.textContent = '▲';
+    }
+
+    // Mặc định mở profile
+    var profileBody = document.getElementById('pa-profile-body');
+    if (profileBody) profileBody.classList.add('is-open');
+    var profileIcon = document.getElementById('pa-toggle-icon');
+    if (profileIcon) profileIcon.textContent = '▲';
   }
 
   // ══════════════════════════════════════════════

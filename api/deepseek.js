@@ -4,7 +4,7 @@ const { supabase } = require('../lib/supabase');
 const { requireAdmin } = require('../lib/auth');
 const { sendTelegramMessage, sendDailyReport, sendNewCityAlert, sendNewStudentAlert } = require('../lib/telegram');
 const http = require('http');
-const { KB_FOR_CHAT, KB_FOR_STUDY_PLAN, KB_FOR_GAP, KB_FOR_REJECTION } = require('../lib/knowledge-base');
+const { KB_FOR_CHAT, KB_FOR_STUDY_PLAN, KB_FOR_GAP, KB_FOR_REJECTION, KB_ANALYSIS_FRAMEWORK, KB_DOCUMENT_DECISION_RULES } = require('../lib/knowledge-base');
 const { getDeepSeekKey, callDeepSeek, getBotToken, verifyTelegramWebhook, escapeHtmlTelegram } = require('../lib/ai/common');
 
 // ─── Helper: Tìm case tương tự từ Case DB (Phase 4: Learning Agent) ───
@@ -2713,6 +2713,194 @@ async function handleAnalytics(req, res) {
 // ─── Main Router ───
 // ═══════════════════════════════════════════════════
 
+// ─── Action: Profile Analysis (action=profile-analysis)
+// Phân tích hồ sơ học sinh bằng AI dựa trên KB_ANALYSIS_FRAMEWORK
+async function handleProfileAnalysis(req, res) {
+  const apiKey = getDeepSeekKey();
+  if (!apiKey) {
+    return res.status(503).json({ success: false, error: 'DEEPSEEK_API_KEY chưa được cấu hình.' });
+  }
+
+  const { profile } = req.body || {};
+  if (!profile || typeof profile !== 'object') {
+    return res.status(400).json({ success: false, error: 'Thiếu thông tin hồ sơ.' });
+  }
+
+  const p = profile;
+  const visaType = p.visaType || 'D-4-1';
+
+  // Fetch similar cases for RAG context
+  const similarCases = await fetchSimilarCases(p);
+
+  // Build profile summary for AI
+  var profileSummary = `=== HỒ SƠ HỌC SINH ===\n`;
+  profileSummary += `Loại visa: ${visaType}\n`;
+  profileSummary += `Họ tên: ${p.fullName || 'Chưa rõ'}\n`;
+  profileSummary += `Giới tính: ${p.gender === 'male' ? 'Nam' : p.gender === 'female' ? 'Nữ' : 'Chưa rõ'}\n`;
+  profileSummary += `Ngày sinh: ${p.dateOfBirth || 'Chưa rõ'}\n`;
+  profileSummary += `Học vấn: ${p.educationLevel === 'university' ? 'Đại học/Cao đẳng' : 'THPT'}\n`;
+  profileSummary += `Trường THPT: ${p.highSchoolName || 'Chưa rõ'}\n`;
+  profileSummary += `GPA: ${p.gpa || 'Chưa rõ'}/10\n`;
+  profileSummary += `Năm tốt nghiệp: ${p.graduationYear || 'Chưa rõ'}\n`;
+  profileSummary += `Tiếng Hàn: ${p.koreanLevel || 'Chưa có'}\n`;
+  profileSummary += `TOPIK: ${p.hasTopik && p.topikGrade ? 'Có - Topik ' + p.topikGrade : 'Chưa có'}\n`;
+  profileSummary += `IELTS: ${p.ieltsScore || 'Chưa có'}\n`;
+  profileSummary += `Gap year: ${p.gapYears ? p.gapYears + ' năm' : 'Không có'}\n`;
+  profileSummary += `Trường dự định: ${p.chosenSchool || 'Chưa chọn'}\n`;
+  profileSummary += `Ngành dự định: ${p.chosenMajor || 'Chưa chọn'}\n`;
+  profileSummary += `Sổ tiết kiệm: ${p.savingsAmount ? p.savingsAmount.toLocaleString() + ' USD' : 'Chưa rõ'}\n`;
+  profileSummary += `Bảo lãnh: ${p.sponsorIsSelf ? 'Tự thân' : p.sponsorRelation === 'parent' ? 'Cha/Mẹ' : 'Người thân khác'}\n`;
+  if (!p.sponsorIsSelf) {
+    profileSummary += `Người bảo lãnh: ${p.sponsorName || 'Chưa rõ'} - ${p.sponsorOccupation || 'Chưa rõ'}\n`;
+  }
+  profileSummary += `Đã từng trượt visa: ${p.hasVisaRejection ? 'Có' : 'Không'}\n`;
+  if (p.hasVisaRejection) {
+    profileSummary += `Lý do trượt: ${p.rejectionReason || 'Không rõ'}\n`;
+  }
+  profileSummary += `Người thân bất hợp pháp: ${p.hasIllegalRelative ? 'Có (!)' : 'Không'}\n`;
+  profileSummary += `Kinh nghiệm làm việc: ${p.hasWorkExperience ? 'Có' : 'Không'}\n`;
+  if (p.hasWorkExperience) {
+    profileSummary += `Công ty: ${p.workCompany || 'Chưa rõ'}\n`;
+    profileSummary += `Vị trí: ${p.workPosition || 'Chưa rõ'}\n`;
+    profileSummary += `Thời gian: ${p.workDuration ? p.workDuration + ' năm' : 'Chưa rõ'}\n`;
+    profileSummary += `HĐLĐ/BHXH: ${p.hasLaborContract ? 'Có' : 'Không'}\n`;
+  }
+  if (visaType === 'D-2') {
+    profileSummary += `Thư giới thiệu: ${p.hasRecommendation ? 'Có' : 'Chưa có'}\n`;
+  }
+  if (visaType === 'D4-to-D2') {
+    profileSummary += `Trường tiếng hiện tại: ${p.currentKoreanSchool || 'Chưa rõ'}\n`;
+    profileSummary += `Level: ${p.currentKoreanLevel || 'Chưa rõ'}\n`;
+    profileSummary += `Vị trí: ${p.currentLocation === 'korea' ? 'Đang ở Hàn' : 'Việt Nam'}\n`;
+  }
+
+  // Build similar cases context
+  var caseContext = '';
+  if (similarCases.length > 0) {
+    caseContext = '\n=== CASE TƯƠNG TỰ (THAM KHẢO) ===';
+    similarCases.forEach(function(c, i) {
+      var sp = c.student_profile || {};
+      caseContext += '\nCase ' + (i + 1) + ' (' + (c.result === 'approved' ? 'ĐÃ ĐỖ' : c.result === 'rejected' ? 'TRƯỢT' : c.result || 'Đang xử lý') + '):';
+      caseContext += '\n  • ' + (sp.gender === 'female' ? 'Nữ' : 'Nam') + ', ' + (sp.age || '?') + 't, GPA ' + (sp.gpa || '?') + ', Tiếng Hàn: ' + (sp.korean || '?');
+      caseContext += '\n  • KQ: ' + (c.result || 'Unknown') + ' | Ghi chú: ' + (c.notes || 'Không có');
+    });
+  }
+
+  // Guard: kiểm tra hồ sơ có đủ dữ liệu để phân tích
+  var hasData = p.fullName || p.gpa || p.dateOfBirth || p.koreanLevel || p.savingsAmount || p.hasVisaRejection !== undefined;
+  if (!hasData) {
+    return res.json({ success: false, error: 'Hồ sơ chưa có đủ thông tin để phân tích bằng AI. Vui lòng khai báo đầy đủ trước.' });
+  }
+
+  const systemPrompt = `Bạn là chuyên gia phân tích hồ sơ du học Hàn Quốc. Nhiệm vụ của bạn là phân tích hồ sơ học sinh theo FRAMEWORK dưới đây và trả về kết quả dạng JSON.
+
+${KB_ANALYSIS_FRAMEWORK}
+
+${KB_DOCUMENT_DECISION_RULES}
+
+${KB_FOR_GAP}
+
+${KB_FOR_REJECTION}
+
+QUY TẮC QUAN TRỌNG:
+1. Phân tích CHI TIẾT từng nhóm, không bỏ sót
+2. Với mỗi nhóm, xác định rõ: điểm mạnh, điểm yếu, rủi ro, chứng cứ thiếu, hành động
+3. Đánh giá tổng thể: hồ sơ tốt/trung bình/rủi ro cao
+4. Đưa ra quyết định sau phân tích (có nhận không? cần bổ sung gì? có cần đổi trường?)
+5. TUYỆT ĐỐI CHÍNH XÁC: chỉ phân tích dựa trên thông tin được cung cấp
+
+${caseContext}
+
+TRẢ VỀ JSON CHUẨN (KHÔNG markdown, KHÔNG giải thích thêm):
+{
+  "groups": [
+    {
+      "group": "Nhân thân",
+      "icon": "👤",
+      "strengths": ["..."],
+      "weaknesses": ["..."],
+      "risks": ["..."],
+      "missingEvidence": ["..."],
+      "actions": ["..."]
+    },
+    {
+      "group": "Học vấn",
+      "icon": "🎓",
+      "strengths": ["..."],
+      "weaknesses": ["..."],
+      "risks": ["..."],
+      "missingEvidence": ["..."],
+      "actions": ["..."]
+    },
+    {
+      "group": "Kinh nghiệm",
+      "icon": "💼",
+      "strengths": ["..."],
+      "weaknesses": ["..."],
+      "risks": ["..."],
+      "missingEvidence": ["..."],
+      "actions": ["..."]
+    },
+    {
+      "group": "Tài chính",
+      "icon": "💰",
+      "strengths": ["..."],
+      "weaknesses": ["..."],
+      "risks": ["..."],
+      "missingEvidence": ["..."],
+      "actions": ["..."]
+    },
+    {
+      "group": "Nhập cảnh",
+      "icon": "🛂",
+      "strengths": ["..."],
+      "weaknesses": ["..."],
+      "risks": ["..."],
+      "missingEvidence": ["..."],
+      "actions": ["..."]
+    },
+    {
+      "group": "Gia đình",
+      "icon": "👨‍👩‍👧‍👧",
+      "strengths": ["..."],
+      "weaknesses": ["..."],
+      "risks": ["..."],
+      "missingEvidence": ["..."],
+      "actions": ["..."]
+    }
+  ],
+  "overall": {
+    "score": 0-100,
+    "label": "✅ Hồ sơ tốt" hoặc "⚠ Hồ sơ trung bình" hoặc "⚠ Hồ sơ rủi ro" hoặc "❌ Hồ sơ rủi ro cao",
+    "summary": "Đánh giá tổng quan 1-2 câu",
+    "decisions": ["Quyết định 1", "Quyết định 2", "..."],
+    "topActions": ["Hành động ưu tiên 1", "Hành động ưu tiên 2", "..."]
+  }
+}`;
+
+  const userMessage = `Phân tích hồ sơ học sinh sau theo framework 6 nhóm:\n\n${profileSummary}`;
+
+  const analysis = await callDeepSeek(
+    [{ role: 'system', content: systemPrompt }, { role: 'user', content: userMessage }],
+    { temperature: 0.3, maxTokens: 3000, timeout: 30000 }
+  );
+
+  if (!analysis) {
+    return res.json({ success: false, error: 'Không nhận được phản hồi từ AI.' });
+  }
+
+  // Parse JSON từ response
+  try {
+    var jsonStr = analysis.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+    var parsed = JSON.parse(jsonStr);
+    return res.json({ success: true, analysis: parsed });
+  } catch (e) {
+    // Nếu parse JSON thất bại, trả về text gốc để frontend xử lý
+    console.error('Profile analysis JSON parse error:', e.message);
+    return res.json({ success: true, analysis: null, rawAnalysis: analysis });
+  }
+}
+
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
@@ -2743,6 +2931,7 @@ module.exports = async (req, res) => {
       case 'interview-simulator': return await handleInterviewSimulator(req, res);
       case 'student-agent': return await handleStudentAgent(req, res);
       case 'analytics': return await handleAnalytics(req, res);
+      case 'profile-analysis': return await handleProfileAnalysis(req, res);
       case 'telegram-daily-report': return await handleTelegramDailyReport(req, res);
       default:
         return res.status(400).json({ error: `Unknown action: ${action}` });
