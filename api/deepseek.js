@@ -1601,6 +1601,126 @@ async function executeStudentTool(toolName, params, profile) {
   }
 }
 
+// ─── Helper: tóm tắt kết quả tool để ghi log ───
+function summarizeToolResult(toolName, result) {
+  if (!result) return 'Không có kết quả';
+  try {
+    switch (toolName) {
+      case 'search_schools':
+      case 'list_by_criteria': {
+        var arr = Array.isArray(result) ? result : [];
+        var names = arr.slice(0, 3).map(function(s) { return s.name || ''; }).filter(Boolean).join(', ');
+        return 'Tìm thấy ' + arr.length + ' trường' + (names ? ': ' + names : '');
+      }
+      case 'get_school_detail': {
+        if (result && result.name) return 'Chi tiết: ' + result.name;
+        return 'Không tìm thấy trường';
+      }
+      case 'compare_schools': {
+        if (result && result.school1 && result.school2) return 'So sánh: ' + result.school1.name + ' vs ' + result.school2.name;
+        return result && result.error ? 'Lỗi: ' + result.error : 'Không đủ dữ liệu';
+      }
+      case 'apply_school': {
+        if (result && result.application) return 'Đã tạo đơn: ' + (result.application.schoolName || '');
+        return result && result.message ? result.message : 'Đã xử lý';
+      }
+      case 'get_applications': {
+        var cnt = (result && result.applications) ? result.applications.length : 0;
+        return 'Có ' + cnt + ' đơn';
+      }
+      case 'set_reminder': {
+        if (result && result.reminder) return 'Nhắc nhở: ' + (result.reminder.title || '') + ' - hạn ' + (result.reminder.dueDate || '');
+        return result && result.message ? result.message : 'Đã tạo nhắc nhở';
+      }
+      case 'interview_simulator': {
+        if (result && result.type === 'interview_question') return 'Câu ' + (result.questionNumber || '?') + '/' + (result.totalQuestions || '?');
+        if (result && result.type === 'interview_complete') return 'Hoàn thành phỏng vấn';
+        if (result && result.type === 'interview_answer') return 'Đã trả lời câu hỏi';
+        return 'Đã xử lý';
+      }
+      case 'upload_document': {
+        if (result && result.type === 'document_status') {
+          var cnt2 = (result.documents || []).length;
+          var done = (result.documents || []).filter(function(d) { return d.status === 'Có' || d.status === 'done'; }).length;
+          return done + '/' + cnt2 + ' giấy tờ đã có';
+        }
+        return result && result.message ? result.message : 'Đã kiểm tra';
+      }
+      case 'generate_study_plan': {
+        return (result && result.draft) ? 'Đã tạo bản nháp Study Plan' : (result && result.message ? result.message : 'Đã xử lý');
+      }
+      case 'get_advisor_history': {
+        var cnt3 = (result && result.cases) ? result.cases.length : 0;
+        return 'Có ' + cnt3 + ' lịch sử tư vấn';
+      }
+      case 'check_deadlines': {
+        var cnt4 = (result && result.reminders) ? result.reminders.length : 0;
+        var overdue = (result && result.reminders) ? result.reminders.filter(function(r) { return !r.completed && r.daysLeft < 0; }).length : 0;
+        return cnt4 + ' nhắc nhở' + (overdue ? ' (' + overdue + ' quá hạn)' : '');
+      }
+      case 'update_student_profile': {
+        return (result && result.updated) ? 'Đã cập nhật hồ sơ' : 'Không có thay đổi';
+      }
+      case 'update_checklist': {
+        return (result && result.updated) ? 'Đã cập nhật checklist' : 'Không có thay đổi';
+      }
+      case 'get_checklist': {
+        var items = (result && Array.isArray(result)) ? result.length : (result && result.items ? result.items.length : 0);
+        return 'Checklist: ' + items + ' mục';
+      }
+      default: {
+        if (result && typeof result === 'object') {
+          if (result.message) return result.message;
+          var keys = Object.keys(result);
+          return 'Kết quả ' + keys.length + ' trường';
+        }
+        return String(result).substring(0, 100);
+      }
+    }
+  } catch (e) {
+    return 'Lỗi tóm tắt';
+  }
+}
+
+// ─── Helper: ghi log tool call xuống DB ───
+async function logStudentToolCall(toolName, toolParams, execResult, studentProfile, userMessage, durationMs) {
+  try {
+    var success = !!(execResult && execResult.success && execResult.result);
+    var resultData = success ? execResult.result : null;
+    var resultSummary = success ? summarizeToolResult(toolName, resultData) : '';
+    var resultCount = 0;
+    if (resultData) {
+      if (Array.isArray(resultData)) resultCount = resultData.length;
+      else if (resultData.applications) resultCount = resultData.applications.length;
+      else if (resultData.cases) resultCount = resultData.cases.length;
+      else if (resultData.reminders) resultCount = resultData.reminders.length;
+      else if (resultData.documents) resultCount = resultData.documents.length;
+      else if (resultData.items) resultCount = resultData.items.length;
+      else if (resultData.school1 && resultData.school2) resultCount = 2;
+      else if (resultData.reminder) resultCount = 1;
+      else if (resultData.application) resultCount = 1;
+      else if (resultData.draft) resultCount = 1;
+      else if (resultData.updated) resultCount = 1;
+    }
+
+    await supabase.from('student_tool_logs').insert({
+      student_email: (studentProfile && studentProfile.email) || null,
+      student_name: (studentProfile && studentProfile.fullName) || null,
+      tool_name: toolName,
+      params: toolParams || {},
+      result_summary: resultSummary || (execResult && execResult.error ? 'Lỗi: ' + execResult.error : 'Không có kết quả'),
+      result_count: resultCount,
+      success: success,
+      error_message: (!success && execResult && execResult.error) ? execResult.error : null,
+      user_message: userMessage || null,
+      duration_ms: durationMs || 0,
+    });
+  } catch (e) {
+    // Silent fail — không để logging ảnh hưởng tới response
+    console.error('Log tool call error:', e.message);
+  }
+}
+
 // ─── Build tool description for system prompt ───
 function buildToolsSystemPrompt() {
   var lines = ['\n\n=== CÔNG CỤ SẴN CÓ ==='];
@@ -1773,6 +1893,7 @@ ${convHistory}`;
       } catch (e) {
         console.error('Parse tool params error:', e.message);
       }
+      var toolStartTime = Date.now();
       var execResult = await executeStudentTool(toolName, toolParams, studentProfile);
       if (execResult.success && execResult.result) {
         toolResults = { tool: toolName, params: toolParams, data: execResult.result };
@@ -1782,6 +1903,13 @@ ${convHistory}`;
         var errMsg = (execResult && execResult.error) || 'Không tìm thấy kết quả';
         reply = '❌ Lỗi khi tra cứu: ' + errMsg;
       }
+
+      // ─── Log tool call to DB (async, silent fail) ───
+      var toolDuration = Date.now() - toolStartTime;
+      logStudentToolCall(toolName, toolParams, execResult, studentProfile, message, toolDuration).catch(function(le) {
+        console.error('Log tool call error:', le.message);
+      });
+      toolStartTime = undefined;
     }
 
     var profileMatch = answer.match(/---ACTION:update_profile---([\s\S]*?)---END ACTION---/);
