@@ -1,4 +1,8 @@
 {
+  "github": {
+    "silent": false,
+    "autoJobCancelation": true
+  },
   "buildCommand": "npm run build",
   "outputDirectory": "public",
   "rewrites": [
