@@ -6,6 +6,7 @@
     { "source": "/(admin/[^/]+\\.html)$", "destination": "/$1" },
     { "source": "/admin/login", "destination": "/admin/login.html" },
     { "source": "/api/analytics", "destination": "/api/deepseek?action=analytics" },
-    { "source": "/api/admin/analytics", "destination": "/api/deepseek?action=analytics" }
+    { "source": "/api/admin/analytics", "destination": "/api/deepseek?action=analytics" },
+    { "source": "/api/admin/:path*", "destination": "/api/admin-handler?route=:path*" }
   ]
 }
