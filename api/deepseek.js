@@ -1043,7 +1043,109 @@ HƯỚNG DẪN TRẢ LỜI:
       answer: 'Xin lỗi, đã có lỗi xảy ra. Vui lòng thử lại sau!',
     });
   }
-}  // ═══════════════════════════════════════════════════
+}
+
+// ═══════════════════════════════════════════════════
+// ─── Action: Generate Study Plan (action=generate-study-plan)
+// 📝 Guided 8-step Study Plan Generator
+// ═══════════════════════════════════════════════════
+
+async function handleGenerateStudyPlan(req, res) {
+  const apiKey = getDeepSeekKey();
+  if (!apiKey) {
+    // Fallback: generate locally without AI (frontend already has fallback)
+    return res.json({ success: true, studyPlan: null, localFallback: true });
+  }
+
+  const { answers, profile } = req.body || {};
+  if (!answers) {
+    return res.status(400).json({ success: false, error: 'Missing answers field' });
+  }
+
+  try {
+    const systemPrompt = `Bạn là chuyên gia tư vấn du học Hàn Quốc. Dựa trên câu trả lời của học sinh, hãy tổng hợp thành một Study Plan hoàn chỉnh.
+
+YÊU CẦU:
+- Viết bằng tiếng Việt, trang trọng nhưng tự nhiên
+- Dùng tiêu đề rõ ràng cho mỗi phần
+- Dài 500-800 từ, đủ để thuyết phục hội đồng xét duyệt visa
+- Nếu học sinh có gap year, giải trình nhẹ nhàng, tích cực
+- Nếu học sinh trượt visa, đưa ra giải trình thuyết phục (khắc phục điểm yếu lần trước)
+- Kết thúc bằng cam kết về nước sau khi học xong
+- KHÔNG thêm thông tin không có trong câu trả lời của học sinh
+
+CẤU TRÚC:
+1. Lý do chọn Hàn Quốc
+2. Lý do chọn trường & ngành học
+3. Kế hoạch học tập chi tiết
+4. Kế hoạch sau tốt nghiệp (cam kết về nước)
+5. Giải trình thời gian trống (nếu có)
+6. Khả năng tài chính
+7. Kết luận`;
+
+    var userParts = [];
+    if (answers.whyKorea) userParts.push('Câu 1 - Lý do chọn Hàn Quốc: ' + answers.whyKorea);
+    if (answers.whySchool) userParts.push('Câu 2 - Lý do chọn trường: ' + answers.whySchool);
+    if (answers.majorGoal) userParts.push('Câu 3 - Ngành học & mục tiêu: ' + answers.majorGoal);
+    if (answers.studyPlan) userParts.push('Câu 4 - Kế hoạch học tập: ' + answers.studyPlan);
+    if (answers.afterGraduation) userParts.push('Câu 5 - Dự định sau tốt nghiệp: ' + answers.afterGraduation);
+    if (answers.gapExplanation) userParts.push('Câu 6 - Giải trình thời gian: ' + answers.gapExplanation);
+    if (answers.familyFinance) userParts.push('Câu 7 - Tài chính gia đình: ' + answers.familyFinance);
+    if (answers.languageLevel) userParts.push('Câu 8 - Trình độ ngoại ngữ: ' + answers.languageLevel);
+
+    if (profile) {
+      userParts.push('');
+      userParts.push('Thông tin hồ sơ: ' + JSON.stringify({
+        visaType: profile.visaType,
+        gpa: profile.gpa,
+        age: profile.age || profile.dateOfBirth,
+        region: profile.region,
+      }));
+    }
+
+    const userMessage = userParts.join('\n\n');
+
+    const studyPlan = await callDeepSeek(
+      [{ role: 'system', content: systemPrompt }, { role: 'user', content: userMessage }],
+      { temperature: 0.4, maxTokens: 2000, timeout: 30000 }
+    );
+
+    return res.json({ success: true, studyPlan: studyPlan || null });
+  } catch (err) {
+    console.error('Generate study plan error:', err);
+    return res.json({ success: false, error: err.message, studyPlan: null });
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// ─── Action: Similar Cases (action=similar-cases)
+// 📊 Match profile with past advisor_cases 
+// ═══════════════════════════════════════════════════
+
+async function handleSimilarCases(req, res) {
+  try {
+    const { profile } = req.body || {};
+    if (!profile) {
+      return res.status(400).json({ success: false, error: 'Missing profile' });
+    }
+
+    // Reuse the existing fetchSimilarCases helper
+    const cases = await fetchSimilarCases({
+      visaType: profile.visaType,
+      gender: profile.gender,
+      korean: profile.korean,
+      visaFail: profile.visaFail || profile.hasVisaRejection ? 'yes' : 'no',
+      gpa: profile.gpa ? parseFloat(profile.gpa) : null,
+      age: profile.age || null,
+    });
+
+    return res.json({ success: true, cases: cases || [] });
+  } catch (err) {
+    console.error('Similar cases error:', err);
+    return res.json({ success: false, error: err.message, cases: [] });
+  }
+}
+
 // ─── TOOL CALLING — Definitions for Student Agent ───
 // Phase 1: search schools, get detail, compare, update profile, checklist, filter
 // ═══════════════════════════════════════════════════
@@ -3149,6 +3251,8 @@ module.exports = async (req, res) => {
       case 'student-agent': return await handleStudentAgent(req, res);
       case 'analytics': return await handleAnalytics(req, res);
       case 'profile-analysis': return await handleProfileAnalysis(req, res);
+      case 'generate-study-plan': return await handleGenerateStudyPlan(req, res);
+      case 'similar-cases': return await handleSimilarCases(req, res);
       case 'telegram-daily-report': return await handleTelegramDailyReport(req, res);
       default:
         return res.status(400).json({ error: `Unknown action: ${action}` });
