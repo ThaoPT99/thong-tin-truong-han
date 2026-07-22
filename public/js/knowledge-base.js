@@ -102,7 +102,7 @@
 
     const catTabs = CATEGORIES.map(c => `
       <button type="button" class="kb-cat-tab ${c.id === currentCategory ? 'active' : ''}" data-cat="${c.id}">
-        ${c.icon} ${c.label}
+        ${c.label}
       </button>
     `).join('');
 
