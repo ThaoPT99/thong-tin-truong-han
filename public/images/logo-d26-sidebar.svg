@@ -1,8 +1,10 @@
 <svg width="400" height="140" viewBox="0 0 400 140" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <style>
-      @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800;900&display=swap');
-      text { font-family: 'Be Vietnam Pro', Arial, sans-serif; }
+      <![CDATA[
+        @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800;900&display=swap');
+        text { font-family: 'Be Vietnam Pro', Arial, sans-serif; }
+      ]]>
     </style>
     <linearGradient id="docBg" x1="4" y1="4" x2="76" y2="96" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#20E3B2"/>
