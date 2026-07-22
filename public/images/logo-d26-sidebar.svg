@@ -1,24 +1,47 @@
-<svg width="430" height="150" viewBox="0 0 430 150" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="430" height="150" rx="34" fill="#08223F"/>
-  <rect x="18" y="20" width="110" height="110" rx="32" fill="url(#markBg)"/>
-  <path d="M33 87C44 47 92 24 123 38" stroke="url(#orbit)" stroke-width="5" stroke-linecap="round"/>
-  <text x="73" y="87" text-anchor="middle" fill="white" font-family="Arial Black, Arial, sans-serif" font-size="42" font-weight="900" letter-spacing="-4">D26</text>
-  <path d="M92 30L98 43L112 45L102 55L104 69L92 62L80 69L82 55L72 45L86 43L92 30Z" fill="#FBBF24"/>
-  <text x="150" y="56" fill="#99F6E4" font-family="Arial, sans-serif" font-size="17" font-weight="900" letter-spacing="2.5">KOREA D2-6</text>
-  <text x="148" y="99" fill="white" font-family="Arial Black, Arial, sans-serif" font-size="40" font-weight="900" letter-spacing="-1.5">D26</text>
-  <rect x="238" y="68" width="126" height="38" rx="19" fill="#E7F7F3"/>
-  <text x="301" y="94" text-anchor="middle" fill="#0F766E" font-family="Arial, sans-serif" font-size="18" font-weight="900">SCHOOLS</text>
-  <rect x="150" y="112" width="154" height="24" rx="12" fill="rgba(45, 212, 191, 0.14)" stroke="rgba(153, 246, 228, 0.28)"/>
-  <text x="227" y="129" text-anchor="middle" fill="#CCFBF1" font-family="Arial, sans-serif" font-size="12" font-weight="900">Tuyển sinh 03/2027</text>
+<svg width="400" height="140" viewBox="0 0 400 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background card -->
+  <rect width="400" height="140" rx="32" fill="#08223F"/>
+
+  <!-- Icon: Document with compass needle -->
+  <g transform="translate(24,20)">
+    <!-- Document body -->
+    <rect x="4" y="4" width="72" height="92" rx="12" fill="url(#docBg)" stroke="url(#docBorder)" stroke-width="2"/>
+    <!-- Folded corner -->
+    <path d="M52 4V24C52 28.4 55.6 32 60 32H76" fill="url(#foldGrad)" stroke="#20E3B2" stroke-width="1.5"/>
+    <!-- Content lines (simulating text on document) -->
+    <rect x="16" y="38" width="48" height="4" rx="2" fill="rgba(255,255,255,0.5)"/>
+    <rect x="16" y="48" width="40" height="4" rx="2" fill="rgba(255,255,255,0.35)"/>
+    <rect x="16" y="58" width="44" height="4" rx="2" fill="rgba(255,255,255,0.35)"/>
+    <rect x="16" y="68" width="32" height="4" rx="2" fill="rgba(255,255,255,0.35)"/>
+    <!-- Compass/star -->
+    <path d="M40 14L43.5 22.5L52 24.5L46 30.5L47.5 39L40 35L32.5 39L34 30.5L28 24.5L36.5 22.5L40 14Z" fill="#FBBF24"/>
+    <!-- Check mark -->
+    <path d="M28 80L36 88L52 72" stroke="#20E3B2" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- Text: D26 -->
+  <text x="130" y="46" fill="white" font-family="'Be Vietnam Pro', Arial, sans-serif" font-size="34" font-weight="800" letter-spacing="-1">D26</text>
+
+  <!-- Tagline -->
+  <text x="130" y="76" fill="#99F6E4" font-family="'Be Vietnam Pro', Arial, sans-serif" font-size="13" font-weight="600" letter-spacing="1">HỒ SƠ DU HỌC</text>
+
+  <!-- Subtitle -->
+  <rect x="128" y="88" width="164" height="28" rx="14" fill="rgba(45,212,191,0.12)" stroke="rgba(153,246,228,0.2)" stroke-width="1"/>
+  <text x="210" y="107" text-anchor="middle" fill="#CCFBF1" font-family="'Be Vietnam Pro', Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="0.5">TỰ LÀM HỒ SƠ KỲ THÁNG 3/2027</text>
+
   <defs>
-    <linearGradient id="markBg" x1="20" y1="22" x2="128" y2="130" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#20E3B2"/>
-      <stop offset="0.52" stop-color="#2F80ED"/>
+    <linearGradient id="docBg" x1="4" y1="4" x2="76" y2="96" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#20E3B2"/>
+      <stop offset="0.5" stop-color="#2F80ED"/>
       <stop offset="1" stop-color="#8B5CF6"/>
     </linearGradient>
-    <linearGradient id="orbit" x1="33" y1="60" x2="123" y2="60" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#FBBF24"/>
-      <stop offset="1" stop-color="#CCFBF1"/>
+    <linearGradient id="docBorder" x1="4" y1="4" x2="76" y2="96" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#99F6E4"/>
+      <stop offset="1" stop-color="#C4B5FD"/>
+    </linearGradient>
+    <linearGradient id="foldGrad" x1="52" y1="4" x2="76" y2="32" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2F80ED"/>
+      <stop offset="1" stop-color="#1E3A5F"/>
     </linearGradient>
   </defs>
 </svg>

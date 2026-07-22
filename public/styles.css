@@ -3062,7 +3062,7 @@ html {
     display: block;
     width: 100%;
     max-width: 210px;
-    aspect-ratio: 430 / 150;
+    aspect-ratio: 400 / 140;
     height: auto;
     filter: drop-shadow(0 14px 26px rgba(0, 0, 0, 0.18));
 }
