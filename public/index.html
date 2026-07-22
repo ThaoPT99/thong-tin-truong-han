@@ -582,6 +582,12 @@
         errorEl.classList.add('show');
         return;
       }
+      var phoneDigits = phone.replace(/\D/g, '');
+      if (phoneDigits.length < 10) {
+        errorEl.textContent = 'Số điện thoại phải có ít nhất 10 số';
+        errorEl.classList.add('show');
+        return;
+      }
       if (password.length < 6) {
         errorEl.textContent = 'Mật khẩu phải có ít nhất 6 ký tự';
         errorEl.classList.add('show');

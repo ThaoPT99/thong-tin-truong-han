@@ -321,6 +321,10 @@ async function handleRegister(req, res) {
   if (!phone || !phone.trim()) {
     return res.status(400).json({ error: 'Vui lòng nhập số điện thoại' });
   }
+  var phoneDigits = String(phone).replace(/\D/g, '');
+  if (phoneDigits.length < 10) {
+    return res.status(400).json({ error: 'Số điện thoại phải có ít nhất 10 số' });
+  }
   if (password.length < 6) {
     return res.status(400).json({ error: 'Mật khẩu phải có ít nhất 6 ký tự' });
   }
