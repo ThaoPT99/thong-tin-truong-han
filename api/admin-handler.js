@@ -18,8 +18,16 @@ module.exports = async (req, res) => {
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   // The rewrite sets ?route=cases or ?route=students etc.
-  // Also handles sub-paths: ?route=cases&action=stats → the admin handler sees action=stats in query
-  const route = (req.query.route || '').split('/')[0]; // take first segment only
+  // For path-based IDs like /api/admin/schools/UUID, route becomes 'schools/UUID'
+  // We split off the first segment as the route name, and the rest as path ID.
+  const routeParts = (req.query.route || '').split('/');
+  const route = routeParts[0];
+
+  // If there's a second path segment (e.g., UUID from /api/admin/schools/UUID),
+  // inject it into req.query.id so the downstream handler can find it.
+  if (routeParts.length > 1 && !req.query.id) {
+    req.query.id = routeParts.slice(1).join('/');
+  }
 
   switch (route) {
     case 'access-control':
