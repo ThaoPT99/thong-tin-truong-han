@@ -38,12 +38,12 @@ describe('requireAdmin middleware', () => {
     res = makeMockRes();
   });
 
-  it('should return 401 if no Authorization header', async () => {
+  it('should return 401 if no token (no Authorization header, no cookie)', async () => {
     const wrapped = requireAdmin(handler);
     await wrapped(req, res);
     expect(res.status).toHaveBeenCalledWith(401);
     expect(res.json).toHaveBeenCalledWith(
-      expect.objectContaining({ error: expect.stringContaining('Authorization') })
+      expect.objectContaining({ error: 'Missing authorization token' })
     );
     expect(handler).not.toHaveBeenCalled();
   });
