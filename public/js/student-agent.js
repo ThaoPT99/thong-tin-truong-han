@@ -57,6 +57,18 @@
   }
   loadStudentProfile();
 
+  // ─── Get personalized greeting ───
+  function getGreeting() {
+    var name = '';
+    if (studentProfile) {
+      name = studentProfile.fullName || studentProfile.name || '';
+    }
+    if (name && name.trim()) {
+      return 'Chào <b>' + escapeHTML(name.trim()) + '</b>! Tôi là trợ lý AI cá nhân của bạn.';
+    }
+    return 'Chào bạn! Tôi là trợ lý AI cá nhân của bạn.';
+  }
+
   // ─── Build HTML ───
   function buildWidget() {
     var container = document.createElement('div');
@@ -88,14 +100,14 @@
         '<div id="sa-messages" class="sa-messages">' +
           '<div class="sa-welcome">' +
             '<div class="sa-bubble sa-bubble-ai">' +
-              '<div class="sa-bubble-content">Chào bạn! Tôi là trợ lý AI cá nhân của bạn.<br><br>' +
+              '<div class="sa-bubble-content">' + getGreeting() + '<br><br>' +
               'Tôi có thể:<br>' +
               '• Xem/Sửa hồ sơ của bạn<br>' +
               '• Cập nhật checklist giấy tờ<br>' +
               '• Tra cứu thông tin trường<br>' +
               '• Soạn Study Plan / Giải trình<br>' +
               '• Xem nhắc nhở<br><br>' +
-              '<i>VD: "Cập nhật GPA của tôi lên 7.5"</i></div>' +
+              '<i>VD: "Cập nhật GPA của tôi lên 7.5"</i></div> +
             '</div>' +
           '</div>' +
         '</div>' +
