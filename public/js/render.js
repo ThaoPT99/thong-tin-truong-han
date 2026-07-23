@@ -1031,6 +1031,10 @@ function getInitialView() {
   // Check visa_type param
   const vt = params.get("visa_type");
   if (vt === 'D4-1') return 'd4-1';
+  // Nếu học sinh đã đăng nhập, vào thẳng Hồ sơ của tôi
+  try {
+    if (localStorage.getItem('student_token')) return 'checklist';
+  } catch(e) { /* localStorage không khả dụng */ }
   return "schools";
 }
 
