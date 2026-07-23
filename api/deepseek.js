@@ -2768,24 +2768,31 @@ async function handleAnalyticsAdmin(req) {
 
   // ─── view=conversion: Funnel chuyển đổi ───
   if (view === 'conversion') {
-    const [
-      { count: totalViews },
-      { count: totalSessions },
-      { count: schoolDetailViews },
-      { count: compareViews },
-      { count: zaloPopupOpens },
-      { count: costCalcViews },
-      { count: applicationSubmits },
-      { data: advisorEvents },
-    ] = await Promise.all([
-      supabase.from('analytics_page_views').select('*', { count: 'exact', head: true }).gte('created_at', since),
-      supabase.from('analytics_sessions').select('*', { count: 'exact', head: true }).gte('started_at', since),
-      supabase.from('analytics_page_views').select('*', { count: 'exact', head: true }).gte('created_at', since).eq('page_type', 'school_detail'),
-      supabase.from('analytics_page_views').select('*', { count: 'exact', head: true }).gte('created_at', since).eq('page_type', 'compare'),
-      supabase.from('analytics_events').select('*', { count: 'exact', head: true }).gte('created_at', since).eq('event_type', 'zalo_popup_open'),
-      supabase.from('analytics_page_views').select('*', { count: 'exact', head: true }).gte('created_at', since).eq('page_type', 'cost'),
-      supabase.from('analytics_events').select('event_type').gte('created_at', since).in('event_type', ['advisor_form_open', 'advisor_analyze', 'advisor_save']),
-    ]);
+    let totalViews = 0, totalSessions = 0, schoolDetailViews = 0, compareViews = 0;
+    let zaloPopupOpens = 0, costCalcViews = 0, applicationSubmits = 0;
+    let advisorEvents = [];
+
+    try {
+      const results = await Promise.all([
+        supabase.from('analytics_page_views').select('*', { count: 'exact', head: true }).gte('created_at', since).catch(() => ({ count: 0 })),
+        supabase.from('analytics_sessions').select('*', { count: 'exact', head: true }).gte('started_at', since).catch(() => ({ count: 0 })),
+        supabase.from('analytics_page_views').select('*', { count: 'exact', head: true }).gte('created_at', since).eq('page_type', 'school_detail').catch(() => ({ count: 0 })),
+        supabase.from('analytics_page_views').select('*', { count: 'exact', head: true }).gte('created_at', since).eq('page_type', 'compare').catch(() => ({ count: 0 })),
+        supabase.from('analytics_events').select('*', { count: 'exact', head: true }).gte('created_at', since).eq('event_type', 'zalo_popup_open').catch(() => ({ count: 0 })),
+        supabase.from('analytics_page_views').select('*', { count: 'exact', head: true }).gte('created_at', since).eq('page_type', 'cost').catch(() => ({ count: 0 })),
+        supabase.from('analytics_events').select('event_type').gte('created_at', since).in('event_type', ['advisor_form_open', 'advisor_analyze', 'advisor_save']).catch(() => ({ data: [] })),
+      ]);
+      totalViews = (results[0] && results[0].count) || 0;
+      totalSessions = (results[1] && results[1].count) || 0;
+      schoolDetailViews = (results[2] && results[2].count) || 0;
+      compareViews = (results[3] && results[3].count) || 0;
+      zaloPopupOpens = (results[4] && results[4].count) || 0;
+      costCalcViews = (results[5] && results[5].count) || 0;
+      applicationSubmits = (results[6] && results[6].count) || 0;
+      advisorEvents = (results[7] && results[7].data) || [];
+    } catch (convErr) {
+      console.error('Conversion view error:', convErr.message);
+    }
 
     // Count advisor events từ combined query
     let advisorFormOpens = 0;
