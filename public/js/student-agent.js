@@ -107,7 +107,7 @@
               '• Tra cứu thông tin trường<br>' +
               '• Soạn Study Plan / Giải trình<br>' +
               '• Xem nhắc nhở<br><br>' +
-              '<i>VD: "Cập nhật GPA của tôi lên 7.5"</i></div> +
+              '<i>VD: "Cập nhật GPA của tôi lên 7.5"</i></div>' +
             '</div>' +
           '</div>' +
         '</div>' +
@@ -125,8 +125,7 @@
             '<button type="button" data-quick="Cập nhật GPA của tôi lên 7.0">Sửa GPA</button>' +
             '<button type="button" data-quick="Tìm trường ở Seoul">Seoul</button>' +
             '<button type="button" data-quick="So sánh Osan và Induk">So sánh</button>' +
-            '<button type="button" data-quick="Gửi đơn vào Osan">Gửi đơn</button>' +
-            '<button type="button" data-quick="Xem đơn của tôi">Đơn của tôi</button>' +
+
             '<button type="button" data-quick="Tạo nhắc nhở nộp hồ sơ hạn 2026-09-15">Nhắc nhở</button>' +
           '</div>' +
         '</div>' +
@@ -191,8 +190,6 @@
       case 'get_school_detail': return renderSchoolDetail(data);
       case 'compare_schools': return renderCompareTable(data);
       case 'list_by_criteria': return renderSchoolCards(data, 'Trường phù hợp với tiêu chí của bạn');
-      case 'apply_school': return renderApplyResult(data);
-      case 'get_applications': return renderApplicationsList(data);
       case 'set_reminder': return renderReminderResult(data);
       case 'interview_simulator': return renderInterviewResult(data);
       case 'upload_document': return renderDocumentStatus(data);
@@ -329,58 +326,6 @@
     return html;
   }
 
-  // ─── Render apply result (for apply_school) ───
-  function renderApplyResult(data) {
-    if (!data || data.error) return 'Lỗi: ' + escapeHTML(data.error || 'Không thể tạo đơn');
-    if (!data.application && data.message) return escapeHTML(data.message);
-    if (!data.application && !data.message) return 'Đã xử lý yêu cầu của bạn!';
-    var app = data.application;
-    var statusColors = { 'draft': '#6b7280', 'submitted': '#2563eb', 'reviewing': '#d97706', 'approved': '#059669', 'rejected': '#dc2626' };
-    var color = statusColors[app.statusRaw] || statusColors[app.status] || '#6b7280';
-    var html = '<div style="background:#f0f7ff;border-radius:12px;padding:12px;margin:8px 0;font-size:13px;line-height:1.5">';
-    html += '<div style="font-weight:700;color:#1a56db;margin-bottom:6px;font-size:14px">Đơn đăng ký</div>';
-    html += '<div style="background:#fff;border-radius:8px;padding:10px 12px;border:1px solid #e5e7eb">';
-    html += '<div style="font-weight:600;color:#111;margin-bottom:4px">' + escapeHTML(app.schoolName || 'Đã gửi đơn') + '</div>';
-    html += '<div style="color:#4b5563;font-size:12px">Học sinh: ' + escapeHTML(app.studentName || '') + '</div>';
-    html += '<div style="display:flex;align-items:center;gap:6px;margin-top:6px">';
-    html += '<span style="background:' + color + ';color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:500">' + escapeHTML(app.status || 'Đã tạo') + '</span>';
-    html += '<span style="color:#9ca3af;font-size:11px">' + (app.createdAt ? new Date(app.createdAt).toLocaleDateString('vi-VN') : '') + '</span>';
-    html += '</div>';
-    if (data.message) html += '<div style="color:#059669;font-size:12px;margin-top:6px;font-weight:500">' + escapeHTML(data.message) + '</div>';
-    html += '</div>';
-    html += '<div style="text-align:center;margin-top:6px"><span style="color:#6b7280;font-size:11px">Xem chi tiết trong tab Gửi đơn</span></div>';
-    html += '</div>';
-    return html;
-  }
-
-  // ─── Render applications list (for get_applications) ───
-  function renderApplicationsList(data) {
-    if (!data || data.error) return 'Lỗi: ' + escapeHTML(data.error || 'Không thể lấy danh sách');
-    if (data.message) return escapeHTML(data.message);
-    if (!data.applications || data.applications.length === 0) return 'Bạn chưa có đơn đăng ký nào.';
-    var html = '<div style="background:#f0f7ff;border-radius:12px;padding:12px;margin:8px 0;font-size:13px;line-height:1.5">';
-    html += '<div style="font-weight:700;color:#1a56db;margin-bottom:8px;font-size:14px">Danh sách đơn (' + data.applications.length + ')</div>';
-    var statusColors = { 'draft': '#6b7280', 'submitted': '#2563eb', 'reviewing': '#d97706', 'approved': '#059669', 'rejected': '#dc2626' };
-    var findColor = function(s) {
-      for (var k in statusColors) { if (s && s.toLowerCase().includes(k)) return statusColors[k]; }
-      return '#6b7280';
-    };
-    for (var i = 0; i < data.applications.length; i++) {
-      var a = data.applications[i];
-      var c = findColor(a.statusRaw || a.status);
-      html += '<div style="background:#fff;border-radius:8px;padding:10px 12px;margin-bottom:6px;border:1px solid #e5e7eb">';
-      html += '<div style="font-weight:600;color:#111;font-size:13px">' + escapeHTML(a.schoolName || 'Chưa rõ') + '</div>';
-      html += '<div style="color:#4b5563;font-size:12px;margin-top:2px">' + escapeHTML(a.studentName || '') + '</div>';
-      html += '<div style="display:flex;align-items:center;gap:8px;margin-top:4px">';
-      html += '<span style="background:' + c + ';color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:500">' + escapeHTML(a.status || '—') + '</span>';
-      if (a.createdAt) html += '<span style="color:#9ca3af;font-size:11px">' + new Date(a.createdAt).toLocaleDateString('vi-VN') + '</span>';
-      html += '</div></div>';
-    }
-    html += '<div style="text-align:center;margin-top:4px"><span style="color:#6b7280;font-size:11px">Chi tiết: tab Gửi đơn trên web</span></div>';
-    html += '</div>';
-    return html;
-  }
-
   // ─── Render interview result (for interview_simulator) ───
   function renderInterviewResult(data) {
     if (!data || data.error) return 'Lỗi: ' + escapeHTML(data.error || 'Không thể bắt đầu phỏng vấn');
@@ -458,7 +403,7 @@
     html += '<div style="color:#d97706;font-weight:500;margin-top:4px">Hạn: ' + escapeHTML(r.dueDate || '') + '</div>';
     if (data.message) html += '<div style="color:#059669;font-size:12px;margin-top:4px">' + escapeHTML(data.message) + '</div>';
     html += '</div>';
-    html += '<div style="text-align:center;margin-top:6px"><span style="color:#6b7280;font-size:11px">Xem trong tab Gửi đơn</span></div>';
+    html += '<div style="text-align:center;margin-top:6px"><span style="color:#6b7280;font-size:11px">Xem trong Hồ sơ của tôi</span></div>';
     html += '</div>';
     return html;
   }

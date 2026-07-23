@@ -613,7 +613,7 @@
         }).catch(function() {});
       });
       setTimeout(function() {
-        alert('✅ Đã tạo ' + count + ' nhắc nhở tự động! Xem trong tab Gửi đơn.');
+        alert('✅ Đã tạo ' + count + ' nhắc nhở tự động! Xem trong Hồ sơ của tôi.');
       }, 500);
     };
   }
@@ -677,7 +677,7 @@
         }).catch(function() {});
       });
       setTimeout(function() {
-        alert('✅ Đã tạo ' + count + ' nhắc nhở tự động! Xem trong tab Gửi đơn.');
+        alert('✅ Đã tạo ' + count + ' nhắc nhở tự động! Xem trong Hồ sơ của tôi.');
       }, 500);
     };
   }
