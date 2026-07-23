@@ -3,43 +3,30 @@
 -- Chạy file này trong Supabase SQL Editor (một lần duy nhất)
 -- ============================================================
 
--- 1. Tạo bucket 'student-documents' (nếu chưa tồn tại)
--- Lưu ý: Supabase Storage bucket cần được tạo qua UI hoặc API
--- Cách 1: Vào Supabase Dashboard > Storage > Tạo bucket "student-documents" (public)
--- Cách 2: Chạy lệnh SQL dưới đây (yêu cầu extensions)
+-- LƯU Ý: Storage bucket KHÔNG thể tạo qua SQL.
+-- Chạy script sau để tạo bucket tự động:
+--   node scripts/setup-storage-bucket.js
+-- Hoặc tạo thủ công: Supabase Dashboard > Storage > Tạo bucket "student-documents" (public)
 
--- Kiểm tra extension pg_cron đã bật chưa
-CREATE EXTENSION IF NOT EXISTS "pg_cron";
+-- Sau khi bucket đã được tạo, chạy các lệnh SQL dưới đây
+-- để thiết lập policies cho storage.objects
 
--- Tạo function để tạo bucket (gọi qua HTTP nếu cần)
-CREATE OR REPLACE FUNCTION create_student_docs_bucket()
-RETURNS void AS $$
-BEGIN
-  -- Bucket sẽ được tạo thủ công qua UI hoặc tự động qua API
-  -- Không thể tạo bucket trực tiếp qua SQL
-  RAISE NOTICE 'Vui lòng tạo bucket "student-documents" trong Supabase Dashboard > Storage';
-END;
-$$ LANGUAGE plpgsql;
+-- ============================================
+-- STORAGE POLICIES (chạy SAU KHI tạo bucket)
+-- ============================================
 
--- 2. Nếu bucket đã tồn tại, tạo policy cho phép student upload
--- (Chạy sau khi tạo bucket qua UI)
-/*
-CREATE POLICY "Students can upload their own documents"
-ON storage.objects
-FOR INSERT
-WITH CHECK (
-  bucket_id = 'student-documents' 
-  AND (storage.foldername(name))[1] = auth.uid()::text
-);
+-- 1. Policy: public đọc file (vì bucket là public, ai cũng xem được file đã upload)
+DROP POLICY IF EXISTS "public_read_student_docs" ON storage.objects;
+CREATE POLICY "public_read_student_docs"
+ON storage.objects FOR SELECT
+USING (bucket_id = 'student-documents');
 
-CREATE POLICY "Students can view their own documents"
-ON storage.objects
-FOR SELECT
-USING (
-  bucket_id = 'student-documents'
-  AND (storage.foldername(name))[1] = auth.uid()::text
-);
-*/
+-- 2. Policy: service_role quản lý tất cả (dùng cho server-side upload)
+DROP POLICY IF EXISTS "service_manage_student_docs" ON storage.objects;
+CREATE POLICY "service_manage_student_docs"
+ON storage.objects FOR ALL
+USING (bucket_id = 'student-documents')
+WITH CHECK (bucket_id = 'student-documents');
 
 -- 3. Cập nhật RLS cho bảng student_documents (nếu chưa có)
 ALTER TABLE student_documents ENABLE ROW LEVEL SECURITY;

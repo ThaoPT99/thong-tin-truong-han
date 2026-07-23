@@ -11,14 +11,39 @@
   const storageKey = 'studentAgentMessages';
   const profileKey = 'checklist_data'; // Share with checklist.js
 
-  // Load persisted messages
-  try {
-    var saved = localStorage.getItem(storageKey);
-    if (saved) {
-      messages = JSON.parse(saved);
-      if (messages.length > 20) messages = messages.slice(-20);
-    }
-  } catch (e) { /* ignore */ }
+  // Load persisted messages (local first, then server if logged in)
+  async function loadMessages() {
+    // Load from localStorage first (fast)
+    try {
+      var saved = localStorage.getItem(storageKey);
+      if (saved) {
+        messages = JSON.parse(saved);
+        if (messages.length > 20) messages = messages.slice(-20);
+      }
+    } catch (e) { /* ignore */ }
+
+    // Then try to load from server (slower, may override)
+    try {
+      var token = getToken();
+      if (!token) return;
+      var fetchFn = window.fetchWithAuth || fetch;
+      var res = await fetchFn('/api/auth/student?action=chat-load', {
+        headers: { 'Authorization': 'Bearer ' + token },
+      });
+      if (!res.ok) return;
+      var data = await res.json();
+      if (data.success && data.messages && data.messages.length > 0) {
+        // Merge: take longer list, but keep local if it has more messages
+        if (data.messages.length >= messages.length) {
+          var serverMsgs = data.messages.map(function(m) {
+            return { role: m.role, content: m.content, tool: m.tool };
+          });
+          messages = serverMsgs.slice(-20);
+          saveMessagesLocal(); // Sync back to localStorage
+        }
+      }
+    } catch (e) { /* silent */ }
+  }
 
   // Load student profile from checklist data
   function loadStudentProfile() {
@@ -597,19 +622,52 @@
     }
 
     renderMessages();
-    saveMessages();
+    saveMessagesLocal();
+    syncMessagesToServer(); // Sync to server in background
 
     if (input) { input.value = ''; input.disabled = false; input.focus(); }
     if (sendBtn) sendBtn.disabled = false;
     isSending = false;
   }
 
-  // ─── Persist ───
-  function saveMessages() {
+  // ─── Get student auth token ───
+  function getToken() {
+    try { return localStorage.getItem('student_token'); } catch(e) { return null; }
+  }
+
+  // ─── Persist (local) ───
+  function saveMessagesLocal() {
     try {
       var toSave = messages.slice(-20);
       localStorage.setItem(storageKey, JSON.stringify(toSave));
     } catch (e) { /* ignore */ }
+  }
+
+  // ─── Sync to server (if logged in) ───
+  async function syncMessagesToServer() {
+    var token = getToken();
+    if (!token) return;
+    try {
+      var fetchFn = window.fetchWithAuth || fetch;
+      // Don't wait for response (fire-and-forget for performance)
+      fetchFn('/api/auth/student?action=chat-save', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token,
+        },
+        body: JSON.stringify({
+          messages: messages.slice(-20).map(function(m) {
+            return {
+              role: m.role,
+              content: typeof m.content === 'string' ? m.content.replace(/<[^>]*>/g, '').substring(0, 1000) : '',
+              tool: m.tool || '',
+              metadata: { source: 'student-agent' },
+            };
+          }),
+        }),
+      }).catch(function() {}); // Silent fail
+    } catch (e) { /* silent */ }
   }
 
   // ─── Toggle ───
@@ -655,7 +713,12 @@
   // ─── Init ───
   function init() {
     var widget = buildWidget();
-    renderMessages();
+
+    // Load messages from localStorage first, then server
+    loadMessages().then(function() {
+      renderMessages();
+    });
+
     updateVisibility();
 
     // Listen for auth changes

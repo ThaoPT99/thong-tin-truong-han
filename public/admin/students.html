@@ -134,7 +134,30 @@
         <button type="button" class="admin-tab role-director" data-tab="advisor" style="padding:8px 18px;border:none;background:none;font-weight:600;font-size:0.9rem;cursor:pointer;color:var(--gray-500);">
           HS tu gui form
         </button>
+        <button type="button" class="admin-tab role-director" data-tab="progress" style="padding:8px 18px;border:none;background:none;font-weight:600;font-size:0.9rem;cursor:pointer;color:var(--gray-500);">
+          Tiến độ hồ sơ
+        </button>
       </div>
+
+      <!-- Tab progress CSS -->
+      <style>
+        .progress-step { display:flex; align-items:flex-start; gap:8px; padding:8px 0; border-bottom:1px solid var(--gray-100); }
+        .progress-step:last-child { border-bottom:none; }
+        .progress-icon { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; }
+        .progress-icon.done { background:#d1fae5; color:#065f46; }
+        .progress-icon.pending { background:#fef3c7; color:#92400e; }
+        .progress-info { flex:1; min-width:0; }
+        .progress-info .step-name { font-weight:600; font-size:.85rem; color:var(--gray-800); }
+        .progress-info .step-time { font-size:.75rem; color:var(--gray-400); }
+        .progress-info .step-data { font-size:.78rem; color:var(--gray-500); margin-top:2px; white-space:pre-wrap; max-height:60px; overflow:hidden; cursor:pointer; }
+        .progress-info .step-data:hover { max-height:none; }
+        .doc-badge { display:inline-block; padding:2px 8px; border-radius:999px; font-size:.7rem; font-weight:600; }
+        .doc-badge.draft { background:#f3f4f6; color:#6b7280; }
+        .doc-badge.reviewing { background:#fef3c7; color:#92400e; }
+        .doc-badge.finalized { background:#d1fae5; color:#065f46; }
+        .chat-preview { font-size:.8rem; color:var(--gray-500); max-height:40px; overflow:hidden; }
+        .progress-search { width:100%; padding:8px 12px; border:1px solid var(--gray-300); border-radius:8px; font-size:.88rem; margin-bottom:12px; }
+      </style>
 
       <!-- Tab: CRM -->
       <div class="admin-tab-content" id="tab-crm">
@@ -200,6 +223,27 @@
             </div>
             <div id="advisor-empty" class="empty-state" style="display:none">
               <p>Chưa có học sinh nào gửi thông tin từ form Tư vấn.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Progress (Tiến độ hồ sơ) -->
+      <div class="admin-tab-content" id="tab-progress" style="display:none">
+        <div class="card">
+          <div class="card-header">
+            <h3>Tiến độ hồ sơ của học sinh</h3>
+            <p style="font-size:0.85rem;color:var(--gray-400);margin-top:4px;">Xem checklist progress + bản nháp giấy tờ + lịch sử chat AI của từng học sinh.</p>
+            <div class="toolbar" style="margin-top:8px">
+              <input type="text" id="progress-search" class="progress-search" placeholder="Tìm theo email hoặc tên..." oninput="filterProgress()">
+            </div>
+          </div>
+          <div class="card-body">
+            <div id="progress-list" class="student-grid">
+              <div class="loading-state"><div class="spinner"></div> Đang tải dữ liệu...</div>
+            </div>
+            <div id="progress-empty" class="empty-state" style="display:none">
+              <p>Chưa có học sinh nào bắt đầu khai báo hồ sơ.</p>
             </div>
           </div>
         </div>
@@ -570,6 +614,8 @@ document.querySelectorAll('.admin-tab').forEach(function(tab) {
       loadAdvisorSubmissions();
     } else if (tabName === 'accounts') {
       loadRegisteredAccounts();
+    } else if (tabName === 'progress') {
+      loadProgressData();
     }
   });
 });
@@ -623,6 +669,300 @@ function renderRegisteredAccounts(data) {
       '</div>' +
     '</div>';
   }).join('');
+}
+
+// ─── Progress Data (Tiến độ hồ sơ) ───
+var progressData = [];
+var chatHistoryCache = {};
+
+async function loadProgressData() {
+  var container = document.getElementById('progress-list');
+  var empty = document.getElementById('progress-empty');
+  if (!container) return;
+  
+  container.innerHTML = '<div class="loading-state"><div class="spinner"></div> Dang tai du lieu...</div>';
+  empty.style.display = 'none';
+  
+  try {
+    // Load checklist progress + documents + profiles in parallel
+    var [progressRes, docsRes] = await Promise.all([
+      api('GET', '/admin/students?view=checklist-progress'),
+      api('GET', '/admin/students?view=student-documents'),
+    ]);
+    
+    // Group by student email
+    var grouped = {};
+    
+    // Process checklist progress
+    (progressRes.data || []).forEach(function(p) {
+      var profile = p.student_profiles || {};
+      var email = profile.email || 'unknown';
+      if (!grouped[email]) {
+        grouped[email] = {
+          email: email,
+          fullName: profile.full_name || '',
+          phone: profile.phone || '',
+          lastActive: profile.last_active || '',
+          steps: [],
+          documents: [],
+        };
+      }
+      grouped[email].steps.push(p);
+    });
+    
+    // Process documents
+    (docsRes.data || []).forEach(function(d) {
+      var profile = d.student_profiles || {};
+      var email = profile.email || 'unknown';
+      if (!grouped[email]) {
+        grouped[email] = {
+          email: email,
+          fullName: profile.full_name || '',
+          phone: profile.phone || '',
+          lastActive: '',
+          steps: [],
+          documents: [],
+        };
+      }
+      grouped[email].documents.push(d);
+    });
+    
+    progressData = Object.values(grouped);
+    renderProgressData(progressData);
+  } catch (err) {
+    container.innerHTML = '<div class="empty-state" style="color:var(--danger)">Loi: ' + escapeHtml(err.message) + '</div>';
+  }
+}
+
+function renderProgressData(data) {
+  var container = document.getElementById('progress-list');
+  var empty = document.getElementById('progress-empty');
+  
+  if (!data || data.length === 0) {
+    container.style.display = 'none';
+    empty.style.display = 'block';
+    return;
+  }
+  
+  container.style.display = 'grid';
+  empty.style.display = 'none';
+  
+  var STEP_LABELS = {
+    profile: 'Khai báo hồ sơ',
+    personal: 'Thông tin cá nhân',
+    education: 'Học vấn',
+    finance: 'Tài chính',
+    risk: 'Rủi ro',
+    analysis: 'Phân tích',
+  };
+  
+  var DOC_TYPE_LABELS = {
+    study_plan: 'Study Plan',
+    gap_explanation: 'Giải trình gap year',
+    visa_rejection: 'Giải trình trượt visa',
+  };
+  
+  container.innerHTML = data.map(function(s) {
+    var totalSteps = s.steps.length;
+    var completedSteps = s.steps.filter(function(st) { return st.completed; }).length;
+    var pct = totalSteps > 0 ? Math.round(completedSteps / 6 * 100) : 0;
+    
+    var stepsHtml = s.steps.map(function(st) {
+      var stepName = STEP_LABELS[st.step_id] || st.step_id;
+      var icon = st.completed ? '<span class="progress-icon done">✓</span>' : '<span class="progress-icon pending">⏳</span>';
+      var dataPreview = st.data ? JSON.stringify(st.data).substring(0, 100) : '';
+      return '<div class="progress-step">' +
+        icon +
+        '<div class="progress-info">' +
+          '<div class="step-name">' + stepName + (st.completed ? ' ✅' : '') + '</div>' +
+          '<div class="step-time">' + new Date(st.updated_at).toLocaleString('vi-VN') + '</div>' +
+          (dataPreview ? '<div class="step-data" title="Click de xem them">' + escapeHtml(dataPreview) + '</div>' : '') +
+        '</div>' +
+      '</div>';
+    }).join('');
+    
+    var docsHtml = s.documents.map(function(d) {
+      var docLabel = DOC_TYPE_LABELS[d.doc_type] || d.doc_type;
+      var statusClass = d.status === 'finalized' ? 'finalized' : d.status === 'reviewing' ? 'reviewing' : 'draft';
+      return '<div style="padding:4px 0;font-size:.82rem">' +
+        '<span class="doc-badge ' + statusClass + '">' + escapeHtml(docLabel) + '</span> ' +
+        '<span style="color:var(--gray-500);font-size:.75rem">' + escapeHtml(d.status || 'draft') + '</span>' +
+        (d.file_url ? ' 📎' : '') +
+      '</div>';
+    }).join('');
+    
+    var hasDocs = s.documents.length > 0;
+    var activeHtml = s.lastActive ? '<div style="font-size:.75rem;color:var(--gray-400);margin-top:2px">📅 Hoat dong cuoi: ' + new Date(s.lastActive).toLocaleString('vi-VN') + '</div>' : '';
+    
+    return '<div class="student-card" style="cursor:pointer" onclick="showStudentDetail(\'' + escapeHtml(s.email) + '\')">' +
+      '<div>' +
+        '<div class="s-name">' + escapeHtml(s.fullName || s.email) + '</div>' +
+        '<div class="s-meta">' +
+          '<span>' + escapeHtml(s.email) + '</span>' +
+          (s.phone ? '<span>' + escapeHtml(s.phone) + '</span>' : '') +
+        '</div>' +
+        activeHtml +
+        '<div style="margin-top:6px;display:flex;gap:8px;align-items:center">' +
+          '<div style="flex:1;height:6px;background:var(--gray-200);border-radius:3px">' +
+            '<div style="width:' + pct + '%;height:6px;background:' + (pct >= 80 ? '#059669' : pct >= 40 ? '#d97706' : '#dc2626') + ';border-radius:3px"></div>' +
+          '</div>' +
+          '<span style="font-size:.75rem;font-weight:600;color:var(--gray-500)">' + completedSteps + '/' + totalSteps + ' buoc</span>' +
+        '</div>' +
+        (hasDocs ? '<div style="margin-top:4px">' + docsHtml + '</div>' : '') +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function filterProgress() {
+  var q = document.getElementById('progress-search').value.toLowerCase().trim();
+  if (!q) { renderProgressData(progressData); return; }
+  var filtered = progressData.filter(function(s) {
+    return (s.email || '').toLowerCase().includes(q) ||
+      (s.fullName || '').toLowerCase().includes(q) ||
+      (s.phone || '').includes(q);
+  });
+  renderProgressData(filtered);
+}
+
+// ─── Student Detail Modal (xem chi tiết hồ sơ) ───
+var currentStudentEmail = null;
+
+function showStudentDetail(email) {
+  currentStudentEmail = email;
+  var s = progressData.find(function(x) { return x.email === email; });
+  if (!s) return;
+  
+  var STEP_LABELS = {
+    profile: 'Khai báo hồ sơ', personal: 'Cá nhân',
+    education: 'Học vấn', finance: 'Tài chính',
+    risk: 'Rủi ro', analysis: 'Phân tích',
+  };
+  
+  var DOC_TYPE_LABELS = {
+    study_plan: 'Study Plan', gap_explanation: 'Giải trình gap year', visa_rejection: 'Giải trình trượt visa',
+  };
+  
+  var html = '<div style="max-height:70vh;overflow-y:auto">';
+  
+  // Thông tin cơ bản
+  html += '<div style="margin-bottom:12px;padding:8px 12px;background:#f9fafb;border-radius:8px">';
+  html += '<div style="font-weight:700;font-size:.95rem">' + escapeHtml(s.fullName || s.email) + '</div>';
+  html += '<div style="font-size:.82rem;color:var(--gray-500)">' + escapeHtml(s.email) + (s.phone ? ' • ' + escapeHtml(s.phone) : '') + '</div>';
+  html += '</div>';
+  
+  // Steps
+  if (s.steps.length > 0) {
+    html += '<h4 style="font-size:.85rem;margin:0 0 6px;color:var(--gray-600)">Tiến độ khai báo</h4>';
+    s.steps.forEach(function(st) {
+      var stepName = STEP_LABELS[st.step_id] || st.step_id;
+      var icon = st.completed ? '✅' : '⏳';
+      html += '<div style="display:flex;gap:6px;padding:4px 0;border-bottom:1px solid var(--gray-100);font-size:.82rem">';
+      html += '<span>' + icon + '</span>';
+      html += '<span style="flex:1">' + stepName + '</span>';
+      html += '<span style="color:var(--gray-400);font-size:.75rem">' + new Date(st.updated_at).toLocaleString('vi-VN') + '</span>';
+      html += '</div>';
+    });
+  }
+  
+  // Documents
+  if (s.documents.length > 0) {
+    html += '<h4 style="font-size:.85rem;margin:8px 0 6px;color:var(--gray-600)">Giấy tờ / Bản nháp</h4>';
+    s.documents.forEach(function(d) {
+      var docLabel = DOC_TYPE_LABELS[d.doc_type] || d.doc_type;
+      var hasDraft = d.ai_draft && d.ai_draft.length > 0;
+      var hasEdit = d.user_edit && d.user_edit.length > 0;
+      var hasFinal = d.final_version && d.final_version.length > 0;
+      html += '<div style="padding:6px 8px;margin-bottom:4px;background:#fff;border:1px solid var(--gray-200);border-radius:6px;font-size:.82rem">';
+      html += '<div style="font-weight:600;color:var(--gray-700)">' + docLabel + ' <span style="font-weight:400;color:var(--gray-400);font-size:.75rem">(' + (d.status || 'draft') + ')' + (d.file_url ? ' 📎' : '') + '</span></div>';
+      if (hasDraft) html += '<div style="color:var(--gray-400);font-size:.75rem;margin-top:2px">📝 AI draft: ' + d.ai_draft.substring(0, 120) + '...</div>';
+      if (hasEdit) html += '<div style="color:#d97706;font-size:.75rem;margin-top:1px">✏️ HS da sua: ' + d.user_edit.substring(0, 120) + '...</div>';
+      if (hasFinal) html += '<div style="color:#059669;font-size:.75rem;margin-top:1px">✅ Final: ' + d.final_version.substring(0, 120) + '...</div>';
+      html += '<div style="font-size:.7rem;color:var(--gray-400);margin-top:2px">Cập nhật: ' + new Date(d.updated_at).toLocaleString('vi-VN') + '</div>';
+      html += '</div>';
+    });
+  }
+  
+  // Chat History button
+  html += '<div style="margin-top:12px;text-align:center">';
+  html += '<button type="button" class="btn btn-outline btn-sm" onclick="loadStudentChatHistory(\'' + escapeHtml(s.email) + '\')">💬 Xem lịch sử chat AI</button>';
+  html += '</div>';
+  
+  html += '<div id="chat-history-container-' + escapeHtml(s.email) + '" style="margin-top:8px"></div>';
+  html += '</div>';
+  
+  showModal(html, 'Chi tiết hồ sơ: ' + escapeHtml(s.fullName || s.email));
+}
+
+// ─── Load chat history ───
+async function loadStudentChatHistory(email) {
+  var container = document.getElementById('chat-history-container-' + escapeHtml(email));
+  if (!container) return;
+  
+  // Check cache
+  if (chatHistoryCache[email]) {
+    renderChatHistory(container, chatHistoryCache[email]);
+    return;
+  }
+  
+  container.innerHTML = '<div style="text-align:center;padding:12px"><div class="spinner" style="display:inline-block"></div> Dang tai...</div>';
+  
+  try {
+    var res = await api('GET', '/admin/students?view=chat-history&student_email=' + encodeURIComponent(email) + '&limit=30');
+    var chats = res.data || [];
+    chatHistoryCache[email] = chats;
+    renderChatHistory(container, chats);
+  } catch (err) {
+    container.innerHTML = '<div style="color:var(--danger);font-size:.82rem;text-align:center;padding:8px">Loi: ' + escapeHtml(err.message) + '</div>';
+  }
+}
+
+function renderChatHistory(container, chats) {
+  if (!chats || chats.length === 0) {
+    container.innerHTML = '<div style="font-size:.82rem;color:var(--gray-400);text-align:center;padding:12px">Chua co lich su chat.</div>';
+    return;
+  }
+  
+  var html = '<div style="margin-top:8px;border:1px solid var(--gray-200);border-radius:8px;max-height:300px;overflow-y:auto">';
+  chats.forEach(function(c) {
+    var isUser = c.role === 'user';
+    html += '<div style="padding:6px 8px;border-bottom:1px solid var(--gray-100);font-size:.8rem">';
+    html += '<span style="font-weight:600;color:' + (isUser ? '#2563eb' : '#059669') + ';font-size:.7rem">' + (isUser ? '👤 HS' : '🤖 AI') + '</span> ';
+    html += '<span style="color:var(--gray-400);font-size:.7rem">' + new Date(c.created_at).toLocaleString('vi-VN') + '</span>';
+    if (c.tool_used) html += ' <span style="color:var(--gray-400);font-size:.7rem">🔧 ' + escapeHtml(c.tool_used) + '</span>';
+    html += '<div style="margin-top:2px;color:var(--gray-600)">' + escapeHtml(c.content || '').substring(0, 200) + '</div>';
+    html += '</div>';
+  });
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+function showModal(html, title) {
+  // Create a simple modal overlay
+  var overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;padding:20px;';
+  
+  var box = document.createElement('div');
+  box.style.cssText = 'background:#fff;border-radius:12px;max-width:600px;width:100%;max-height:85vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.15);';
+  
+  var header = document.createElement('div');
+  header.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--gray-200);';
+  header.innerHTML = '<h3 style="margin:0;font-size:1rem">' + (title || 'Chi tiết') + '</h3>' +
+    '<button type="button" class="btn btn-sm btn-outline" onclick="this.closest(\'.modal-overlay\').remove()" style="padding:4px 10px;font-size:.8rem">✕ Đóng</button>';
+  
+  var body = document.createElement('div');
+  body.style.cssText = 'padding:14px 16px;overflow-y:auto;flex:1;';
+  body.innerHTML = html;
+  
+  box.appendChild(header);
+  box.appendChild(body);
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+  
+  overlay.addEventListener('click', function(e) {
+    if (e.target === overlay) overlay.remove();
+  });
 }
 
 // ─── Advisor Submissions ───

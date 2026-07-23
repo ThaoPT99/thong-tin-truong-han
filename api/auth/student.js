@@ -287,6 +287,14 @@ module.exports = async (req, res) => {
       // ═══ Advisor Data (lưu thông tin từ form Tư vấn) ═══
       case 'save-advisor-data': return await handleSaveAdvisorData(req, res);
       case 'load-advisor-data': return await handleLoadAdvisorData(req, res);
+      // ═══ Phase 5: Chat History ═══
+      case 'chat-save': return await handleChatSave(req, res);
+      case 'chat-load': return await handleChatLoad(req, res);
+      case 'chat-clear': return await handleChatClear(req, res);
+      // ═══ Phase 5: Login Log ═══
+      case 'log-login': return await handleLogLogin(req, res);
+      // ═══ Phase 5: Notification (kiểm tra admin_note mới) ═══
+      case 'check-notifications': return await handleCheckNotifications(req, res);
       // ═══ Phase 2: Document upload ═══
       case 'document-upload': return await handleDocumentUpload(req, res);
       default:
@@ -938,6 +946,202 @@ async function handleLoadAdvisorData(req, res) {
 // Phase 2: Document upload to Supabase Storage
 // ════════════════════════════════════════════════════════════
 
+// ════════════════════════════════════════════════════════════
+// Phase 5: Chat History — save/load/clear
+// ════════════════════════════════════════════════════════════
+
+async function handleChatSave(req, res) {
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+
+  const auth = req.headers.authorization;
+  if (!auth || !auth.startsWith('Bearer ')) return res.status(401).json({ error: 'Missing token' });
+  const token = auth.split(' ')[1];
+
+  try {
+    const profileId = await getProfileIdFromToken(token);
+    if (!profileId) return res.status(404).json({ error: 'Profile not found' });
+
+    const { messages } = req.body || {};
+    if (!messages || !Array.isArray(messages) || messages.length === 0) {
+      return res.json({ success: true, saved: 0 });
+    }
+
+    // Only save last 20 messages to avoid bloat
+    const toSave = messages.slice(-20);
+    
+    // Delete old messages first (keep it clean)
+    await supabase
+      .from('student_chat_history')
+      .delete()
+      .eq('student_id', profileId);
+
+    // Insert new messages
+    const rows = toSave.map(function(m) {
+      return {
+        student_id: profileId,
+        role: m.role === 'user' ? 'user' : 'assistant',
+        content: typeof m.content === 'string' ? m.content.substring(0, 2000) : JSON.stringify(m.content).substring(0, 2000),
+        tool_used: m.tool || '',
+        metadata: m.metadata || {},
+      };
+    });
+
+    const { error } = await supabase.from('student_chat_history').insert(rows);
+    if (error) throw error;
+
+    // Update last_active
+    await supabase.from('student_profiles').update({ last_active: new Date().toISOString() }).eq('id', profileId);
+
+    return res.json({ success: true, saved: rows.length });
+  } catch (err) {
+    console.error('Chat save error:', err);
+    return res.status(500).json({ error: 'Failed to save chat' });
+  }
+}
+
+async function handleChatLoad(req, res) {
+  if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
+
+  const auth = req.headers.authorization;
+  if (!auth || !auth.startsWith('Bearer ')) return res.status(401).json({ error: 'Missing token' });
+  const token = auth.split(' ')[1];
+
+  try {
+    const profileId = await getProfileIdFromToken(token);
+    if (!profileId) return res.json({ success: true, messages: [] });
+
+    const { data: rows, error } = await supabase
+      .from('student_chat_history')
+      .select('role, content, tool_used, metadata, created_at')
+      .eq('student_id', profileId)
+      .order('created_at', { ascending: true })
+      .limit(50);
+
+    if (error) throw error;
+
+    const messages = (rows || []).map(function(r) {
+      return {
+        role: r.role,
+        content: r.content,
+        tool: r.tool_used || '',
+        metadata: r.metadata || {},
+        createdAt: r.created_at,
+      };
+    });
+
+    return res.json({ success: true, messages });
+  } catch (err) {
+    console.error('Chat load error:', err);
+    return res.status(500).json({ error: 'Failed to load chat' });
+  }
+}
+
+async function handleChatClear(req, res) {
+  if (req.method !== 'DELETE') return res.status(405).json({ error: 'Method not allowed' });
+
+  const auth = req.headers.authorization;
+  if (!auth || !auth.startsWith('Bearer ')) return res.status(401).json({ error: 'Missing token' });
+  const token = auth.split(' ')[1];
+
+  try {
+    const profileId = await getProfileIdFromToken(token);
+    if (!profileId) return res.status(404).json({ error: 'Profile not found' });
+
+    await supabase.from('student_chat_history').delete().eq('student_id', profileId);
+    return res.json({ success: true });
+  } catch (err) {
+    console.error('Chat clear error:', err);
+    return res.status(500).json({ error: 'Failed to clear chat' });
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// Phase 5: Login Log — ghi lại lần đăng nhập
+// ════════════════════════════════════════════════════════════
+
+async function handleLogLogin(req, res) {
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+
+  const auth = req.headers.authorization;
+  if (!auth || !auth.startsWith('Bearer ')) return res.status(401).json({ error: 'Missing token' });
+  const token = auth.split(' ')[1];
+
+  try {
+    const profileId = await getProfileIdFromToken(token);
+    if (!profileId) return res.status(404).json({ error: 'Profile not found' });
+
+    const { action } = req.body || {};
+    const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.socket?.remoteAddress || '';
+
+    await supabase.from('student_login_logs').insert({
+      student_id: profileId,
+      ip: ip,
+      user_agent: (req.headers['user-agent'] || '').substring(0, 500),
+      action: action || 'login',
+    });
+
+    // Update last_active and last_ip
+    await supabase.from('student_profiles').update({
+      last_active: new Date().toISOString(),
+      last_ip: ip,
+    }).eq('id', profileId);
+
+    return res.json({ success: true });
+  } catch (err) {
+    console.error('Log login error:', err);
+    return res.json({ success: true }); // Silent fail
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// Phase 5: Check Notifications — kiểm tra admin_note mới
+// ════════════════════════════════════════════════════════════
+
+async function handleCheckNotifications(req, res) {
+  if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
+
+  const auth = req.headers.authorization;
+  if (!auth || !auth.startsWith('Bearer ')) return res.status(401).json({ error: 'Missing token' });
+  const token = auth.split(' ')[1];
+
+  try {
+    const profileId = await getProfileIdFromToken(token);
+    if (!profileId) return res.json({ success: true, notifications: [] });
+
+    // Kiểm tra application nào có admin_note và status thay đổi
+    const { data: apps, error } = await supabase
+      .from('school_applications')
+      .select('id, status, admin_note, updated_at')
+      .eq('student_profile_id', profileId)
+      .not('admin_note', 'is', null)
+      .neq('admin_note', '')
+      .order('updated_at', { ascending: false })
+      .limit(10);
+
+    if (error) throw error;
+
+    const notifications = (apps || []).map(function(a) {
+      return {
+        id: a.id,
+        type: 'application_update',
+        title: 'Admin đã cập nhật hồ sơ',
+        message: a.admin_note,
+        status: a.status,
+        createdAt: a.updated_at,
+      };
+    });
+
+    return res.json({ success: true, notifications });
+  } catch (err) {
+    console.error('Check notifications error:', err);
+    return res.json({ success: true, notifications: [] });
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// Phase 2: Document upload to Supabase Storage
+// ════════════════════════════════════════════════════════════
+
 async function handleDocumentUpload(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
   const profileId = await getAuthProfile(req);
@@ -956,8 +1160,10 @@ async function handleDocumentUpload(req, res) {
 
     let fileUrl = '';
     let uploadStatus = 'pending';
+    let warning = '';
 
     try {
+      // Try to upload
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from(bucketName)
         .upload(filePath, buffer, {
@@ -966,9 +1172,50 @@ async function handleDocumentUpload(req, res) {
         });
 
       if (uploadError) {
-        // Bucket might not exist yet
-        console.warn('Storage upload failed (bucket may not exist):', uploadError.message);
-        uploadStatus = 'no_storage';
+        // Bucket might not exist yet — try to create it
+        console.warn('Storage upload failed, trying to create bucket:', uploadError.message);
+        
+        try {
+          const { data: buckets } = await supabase.storage.listBuckets();
+          const exists = buckets && buckets.find(function(b) { return b.name === bucketName; });
+          
+          if (!exists) {
+            const { error: createError } = await supabase.storage.createBucket(bucketName, {
+              public: true,
+              file_size_limit: 10485760, // 10MB
+            });
+            
+            if (createError) {
+              warning = 'Không thể tạo bucket storage: ' + createError.message + '. Vào Supabase Dashboard > Storage > tạo bucket "student-documents" (public).';
+              uploadStatus = 'no_storage';
+            } else {
+              // Retry upload after creating bucket
+              const { data: retryData, error: retryError } = await supabase.storage
+                .from(bucketName)
+                .upload(filePath, buffer, {
+                  contentType: 'application/octet-stream',
+                  upsert: true,
+                });
+              
+              if (retryError) {
+                warning = 'Bucket đã được tạo nhưng upload vẫn thất bại: ' + retryError.message;
+                uploadStatus = 'no_storage';
+              } else {
+                const { data: urlData } = supabase.storage.from(bucketName).getPublicUrl(filePath);
+                fileUrl = urlData?.publicUrl || '';
+                uploadStatus = 'uploaded';
+                warning = 'Bucket "student-documents" đã được tự động tạo.';
+              }
+            }
+          } else {
+            warning = 'Bucket đã tồn tại nhưng upload thất bại: ' + uploadError.message;
+            uploadStatus = 'no_storage';
+          }
+        } catch (autoCreateErr) {
+          console.warn('Auto-create bucket failed:', autoCreateErr.message);
+          warning = 'Không thể tự động tạo bucket. Vào Supabase Dashboard > Storage > tạo bucket "student-documents" (public).';
+          uploadStatus = 'no_storage';
+        }
       } else {
         // Get public URL
         const { data: urlData } = supabase.storage.from(bucketName).getPublicUrl(filePath);
@@ -976,7 +1223,8 @@ async function handleDocumentUpload(req, res) {
         uploadStatus = 'uploaded';
       }
     } catch (storageErr) {
-      console.warn('Storage error (create bucket "student-documents" in Supabase Dashboard):', storageErr.message);
+      console.warn('Storage error:', storageErr.message);
+      warning = 'Lỗi storage: ' + storageErr.message;
       uploadStatus = 'no_storage';
     }
 
@@ -1027,11 +1275,13 @@ async function handleDocumentUpload(req, res) {
         success: true,
         document: doc,
         fileUrl: '',
-        warning: 'File đã được lưu thông tin nhưng chưa upload lên Storage. Vào Supabase Dashboard > Storage > tạo bucket "student-documents" (public) để upload hoạt động.'
+        warning: warning || 'File đã được lưu thông tin nhưng chưa upload lên Storage. Vào Supabase Dashboard > Storage > tạo bucket "student-documents" (public) để upload hoạt động.'
       });
     }
 
-    return res.json({ success: true, document: doc, fileUrl });
+    const result = { success: true, document: doc, fileUrl };
+    if (warning) result.warning = warning;
+    return res.json(result);
   } catch (err) {
     console.error('Document upload error:', err);
     return res.status(500).json({ error: 'Upload thất bại: ' + (err.message || 'Lỗi không xác định') });
