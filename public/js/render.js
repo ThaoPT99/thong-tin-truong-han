@@ -1027,7 +1027,7 @@ function getInitialView() {
   const schoolId = params.get("school");
   if (schoolId && getSchoolById(schoolId)) return schoolId;
   const view = params.get("view");
-  if (["advisor", "compare", "map", "extra", "ebook", "schools", "d4-1", "cost", "application", "checklist", "knowledge"].includes(view)) return view;
+  if (["advisor", "compare", "map", "extra", "ebook", "schools", "d4-1", "cost", "checklist", "knowledge"].includes(view)) return view;
   // Check visa_type param
   const vt = params.get("visa_type");
   if (vt === 'D4-1') return 'd4-1';
@@ -1914,7 +1914,6 @@ function showSchool(viewId) {
   const ebook = document.getElementById("ebook-content");
   const advisor = document.getElementById("advisor-content");
   const costEl = document.getElementById("cost-content");
-  const appEl = document.getElementById("application-content");
   const checklistEl = document.getElementById("checklist-content");
   const knowledgeEl = document.getElementById("knowledge-content");
 
@@ -1953,7 +1952,7 @@ function showSchool(viewId) {
   updatePageMeta(viewId, getSchoolById(viewId));
 
   const hideAll = () => {
-    [content, schools, compare, extra, map, ebook, advisor, costEl, appEl, checklistEl, knowledgeEl].forEach(el => el?.classList.add("hidden"));
+    [content, schools, compare, extra, map, ebook, advisor, costEl, checklistEl, knowledgeEl].forEach(el => el?.classList.add("hidden"));
   };
 
   // Track page views
@@ -2014,14 +2013,6 @@ function showSchool(viewId) {
     costEl.classList.remove("hidden");
     costEl.innerHTML = renderCostCalculator();
     bindCostCalculator(costEl);
-    return;
-  }
-
-  if (viewId === "application") {
-    hideAll();
-    appEl.classList.remove("hidden");
-    if (typeof window.renderApplicationApp === "function") window.renderApplicationApp(appEl);
-    else appEl.innerHTML = `<div class="empty"><p>Đang tải form đăng ký...</p></div>`;
     return;
   }
 

@@ -662,7 +662,7 @@
       var count = 0;
       timeline.forEach(function(m) {
         if (m.isPast) return;
-        // Save to application.js reminder system
+        // Saved via reminders API
         var fetchFn = window.fetchWithAuth || fetch;
         fetchFn('/api/auth/student?action=reminders-create', {
           method: 'POST',

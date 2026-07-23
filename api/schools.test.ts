@@ -67,29 +67,7 @@ describe('/api/schools', () => {
     });
   });
 
-  describe('POST /api/schools (apply)', () => {
-    it('should reject request without fullName', async () => {
-      const res = makeRes();
-      await handler(makeReq('POST', {}, {}), res);
-      expect(res.status).toHaveBeenCalledWith(400);
-      expect(res.json).toHaveBeenCalledWith(
-        expect.objectContaining({ error: expect.stringContaining('fullName') })
-      );
-    });
-
-    it('should allow requests within rate limit', async () => {
-      const res = makeRes();
-      // First 5 requests should be allowed (check only that handler runs)
-      await handler(makeReq('POST', {}, { fullName: 'User 1' }), makeRes());
-      await handler(makeReq('POST', {}, { fullName: 'User 2' }), makeRes());
-      await handler(makeReq('POST', {}, { fullName: 'User 3' }), makeRes());
-      await handler(makeReq('POST', {}, { fullName: 'User 4' }), makeRes());
-      // 5th request should still be within limit
-      await handler(makeReq('POST', {}, { fullName: 'User 5' }), res);
-      // Expect NOT rate limited (status !== 429)
-      expect(res.status).not.toHaveBeenCalledWith(429);
-    });
-  });
+  // (POST tests removed — handler đã xoá cùng feature "Gửi đơn")
 });
 
 function makeRes() {

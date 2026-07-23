@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demo 6 cải tiến cá nhân hóa hồ sơ</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f1f5f9; color: #1e293b; padding: 20px; }
+  
+  .demo-header { text-align: center; margin-bottom: 32px; }
+  .demo-header h1 { font-size: 2rem; color: #0f172a; }
+  .demo-header p { color: #64748b; margin-top: 8px; font-size: 1rem; }
+  .demo-header .badge { display: inline-block; background: #2563eb; color: #fff; padding: 4px 14px; border-radius: 20px; font-size: .8rem; font-weight: 600; margin-top: 12px; }
+
+  .demo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(480px, 1fr)); gap: 24px; max-width: 1400px; margin: 0 auto; }
+  .demo-card { background: #fff; border-radius: 16px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,.08); border: 1px solid #e2e8f0; }
+  .demo-card h2 { font-size: 1.2rem; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+  .demo-card .desc { color: #64748b; font-size: .88rem; margin-bottom: 16px; }
+  .demo-card .feature-num { display: inline-block; background: #eef2ff; color: #4338ca; border-radius: 8px; padding: 2px 10px; font-size: .75rem; font-weight: 700; margin-bottom: 12px; }
+
+  /* #6 School Cards */
+  .pa-school-recs { margin-top: 12px; }
+  .pa-school-recs-header { font-weight: 700; font-size: 1rem; margin-bottom: 12px; color: #0f172a; }
+  .pa-school-recs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .pa-school-rec-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; cursor: pointer; transition: all .2s; }
+  .pa-school-rec-card:hover { border-color: #93c5fd; box-shadow: 0 2px 8px rgba(37,99,235,.12); transform: translateY(-2px); }
+  .pa-school-rec-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .pa-school-rec-name { font-weight: 600; font-size: .9rem; }
+  .pa-school-rec-pct { font-weight: 800; font-size: 1.2rem; }
+  .pa-school-rec-meter { height: 6px; background: #e2e8f0; border-radius: 3px; margin-bottom: 8px; overflow: hidden; }
+  .pa-school-rec-meter span { display: block; height: 100%; border-radius: 3px; transition: width .5s; }
+  .pa-school-rec-tags { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
+  .pa-school-rec-tags span { font-size: .72rem; padding: 2px 8px; border-radius: 6px; background: #f1f5f9; color: #475569; }
+  .pa-school-rec-reasons { font-size: .78rem; color: #475569; line-height: 1.5; }
+
+  /* #2 Timeline */
+  .cl-timeline-section { margin-top: 16px; }
+  .cl-timeline-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 20px; }
+  .cl-timeline-icon { font-size: 2rem; }
+  .cl-timeline-header h4 { font-size: 1rem; font-weight: 700; }
+  .cl-timeline-header p { font-size: .82rem; color: #64748b; margin-top: 2px; }
+  .cl-timeline { position: relative; padding-left: 40px; }
+  .cl-timeline::before { content: ''; position: absolute; left: 18px; top: 8px; bottom: 8px; width: 2px; background: #dbe3ee; }
+  .cl-timeline-item { position: relative; margin-bottom: 20px; padding-left: 20px; }
+  .cl-timeline-dot { position: absolute; left: -40px; top: 2px; width: 36px; height: 36px; border-radius: 50%; background: #fff; border: 2px solid #2563eb; display: flex; align-items: center; justify-content: center; font-size: 1rem; z-index: 1; }
+  .cl-timeline-item.is-past .cl-timeline-dot { border-color: #94a3b8; opacity: .6; }
+  .cl-timeline-item.is-upcoming .cl-timeline-dot { border-color: #059669; background: #ecfdf5; }
+  .cl-timeline-title { font-weight: 600; font-size: .9rem; }
+  .cl-timeline-date { font-size: .78rem; color: #64748b; margin-top: 2px; }
+  .cl-timeline-tasks { margin-top: 6px; padding-left: 16px; font-size: .82rem; color: #475569; }
+  .cl-timeline-tasks li { margin-bottom: 2px; }
+  .cl-timeline-actions { margin-top: 12px; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 18px; border-radius: 8px; font-size: .85rem; font-weight: 600; border: none; cursor: pointer; transition: all .2s; }
+  .btn-primary { background: #2563eb; color: #fff; }
+  .btn-primary:hover { background: #1d4ed8; }
+  .btn-sm { padding: 6px 14px; font-size: .8rem; }
+  .btn-outline { background: transparent; border: 1.5px solid #cbd5e1; color: #475569; }
+  .btn-outline:hover { border-color: #94a3b8; background: #f8fafc; }
+
+  /* #3 Similar Cases */
+  .cl-similar-cases { margin-top: 16px; padding: 16px; background: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0; }
+  .cl-similar-header { font-weight: 700; font-size: .95rem; margin-bottom: 12px; }
+  .cl-similar-stats { display: flex; gap: 16px; margin-bottom: 12px; }
+  .cl-similar-stat { font-size: .82rem; color: #475569; }
+  .cl-similar-stat strong { font-size: 1.1rem; }
+  .cl-similar-case { padding: 10px 12px; background: #fff; border-radius: 8px; margin-bottom: 8px; border: 1px solid #e2e8f0; }
+  .cl-similar-case-header { display: flex; justify-content: space-between; align-items: center; font-size: .85rem; }
+  .cl-similar-case-schools { font-size: .78rem; color: #64748b; margin-top: 4px; }
+  .cl-similar-case-notes { font-size: .78rem; color: #059669; margin-top: 4px; }
+
+  /* #4 Smart Checklist */
+  .cl-smart-demo { margin-top: 12px; }
+  .cl-smart-item { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 6px; font-size: .85rem; }
+  .cl-smart-step { display: inline-block; background: #2563eb; color: #fff; padding: 1px 8px; border-radius: 6px; font-size: .72rem; font-weight: 700; margin-right: 4px; }
+  .cl-smart-meta { color: #64748b; font-size: .78rem; }
+  .cl-smart-tip-btn { background: none; border: 1px solid #e2e8f0; border-radius: 6px; padding: 2px 8px; cursor: pointer; font-size: .85rem; margin-left: auto; }
+  .cl-smart-tip-btn:hover { background: #fef9c3; }
+
+  /* #1 Study Plan Builder */
+  .sp-trigger-area { margin-top: 16px; display: flex; gap: 12px; }
+  .sp-icon-btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; border-radius: 12px; font-size: .95rem; font-weight: 600; border: none; cursor: pointer; transition: all .2s; }
+  .sp-icon-btn.primary { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; box-shadow: 0 4px 12px rgba(37,99,235,.3); }
+  .sp-icon-btn.primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37,99,235,.4); }
+  .sp-icon-btn.secondary { background: #f8fafc; color: #475569; border: 1.5px solid #e2e8f0; }
+  .sp-icon-btn.secondary:hover { border-color: #94a3b8; }
+  .sp-progress { height: 6px; background: #e2e8f0; border-radius: 3px; margin: 12px 0; overflow: hidden; }
+  .sp-progress-bar { height: 100%; background: linear-gradient(90deg, #2563eb, #3b82f6); border-radius: 3px; transition: width .3s; }
+  .sp-question-text { font-weight: 600; font-size: 1rem; margin-bottom: 8px; }
+  .sp-question-hint { font-size: .82rem; color: #64748b; margin-bottom: 12px; padding: 8px 12px; background: #fef9c3; border-radius: 8px; }
+  .sp-answer { width: 100%; padding: 10px; border: 1.5px solid #dbe3ee; border-radius: 8px; font: inherit; font-size: .88rem; min-height: 100px; resize: vertical; }
+  .sp-answer:focus { outline: none; border-color: #2563eb; }
+  .sp-word-count { font-size: .75rem; color: #94a3b8; text-align: right; margin-top: 4px; }
+  .sp-nav { display: flex; justify-content: space-between; gap: 8px; margin-top: 16px; }
+  .sp-result { padding: 16px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; }
+  .sp-result-header { font-weight: 700; color: #166534; margin-bottom: 12px; }
+  .sp-result-content { font-size: .85rem; line-height: 1.7; color: #1e293b; white-space: pre-wrap; }
+  .sp-loading { text-align: center; padding: 20px; color: #64748b; }
+  .sp-generated { font-size: .85rem; line-height: 1.7; }
+  .sp-nav-btn { padding: 8px 20px; border-radius: 8px; font-size: .88rem; font-weight: 600; border: none; cursor: pointer; transition: all .2s; }
+
+  /* #5 Reviewer */
+  .sp-reviewer-demo { margin-top: 16px; }
+  .sp-review-score { text-align: center; padding: 16px; background: #f8fafc; border-radius: 12px; margin-bottom: 16px; }
+  .sp-review-score .big-score { font-size: 2.5rem; font-weight: 800; }
+  .sp-review-score .level { font-weight: 600; margin-top: 4px; }
+  .sp-review-score .words { color: #64748b; font-size: .85rem; margin-top: 4px; }
+  .sp-review-result ul { color: #475569; font-size: .9rem; line-height: 1.7; padding-left: 1.2rem; }
+  .sp-review-result li { margin-bottom: 4px; }
+
+  /* Tip Popup */
+  .cl-tip-popup { position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; }
+  .cl-tip-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.4); }
+  .cl-tip-card { position: relative; background: #fff; border-radius: 16px; padding: 24px; max-width: 400px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,.2); }
+  .cl-tip-close { position: absolute; top: 12px; right: 12px; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #94a3b8; }
+  .cl-tip-icon { font-size: 2rem; text-align: center; margin-bottom: 12px; }
+  .cl-tip-card h4 { font-size: 1.1rem; font-weight: 700; margin-bottom: 12px; text-align: center; }
+  .cl-tip-content { font-size: .88rem; color: #475569; line-height: 1.6; }
+  .cl-tip-cost, .cl-tip-time { font-size: .82rem; color: #64748b; margin-top: 8px; }
+
+  .section-divider { border: none; border-top: 1px solid #e2e8f0; margin: 20px 0; }
+
+  @media (max-width: 768px) {
+    .demo-grid { grid-template-columns: 1fr; }
+    .pa-school-recs-grid { grid-template-columns: 1fr; }
+    .sp-trigger-area { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<div class="demo-header">
+  <div class="badge">6 cải tiến mới</div>
+  <h1>🎯 Cá nhân hóa hồ sơ du học</h1>
+  <p>Trải nghiệm trực tiếp các tính năng mới trên site thongtintruonghan.vercel.app</p>
+</div>
+
+<div class="demo-grid">
+
+  <!-- Feature #6 -->
+  <div class="demo-card">
+    <div class="feature-num">#6</div>
+    <h2>🏫 Gợi ý trường trong phân tích</h2>
+    <p class="desc">Sau khi phân tích hồ sơ ở bước 5, hệ thống tự động đề xuất Top 3 trường phù hợp kèm % match.</p>
+    <div class="pa-school-recs">
+      <div class="pa-school-recs-header">🏫 Top trường phù hợp với hồ sơ</div>
+      <div class="pa-school-recs-grid">
+        <div class="pa-school-rec-card">
+          <div class="pa-school-rec-top"><div class="pa-school-rec-name">Osan University</div><div class="pa-school-rec-pct" style="color:#059669">85%</div></div>
+          <div class="pa-school-rec-meter"><span style="width:85%;background:#059669"></span></div>
+          <div class="pa-school-rec-tags"><span>Phù hợp</span><span>Gyeonggi</span></div>
+          <div class="pa-school-rec-reasons"><div>✅ GPA 7.5 phù hợp yêu cầu đầu vào</div><div>✅ Chi phí thấp, phù hợp ngân sách</div></div>
+        </div>
+        <div class="pa-school-rec-card">
+          <div class="pa-school-rec-top"><div class="pa-school-rec-name">Induk University</div><div class="pa-school-rec-pct" style="color:#d97706">72%</div></div>
+          <div class="pa-school-rec-meter"><span style="width:72%;background:#d97706"></span></div>
+          <div class="pa-school-rec-tags"><span>Cân nhắc</span><span>Seoul</span></div>
+          <div class="pa-school-rec-reasons"><div>✅ Ngành Quản trị KD phù hợp</div><div>⚠️ Học phí cao hơn ngân sách</div></div>
+        </div>
+        <div class="pa-school-rec-card">
+          <div class="pa-school-rec-top"><div class="pa-school-rec-name">Yeonsung University</div><div class="pa-school-rec-pct" style="color:#d97706">68%</div></div>
+          <div class="pa-school-rec-meter"><span style="width:68%;background:#d97706"></span></div>
+          <div class="pa-school-rec-tags"><span>Cân nhắc</span><span>Gyeonggi</span></div>
+          <div class="pa-school-rec-reasons"><div>✅ Có ký túc xá</div><div>⚠️ Yêu cầu TOPIK 3+</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Feature #2 -->
+  <div class="demo-card">
+    <div class="feature-num">#2</div>
+    <h2>📅 Timeline cá nhân hoá tự động</h2>
+    <p class="desc">Dựa trên loại visa và ngày hiện tại, hệ thống tự động sinh lộ trình từng bước.</p>
+    <div class="cl-timeline-section">
+      <div class="cl-timeline-header">
+        <span class="cl-timeline-icon">📅</span>
+        <div><h4>Lộ trình tự động của bạn</h4><p>Dựa trên hồ sơ (D-4-1) và kỳ nhập học tháng 9/2026</p></div>
+      </div>
+      <div class="cl-timeline">
+        <div class="cl-timeline-item is-past">
+          <div class="cl-timeline-dot">🚀</div>
+          <div class="cl-timeline-content">
+            <div class="cl-timeline-title">Bắt đầu</div>
+            <div class="cl-timeline-date">22/07/2026</div>
+            <ul class="cl-timeline-tasks"><li>Khai báo hồ sơ</li><li>Chọn trường dự định</li></ul>
+          </div>
+        </div>
+        <div class="cl-timeline-item is-upcoming">
+          <div class="cl-timeline-dot">📖</div>
+          <div class="cl-timeline-content">
+            <div class="cl-timeline-title">Học tiếng Hàn</div>
+            <div class="cl-timeline-date">22/08/2026</div>
+            <ul class="cl-timeline-tasks"><li>Học TOPIK 2+</li><li>Thi thử</li></ul>
+          </div>
+        </div>
+        <div class="cl-timeline-item">
+          <div class="cl-timeline-dot">💰</div>
+          <div class="cl-timeline-content">
+            <div class="cl-timeline-title">Mở sổ TK + Tài chính</div>
+            <div class="cl-timeline-date">06/09/2026</div>
+            <ul class="cl-timeline-tasks"><li>Mở sổ tiết kiệm 10,000 USD</li><li>Chuẩn bị CMTC</li></ul>
+          </div>
+        </div>
+        <div class="cl-timeline-item">
+          <div class="cl-timeline-dot">📋</div>
+          <div class="cl-timeline-content">
+            <div class="cl-timeline-title">Nộp hồ sơ trường</div>
+            <div class="cl-timeline-date">22/10/2026</div>
+            <ul class="cl-timeline-tasks"><li>Hoàn thiện hồ sơ</li><li>Nộp trường</li></ul>
+          </div>
+        </div>
+        <div class="cl-timeline-item">
+          <div class="cl-timeline-dot">🎉</div>
+          <div class="cl-timeline-content">
+            <div class="cl-timeline-title">Nhập học!</div>
+            <div class="cl-timeline-date">06/03/2027</div>
+            <ul class="cl-timeline-tasks"><li>Nhận visa</li><li>Mua vé bay</li></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Feature #3 -->
+  <div class="demo-card">
+    <div class="feature-num">#3</div>
+    <h2>📊 So sánh với hồ sơ tương tự</h2>
+    <p class="desc">So sánh hồ sơ của bạn với các case thực tế từ kho dữ liệu advisor_cases.</p>
+    <div class="cl-similar-cases">
+      <div class="cl-similar-header">📊 Hồ sơ tương tự đã xử lý</div>
+      <div class="cl-similar-stats">
+        <div class="cl-similar-stat"><strong>24</strong> hồ sơ tương tự</div>
+        <div class="cl-similar-stat" style="color:#059669"><strong>67%</strong> tỉ lệ đậu</div>
+        <div class="cl-similar-stat">16 đậu / 8 trượt</div>
+      </div>
+      <div class="cl-similar-case">
+        <div class="cl-similar-case-header"><span>👨 22t, GPA 7.0</span><span style="color:#059669;font-weight:700">✅ Đậu visa</span></div>
+        <div class="cl-similar-case-schools">🏫 Osan University</div>
+        <div class="cl-similar-case-notes">💡 Có TOPIK 2, tài chính 10,000 USD</div>
+      </div>
+      <div class="cl-similar-case">
+        <div class="cl-similar-case-header"><span>👩 23t, GPA 8.0</span><span style="color:#059669;font-weight:700">✅ Đậu visa</span></div>
+        <div class="cl-similar-case-schools">🏫 Induk University</div>
+        <div class="cl-similar-case-notes">💡 Có giải trình gap year rõ ràng</div>
+      </div>
+      <div class="cl-similar-case">
+        <div class="cl-similar-case-header"><span>👨 24t, GPA 5.5</span><span style="color:#dc2626;font-weight:700">❌ Trượt visa</span></div>
+        <div class="cl-similar-case-schools">🏫 Yeonsung University</div>
+        <div class="cl-similar-case-notes">💡 Study Plan chung chung, thiếu cam kết về nước</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Feature #4 -->
+  <div class="demo-card">
+    <div class="feature-num">#4</div>
+    <h2>📋 Checklist thông minh</h2>
+    <p class="desc">Mỗi giấy tờ có số thứ tự ưu tiên, chi phí, thời gian và nút 💡 hướng dẫn chi tiết.</p>
+    <div class="cl-smart-demo">
+      <div class="cl-smart-item">
+        <input type="checkbox">
+        <div><span class="cl-smart-step">#1</span> Đơn xin visa (Mẫu KSD0-2014)</div>
+        <span class="cl-smart-meta">💰 0đ · ⏱ 15 phút</span>
+        <button class="cl-smart-tip-btn" onclick="showTipDemo('Tải mẫu KSD0-2014 từ website KVAC. Điền bằng tiếng Hàn hoặc Anh. Chữ ký phải giống hộ chiếu.', '0đ', '15 phút')">💡</button>
+      </div>
+      <div class="cl-smart-item">
+        <input type="checkbox">
+        <div><span class="cl-smart-step">#2</span> Hộ chiếu (Passport)</div>
+        <span class="cl-smart-meta">💰 200,000đ · ⏱ 2 tuần</span>
+        <button class="cl-smart-tip-btn" onclick="showTipDemo('Làm hộ chiếu tại Phòng Quản lý xuất nhập cảnh. Cần CCCD + ảnh 4x6.', '200,000đ', '2 tuần')">💡</button>
+      </div>
+      <div class="cl-smart-item">
+        <input type="checkbox">
+        <div><span class="cl-smart-step">#10</span> Sổ tiết kiệm 10,000+ USD</div>
+        <span class="cl-smart-meta">💰 8,000-10,000 USD · ⏱ 1 ngày</span>
+        <button class="cl-smart-tip-btn" onclick="showTipDemo('Mở tại quầy ngân hàng (không online). Kỳ hạn 12 tháng. Để sổ càng lâu càng tốt.', '8,000-10,000 USD', '1 ngày')">💡</button>
+      </div>
+      <div class="cl-smart-item">
+        <input type="checkbox">
+        <div><span class="cl-smart-step">#13</span> Study Plan</div>
+        <span class="cl-smart-meta">💰 0đ · ⏱ 2-4 giờ</span>
+        <button class="cl-smart-tip-btn" onclick="showTipDemo('Dùng AI trên site để soạn nháp! Study Plan chung chung = trượt visa.', '0đ', '2-4 giờ')">💡</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Feature #1 -->
+  <div class="demo-card">
+    <div class="feature-num">#1</div>
+    <h2>✍ Study Plan Builder 8 bước</h2>
+    <p class="desc">Trả lời 8 câu hỏi dẫn dắt → AI tự động tổng hợp thành Study Plan hoàn chỉnh.</p>
+    
+    <div id="sp-demo-area">
+      <div class="sp-progress">
+        <div class="sp-progress-bar" id="sp-demo-progress" style="width:12.5%"></div>
+      </div>
+      <div id="sp-demo-content">
+        <div class="sp-question-text">1/8 · Vì sao bạn chọn du học Hàn Quốc thay vì các nước khác?</div>
+        <div class="sp-question-hint">💡 Gợi ý: Văn hoá K-pop ảnh hưởng, chất lượng giáo dục, gần Việt Nam, học phí hợp lý...</div>
+        <textarea class="sp-answer" id="sp-demo-answer" rows="4" placeholder="Nhập câu trả lời của bạn...">Tôi chọn Hàn Quốc vì nền giáo dục phát triển, học phí hợp lý hơn các nước khác và gần Việt Nam. Ngoài ra, cơ hội việc làm sau khi tốt nghiệp tại các công ty Hàn Quốc ở Việt Nam rất lớn.</textarea>
+        <div class="sp-word-count">32 từ</div>
+      </div>
+      <div class="sp-nav">
+        <button class="btn btn-outline btn-sm" disabled>← Quay lại</button>
+        <button class="btn btn-primary btn-sm" onclick="demoNextStep()">Lưu &amp; Tiếp theo →</button>
+      </div>
+    </div>
+    
+    <hr class="section-divider">
+    
+    <div class="sp-trigger-area">
+      <button class="sp-icon-btn primary" onclick="alert('🔓 Tính năng này hoạt động đầy đủ trên site thật!\n\nVào tab Hồ sơ của tôi → Soạn Study Plan')">
+        ✍ Soạn Study Plan ngay
+      </button>
+      <button class="sp-icon-btn secondary" onclick="alert('🔓 Tính năng này hoạt động đầy đủ trên site thật!\n\nVào tab Hồ sơ của tôi → Đánh giá Study Plan')">
+        📝 Đánh giá Study Plan
+      </button>
+    </div>
+  </div>
+
+  <!-- Feature #5 -->
+  <div class="demo-card">
+    <div class="feature-num">#5</div>
+    <h2>📝 AI chấm điểm Study Plan</h2>
+    <p class="desc">Dán Study Plan của bạn → AI chấm điểm và gợi ý cải thiện chi tiết.</p>
+    <div class="sp-reviewer-demo">
+      <div class="sp-review-score">
+        <div class="big-score" style="color:#d97706">62</div>
+        <div class="level" style="color:#d97706">⚠️ Khá</div>
+        <div class="words">156 từ</div>
+      </div>
+      <div style="font-weight:600;margin-bottom:8px">📋 Gợi ý cải thiện:</div>
+      <ul style="color:#475569;font-size:.88rem;line-height:1.7">
+        <li style="color:#059669">✅ Độ dài phù hợp.</li>
+        <li style="color:#059669">✅ Có đề cập lý do chọn Hàn Quốc.</li>
+        <li style="color:#dc2626">❌ Nên đề cập tên trường cụ thể thay vì viết chung chung.</li>
+        <li style="color:#dc2626">❌ Nên thể hiện cam kết về nước sau khi học xong.</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<script>
+var demoStep = 0;
+var demoAnswers = [
+  'Tôi chọn Hàn Quốc vì nền giáo dục phát triển, học phí hợp lý...',
+  'Tôi chọn Osan University vì chương trình Quản trị KD phù hợp...',
+  'Tôi muốn học Quản trị kinh doanh để sau này về làm cho công ty Hàn tại VN...',
+  'Giai đoạn 1 học tiếng Hàn, Giai đoạn 2 học chuyên ngành...',
+  'Sau tốt nghiệp tôi sẽ về Việt Nam làm việc cho công ty Hàn Quốc...',
+  'Tôi đã đi làm 3 năm tại công ty ABC, không phải gap year...',
+  'Cha tôi kinh doanh, thu nhập ổn định 30 triệu/tháng...',
+  'Trình độ tiếng Hàn Sejong 2B, dự định thi TOPIK 2...',
+];
+
+function demoNextStep() {
+  demoStep++;
+  if (demoStep >= 8) {
+    document.getElementById('sp-demo-content').innerHTML = 
+      '<div class="sp-result"><div class="sp-result-header">✅ Hoàn thành! Đây là bản nháp Study Plan của bạn:</div>' +
+      '<div class="sp-result-content"><div class="sp-generated"><strong>KẾ HOẠCH HỌC TẬP (STUDY PLAN)</strong><br><br>' +
+      '1. Lý do chọn Hàn Quốc:<br>Tôi chọn Hàn Quốc vì nền giáo dục phát triển, học phí hợp lý hơn các nước khác và gần Việt Nam. ' +
+      'Cơ hội việc làm tại các công ty Hàn Quốc ở Việt Nam rất lớn.<br><br>' +
+      '2. Lý do chọn trường:<br>Tôi chọn Osan University vì chương trình Quản trị kinh doanh phù hợp với định hướng nghề nghiệp...<br><br>' +
+      '<em>...bản đầy đủ được tạo bởi AI khi bạn dùng tính năng trên site thực tế.</em></div></div></div>';
+    document.getElementById('sp-demo-progress').style.width = '100%';
+    return;
+  }
+  var questions = [
+    '1/8 · Vì sao bạn chọn du học Hàn Quốc?',
+    '2/8 · Vì sao bạn chọn trường này?',
+    '3/8 · Bạn học ngành gì? Liên quan gì đến nghề nghiệp?',
+    '4/8 · Kế hoạch học tập theo từng giai đoạn?',
+    '5/8 · Kế hoạch sau tốt nghiệp?',
+    '6/8 · Giải trình gap year (nếu có)?',
+    '7/8 · Gia đình có thu nhập thế nào?',
+    '8/8 · Trình độ tiếng Hàn/Anh?'
+  ];
+  var hints = [
+    '💡 Văn hoá K-pop, chất lượng giáo dục, gần VN...',
+    '💡 Chương trình phù hợp, vị trí thuận lợi...',
+    '💡 Ngành bạn đam mê, liên quan đến dự định tương lai.',
+    '💡 Giai đoạn 1 học tiếng, Giai đoạn 2 học chuyên ngành...',
+    '💡 Nên thể hiện cam kết về nước.',
+    '💡 Đi làm, học thêm kỹ năng... Nếu không có gap, ghi "Không có gap year".',
+    '💡 Cha/mẹ làm gì? Thu nhập bao nhiêu?',
+    '💡 TOPIK mấy? IELTS? Kế hoạch cải thiện?'
+  ];
+  document.getElementById('sp-demo-content').innerHTML = 
+    '<div class="sp-question-text">' + (demoStep + 1) + '/8 · ' + questions[demoStep] + '</div>' +
+    '<div class="sp-question-hint">' + hints[demoStep] + '</div>' +
+    '<textarea class="sp-answer" rows="4">' + demoAnswers[demoStep] + '</textarea>' +
+    '<div class="sp-word-count">~25 từ</div>';
+  document.getElementById('sp-demo-progress').style.width = ((demoStep + 1) / 8 * 100) + '%';
+}
+
+function showTipDemo(tip, cost, time) {
+  var popup = document.createElement('div');
+  popup.className = 'cl-tip-popup';
+  popup.innerHTML = '<div class="cl-tip-backdrop" onclick="this.parentElement.remove()"></div>' +
+    '<div class="cl-tip-card">' +
+    '<button class="cl-tip-close" onclick="this.closest(\'.cl-tip-popup\').remove()">&times;</button>' +
+    '<div class="cl-tip-icon">💡</div>' +
+    '<h4>Hướng dẫn nhanh</h4>' +
+    '<div class="cl-tip-content">' + tip + '</div>' +
+    (cost ? '<div class="cl-tip-cost">💰 Chi phí dự kiến: <strong>' + cost + '</strong></div>' : '') +
+    (time ? '<div class="cl-tip-time">⏱ Thời gian: <strong>' + time + '</strong></div>' : '') +
+    '</div>';
+  document.body.appendChild(popup);
+}
+</script>
+</body>
+</html>

@@ -12,8 +12,7 @@ const PRECACHE_URLS = [
   '/js/render.js',
   '/js/zalo-popup.js',
   '/images/logo-d26-sidebar.svg',
-  '/images/logo-d26-horizontal.svg',
-  '/js/application.js'
+  '/images/logo-d26-horizontal.svg'
 ];
 
 // Install: pre-cache static assets

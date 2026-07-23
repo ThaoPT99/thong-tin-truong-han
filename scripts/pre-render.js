@@ -187,7 +187,7 @@ function buildSchoolHtml(school, semesterInfo) {
               <button class="tab-btn" data-school="extra">Tài liệu</button>
               <button class="tab-btn" data-school="ebook">Cẩm nang D2-6</button>
               <button class="tab-btn" data-school="cost">Chi phí</button>
-              <button class="tab-btn" data-school="application">📨 Gửi đơn</button>
+              
             </div>
           </div>
         </div>
@@ -252,7 +252,7 @@ function buildSchoolHtml(school, semesterInfo) {
         <div id="map-content" class="hidden"></div>
         <div id="extra-content" class="hidden"></div>
         <div id="cost-content" class="hidden"></div>
-        <div id="application-content" class="hidden"></div>
+        
         <div id="checklist-content" class="hidden"></div>
         <div id="ebook-content" class="hidden"></div>
       </main>
