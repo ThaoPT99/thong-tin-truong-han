@@ -2828,9 +2828,14 @@ async function handleAnalytics(req, res) {
   }
   if (req.method === 'GET') {
     return await requireAdmin(async (req, res) => {
-      const data = await handleAnalyticsAdmin(req);
-      if (!data) return res.status(400).json({ error: `Unknown view: ${req.query.view}` });
-      return res.json({ success: true, data });
+      try {
+        const data = await handleAnalyticsAdmin(req);
+        if (!data) return res.status(400).json({ error: `Unknown view: ${req.query.view}` });
+        return res.json({ success: true, data });
+      } catch (analyticsErr) {
+        console.error('handleAnalyticsAdmin error:', analyticsErr.message);
+        return res.status(500).json({ error: 'Analytics error: ' + analyticsErr.message });
+      }
     })(req, res);
   }
   return res.status(405).json({ error: 'Method not allowed' });
