@@ -436,6 +436,7 @@
           localStorage.removeItem('student_token');
           localStorage.removeItem('student_refresh_token');
           localStorage.removeItem('student_user');
+          localStorage.removeItem('checklist_data');
           var btn = document.getElementById('authBtn');
           if (btn) btn.classList.remove('is-logged-in');
           var txt = document.getElementById('authBtnText');
@@ -473,15 +474,15 @@
                 localStorage.setItem('student_refresh_token', refreshData.refresh_token);
               }
               return refreshData.access_token;
-            } else {
-              localStorage.removeItem('student_token');
-              localStorage.removeItem('student_refresh_token');
-              localStorage.removeItem('student_user');
-              var btn = document.getElementById('authBtn');
-              if (btn) btn.classList.remove('is-logged-in');
-              var txt = document.getElementById('authBtnText');
-              if (txt) txt.textContent = 'Đăng nhập';
-              return null;
+            } else {          localStorage.removeItem('student_token');
+          localStorage.removeItem('student_refresh_token');
+          localStorage.removeItem('student_user');
+          localStorage.removeItem('checklist_data');
+          var btn = document.getElementById('authBtn');
+          if (btn) btn.classList.remove('is-logged-in');
+          var txt = document.getElementById('authBtnText');
+          if (txt) txt.textContent = 'Đăng nhập';
+          return null;
             }
           })();
         }
@@ -505,6 +506,7 @@
           localStorage.removeItem('student_token');
           localStorage.removeItem('student_refresh_token');
           localStorage.removeItem('student_user');
+          localStorage.removeItem('checklist_data');
           location.reload();
         }
         return;
