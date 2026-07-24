@@ -411,7 +411,8 @@
     var details = [];
 
     var visaType = profile.visaType || 'D-4-1';
-    var minSavings = (visaType === 'D-2' || visaType === 'D-2-6') ? 18000 : 10000;
+    // D-2 mức tối thiểu dao động $10,000-$20,000 tuỳ trường; dùng $15,000 làm mức trung bình cho scoring
+    var minSavings = (visaType === 'D-2' || visaType === 'D-2-6') ? 15000 : 10000;
     var savings = profile.savingsAmount || 0;
     var monthlyIncome = profile.monthlyIncome || 0;
     var savingsDuration = profile.savingsDurationMonths;

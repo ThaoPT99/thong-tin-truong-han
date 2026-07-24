@@ -101,7 +101,7 @@
     if (profile.consularRegion) {
       if (profile.consularRegion === 'kvac_hanoi') {
         result.strengths.push('Nộp hồ sơ tại KVAC Hà Nội — quy trình quen thuộc, thời gian xử lý 5-15 ngày làm việc.');
-        result.actions.push('Đặt lịch hẹn KVAC Hà Nội sớm (địa chỉ: Tầng 5, Trung tâm Hội nghị Quốc tế, 11 Lê Hồng Phong, Ba Đình).');
+        result.actions.push('Đến KVAC Hà Nội (Tầng 12, Discovery Complex, 302 Cầu Giấy, phường Cầu Giấy) trong giờ làm việc 08:00-16:30. KVAC HN đã dừng đặt lịch online từ 06/04/2026 — đến trực tiếp lấy số thứ tự.');
         result.actions.push('Khám lao phổi tại BV Phổi Trung ương (Hoàng Hoa Thám, Hà Nội).');
         // Nếu khu vực rủi ro + KVAC Hà Nội = cảnh báo kép
         if (profile.region) {

@@ -263,7 +263,7 @@ window.CHECKLIST_DATA = {
           {
             id: 'A4-9',
             name: 'Sổ đóng băng K-Study (ngân hàng Hàn Quốc tại Việt Nam)',
-            description: 'Nhiều trường yêu cầu mở sổ đóng băng tại Shinhan hoặc Woori Bank Việt Nam, số tiền 8,000-10,000 USD. Làm tăng tỉ lệ đậu visa đáng kể.',
+            description: 'Nhiều trường yêu cầu mở sổ đóng băng tại Shinhan hoặc Woori Bank Việt Nam, số tiền 8,000,000-10,000,000 KRW (~6,000-7,500 USD). Làm tăng tỉ lệ đậu visa đáng kể.',
             documentType: 'k_study_account',
             required: false,
             rule: null,
@@ -312,8 +312,8 @@ window.CHECKLIST_DATA = {
         items: [
           {
             id: 'A6-1',
-            name: 'Đặt lịch hẹn KVAC',
-            description: 'Đặt lịch qua KVAC (visaforkorea-vt.com). Nếu chưa chọn vùng lãnh sự: xác định nơi nộp theo địa chỉ cư trú.',
+            name: 'Nộp hồ sơ tại KVAC',
+            description: 'Nếu ở miền Bắc (từ Huế trở ra): đến trực tiếp KVAC Hà Nội (không cần đặt lịch, KVAC HN đã dừng đặt online từ 06/04/2026). Nếu ở miền Nam: đặt lịch online qua visaforkorea-hc.com.',
             documentType: 'kvac_booking',
             required: true,
             rule: { consular_region: { eq: null } },
@@ -321,8 +321,8 @@ window.CHECKLIST_DATA = {
           },
           {
             id: 'A6-1-HN',
-            name: 'Đặt lịch hẹn KVAC Hà Nội',
-            description: 'Đặt lịch qua website KVAC, chọn điểm nộp: KVAC Hà Nội (Tầng 5, Trung tâm Hội nghị Quốc tế, 11 Lê Hồng Phong, Ba Đình). Lịch thường đầy nhanh — cần đặt trước 2-3 tuần.',
+            name: 'Nộp hồ sơ tại KVAC Hà Nội',
+            description: 'KVAC Hà Nội ĐÃ DỪNG đặt lịch online từ 06/04/2026. Đến trực tiếp KVAC (Tầng 12, Discovery Complex, 302 Cầu Giấy, phường Cầu Giấy) trong giờ làm việc (08:00-16:30) để lấy số thứ tự. Nên đến sau 10h sáng để đỡ đông.',
             documentType: 'kvac_booking',
             required: true,
             rule: { consular_region: { eq: 'kvac_hanoi' } },
@@ -331,11 +331,11 @@ window.CHECKLIST_DATA = {
           {
             id: 'A6-1-HCM',
             name: 'Đặt lịch hẹn KVAC TP.HCM (trực thuộc LSQ)',
-            description: 'Đặt lịch qua website KVAC, chọn điểm nộp: KVAC TP.HCM. Thực tế hồ sơ sẽ do Lãnh sự quán Hàn Quốc tại TP.HCM xét duyệt. Lịch thường thoáng hơn KVAC HN.',
+            description: 'Đặt lịch online qua website KVAC TP.HCM (visaforkorea-hc.com), chọn điểm nộp: KVAC TP.HCM (253 Điện Biên Phủ, Phường Xuân Hòa, Quận 3). Thực tế hồ sơ sẽ do Lãnh sự quán Hàn Quốc tại TP.HCM xét duyệt. Lịch thường thoáng hơn KVAC HN.',
             documentType: 'kvac_booking',
             required: true,
             rule: { consular_region: { eq: 'lsq_hcm' } },
-            link: 'https://visaforkorea-vt.com/'
+            link: 'https://visaforkorea-hc.com/'
           },
           {
             id: 'A6-2',
@@ -383,7 +383,7 @@ window.CHECKLIST_DATA = {
           {
             id: 'A6-4-HN',
             name: 'Nộp hồ sơ tại KVAC Hà Nội',
-            description: 'Đến KVAC Hà Nội (Tầng 5, 11 Lê Hồng Phong, Ba Đình) đúng giờ hẹn. Mang theo: hộ chiếu gốc, CCCD, tất cả giấy tờ gốc + bản dịch công chứng, ảnh thẻ, lệ phí visa.',
+            description: 'Đến KVAC Hà Nội (Tầng 12, Discovery Complex, 302 Cầu Giấy, phường Cầu Giấy) trong giờ làm việc (08:00-16:30). Mang theo: hộ chiếu gốc, CCCD, tất cả giấy tờ gốc + bản dịch công chứng, ảnh thẻ, lệ phí visa. KVAC HN đã dừng đặt lịch online — đến trực tiếp lấy số.',
             documentType: 'submission',
             required: true,
             rule: { consular_region: { eq: 'kvac_hanoi' } }
@@ -679,7 +679,7 @@ window.CHECKLIST_DATA = {
           { id: 'B2-2', name: 'Học bạ THPT', description: 'Bản gốc + dịch công chứng.', documentType: 'transcript', required: true, rule: null },
           { id: 'B2-3', name: 'Bằng tốt nghiệp ĐH (nếu có)', description: 'Nếu đã học đại học.', documentType: 'uni_diploma', required: false, rule: { education_level: { eq: 'university' } } },
           { id: 'B2-4', name: 'Bảng điểm ĐH (nếu có)', description: 'Nếu đã học đại học.', documentType: 'uni_transcript', required: false, rule: { education_level: { eq: 'university' } } },
-          { id: 'B2-5', name: 'Thư giới thiệu từ giáo viên', description: 'Cần 2 thư giới thiệu cho visa D-2.', documentType: 'recommendation_letter', required: true, rule: null, hasAiAssist: true },
+          { id: 'B2-5', name: 'Thư giới thiệu từ giáo viên (không bắt buộc nhưng nên có)', description: 'Không bắt buộc từ ĐSQ nhưng một số trường yêu cầu — nên chuẩn bị 1-2 thư để tăng độ tin cậy.', documentType: 'recommendation_letter', required: false, rule: null, recommended: true, hasAiAssist: true },
           { id: 'B2-6', name: 'Chứng chỉ TOPIK / IELTS', description: 'TOPIK 3+ hoặc IELTS 5.5+ thường là yêu cầu đầu vào.', documentType: 'language_cert', required: true, rule: null },
           { id: 'B2-7', name: 'Giải trình khoảng trống (nếu có)', description: 'Gap > 6 tháng cần giải trình.', documentType: 'gap_explanation', required: false, rule: { gap_years: { gt: 0.5 } }, hasAiAssist: true }
         ]
@@ -701,13 +701,13 @@ window.CHECKLIST_DATA = {
         icon: '',
         required: true,
         items: [
-          { id: 'B4-1', name: 'Sổ tiết kiệm (tối thiểu $18,000-$20,000)', description: '~450-500 triệu VND. D-2 yêu cầu cao hơn D-4-1. Gửi kỳ hạn 12 tháng, mở trước 3-6 tháng. Chỉ chấp nhận sổ mở tại quầy.', documentType: 'savings_book', required: true, warning: '⚠ D-2 cần SỔ TIẾT KIỆM TỐI THIỂU $18,000-$20,000 (KHÁC với D-4-1 chỉ $10,000). Gửi trước 3-6 tháng.', rule: null },
+          { id: 'B4-1', name: 'Sổ tiết kiệm (tuỳ trường, $10,000-$20,000)', description: '~250-500 triệu VND. D-2 yêu cầu cao hơn D-4-1, nhưng tuỳ trường/khu vực. Trường vùng tỉnh có thể chỉ cần $10,000-$15,000, trường Seoul cần $18,000-$20,000. Gửi kỳ hạn 12 tháng, mở trước 3-6 tháng. Chỉ chấp nhận sổ mở tại quầy.', documentType: 'savings_book', required: true, warning: '⚠ D-2 yêu cầu tài chính cao hơn D-4-1. Mức cụ thể phụ thuộc vào trường và khu vực — xác nhận với trường trước khi mở sổ. Gửi trước 3-6 tháng.', rule: null },
           { id: 'B4-2', name: 'Xác nhận số dư + sao kê ngân hàng 3 tháng', description: 'Bản gốc, cấp trong 30 ngày. Sao kê phải thể hiện lịch sử ỔN ĐỊNH, không nạp tiền sốc trước khi lấy sao kê.', documentType: 'bank_statement', required: true, warning: '⚠ Không nạp tiền "sốc" rồi lấy sao kê ngay. Duy trì số dư ổn định 3-6 tháng!', rule: null },
           { id: 'B4-3', name: 'Giấy bảo lãnh tài chính', description: 'Nếu người bảo lãnh không phải tự thân.', documentType: 'sponsorship', required: false, rule: { sponsor_is_self: { eq: false } } },
           { id: 'B4-4', name: 'Giấy tờ chứng minh quan hệ', description: 'Quan hệ với người bảo lãnh.', documentType: 'relationship', required: false, rule: { sponsor_is_self: { eq: false } } },
           { id: 'B4-5', name: 'Chứng minh thu nhập người bảo lãnh', description: 'HĐLĐ, sao kê lương, thu nhập từ kinh doanh.', documentType: 'income_proof', required: true, rule: { sponsor_is_self: { eq: false } } },
           { id: 'B4-6', name: 'Dịch công chứng toàn bộ', description: 'Tất cả giấy tờ tài chính.', documentType: 'notarized', required: true, rule: null },
-          { id: 'B4-7', name: 'Sổ đóng băng K-Study (ngân hàng Hàn tại Việt Nam)', description: 'Mở tại Shinhan/Woori Bank, 8,000-10,000 USD. Tăng tỉ lệ đậu visa.', documentType: 'k_study_account', required: false, recommended: true, warning: ' Sổ đóng băng K-Study giúp tăng tỉ lệ đậu visa D-2.', rule: null }
+          { id: 'B4-7', name: 'Sổ đóng băng K-Study (ngân hàng Hàn tại Việt Nam)', description: 'Mở tại Shinhan/Woori Bank Việt Nam, số tiền 8,000,000-10,000,000 KRW (~6,000-7,500 USD). Tăng tỉ lệ đậu visa.', documentType: 'k_study_account', required: false, recommended: true, warning: ' Sổ đóng băng K-Study giúp tăng tỉ lệ đậu visa D-2. Nếu trường yêu cầu, đây là bắt buộc.', rule: null }
         ]
       },
       {
@@ -726,15 +726,15 @@ window.CHECKLIST_DATA = {
         icon: '',
         required: true,
         items: [
-          { id: 'B6-1', name: 'Đặt lịch hẹn KVAC', description: 'Đặt lịch qua visaforkorea-vt.com. Nếu chưa chọn vùng: xác định nơi nộp theo địa chỉ.', documentType: 'kvac', required: true, rule: { consular_region: { eq: null } }, link: 'https://visaforkorea-vt.com/' },
-          { id: 'B6-1-HN', name: 'Đặt lịch hẹn KVAC Hà Nội', description: 'Đặt lịch qua website, chọn KVAC Hà Nội (11 Lê Hồng Phong, Ba Đình). Lịch đầy nhanh — đặt trước 2-3 tuần.', documentType: 'kvac', required: true, rule: { consular_region: { eq: 'kvac_hanoi' } }, link: 'https://visaforkorea-vt.com/' },
-          { id: 'B6-1-HCM', name: 'Đặt lịch hẹn KVAC TP.HCM', description: 'Đặt lịch qua website, chọn KVAC TP.HCM. Lịch thường thoáng hơn HN.', documentType: 'kvac', required: true, rule: { consular_region: { eq: 'lsq_hcm' } }, link: 'https://visaforkorea-vt.com/' },
+          { id: 'B6-1', name: 'Nộp hồ sơ KVAC', description: 'Nếu ở miền Bắc (từ Huế trở ra): đến trực tiếp KVAC Hà Nội (đã dừng đặt online từ 06/04/2026). Nếu ở miền Nam: đặt lịch online qua visaforkorea-hc.com.', documentType: 'kvac', required: true, rule: { consular_region: { eq: null } }, link: 'https://visaforkorea-vt.com/' },
+          { id: 'B6-1-HN', name: 'Nộp hồ sơ tại KVAC Hà Nội', description: 'KVAC Hà Nội ĐÃ DỪNG đặt lịch online từ 06/04/2026. Đến trực tiếp KVAC (Tầng 12, Discovery Complex, 302 Cầu Giấy, phường Cầu Giấy) trong giờ làm việc (08:00-16:30) để lấy số. Nên đến sau 10h sáng.', documentType: 'kvac', required: true, rule: { consular_region: { eq: 'kvac_hanoi' } }, link: 'https://visaforkorea-vt.com/' },
+          { id: 'B6-1-HCM', name: 'Đặt lịch hẹn KVAC TP.HCM', description: 'Đặt lịch online qua visaforkorea-hc.com, chọn KVAC TP.HCM (253 Điện Biên Phủ, Quận 3). Lịch thường thoáng hơn HN.', documentType: 'kvac', required: true, rule: { consular_region: { eq: 'lsq_hcm' } }, link: 'https://visaforkorea-hc.com/' },
           { id: 'B6-2', name: 'TB test - bệnh viện chỉ định', description: 'Bắt buộc. Nếu chưa chọn vùng: HN→BV Phổi TW, HCM→BV Chợ Rẫy/Phạm Ngọc Thạch/Thống Nhất. Giá trị 3 tháng.', documentType: 'health', required: true, warning: '⚠ Chỉ khám tại bệnh viện ĐSQ chỉ định!', rule: { consular_region: { eq: null } } },
           { id: 'B6-2-HN', name: 'TB test - KVAC Hà Nội', description: 'Khám tại BV Phổi Trung ương (464 Hoàng Hoa Thám, Ba Đình, HN). Có giá trị 3 tháng.', documentType: 'health', required: true, warning: '⚠ Chỉ khám tại BV Phổi TW!', rule: { consular_region: { eq: 'kvac_hanoi' } } },
           { id: 'B6-2-HCM', name: 'TB test - LSQ TP.HCM', description: 'Khám tại 1 trong 3 BV: Chợ Rẫy, Phạm Ngọc Thạch hoặc Thống Nhất (TP.HCM). Giá trị 3 tháng.', documentType: 'health', required: true, warning: '⚠ Chỉ khám tại BV ĐSQ chỉ định (Chợ Rẫy/Phạm Ngọc Thạch/Thống Nhất)!', rule: { consular_region: { eq: 'lsq_hcm' } } },
           { id: 'B6-3', name: 'Bảo hiểm du học', description: 'Bắt buộc.', documentType: 'insurance', required: true, rule: null },
           { id: 'B6-4', name: 'Nộp và theo dõi kết quả', description: 'Nộp hồ sơ tại cơ quan lãnh sự đã chọn, theo dõi online. Nếu chưa chọn vùng: xác định nơi nộp trước.', documentType: 'tracking', required: true, rule: { consular_region: { eq: null } } },
-          { id: 'B6-4-HN', name: 'Nộp hồ sơ tại KVAC Hà Nội', description: 'Đến KVAC Hà Nội (Tầng 5, 11 Lê Hồng Phong, Ba Đình) đúng giờ hẹn. Mang đầy đủ giấy tờ gốc + bản dịch công chứng.', documentType: 'tracking', required: true, rule: { consular_region: { eq: 'kvac_hanoi' } } },
+          { id: 'B6-4-HN', name: 'Nộp hồ sơ tại KVAC Hà Nội', description: 'Đến KVAC Hà Nội (Tầng 12, Discovery Complex, 302 Cầu Giấy, phường Cầu Giấy) trong giờ làm việc (08:00-16:30). Mang đầy đủ giấy tờ gốc + bản dịch công chứng. KVAC HN đã dừng đặt online — đến trực tiếp.', documentType: 'tracking', required: true, rule: { consular_region: { eq: 'kvac_hanoi' } } },
           { id: 'B6-4-HCM', name: 'Nộp hồ sơ tại LSQ Hàn Quốc TP.HCM', description: 'Đến LSQ Hàn Quốc tại TP.HCM (107 Nguyễn Du, Quận 1) đúng giờ hẹn. Mang đầy đủ giấy tờ gốc + bản dịch công chứng.', documentType: 'tracking', required: true, rule: { consular_region: { eq: 'lsq_hcm' } } }
         ]
       },
@@ -748,7 +748,7 @@ window.CHECKLIST_DATA = {
         items: [
           { id: 'ALERT-D2-1', name: '⏳ Thời hạn giấy tờ 3 tháng', description: 'Hầu hết giấy tờ (sổ TK, giấy khám, giấy nhập học, dịch công chứng) chỉ có giá trị 3 tháng. Kiểm tra kỹ trước nộp!', documentType: 'general_warning', required: true, rule: null },
           { id: 'ALERT-D2-2', name: ' Sổ tiết kiệm mở tại quầy', description: 'KHÔNG chấp nhận sổ online. Mở trực tiếp tại quầy giao dịch. Kèm xác nhận số dư trong 30 ngày.', documentType: 'general_warning', required: true, rule: null },
-          { id: 'ALERT-D2-3', name: ' D-2 cần $18,000-$20,000', description: 'Sổ tiết kiệm cho D-2 cao hơn D-4-1. Không nộp sổ $10,000 cho visa D-2 vì sẽ bị từ chối ngay.', documentType: 'general_warning', required: true, rule: null },
+          { id: 'ALERT-D2-3', name: ' D-2 yêu cầu tài chính cao hơn D-4-1', description: 'Sổ tiết kiệm cho D-2 dao động $10,000-$20,000 tuỳ trường/khu vực. Trường Seoul thường cần $18,000-$20,000, trường tỉnh có thể chỉ $10,000-$15,000. Xác nhận với trường trước khi mở sổ.', documentType: 'general_warning', required: true, rule: null },
           { id: 'ALERT-D2-4', name: ' Tính xác thực', description: 'Giả mạo giấy tờ sẽ bị cấm nhập cảnh Hàn Quốc. Mọi giấy tờ đều được xác minh.', documentType: 'general_warning', required: true, rule: null },
           { id: 'ALERT-D2-5', name: ' Giấy tờ phải nhất quán', description: 'Tên trên tất cả giấy tờ phải GIỐNG NHAU tuyệt đối. Sai 1 ký tự = từ chối.', documentType: 'general_warning', required: true, rule: null },
           { id: 'ALERT-D2-6', name: ' Study Plan phải cá nhân hóa', description: 'Không viết chung chung. Chỉ rõ mục tiêu, lý do chọn trường, kế hoạch tương lai.', documentType: 'general_warning', required: true, rule: null },
