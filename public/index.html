@@ -437,7 +437,20 @@
           localStorage.removeItem('student_refresh_token');
           localStorage.removeItem('student_user');
           localStorage.removeItem('checklist_data');
-          var btn = document.getElementById('authBtn');
+          localStorage.removeItem('checklist_profile');
+          localStorage.removeItem('d26AdvisorLastResult');
+          localStorage.removeItem('study_plan_draft');
+          localStorage.removeItem('journey_stage');
+          localStorage.removeItem('aiChatMessages');
+          localStorage.removeItem('studentAgentMessages');
+          localStorage.removeItem('d26ChecklistState');
+          // Xoá tất cả key bắt đầu bằng checklist_ (dữ liệu form nhập)
+          for (var i = localStorage.length - 1; i >= 0; i--) {
+            var k = localStorage.key(i);
+            if (k && k.indexOf('checklist_') === 0 && k !== 'checklist_data') {
+              localStorage.removeItem(k);
+            }
+          }          var btn = document.getElementById('authBtn');
           if (btn) btn.classList.remove('is-logged-in');
           var txt = document.getElementById('authBtnText');
           if (txt) txt.textContent = 'Đăng nhập';
@@ -478,7 +491,20 @@
           localStorage.removeItem('student_refresh_token');
           localStorage.removeItem('student_user');
           localStorage.removeItem('checklist_data');
-          var btn = document.getElementById('authBtn');
+          localStorage.removeItem('checklist_profile');
+          localStorage.removeItem('d26AdvisorLastResult');
+          localStorage.removeItem('study_plan_draft');
+          localStorage.removeItem('journey_stage');
+          localStorage.removeItem('aiChatMessages');
+          localStorage.removeItem('studentAgentMessages');
+          localStorage.removeItem('d26ChecklistState');
+          // Xoá tất cả key bắt đầu bằng checklist_ (dữ liệu form nhập)
+          for (var i = localStorage.length - 1; i >= 0; i--) {
+            var k = localStorage.key(i);
+            if (k && k.indexOf('checklist_') === 0 && k !== 'checklist_data') {
+              localStorage.removeItem(k);
+            }
+          }          var btn = document.getElementById('authBtn');
           if (btn) btn.classList.remove('is-logged-in');
           var txt = document.getElementById('authBtnText');
           if (txt) txt.textContent = 'Đăng nhập';
@@ -507,7 +533,20 @@
           localStorage.removeItem('student_refresh_token');
           localStorage.removeItem('student_user');
           localStorage.removeItem('checklist_data');
-          location.reload();
+          localStorage.removeItem('checklist_profile');
+          localStorage.removeItem('d26AdvisorLastResult');
+          localStorage.removeItem('study_plan_draft');
+          localStorage.removeItem('journey_stage');
+          localStorage.removeItem('aiChatMessages');
+          localStorage.removeItem('studentAgentMessages');
+          localStorage.removeItem('d26ChecklistState');
+          // Xoá tất cả key bắt đầu bằng checklist_ (dữ liệu form nhập)
+          for (var i = localStorage.length - 1; i >= 0; i--) {
+            var k = localStorage.key(i);
+            if (k && k.indexOf('checklist_') === 0 && k !== 'checklist_data') {
+              localStorage.removeItem(k);
+            }
+          }          location.reload();
         }
         return;
       }
