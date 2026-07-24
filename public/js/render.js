@@ -1981,7 +1981,12 @@ function showSchool(viewId) {
   if (viewId === "schools" || viewId === "d4-1") {
     hideAll();
     schools.classList.remove("hidden");
-    schools.innerHTML = renderSchoolsDirectory();
+    // Visa hero section: banner riêng cho từng loại visa + so sánh + quiz + flowchart
+    var visaHtml = '';
+    if (typeof window.renderVisaSection === 'function') {
+      visaHtml = window.renderVisaSection(currentVisaType);
+    }
+    schools.innerHTML = visaHtml + renderSchoolsDirectory();
     bindSchoolsDirectory(schools);
     return;
   }

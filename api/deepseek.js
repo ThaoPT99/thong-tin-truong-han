@@ -2368,6 +2368,49 @@ Tra ve JSON:
   }
 
   // ═══════════════════════════════════════════════════
+  // ─── Action: Translate Study Plan (action=translate-study-plan)
+  // Dich Study Plan tu tieng Viet sang tieng Han
+  // ═══════════════════════════════════════════════════
+  async function handleTranslateStudyPlan(req, res) {
+    const apiKey = getDeepSeekKey();
+    if (!apiKey) {
+      return res.json({ success: false, error: 'AI chua duoc cau hinh.', translatedText: null });
+    }
+
+    const { text, sourceLang, targetLang } = req.body || {};
+    if (!text || text.trim().length < 20) {
+      return res.status(400).json({ success: false, error: 'Van ban qua ngan. Vui long nhap it nhat 20 ky tu.', translatedText: null });
+    }
+
+    try {
+      const systemPrompt = `Ban la chuyen gia dich thuat song ngu Viet-Han, chuyen dich cac van ban du hoc, ho so xin visa, Study Plan.
+
+NHIEM VU:
+Dich van ban duoi day tu tieng Viet sang tieng Han (Hangul).
+
+YEU CAU:
+- Dich CHINH XAC, giu nguyen y nghia
+- Su dung tu vung hoc thuat, trang trong
+- Dung ngu phap tieng Han chuan xac
+- KHONG them, KHONG bot, KHONG sua noi dung goc
+- Giu nguyen dinh dang (xuat dong, danh sach, tieu de)
+- Neu co ten rieng (ten nguoi, ten truong), giu nguyen va viet bang Hangul neu co the
+- Neu co so lieu (GPA, TOPIK, nam thang...), giu nguyen
+
+CHI tra ve ban dich, KHONG co giai thich hay ghi chu them.`;
+
+      const translatedText = await callDeepSeek(
+        [{ role: 'system', content: systemPrompt }, { role: 'user', content: 'Hay dich Study Plan duoi day sang tieng Han:\n\n' + text }],
+        { temperature: 0.3, maxTokens: 4000, timeout: 30000 }
+      );
+
+      return res.json({ success: true, translatedText: translatedText || null });
+    } catch (err) {
+      console.error('Translate study plan error:', err);
+      return res.json({ success: false, error: err.message, translatedText: null });
+    }
+  }
+
   // ─── Action: Review Study Plan (action=review-study-plan)
   // Check diem va goi y cai thien Study Plan bang AI
   // ═══════════════════════════════════════════════════
@@ -3067,6 +3110,7 @@ module.exports = async (req, res) => {
       case 'chat-web': return await handleChatWeb(req, res);
       case 'generate-checklist': return await handleGenerateChecklist(req, res);
       case 'review-study-plan': return await handleReviewStudyPlan(req, res);
+      case 'translate-study-plan': return await handleTranslateStudyPlan(req, res);
       case 'interview-simulator': return await handleInterviewSimulator(req, res);
       case 'student-agent': return await handleStudentAgent(req, res);
       case 'analytics': return await handleAnalytics(req, res);

@@ -618,17 +618,69 @@
           </div>
         </div>
 
+        <!-- Dòng tiền: Thu nhập -->
+        <div class="cl-grid-2">
+          <div class="cl-field">
+            <label>Thu nhập hàng tháng của gia đình / bản thân (USD)</label>
+            <input type="number" id="cl-monthly-income" min="0" step="100" value="${d.monthlyIncome || ''}" placeholder="VD: 1000">
+            <p class="cl-hint">Thu nhập của người bảo lãnh (lương/kinh doanh/cho thuê...). Dùng để ĐSQ đánh giá nguồn gốc sổ tiết kiệm.</p>
+          </div>
+          <div class="cl-field">
+            <label>Nguồn thu nhập chính</label>
+            <select id="cl-income-source">
+              <option value="">— Chọn —</option>
+              <option value="salary" ${d.incomeSource === 'salary' ? 'selected' : ''}>Lương (nhân viên)</option>
+              <option value="business" ${d.incomeSource === 'business' ? 'selected' : ''}>Kinh doanh / Doanh nghiệp</option>
+              <option value="freelance" ${d.incomeSource === 'freelance' ? 'selected' : ''}>Tự do / Freelance</option>
+              <option value="rental" ${d.incomeSource === 'rental' ? 'selected' : ''}>Cho thuê tài sản</option>
+              <option value="agriculture" ${d.incomeSource === 'agriculture' ? 'selected' : ''}>Nông nghiệp</option>
+              <option value="invest" ${d.incomeSource === 'invest' ? 'selected' : ''}>Đầu tư / Cổ tức</option>
+              <option value="multiple" ${d.incomeSource === 'multiple' ? 'selected' : ''}>Nhiều nguồn</option>
+            </select>
+          </div>
+        </div>
+
         <div class="cl-field">
           <label>Số tiền dự kiến trong sổ tiết kiệm (USD)</label>
           <input type="number" id="cl-savings" min="0" step="1000" value="${d.savingsAmount || ''}" placeholder="10000">
           <p class="cl-hint">${escapeHtml(savingsHint)}</p>
         </div>
 
+        <!-- Thời gian duy trì sổ -->
+        <div class="cl-grid-2">
+          <div class="cl-field">
+            <label>Sổ tiết kiệm đã được mở được bao lâu?</label>
+            <select id="cl-savings-duration">
+              <option value="">— Chọn —</option>
+              <option value="0" ${d.savingsDurationMonths === 0 ? 'selected' : ''}>Chưa mở</option>
+              <option value="1" ${d.savingsDurationMonths === 1 ? 'selected' : ''}>1 tháng</option>
+              <option value="2" ${d.savingsDurationMonths === 2 ? 'selected' : ''}>2 tháng</option>
+              <option value="3" ${d.savingsDurationMonths === 3 ? 'selected' : ''}>3 tháng</option>
+              <option value="6" ${d.savingsDurationMonths === 6 ? 'selected' : ''}>6 tháng</option>
+              <option value="12" ${d.savingsDurationMonths === 12 ? 'selected' : ''}>12 tháng+</option>
+            </select>
+            <p class="cl-hint">ĐSQ ưu tiên sổ đã mở trước 3-6 tháng. Sổ mới mở < 3 tháng sẽ bị soi kỹ.</p>
+          </div>
+          <div class="cl-field">
+            <label>Bạn có sao kê ngân hàng 3-6 tháng không?</label>
+            <select id="cl-bank-statement">
+              <option value="">— Chọn —</option>
+              <option value="ready" ${d.hasSavingsStatement === 'ready' ? 'selected' : ''}>Có, đã có sẵn</option>
+              <option value="need" ${d.hasSavingsStatement === 'need' ? 'selected' : ''}>Chưa lấy nhưng có thể lấy</option>
+              <option value="no_account" ${d.hasSavingsStatement === 'no_account' ? 'selected' : ''}>Không có tài khoản ngân hàng</option>
+            </select>
+            <p class="cl-hint">Sao kê phải thể hiện lịch sử giao dịch ổn định, do ngân hàng cấp.</p>
+          </div>
+        </div>
+
+        <!-- Finance guide widget -->
+        <div id="cl-finance-guide"></div>
+
         <div class="cl-info-box" style="background:#fef3c7;border-color:#f59e0b">
           <strong> Lưu ý quan trọng:</strong><br>
           Hồ sơ tài chính là một trong những phần dễ bị từ chối nhất. 
-          Nếu người bảo lãnh không phải tự thân, bạn cần thêm giấy tờ chứng minh quan hệ 
-          và chứng minh thu nhập của người bảo lãnh.
+          Cần đảm bảo: (1) Sổ tiết kiệm mở TRƯỚC 3-6 tháng, (2) Thu nhập hàng tháng 
+          hợp lý với số tiền trong sổ, (3) Sao kê ngân hàng thể hiện giao dịch ổn định.
         </div>
 
         <div class="cl-nav">
@@ -638,6 +690,35 @@
         </div>
       </div>
     `;
+
+    // Render finance guide widget after DOM is ready
+    if (typeof window.renderFinanceGuide === 'function') {
+      var guideEl = document.getElementById('cl-finance-guide');
+      if (guideEl) {
+        var tempProfile = {
+          savingsAmount: parseFloat(document.getElementById('cl-savings')?.value) || 0,
+          monthlyIncome: parseFloat(document.getElementById('cl-monthly-income')?.value) || 0
+        };
+        guideEl.innerHTML = window.renderFinanceGuide(tempProfile);
+        // Re-render when income or savings changes
+        var incomeInput = document.getElementById('cl-monthly-income');
+        var savingsInput = document.getElementById('cl-savings');
+        if (incomeInput && savingsInput) {
+          incomeInput.addEventListener('input', updateFinanceGuide);
+          savingsInput.addEventListener('input', updateFinanceGuide);
+        }
+      }
+    }
+  }
+
+  function updateFinanceGuide() {
+    var guideEl = document.getElementById('cl-finance-guide');
+    if (!guideEl || typeof window.renderFinanceGuide !== 'function') return;
+    var tempProfile = {
+      savingsAmount: parseFloat(document.getElementById('cl-savings')?.value) || 0,
+      monthlyIncome: parseFloat(document.getElementById('cl-monthly-income')?.value) || 0
+    };
+    guideEl.innerHTML = window.renderFinanceGuide(tempProfile);
   }
 
   window.toggleSponsorFields = function(value) {
@@ -658,6 +739,12 @@
       profile.sponsorRelation = '';
     }
     profile.savingsAmount = parseFloat(document.getElementById('cl-savings').value) || 0;
+    // New financial flow fields
+    profile.monthlyIncome = parseFloat(document.getElementById('cl-monthly-income').value) || 0;
+    profile.incomeSource = document.getElementById('cl-income-source').value;
+    var sd = document.getElementById('cl-savings-duration').value;
+    profile.savingsDurationMonths = sd !== '' ? parseInt(sd) : null;
+    profile.hasSavingsStatement = document.getElementById('cl-bank-statement').value;
     saveData();
     window.clNextStep();
   };
@@ -727,6 +814,17 @@
           </div>
         </div>
 
+        <!-- ─── Vùng lãnh sự ─── -->
+        <div class="cl-field">
+          <label> Nơi bạn sẽ nộp hồ sơ xin visa?</label>
+          <p class="cl-hint" style="margin-top:-4px;margin-bottom:8px">Học sinh hộ khẩu từ Huế trở ra nộp tại KVAC Hà Nội. Hộ khẩu miền Nam nộp tại Lãnh sự quán TP.HCM. Nếu không chắc, chọn theo nơi bạn đang cư trú.</p>
+          <select id="cl-consular-region" onchange="profile.consularRegion = this.value">
+            <option value="">— Chọn —</option>
+            <option value="kvac_hanoi" ${d.consularRegion === 'kvac_hanoi' ? 'selected' : ''}> KVAC Hà Nội (miền Bắc — từ Huế trở ra)</option>
+            <option value="lsq_hcm" ${d.consularRegion === 'lsq_hcm' ? 'selected' : ''}> Lãnh sự quán Hàn Quốc TP.HCM (miền Nam)</option>
+          </select>
+        </div>
+
         <div class="cl-info-box" style="background:#fef2f2;border-color:#ef4444">
           <strong> Lưu ý:</strong><br>
           Các yếu tố rủi ro (trượt visa, gap year, người thân bất hợp pháp) 
@@ -762,6 +860,7 @@
     profile.workCompany = profile.hasWorkExperience ? document.getElementById('cl-work-company')?.value?.trim() || '' : '';
     profile.workPosition = profile.hasWorkExperience ? document.getElementById('cl-work-position')?.value?.trim() || '' : '';
     profile.workDuration = profile.hasWorkExperience ? parseFloat(document.getElementById('cl-work-duration')?.value) || null : null;
+    profile.consularRegion = document.getElementById('cl-consular-region')?.value || '';
     profile._completed = true;
 
     // Generate checklist locally (fast)
@@ -881,6 +980,7 @@
               ${profile.ieltsScore ? '<tr><td>IELTS</td><td>' + profile.ieltsScore + '</td></tr>' : ''}
               ${profile.savingsAmount ? '<tr><td>Sổ tiết kiệm</td><td>' + profile.savingsAmount.toLocaleString() + ' USD</td></tr>' : ''}
               ${profile.hasWorkExperience && profile.workCompany ? '<tr><td>Kinh nghiệm</td><td>' + escapeHtml(profile.workCompany) + (profile.workPosition ? ' - ' + escapeHtml(profile.workPosition) : '') + '</td></tr>' : ''}
+              ${profile.consularRegion ? '<tr><td>Nơi nộp hồ sơ</td><td>' + (profile.consularRegion === 'kvac_hanoi' ? 'KVAC Hà Nội' : 'LSQ Hàn Quốc TP.HCM') + '</td></tr>' : ''}
             </table>
           </div>
         </div>
@@ -1768,6 +1868,7 @@
   var _spReviewerData = null;
 
   window.clOpenStudyPlanReviewer = function() {
+    var visaType = (profile && profile.visaType) || 'D-4-1';
     var overlay = document.createElement('div');
     overlay.className = 'cl-ai-overlay';
     overlay.innerHTML = `
@@ -1780,13 +1881,17 @@
           <!-- Input step -->
           <div id="spr-step-input">
             <p class="cl-form-desc">Dán Study Plan bạn đã viết (hoặc AI đã tạo) vào đây. Hệ thống sẽ chấm điểm và gợi ý cải thiện.</p>
+
+            <!-- Template guide cho từng visa type -->
+            <div id="spr-template-guide"></div>
+
             <div class="spr-field">
               <label class="spr-label"> Study Plan của bạn</label>
               <textarea id="spr-text" class="spr-textarea" rows="10" placeholder="Paste Study Plan của bạn vào đây... (tối thiểu 50 ký tự)"></textarea>
             </div>
             <div class="spr-field">
               <label class="spr-label"> Loại visa</label>
-              <select id="spr-visa-type" class="spr-select">
+              <select id="spr-visa-type" class="spr-select" onchange="window._spuUpdateTemplate(this.value)">
                 <option value="D-4-1">D-4-1 (Học tiếng Hàn)</option>
                 <option value="D-2">D-2 (Đại học chính quy)</option>
               </select>
@@ -1801,6 +1906,9 @@
               </button>
               <button type="button" class="btn btn-outline" onclick="window.clLoadSavedStudyPlan()">
                  Dùng Study Plan đã lưu
+              </button>
+              <button type="button" class="btn btn-outline" onclick="window._spuRunLogicCheck()">
+                 🔍 Kiểm tra logic nhanh
               </button>
             </div>
           </div>
@@ -1872,6 +1980,10 @@
     if (profile && profile.visaType) {
       var visaSel = document.getElementById('spr-visa-type');
       if (visaSel) visaSel.value = profile.visaType;
+    }
+    // Render initial template guide
+    if (typeof window._spuUpdateTemplate === 'function') {
+      window._spuUpdateTemplate((profile && profile.visaType) || 'D-4-1');
     }
   };
 
@@ -2022,6 +2134,14 @@
     }
 
     resultEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    // Hook: goi _spuAfterReview tu study-plan-upgrade.js de them kiem tra logic + song ngu
+    setTimeout(function() {
+      if (typeof window._spuAfterReview === 'function') {
+        var spData = _spReviewerData || {};
+        window._spuAfterReview(resultEl, spData.studyPlan || '', review);
+      }
+    }, 100);
   }
 
   window.clRegenerateStudyPlan = async function() {
