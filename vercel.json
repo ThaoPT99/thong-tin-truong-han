@@ -11,6 +11,7 @@
     { "source": "/admin/login", "destination": "/admin/login.html" },
     { "source": "/api/analytics", "destination": "/api/deepseek?action=analytics" },
     { "source": "/api/admin/analytics", "destination": "/api/deepseek?action=analytics" },
-    { "source": "/api/admin/:path*", "destination": "/api/admin-handler?route=:path*" }
+    { "source": "/api/admin/:path*", "destination": "/api/admin-handler?route=:path*" },
+    { "source": "/tu-lam-ho-so", "destination": "/tu-lam-ho-so.html" }
   ]
 }
