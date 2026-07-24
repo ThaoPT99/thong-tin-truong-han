@@ -716,8 +716,20 @@
     if (!guideEl || typeof window.renderFinanceGuide !== 'function') return;
     var tempProfile = {
       savingsAmount: parseFloat(document.getElementById('cl-savings')?.value) || 0,
-      monthlyIncome: parseFloat(document.getElementById('cl-monthly-income')?.value) || 0
+      monthlyIncome: parseFloat(document.getElementById('cl-monthly-income')?.value) || 0,
+      incomeSource: document.getElementById('cl-income-source')?.value || '',
+      savingsDurationMonths: document.getElementById('cl-savings-duration')?.value || null,
+      hasSavingsStatement: document.getElementById('cl-bank-statement')?.value || '',
+      visaType: profile.visaType || 'D-4-1',
+      sponsorIsSelf: document.getElementById('cl-sponsor')?.value === 'self',
+      sponsorName: document.getElementById('cl-sponsor-name')?.value?.trim() || '',
+      sponsorOccupation: document.getElementById('cl-sponsor-job')?.value?.trim() || '',
+      sponsorRelation: document.getElementById('cl-sponsor')?.value === 'parent' ? 'parent' : (document.getElementById('cl-sponsor')?.value === 'other' ? 'other' : ''),
+      fullName: document.getElementById('cl-fullname')?.value?.trim() || profile.fullName || '',
     };
+    // Parse savingsDuration to int or null
+    var sd = tempProfile.savingsDurationMonths;
+    tempProfile.savingsDurationMonths = sd !== '' && sd !== null ? parseInt(sd) : null;
     guideEl.innerHTML = window.renderFinanceGuide(tempProfile);
   }
 

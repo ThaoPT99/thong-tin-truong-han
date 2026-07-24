@@ -155,9 +155,67 @@
     }
   }
 
+  // ─── Lấy thêm cảnh báo tài chính từ finance-guide ───
+  function getFinanceWarningsFromGuide() {
+    if (typeof window.__fgGetRiskWarnings !== 'function') return [];
+    try {
+      return window.__fgGetRiskWarnings();
+    } catch(e) {
+      return [];
+    }
+  }
+
   // ─── Check + render ───
   function checkAndRender() {
     var result = assessRisks();
+    
+    // Bổ sung cảnh báo tài chính từ finance-guide nếu có
+    var financeWarnings = getFinanceWarningsFromGuide();
+    if (financeWarnings.length > 0 && result) {
+      financeWarnings.forEach(function(fw) {
+        // Chỉ thêm nếu chưa có warning tương tự
+        var exists = result.warnings.some(function(w) {
+          return w.text.indexOf(fw.text.slice(0, 30)) !== -1;
+        });
+        if (!exists) {
+          result.warnings.push({
+            icon: fw.icon || '💰',
+            text: fw.text,
+            action: fw.action || 'Xem chi tiết',
+            actionSchool: fw.actionTarget || 'checklist',
+          });
+          // Giảm điểm dựa trên mức độ
+          if (fw.level === 'critical') result.score -= 20;
+          else if (fw.level === 'high') result.score -= 12;
+          else if (fw.level === 'medium') result.score -= 5;
+        }
+      });
+      // Giới hạn score 0-100
+      result.score = Math.max(0, Math.min(100, result.score));
+      // Cập nhật level nếu score thay đổi
+      if (result.score >= 80) result.level = 'low';
+      else if (result.score >= 60) result.level = 'medium';
+      else if (result.score >= 40) result.level = 'high';
+      else result.level = 'critical';
+    } else if (financeWarnings.length > 0 && !result) {
+      // Nếu không có risk result nào nhưng có cảnh báo tài chính, tạo result mới
+      var score = 100;
+      var warnings = financeWarnings.map(function(fw) {
+        if (fw.level === 'critical') score -= 20;
+        else if (fw.level === 'high') score -= 12;
+        else if (fw.level === 'medium') score -= 5;
+        return {
+          icon: fw.icon || '💰',
+          text: fw.text,
+          action: fw.action || 'Xem chi tiết',
+          actionSchool: fw.actionTarget || 'checklist',
+        };
+      });
+      score = Math.max(0, Math.min(100, score));
+      var level = score >= 80 ? 'low' : score >= 60 ? 'medium' : score >= 40 ? 'high' : 'critical';
+      result = { level: level, score: score, warnings: warnings };
+    }
+
     if (result) {
       renderBanner(result);
     } else {
