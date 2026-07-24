@@ -727,6 +727,15 @@ function renderCompare() {
   if (compareParam) {
     preselected = compareParam.split(",").map(s => decodeURIComponent(s.trim())).filter(Boolean);
   }
+  // Lấy trọng số đã lưu (nếu có)
+  var savedWeights = null;
+  try {
+    var w = localStorage.getItem('compare_weights');
+    if (w) savedWeights = JSON.parse(w);
+  } catch(e) {}
+  // Default weights (tổng = 100%)
+  var dw = savedWeights || { visaChance: 30, costLevel: 25, e7Opportunity: 20, jobOpportunity: 15, studyLoad: 10 };
+  
   return `
     <section class="compare-view">
       <div class="directory-head">
@@ -741,6 +750,53 @@ function renderCompare() {
         <select class="compare-select" data-index="1">${options}</select>
         <select class="compare-select" data-index="2">${options}</select>
       </div>
+
+      <!-- Weight sliders -->
+      <div class="compare-weights-wrap" id="compare-weights-wrap">
+        <div class="compare-weights-head">
+          <h3>⚖️ Trọng số đánh giá</h3>
+          <p>Kéo thanh trượt để gán mức độ quan trọng cho từng tiêu chí. Tổng tự động điều chỉnh về 100%.</p>
+        </div>
+        <div class="compare-weights">
+          <div class="cw-row">
+            <label class="cw-label"><span class="cw-icon">🛂</span> Dễ đỗ visa</label>
+            <div class="cw-controls">
+              <input type="range" class="cw-slider" data-key="visaChance" min="0" max="100" value="${dw.visaChance}">
+              <span class="cw-value" id="cw-val-visaChance">${dw.visaChance}%</span>
+            </div>
+          </div>
+          <div class="cw-row">
+            <label class="cw-label"><span class="cw-icon">💰</span> Chi phí thấp</label>
+            <div class="cw-controls">
+              <input type="range" class="cw-slider" data-key="costLevel" min="0" max="100" value="${dw.costLevel}">
+              <span class="cw-value" id="cw-val-costLevel">${dw.costLevel}%</span>
+            </div>
+          </div>
+          <div class="cw-row">
+            <label class="cw-label"><span class="cw-icon">💼</span> Cơ hội việc làm</label>
+            <div class="cw-controls">
+              <input type="range" class="cw-slider" data-key="jobOpportunity" min="0" max="100" value="${dw.jobOpportunity}">
+              <span class="cw-value" id="cw-val-jobOpportunity">${dw.jobOpportunity}%</span>
+            </div>
+          </div>
+          <div class="cw-row">
+            <label class="cw-label"><span class="cw-icon">📈</span> Dễ chuyển E7</label>
+            <div class="cw-controls">
+              <input type="range" class="cw-slider" data-key="e7Opportunity" min="0" max="100" value="${dw.e7Opportunity}">
+              <span class="cw-value" id="cw-val-e7Opportunity">${dw.e7Opportunity}%</span>
+            </div>
+          </div>
+          <div class="cw-row">
+            <label class="cw-label"><span class="cw-icon">📚</span> Học nhẹ</label>
+            <div class="cw-controls">
+              <input type="range" class="cw-slider" data-key="studyLoad" min="0" max="100" value="${dw.studyLoad}">
+              <span class="cw-value" id="cw-val-studyLoad">${dw.studyLoad}%</span>
+            </div>
+          </div>
+          <div class="cw-total">Tổng: <span id="cw-total-pct">100</span>%</div>
+        </div>
+      </div>
+
       <div class="compare-actions">
         <button type="button" class="btn btn-primary" id="compare-copy-link">Copy link so sánh</button>
         <button type="button" class="btn btn-outline" id="compare-export">Xuất PDF</button>
@@ -764,9 +820,11 @@ function bindCompare(container) {
     });
   }
   
+  // Gán giá trị mặc định + sync options lần đầu
   selects.forEach((select, index) => {
     if (defaults[index]) select.value = defaults[index];
-    select.addEventListener("change", () => {
+    select.addEventListener("change", function() {
+      syncCompareSelects(container);
       renderCompareResult(container);
       updateCompareUrl(container);
       // Track compare view
@@ -776,6 +834,17 @@ function bindCompare(container) {
       }
     });
   });
+  // Sync lần đầu
+  syncCompareSelects(container);
+  
+  // ─── Weight sliders ───
+  var sliders = Array.from(container.querySelectorAll('.cw-slider'));
+  sliders.forEach(function(slider) {
+    slider.addEventListener('input', function() {
+      updateWeightsAndResult(container);
+    });
+  });
+
   
   // Copy link button
   const copyBtn = container.querySelector("#compare-copy-link");
@@ -799,6 +868,67 @@ function bindCompare(container) {
     });
   }
   
+  renderCompareResult(container);
+}
+
+/**
+ * Đồng bộ options giữa các dropdown compare:
+ * - Mỗi dropdown chỉ hiển thị các trường chưa được chọn ở dropdown khác
+ * - Giữ nguyên giá trị đã chọn của từng dropdown
+ */
+function syncCompareSelects(container) {
+  const selects = Array.from(container.querySelectorAll('.compare-select'));
+  const allSchools = getAllSchools();
+  const selectedIds = selects.map(function(s) { return s.value; });
+
+  selects.forEach(function(select, idx) {
+    // Các giá trị đã được chọn ở dropdown KHÁC (không tính dropdown hiện tại)
+    var othersSelected = [];
+    selectedIds.forEach(function(id, i) {
+      if (i !== idx && id) othersSelected.push(id);
+    });
+
+    // Lưu giá trị hiện tại
+    var currentVal = select.value;
+
+    // Build options: chỉ giữ lại các trường chưa được chọn ở dropdown khác, + trường hiện tại
+    var optHtml = allSchools
+      .filter(function(s) {
+        // Luôn giữ trường đang được chọn ở dropdown này
+        if (s.id === currentVal) return true;
+        // Loại trừ các trường đã được chọn ở dropdown khác
+        return othersSelected.indexOf(s.id) === -1;
+      })
+      .map(function(s) {
+        return '<option value="' + escapeHtml(s.id) + '">' + escapeHtml(s.name) + '</option>';
+      })
+      .join('');
+
+    select.innerHTML = optHtml;
+    select.value = currentVal;
+  });
+}
+
+function updateWeightsAndResult(container) {
+  var sliders = Array.from(container.querySelectorAll('.cw-slider'));
+  var total = 0;
+  var weights = {};
+  sliders.forEach(function(slider) {
+    var v = parseInt(slider.value) || 0;
+    weights[slider.dataset.key] = v;
+    total += v;
+    // Update value display
+    var valEl = document.getElementById('cw-val-' + slider.dataset.key);
+    if (valEl) valEl.textContent = v + '%';
+  });
+  // Show total
+  var totalEl = document.getElementById('cw-total-pct');
+  if (totalEl) {
+    totalEl.textContent = total;
+    totalEl.style.color = total === 100 ? '#10b981' : (total > 100 ? '#ef4444' : '#f59e0b');
+  }
+  // Lưu weights vào localStorage
+  try { localStorage.setItem('compare_weights', JSON.stringify(weights)); } catch(e) {}
   renderCompareResult(container);
 }
 
@@ -1061,6 +1191,18 @@ function renderCompareResult(container) {
   const uniqueIds = [...new Set(ids)];
   const schools = uniqueIds.map(id => getSchoolById(id)).filter(Boolean);
 
+  // ─── Đọc trọng số từ sliders ───
+  const sliders = Array.from(container.querySelectorAll('.cw-slider'));
+  const weights = {};
+  var totalWeight = 0;
+  sliders.forEach(function(sl) {
+    var v = parseInt(sl.value) || 0;
+    weights[sl.dataset.key] = v;
+    totalWeight += v;
+  });
+  // Nếu không có slider (có thể chưa render), dùng default
+  var useWeights = totalWeight > 0 && sliders.length > 0;
+
   // Parse values for comparison
   const parsed = schools.map(s => {
     const rules = getAdvisorRules(s.id, s);
@@ -1080,7 +1222,7 @@ function renderCompareResult(container) {
     };
   });
 
-  // Find winners for numeric criteria (lower is better for cost/tuition/ktx/studyLoad/interviewDifficulty; higher is better for visa/job/e7)
+  // Find winners for numeric criteria
   const criteria = {
     tuition: { lowerBetter: true, values: parsed.map(p => p.tuition).filter(v => v !== null) },
     ktx: { lowerBetter: true, values: parsed.map(p => p.ktx).filter(v => v !== null) },
@@ -1106,7 +1248,106 @@ function renderCompareResult(container) {
     });
   });
 
+  // ─── Tính điểm có trọng số ───
+  var scored = [];
+  if (useWeights && schools.length > 0) {
+    // Chuẩn hoá điểm 1-5 về 0-100 cho từng tiêu chí, rồi nhân trọng số
+    var maxValues = {};
+    var minValues = {};
+    ['costLevel', 'visaChance', 'jobOpportunity', 'e7Opportunity', 'studyLoad'].forEach(function(key) {
+      var vals = parsed.map(function(p) { return p[key]; }).filter(function(v) { return v !== null && v !== undefined; });
+      maxValues[key] = Math.max.apply(null, vals);
+      minValues[key] = Math.min.apply(null, vals);
+    });
+
+    parsed.forEach(function(p) {
+      var totalScore = 0;
+      var details = [];
+      
+      ['costLevel', 'visaChance', 'jobOpportunity', 'e7Opportunity', 'studyLoad'].forEach(function(key) {
+        var w = weights[key] || 0;
+        if (w <= 0) return;
+        var val = p[key];
+        var maxV = maxValues[key];
+        var minV = minValues[key];
+        if (maxV === minV) {
+          // Nếu tất cả bằng nhau, điểm bằng nhau
+          return;
+        }
+        // Chuẩn hoá 0-100, lowerBetter đối với costLevel và studyLoad
+        var normalized;
+        if (key === 'costLevel' || key === 'studyLoad') {
+          // lower is better: điểm càng thấp càng tốt
+          normalized = ((maxV - val) / (maxV - minV)) * 100;
+        } else {
+          // higher is better: điểm càng cao càng tốt
+          normalized = ((val - minV) / (maxV - minV)) * 100;
+        }
+        var weighted = normalized * (w / totalWeight);
+        totalScore += weighted;
+        details.push({ key: key, weight: w, raw: val, normalized: Math.round(normalized), weighted: Math.round(weighted) });
+      });
+      
+      scored.push({
+        school: p.school,
+        totalScore: Math.round(totalScore),
+        details: details,
+      });
+    });
+
+    // Xếp hạng theo điểm giảm dần
+    scored.sort(function(a, b) { return b.totalScore - a.totalScore; });
+  }
+
+  // ─── Render HTML ───
+  var scoreHtml = '';
+  if (scored.length > 0) {
+    var rankColors = ['#10b981', '#3b82f6', '#f59e0b'];
+    scoreHtml = '<div class="compare-score-wrap">' +
+      '<div class="compare-score-head">' +
+        '<p class="advisor-kicker">Đánh giá có trọng số</p>' +
+        '<h3>🏆 Xếp hạng tổng quan</h3>' +
+        '<p style="color:var(--text-muted);font-size:0.85rem;">Dựa trên trọng số bạn đã chọn. Thang điểm 0-100.</p>' +
+      '</div>' +
+      '<div class="compare-score-cards">';
+    
+    scored.forEach(function(item, idx) {
+      var rank = idx + 1;
+      var medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank;
+      var color = rankColors[idx] || '#64748b';
+      var detailBars = item.details.map(function(d) {
+        var iconMap = { visaChance: '🛂', costLevel: '💰', jobOpportunity: '💼', e7Opportunity: '📈', studyLoad: '📚' };
+        var icon = iconMap[d.key] || '📊';
+        return '<div class="cs-detail-row">' +
+          '<span class="cs-detail-icon">' + icon + '</span>' +
+          '<div class="cs-detail-bar-wrap">' +
+            '<div class="cs-detail-bar-bg">' +
+              '<div class="cs-detail-bar-fill" style="width:' + d.normalized + '%;background:' + color + ';"></div>' +
+            '</div>' +
+            '<div class="cs-detail-labels">' +
+              '<span>' + d.normalized + '/100</span>' +
+              '<span style="font-weight:600;font-size:0.72rem;">× ' + d.weight + '%</span>' +
+            '</div>' +
+          '</div>' +
+          '<span class="cs-detail-pts" style="color:' + color + ';">+' + d.weighted + '</span>' +
+        '</div>';
+      }).join('');
+
+      scoreHtml += '<div class="cs-card" style="border-color:' + color + ';">' +
+        '<div class="cs-card-top">' +
+          '<div class="cs-rank" style="background:' + color + ';">' + medal + '</div>' +
+          '<div class="cs-name">' + escapeHtml(item.school.name) + '</div>' +
+          '<div class="cs-total" style="color:' + color + ';">' + item.totalScore + '</div>' +
+        '</div>' +
+        '<div class="cs-details">' + detailBars + '</div>' +
+      '</div>';
+    });
+    
+    scoreHtml += '</div></div>';
+  }
+
   target.innerHTML = `
+    ${scoreHtml}
     ${schools.length > 0 ? `
     <div class="compare-radar-wrap">
       <div class="compare-radar-head">
@@ -1981,7 +2222,12 @@ function showSchool(viewId) {
   if (viewId === "schools" || viewId === "d4-1") {
     hideAll();
     schools.classList.remove("hidden");
-    schools.innerHTML = renderSchoolsDirectory();
+    // Visa hero section: banner riêng cho từng loại visa + so sánh + quiz + flowchart
+    var visaHtml = '';
+    if (typeof window.renderVisaSection === 'function') {
+      visaHtml = window.renderVisaSection(currentVisaType);
+    }
+    schools.innerHTML = visaHtml + renderSchoolsDirectory();
     bindSchoolsDirectory(schools);
     return;
   }

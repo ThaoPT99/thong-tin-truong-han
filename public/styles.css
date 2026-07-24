@@ -1684,12 +1684,236 @@ body {
 .compare-radar-canvas-wrap canvas {
     width: 100% !important;
     height: 100% !important;
+}/* Dark mode support */
+
+
+
+
+
+/* ─── Weight Sliders for Compare ─── */
+.compare-weights-wrap {
+  margin-bottom: 1rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: 12px;
+  background: #fff;
+}
+.compare-weights-head {
+  margin-bottom: 0.85rem;
+}
+.compare-weights-head h3 {
+  margin: 0 0 0.2rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text, #1e293b);
+}
+.compare-weights-head p {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--text-muted, #64748b);
+  line-height: 1.4;
+}
+.compare-weights {
+  display: grid;
+  gap: 0.6rem;
+}
+.cw-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.cw-label {
+  flex: 0 0 150px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text, #1e293b);
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.cw-icon {
+  font-size: 1rem;
+}
+.cw-controls {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.cw-slider {
+  flex: 1;
+  min-width: 80px;
+  height: 6px;
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 3px;
+  background: #e2e8f0;
+  outline: none;
+  cursor: pointer;
+}
+.cw-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #2563eb;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+.cw-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+.cw-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #2563eb;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  cursor: pointer;
+}
+.cw-value {
+  flex: 0 0 45px;
+  text-align: right;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--accent, #2563eb);
+}
+.cw-total {
+  text-align: right;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted, #64748b);
+  padding-top: 0.4rem;
+  border-top: 1px dashed var(--border, #e2e8f0);
+  margin-top: 0.25rem;
+}
+.cw-total span {
+  font-weight: 800;
+  font-size: 1rem;
 }
 
-/* Dark mode support */
+/* ─── Weighted Score Cards ─── */
+.compare-score-wrap {
+  margin-bottom: 1.25rem;
+}
+.compare-score-head {
+  margin-bottom: 0.85rem;
+}
+.compare-score-head h3 {
+  margin: 0 0 0.15rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text, #1e293b);
+}
+.compare-score-cards {
+  display: grid;
+  gap: 0.75rem;
+}
+.cs-card {
+  border: 2px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 1rem 1.1rem;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.cs-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+.cs-card-top {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 0.75rem;
+}
+.cs-rank {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+.cs-name {
+  flex: 1;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text, #1e293b);
+}
+.cs-total {
+  font-size: 1.5rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+.cs-details {
+  display: grid;
+  gap: 0.4rem;
+}
+.cs-detail-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+}
+.cs-detail-icon {
+  flex: 0 0 1.2rem;
+  text-align: center;
+}
+.cs-detail-bar-wrap {
+  flex: 1;
+  min-width: 0;
+}
+.cs-detail-bar-bg {
+  height: 6px;
+  background: #e2e8f0;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.cs-detail-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+.cs-detail-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  color: var(--text-muted, #64748b);
+  margin-top: 0.15rem;
+}
+.cs-detail-pts {
+  flex: 0 0 36px;
+  text-align: right;
+  font-weight: 700;
+  font-size: 0.82rem;
+}
 
-
-
+@media (max-width: 768px) {
+  .cw-row {
+    flex-wrap: wrap;
+  }
+  .cw-label {
+    flex-basis: 100%;
+    font-size: 0.82rem;
+  }
+  .compare-weights-wrap {
+    padding: 0.75rem;
+  }
+  .cs-card {
+    padding: 0.75rem;
+  }
+  .cs-total {
+    font-size: 1.2rem;
+  }
+}
 
 /* ─── Auth Modal ─── */
 .auth-modal {

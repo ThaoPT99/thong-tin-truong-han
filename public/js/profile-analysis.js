@@ -97,6 +97,31 @@
       }
     }
 
+    // Vùng lãnh sự (Consular Region)
+    if (profile.consularRegion) {
+      if (profile.consularRegion === 'kvac_hanoi') {
+        result.strengths.push('Nộp hồ sơ tại KVAC Hà Nội — quy trình quen thuộc, thời gian xử lý 5-15 ngày làm việc.');
+        result.actions.push('Đến KVAC Hà Nội (Tầng 12, Discovery Complex, 302 Cầu Giấy, phường Cầu Giấy) trong giờ làm việc 08:00-16:30. KVAC HN đã dừng đặt lịch online từ 06/04/2026 — đến trực tiếp lấy số thứ tự.');
+        result.actions.push('Khám lao phổi tại BV Phổi Trung ương (Hoàng Hoa Thám, Hà Nội).');
+        // Nếu khu vực rủi ro + KVAC Hà Nội = cảnh báo kép
+        if (profile.region) {
+          var rl = (profile.region || '').toLowerCase();
+          var hr = ['nghe an', 'ha tinh', 'quang binh', 'thai binh', 'hai duong', 'bac giang'];
+          var inHighRisk = hr.some(function(r) { return rl.indexOf(r) !== -1; });
+          if (inHighRisk) {
+            result.risks.push('Rủi ro: Ở khu vực rủi ro cao và nộp tại KVAC Hà Nội — hồ sơ sẽ bị soi kỹ. Cần chuẩn bị tài chính thật vững.');
+          }
+        }
+      } else if (profile.consularRegion === 'lsq_hcm') {
+        result.strengths.push('Nộp hồ sơ tại LSQ Hàn Quốc TP.HCM — tỉ lệ đậu visa thường cao hơn KVAC Hà Nội.');
+        result.actions.push('Đặt lịch hẹn LSQ TP.HCM (địa chỉ: 107 Nguyễn Du, Quận 1).');
+        result.actions.push('Khám lao phổi tại một trong các bệnh viện: BV Chợ Rẫy, BV Phạm Ngọc Thạch hoặc BV Thống Nhất (TP.HCM).');
+      }
+    } else {
+      result.missingEvidence.push('Chưa chọn vùng lãnh sự (KVAC Hà Nội / LSQ TP.HCM).');
+      result.actions.push('Chọn vùng lãnh sự phù hợp với nơi cư trú: KVAC Hà Nội (từ Huế trở ra) hoặc LSQ TP.HCM (miền Nam).');
+    }
+
     return result;
   }
 
@@ -243,6 +268,39 @@
     } else {
       result.missingEvidence.push('Chưa khai báo số tiền sổ tiết kiệm.');
       result.actions.push('Cần mở sổ tiết kiệm tối thiểu ' + minSavings.toLocaleString() + ' USD — nên duy trì ít nhất 3 tháng trước khi nộp hồ sơ.');
+    }
+
+    // Tương quan thu nhập vs sổ tiết kiệm
+    var monthlyIncome = profile.monthlyIncome || 0;
+    if (savings > 0 && monthlyIncome > 0) {
+      var incomeRatio = savings / monthlyIncome;
+      if (incomeRatio > 24) {
+        result.weaknesses.push('Sổ tiết kiệm gấp ' + Math.round(incomeRatio) + ' tháng thu nhập (' + monthlyIncome.toLocaleString() + ' USD/tháng) — tỉ lệ bất thường, cần giải trình nguồn gốc rõ ràng.');
+        result.risks.push('Rủi ro: Sổ tiết kiệm quá lớn so với thu nhập, ĐSQ sẽ nghi ngờ tiền đi mượn.');
+        result.actions.push('Cần giải trình nguồn gốc: tích luỹ nhiều năm, bán tài sản, thừa kế hoặc hỗ trợ từ người thân — phải có giấy tờ chứng minh.');
+      } else if (incomeRatio > 12) {
+        result.weaknesses.push('Sổ tiết kiệm gấp ' + Math.round(incomeRatio) + ' tháng thu nhập — hơi cao, nên chuẩn bị giải trình nguồn gốc.');
+        result.actions.push('Chuẩn bị giải trình tích luỹ hoặc giấy tờ bán tài sản/thừa kế nếu có.');
+      } else {
+        result.strengths.push('Sổ tiết kiệm tương xứng với thu nhập (' + Math.round(incomeRatio) + ' tháng lương) — tài chính hợp lý, dễ giải trình.');
+      }
+    } else if (savings > 0 && monthlyIncome <= 0) {
+      result.missingEvidence.push('Chưa khai báo thu nhập hàng tháng — không thể đánh giá tương quan với sổ tiết kiệm.');
+      result.actions.push('Khai báo thu nhập gia đình để hệ thống kiểm tra tương quan tài chính.');
+    }
+
+    // Sổ tiết kiệm thời gian duy trì
+    if (profile.savingsDurationMonths !== null && profile.savingsDurationMonths !== undefined) {
+      if (profile.savingsDurationMonths >= 6) {
+        result.strengths.push('Sổ tiết kiệm đã duy trì ' + profile.savingsDurationMonths + ' tháng — thời gian đủ dài, tạo độ tin cậy.');
+      } else if (profile.savingsDurationMonths >= 3) {
+        result.weaknesses.push('Sổ tiết kiệm mới duy trì ' + profile.savingsDurationMonths + ' tháng — đạt mức tối thiểu nhưng chưa lý tưởng. Nên giữ thêm nếu có thời gian.');
+        result.actions.push('Nếu còn thời gian, giữ sổ thêm 1-3 tháng nữa trước khi nộp để tăng độ tin cậy.');
+      } else if (profile.savingsDurationMonths > 0) {
+        result.weaknesses.push('Sổ tiết kiệm mới chỉ duy trì ' + profile.savingsDurationMonths + ' tháng — rủi ro bị ĐSQ nghi ngờ tiền "nóng".');
+        result.risks.push('Rủi ro: Sổ tiết kiệm mới mở < 3 tháng là dấu hiệu của "tiền đi mượn" hoặc "nạp sốc".');
+        result.actions.push('Tuyệt đối không nộp sổ mới mở < 3 tháng. Nên chờ ít nhất 3 tháng hoặc dùng kỹ thuật built-up.');
+      }
     }
 
     // Người bảo lãnh
