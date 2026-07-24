@@ -21,8 +21,8 @@ window.CHECKLIST_DATA = {
         items: [
           {
             id: 'A1-1',
-            name: 'Đơn xin visa mẫu KSD0-2014',
-            description: 'Tải mẫu từ website ĐSQ/LSQ Hàn Quốc, điền đầy đủ thông tin.',
+            name: 'Đơn xin visa (e-Form trực tuyến)',
+            description: 'Điền đơn xin visa trực tuyến qua hệ thống e-Form trên website KVAC (visaforkorea-vt.com), sau đó in ra và nộp kèm hồ sơ. Lưu ý: chỉ được điền bằng tiếng Hàn hoặc tiếng Anh (từ 13/04/2025).',
             documentType: 'visa_application_form',
             required: true,
             rule: null // Luôn hiển thị
@@ -195,7 +195,7 @@ window.CHECKLIST_DATA = {
           {
             id: 'A4-1',
             name: 'Sổ tiết kiệm',
-            description: 'Tối thiểu 10,000 USD (~250 triệu VND). Gửi kỳ hạn 12 tháng, mở trước 3-6 tháng (khuyến nghị: 6 tháng). Chỉ chấp nhận sổ mở tại quầy giao dịch, không chấp nhận sổ online.',
+            description: 'Tối thiểu 10,000 USD (~250 triệu VND). Gửi kỳ hạn 6-12 tháng, mở trước 3-6 tháng (khuyến nghị: 6 tháng). Chỉ chấp nhận sổ mở tại quầy giao dịch, không chấp nhận sổ online.',
             documentType: 'savings_book',
             required: true,
             rule: null,
@@ -367,7 +367,7 @@ window.CHECKLIST_DATA = {
           {
             id: 'A6-3',
             name: 'Bảo hiểm du học',
-            description: 'Mua bảo hiểm du học Hàn Quốc (bắt buộc khi nộp visa).',
+            description: 'Bảo hiểm du học là yêu cầu bắt buộc — có thể mua trước khi nộp visa hoặc theo hướng dẫn của trường. Kiểm tra với trường vì một số trường cung cấp bảo hiểm riêng.',
             documentType: 'insurance',
             required: true,
             rule: null
@@ -637,6 +637,15 @@ window.CHECKLIST_DATA = {
             required: false,
             rule: { has_topik: { neq: true }, korean_level: { neq: 'none' } },
             recommended: true
+          },
+          {
+            id: 'RISK-10',
+            name: 'Giải trình độ tuổi (trên 28 tuổi)',
+            description: 'Nếu bạn trên 28 tuổi, ĐSQ sẽ xem xét kỹ hơn về mục đích du học. Cần giải trình rõ: lý do chọn du học muộn, kế hoạch nghề nghiệp sau khi về nước, cam kết không ở lại bất hợp pháp. Nên bổ sung chứng chỉ hành nghề, kinh nghiệm làm việc để chứng minh ràng buộc với Việt Nam.',
+            documentType: 'age_explanation',
+            required: true,
+            hasAiAssist: true,
+            rule: { age: { gt: 28 } }
           }
         ]
       }
@@ -657,7 +666,7 @@ window.CHECKLIST_DATA = {
         icon: '',
         required: true,
         items: [
-          { id: 'B1-1', name: 'Đơn xin visa mẫu KSD0-2014', description: 'Tải mẫu từ website ĐSQ/LSQ.', documentType: 'visa_form', required: true, rule: null },
+          { id: 'B1-1', name: 'Đơn xin visa (e-Form trực tuyến)', description: 'Điền đơn trực tuyến qua hệ thống e-Form trên website KVAC, sau đó in ra. Chỉ điền tiếng Hàn hoặc Anh.', documentType: 'visa_form', required: true, rule: null },
           { id: 'B1-2', name: 'Hộ chiếu còn hạn (6 tháng+)', description: 'Còn trang trống và hạn sử dụng >= 6 tháng.', documentType: 'passport', required: true, rule: null },
           { id: 'B1-3', name: 'Ảnh thẻ 3.5x4.5cm', description: 'Nền trắng, chụp trong 6 tháng.', documentType: 'photo', required: true, rule: null },
           { id: 'B1-4', name: 'CCCD/CMND photo', description: 'Photo rõ ràng.', documentType: 'id_card', required: true, rule: null },
@@ -701,7 +710,7 @@ window.CHECKLIST_DATA = {
         icon: '',
         required: true,
         items: [
-          { id: 'B4-1', name: 'Sổ tiết kiệm (tuỳ trường, $10,000-$20,000)', description: '~250-500 triệu VND. D-2 yêu cầu cao hơn D-4-1, nhưng tuỳ trường/khu vực. Trường vùng tỉnh có thể chỉ cần $10,000-$15,000, trường Seoul cần $18,000-$20,000. Gửi kỳ hạn 12 tháng, mở trước 3-6 tháng. Chỉ chấp nhận sổ mở tại quầy.', documentType: 'savings_book', required: true, warning: '⚠ D-2 yêu cầu tài chính cao hơn D-4-1. Mức cụ thể phụ thuộc vào trường và khu vực — xác nhận với trường trước khi mở sổ. Gửi trước 3-6 tháng.', rule: null },
+          { id: 'B4-1', name: 'Sổ tiết kiệm (tuỳ trường, $10,000-$20,000)', description: '~250-500 triệu VND. D-2 yêu cầu cao hơn D-4-1, nhưng tuỳ trường/khu vực. Trường vùng tỉnh có thể chỉ cần $10,000-$15,000, trường Seoul cần $18,000-$20,000. Gửi kỳ hạn 6-12 tháng, mở trước 3-6 tháng. Chỉ chấp nhận sổ mở tại quầy.', documentType: 'savings_book', required: true, warning: '⚠ D-2 yêu cầu tài chính cao hơn D-4-1. Mức cụ thể phụ thuộc vào trường và khu vực — xác nhận với trường trước khi mở sổ. Gửi trước 3-6 tháng.', rule: null },
           { id: 'B4-2', name: 'Xác nhận số dư + sao kê ngân hàng 3 tháng', description: 'Bản gốc, cấp trong 30 ngày. Sao kê phải thể hiện lịch sử ỔN ĐỊNH, không nạp tiền sốc trước khi lấy sao kê.', documentType: 'bank_statement', required: true, warning: '⚠ Không nạp tiền "sốc" rồi lấy sao kê ngay. Duy trì số dư ổn định 3-6 tháng!', rule: null },
           { id: 'B4-3', name: 'Giấy bảo lãnh tài chính', description: 'Nếu người bảo lãnh không phải tự thân.', documentType: 'sponsorship', required: false, rule: { sponsor_is_self: { eq: false } } },
           { id: 'B4-4', name: 'Giấy tờ chứng minh quan hệ', description: 'Quan hệ với người bảo lãnh.', documentType: 'relationship', required: false, rule: { sponsor_is_self: { eq: false } } },
@@ -732,7 +741,7 @@ window.CHECKLIST_DATA = {
           { id: 'B6-2', name: 'TB test - bệnh viện chỉ định', description: 'Bắt buộc. Nếu chưa chọn vùng: HN→BV Phổi TW, HCM→BV Chợ Rẫy/Phạm Ngọc Thạch/Thống Nhất. Giá trị 3 tháng.', documentType: 'health', required: true, warning: '⚠ Chỉ khám tại bệnh viện ĐSQ chỉ định!', rule: { consular_region: { eq: null } } },
           { id: 'B6-2-HN', name: 'TB test - KVAC Hà Nội', description: 'Khám tại BV Phổi Trung ương (464 Hoàng Hoa Thám, Ba Đình, HN). Có giá trị 3 tháng.', documentType: 'health', required: true, warning: '⚠ Chỉ khám tại BV Phổi TW!', rule: { consular_region: { eq: 'kvac_hanoi' } } },
           { id: 'B6-2-HCM', name: 'TB test - LSQ TP.HCM', description: 'Khám tại 1 trong 3 BV: Chợ Rẫy, Phạm Ngọc Thạch hoặc Thống Nhất (TP.HCM). Giá trị 3 tháng.', documentType: 'health', required: true, warning: '⚠ Chỉ khám tại BV ĐSQ chỉ định (Chợ Rẫy/Phạm Ngọc Thạch/Thống Nhất)!', rule: { consular_region: { eq: 'lsq_hcm' } } },
-          { id: 'B6-3', name: 'Bảo hiểm du học', description: 'Bắt buộc.', documentType: 'insurance', required: true, rule: null },
+          { id: 'B6-3', name: 'Bảo hiểm du học', description: 'Bảo hiểm du học bắt buộc — kiểm tra với trường vì một số trường cung cấp gói riêng.', documentType: 'insurance', required: true, rule: null },
           { id: 'B6-4', name: 'Nộp và theo dõi kết quả', description: 'Nộp hồ sơ tại cơ quan lãnh sự đã chọn, theo dõi online. Nếu chưa chọn vùng: xác định nơi nộp trước.', documentType: 'tracking', required: true, rule: { consular_region: { eq: null } } },
           { id: 'B6-4-HN', name: 'Nộp hồ sơ tại KVAC Hà Nội', description: 'Đến KVAC Hà Nội (Tầng 12, Discovery Complex, 302 Cầu Giấy, phường Cầu Giấy) trong giờ làm việc (08:00-16:30). Mang đầy đủ giấy tờ gốc + bản dịch công chứng. KVAC HN đã dừng đặt online — đến trực tiếp.', documentType: 'tracking', required: true, rule: { consular_region: { eq: 'kvac_hanoi' } } },
           { id: 'B6-4-HCM', name: 'Nộp hồ sơ tại LSQ Hàn Quốc TP.HCM', description: 'Đến LSQ Hàn Quốc tại TP.HCM (107 Nguyễn Du, Quận 1) đúng giờ hẹn. Mang đầy đủ giấy tờ gốc + bản dịch công chứng.', documentType: 'tracking', required: true, rule: { consular_region: { eq: 'lsq_hcm' } } }

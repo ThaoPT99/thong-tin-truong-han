@@ -385,6 +385,12 @@
     profile.dateOfBirth = document.getElementById('cl-dob').value;
     profile.gender = document.getElementById('cl-gender').value;
     profile.educationLevel = document.getElementById('cl-edu-level').value;
+    // Compute age from dateOfBirth
+    if (profile.dateOfBirth) {
+      var birth = new Date(profile.dateOfBirth);
+      var diff = new Date() - birth;
+      profile.age = Math.floor(diff / 31557600000);
+    }
     // D4→D2: lưu vị trí hiện tại
     const locInput = document.querySelector('input[name="cl-location"]:checked');
     if (locInput) profile.currentLocation = locInput.value;

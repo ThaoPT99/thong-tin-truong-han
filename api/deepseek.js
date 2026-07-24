@@ -60,7 +60,7 @@ async function handleAdvisor(req, res) {
 
   const profile = req.body || {};
   const { gender, age, gpa, absences, korean, visaFail, region, budget, priorities, visaType } = profile;
-  const vt = visaType || 'D2-6';
+  const vt = visaType || 'D4-1';
 
   // ─── Fetch similar past cases (Learning Agent) ───
   const similarCases = await fetchSimilarCases(profile);
@@ -70,8 +70,8 @@ async function handleAdvisor(req, res) {
   if (vt === 'D4-1') {
     schoolsQuery = schoolsQuery.eq('visa_type', 'D4-1');
   } else {
-    // D2-6 hoặc default — lấy trường D2-6
-    schoolsQuery = schoolsQuery.eq('visa_type', 'D2-6');
+    // Mặc định D4-1 nếu không chọn visa (D4-1 phổ biến hơn cho học sinh mới)
+    schoolsQuery = schoolsQuery.eq('visa_type', 'D4-1');
   }
 
   const [schoolsRes, profilesRes] = await Promise.all([
