@@ -37,8 +37,11 @@
     });
   };
 
-  function renderPage(container, articles, faqs) {
-    const activeCat = currentCategory;
+  function renderPage(container, allArticles, faqs) {
+    // Filter articles by current category
+    const filtered = currentCategory === 'all'
+      ? allArticles
+      : allArticles.filter(function(a) { return a.category === currentCategory; });
 
     container.innerHTML = `
       <section class="kb-view">
@@ -57,7 +60,7 @@
         <div class="kb-search-bar">
           <svg class="kb-search-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           <input type="text" id="kb-search" class="kb-search-input" placeholder="Tìm kiếm bài viết..." autocomplete="off">
-          <span class="kb-search-count" id="kb-result-count">${articles.length} bài viết</span>
+          <span class="kb-search-count" id="kb-result-count">${filtered.length} bài viết</span>
         </div>
 
         <!-- Tabs: Articles / FAQ -->
@@ -68,7 +71,7 @@
 
         <!-- Content -->
         <div id="kb-content">
-          ${currentView === 'articles' ? renderArticlesView(articles) : renderFaqView(faqs)}
+          ${currentView === 'articles' ? renderArticlesView(filtered) : renderFaqView(faqs)}
         </div>
 
         <!-- Article Detail (hidden by default) -->
@@ -89,7 +92,7 @@
       tab.addEventListener('click', function() {
         const cat = this.dataset.cat;
         currentCategory = cat;
-        renderPage(container, articles, faqs);
+        renderPage(container, allArticles, faqs);
       });
     });
   }
