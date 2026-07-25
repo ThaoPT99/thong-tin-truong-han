@@ -233,7 +233,16 @@
       const faqs = faqRes.faqs || [];
       const content = document.getElementById('kb-content');
       const detailEl = document.getElementById('kb-article-detail');
-      if (content) content.innerHTML = view === 'articles' ? renderArticlesView(articlesCache) : renderFaqView(faqs);
+      if (content) {
+        if (view === 'articles') {
+          var filteredView = currentCategory === 'all'
+            ? articlesCache
+            : articlesCache.filter(function(a) { return a.category === currentCategory; });
+          content.innerHTML = renderArticlesView(filteredView);
+        } else {
+          content.innerHTML = renderFaqView(faqs);
+        }
+      }
       if (detailEl) detailEl.style.display = 'none';
       // Update tabs
       container.querySelectorAll('.kb-tab').forEach(function(t) {
