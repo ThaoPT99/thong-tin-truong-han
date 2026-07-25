@@ -5,6 +5,9 @@
 
   // ─── Kiểm tra profile và tạo cảnh báo ───
   function assessRisks() {
+    // Chỉ phân tích khi đã đăng nhập
+    if (!localStorage.getItem('student_token')) return null;
+
     var profile = null;
     try {
       var raw = localStorage.getItem('checklist_data');

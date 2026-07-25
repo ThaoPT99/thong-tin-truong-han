@@ -479,6 +479,11 @@
    * @returns {Object} kết quả phân tích
    */
   window.analyzeStudentProfile = function(profile) {
+    // Chỉ phân tích khi đã đăng nhập
+    if (!localStorage.getItem('student_token')) {
+      return { error: 'Vui lòng đăng nhập để xem phân tích hồ sơ.', requireLogin: true };
+    }
+
     if (!profile || typeof profile !== 'object') {
       return { error: 'Không có hồ sơ để phân tích.' };
     }
