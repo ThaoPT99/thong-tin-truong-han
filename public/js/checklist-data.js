@@ -21,8 +21,8 @@ window.CHECKLIST_DATA = {
         items: [
           {
             id: 'A1-1',
-            name: 'Đơn xin visa mẫu KSD0-2014',
-            description: 'Tải mẫu từ website ĐSQ/LSQ Hàn Quốc, điền đầy đủ thông tin.',
+            name: 'Đơn xin visa (e-Form trực tuyến)',
+            description: 'Điền đơn xin visa trực tuyến qua hệ thống e-Form trên website KVAC (visaforkorea-vt.com), sau đó in ra và nộp kèm hồ sơ. Lưu ý: chỉ được điền bằng tiếng Hàn hoặc tiếng Anh (từ 13/04/2025).',
             documentType: 'visa_application_form',
             required: true,
             rule: null // Luôn hiển thị
@@ -101,6 +101,16 @@ window.CHECKLIST_DATA = {
             documentType: 'school_business_registration',
             required: true,
             source: 'school',
+            rule: null
+          },
+          {
+            id: 'A1-9',
+            name: 'Phiếu lý lịch tư pháp (bản điện tử qua VNeID từ 15/07/2026)',
+            description: 'Từ 15/07/2026, Việt Nam triển khai cấp Phiếu lý lịch tư pháp bản điện tử qua VNeID. Khi nộp hồ sơ visa Hàn Quốc, nếu sử dụng LLTP điện tử, cần bổ sung: (1) Ảnh chụp màn hình trang tiếp nhận hồ sơ trên VNeID, (2) Ảnh chụp màn hình chi tiết hồ sơ LLTP trên VNeID, (3) Bản in Phiếu LLTP từ VNeID. Nếu đã có bản giấy (cấp trước 15/07/2026) thì vẫn được chấp nhận.',
+            documentType: 'criminal_record',
+            required: false,
+            recommended: true,
+            warning: '⚠ LLTP điện tử qua VNeID cần bổ sung 3 giấy tờ theo yêu cầu KVAC. Thiếu sẽ không được chấp nhận!',
             rule: null
           }
         ]
@@ -195,7 +205,7 @@ window.CHECKLIST_DATA = {
           {
             id: 'A4-1',
             name: 'Sổ tiết kiệm',
-            description: 'Tối thiểu 10,000 USD (~250 triệu VND). Gửi kỳ hạn 12 tháng, mở trước 3-6 tháng (khuyến nghị: 6 tháng). Chỉ chấp nhận sổ mở tại quầy giao dịch, không chấp nhận sổ online.',
+            description: 'Tối thiểu 10,000 USD (~250 triệu VND, tương đương 10,000,000 KRW cho khu vực Seoul). Gửi kỳ hạn 6-12 tháng, mở trước 3-6 tháng (khuyến nghị: 6 tháng). Chỉ chấp nhận sổ mở tại quầy giao dịch, không chấp nhận sổ online.',
             documentType: 'savings_book',
             required: true,
             rule: null,
@@ -322,7 +332,7 @@ window.CHECKLIST_DATA = {
           {
             id: 'A6-1-HN',
             name: 'Nộp hồ sơ tại KVAC Hà Nội',
-            description: 'KVAC Hà Nội ĐÃ DỪNG đặt lịch online từ 06/04/2026. Đến trực tiếp KVAC (Tầng 12, Discovery Complex, 302 Cầu Giấy, phường Cầu Giấy) trong giờ làm việc (08:00-16:30) để lấy số thứ tự. Nên đến sau 10h sáng để đỡ đông.',
+            description: 'KVAC Hà Nội ĐÃ DỪNG đặt lịch online từ 06/04/2026. Đến trực tiếp KVAC (Tầng 12, Discovery Complex, 302 Cầu Giấy, phường Cầu Giấy) trong giờ làm việc (08:00-16:30) để lấy số thứ tự. Nên đến sau 10h sáng để đỡ đông. Có thể đặt lịch qua app visaforkorea trên CH Play (Android) hoặc App Store (iOS). Nếu không muốn xếp hàng, có thể sử dụng dịch vụ phòng chờ cao cấp (390,000 VND), đăng ký trực tiếp tại quầy thông tin.',
             documentType: 'kvac_booking',
             required: true,
             rule: { consular_region: { eq: 'kvac_hanoi' } },
@@ -367,7 +377,7 @@ window.CHECKLIST_DATA = {
           {
             id: 'A6-3',
             name: 'Bảo hiểm du học',
-            description: 'Mua bảo hiểm du học Hàn Quốc (bắt buộc khi nộp visa).',
+            description: 'Bảo hiểm du học là yêu cầu bắt buộc — có thể mua trước khi nộp visa hoặc theo hướng dẫn của trường. Kiểm tra với trường vì một số trường cung cấp bảo hiểm riêng.',
             documentType: 'insurance',
             required: true,
             rule: null
@@ -399,9 +409,18 @@ window.CHECKLIST_DATA = {
           {
             id: 'A6-5',
             name: 'Theo dõi kết quả visa',
-            description: 'Thời gian xử lý 5-20 ngày làm việc. Kiểm tra trạng thái online.',
+            description: 'Thời gian xử lý 5-20 ngày làm việc. Kiểm tra trạng thái online qua website KVAC hoặc app visaforkorea.',
             documentType: 'result_tracking',
             required: true,
+            rule: null
+          },
+          {
+            id: 'A6-6',
+            name: 'Dịch vụ phòng chờ cao cấp KVAC (không bắt buộc)',
+            description: 'KVAC Hà Nội cung cấp dịch vụ phòng chờ cao cấp (390,000 VND/bộ hồ sơ) — nhân viên KVAC xử lý toàn bộ quy trình, không cần xếp hàng lấy số. Giờ hoạt động: Sáng 8:00-11:30, Chiều 13:30-16:30. Đăng ký trực tiếp tại quầy thông tin KVAC (không đặt qua tổng đài/email). Lưu ý: phí dịch vụ này TÁCH RỜI với phí visa và phí dịch vụ trung tâm tiêu chuẩn.',
+            documentType: 'kvac_vip',
+            required: false,
+            recommended: false,
             rule: null
           }
         ]
@@ -481,8 +500,8 @@ window.CHECKLIST_DATA = {
           },
           {
             id: 'ALERT-9',
-            name: ' Hợp pháp hóa lãnh sự bắt buộc (trước 11/09/2026)',
-            description: 'Giấy tờ Việt Nam dùng cho Hàn Quốc cần 3 bước: (1) Công chứng tại Phòng Công chứng, (2) Chứng nhận tại Sở Tư pháp/Bộ Ngoại giao, (3) Hợp pháp hóa tại ĐSQ Hàn Quốc. Từ 11/09/2026, Việt Nam tham gia Công ước Apostille, quy trình sẽ đơn giản hơn.',
+            name: ' Hợp pháp hóa lãnh sự / Apostille',
+            description: 'QUAN TRỌNG: Giấy tờ Việt Nam dùng cho Hàn Quốc cần chứng nhận hợp pháp hóa. ● TRƯỚC 11/09/2026: (1) Công chứng tại Phòng Công chứng → (2) Chứng nhận tại Sở Tư pháp/Bộ Ngoại giao → (3) Hợp pháp hóa tại ĐSQ Hàn Quốc (Hà Nội) hoặc LSQ (TP.HCM). ● TỪ 11/09/2026: Việt Nam chính thức áp dụng Công ước Apostille. Do Hàn Quốc cũng là thành viên, quy trình rút gọn: (1) Công chứng tại Phòng Công chứng → (2) Xin tem Apostille tại Cục Lãnh sự (Hà Nội) hoặc Sở Ngoại vụ (TP.HCM) — KHÔNG cần qua ĐSQ/LSQ Hàn Quốc nữa. Tiết kiệm 5-10 ngày làm việc.',
             documentType: 'general_warning',
             required: true,
             rule: null
@@ -524,25 +543,49 @@ window.CHECKLIST_DATA = {
           },
           {
             id: 'A7-4',
-            name: 'Hợp pháp hóa lãnh sự tại ĐSQ/LSQ Hàn Quốc',
-            description: 'Bước CUỐI CÙNG: sau khi có dấu của Bộ Ngoại giao, mang đến ĐSQ Hàn Quốc (Hà Nội) hoặc LSQ (TP.HCM). Từ 11/09/2026: có thể thay Apostille. Thời gian: 3-5 ngày.',
+            name: 'Hợp pháp hóa lãnh sự tại ĐSQ/LSQ Hàn Quốc (áp dụng đến 10/09/2026)',
+            description: 'Bước này chỉ cần thiết nếu bạn nộp hồ sơ TRƯỚC ngày 11/09/2026. Sau khi có dấu của Bộ Ngoại giao, mang đến ĐSQ Hàn Quốc (Hà Nội) hoặc LSQ (TP.HCM). Thời gian: 3-5 ngày. Lưu ý: sau ngày 11/09/2026, bước này được thay thế hoàn toàn bằng tem Apostille (xem A7-5).',
             documentType: 'consular_legalization',
             required: true,
             rule: { consular_region: { eq: null } }
           },
           {
             id: 'A7-4-HN',
-            name: 'Hợp pháp hóa lãnh sự tại ĐSQ Hàn Quốc (Hà Nội)',
-            description: 'Mang giấy tờ đã có dấu của Bộ Ngoại giao đến Đại sứ quán Hàn Quốc tại Hà Nội. Thời gian: 3-5 ngày làm việc. Từ 11/09/2026: thay thế bằng Apostille.',
+            name: 'Hợp pháp hóa lãnh sự tại ĐSQ Hàn Quốc (Hà Nội, đến 10/09/2026)',
+            description: 'Mang giấy tờ đã có dấu của Bộ Ngoại giao đến Đại sứ quán Hàn Quốc tại Hà Nội. Thời gian: 3-5 ngày làm việc. Chỉ áp dụng cho hồ sơ nộp trước 11/09/2026 — sau ngày này dùng Apostille (xem A7-5).',
             documentType: 'consular_legalization',
             required: true,
             rule: { consular_region: { eq: 'kvac_hanoi' } }
           },
           {
             id: 'A7-4-HCM',
-            name: 'Hợp pháp hóa lãnh sự tại LSQ Hàn Quốc (TP.HCM)',
-            description: 'Mang giấy tờ đã có dấu của Bộ Ngoại giao đến Lãnh sự quán Hàn Quốc tại TP.HCM (107 Nguyễn Du, Quận 1). Thời gian: 3-5 ngày. Từ 11/09/2026: thay thế bằng Apostille.',
+            name: 'Hợp pháp hóa lãnh sự tại LSQ Hàn Quốc (TP.HCM, đến 10/09/2026)',
+            description: 'Mang giấy tờ đã có dấu của Bộ Ngoại giao đến Lãnh sự quán Hàn Quốc tại TP.HCM (107 Nguyễn Du, Quận 1). Thời gian: 3-5 ngày. Chỉ áp dụng cho hồ sơ nộp trước 11/09/2026 — sau ngày này dùng Apostille (xem A7-5).',
             documentType: 'consular_legalization',
+            required: true,
+            rule: { consular_region: { eq: 'lsq_hcm' } }
+          },
+          {
+            id: 'A7-5',
+            name: 'Xin tem Apostille tại Cục Lãnh sự / Sở Ngoại vụ (từ 11/09/2026)',
+            description: 'QUY TRÌNH MỚI từ 11/09/2026: Sau khi công chứng giấy tờ tại Phòng Công chứng, mang đến Cục Lãnh sự - Bộ Ngoại giao (Hà Nội, địa chỉ: 44 Tràng Thi, Hoàn Kiếm) hoặc Sở Ngoại vụ TP.HCM (địa chỉ: 6 Alexander De Rhodes, Quận 1) để xin đóng tem Apostille. KHÔNG cần mang sang ĐSQ/LSQ Hàn Quốc nữa vì Hàn Quốc là thành viên Công ước Apostille. Thời gian: 1-3 ngày làm việc.',
+            documentType: 'apostille',
+            required: true,
+            rule: null
+          },
+          {
+            id: 'A7-5-HN',
+            name: 'Xin tem Apostille tại Cục Lãnh sự (Hà Nội) - từ 11/09/2026',
+            description: 'Đến Cục Lãnh sự - Bộ Ngoại giao Việt Nam (44 Tràng Thi, Hoàn Kiếm, Hà Nội) để xin đóng tem Apostille cho giấy tờ. Mang theo: bản gốc + bản dịch đã công chứng. Thời gian: 1-3 ngày làm việc. KHÔNG cần qua ĐSQ Hàn Quốc.',
+            documentType: 'apostille',
+            required: true,
+            rule: { consular_region: { eq: 'kvac_hanoi' } }
+          },
+          {
+            id: 'A7-5-HCM',
+            name: 'Xin tem Apostille tại Sở Ngoại vụ (TP.HCM) - từ 11/09/2026',
+            description: 'Đến Sở Ngoại vụ TP.HCM (6 Alexander De Rhodes, Quận 1, TP.HCM) để xin đóng tem Apostille cho giấy tờ. Mang theo: bản gốc + bản dịch đã công chứng. Thời gian: 1-3 ngày làm việc. KHÔNG cần qua LSQ Hàn Quốc.',
+            documentType: 'apostille',
             required: true,
             rule: { consular_region: { eq: 'lsq_hcm' } }
           }
@@ -637,6 +680,15 @@ window.CHECKLIST_DATA = {
             required: false,
             rule: { has_topik: { neq: true }, korean_level: { neq: 'none' } },
             recommended: true
+          },
+          {
+            id: 'RISK-10',
+            name: 'Giải trình độ tuổi (trên 28 tuổi)',
+            description: 'Nếu bạn trên 28 tuổi, ĐSQ sẽ xem xét kỹ hơn về mục đích du học. Cần giải trình rõ: lý do chọn du học muộn, kế hoạch nghề nghiệp sau khi về nước, cam kết không ở lại bất hợp pháp. Nên bổ sung chứng chỉ hành nghề, kinh nghiệm làm việc để chứng minh ràng buộc với Việt Nam.',
+            documentType: 'age_explanation',
+            required: true,
+            hasAiAssist: true,
+            rule: { age: { gt: 28 } }
           }
         ]
       }
@@ -657,7 +709,7 @@ window.CHECKLIST_DATA = {
         icon: '',
         required: true,
         items: [
-          { id: 'B1-1', name: 'Đơn xin visa mẫu KSD0-2014', description: 'Tải mẫu từ website ĐSQ/LSQ.', documentType: 'visa_form', required: true, rule: null },
+          { id: 'B1-1', name: 'Đơn xin visa (e-Form trực tuyến)', description: 'Điền đơn trực tuyến qua hệ thống e-Form trên website KVAC, sau đó in ra. Chỉ điền tiếng Hàn hoặc Anh.', documentType: 'visa_form', required: true, rule: null },
           { id: 'B1-2', name: 'Hộ chiếu còn hạn (6 tháng+)', description: 'Còn trang trống và hạn sử dụng >= 6 tháng.', documentType: 'passport', required: true, rule: null },
           { id: 'B1-3', name: 'Ảnh thẻ 3.5x4.5cm', description: 'Nền trắng, chụp trong 6 tháng.', documentType: 'photo', required: true, rule: null },
           { id: 'B1-4', name: 'CCCD/CMND photo', description: 'Photo rõ ràng.', documentType: 'id_card', required: true, rule: null },
@@ -701,7 +753,7 @@ window.CHECKLIST_DATA = {
         icon: '',
         required: true,
         items: [
-          { id: 'B4-1', name: 'Sổ tiết kiệm (tuỳ trường, $10,000-$20,000)', description: '~250-500 triệu VND. D-2 yêu cầu cao hơn D-4-1, nhưng tuỳ trường/khu vực. Trường vùng tỉnh có thể chỉ cần $10,000-$15,000, trường Seoul cần $18,000-$20,000. Gửi kỳ hạn 12 tháng, mở trước 3-6 tháng. Chỉ chấp nhận sổ mở tại quầy.', documentType: 'savings_book', required: true, warning: '⚠ D-2 yêu cầu tài chính cao hơn D-4-1. Mức cụ thể phụ thuộc vào trường và khu vực — xác nhận với trường trước khi mở sổ. Gửi trước 3-6 tháng.', rule: null },
+          { id: 'B4-1', name: 'Sổ tiết kiệm (tuỳ trường, $10,000-$20,000)', description: '~250-500 triệu VND. D-2 yêu cầu cao hơn D-4-1, nhưng tuỳ trường/khu vực. Trường vùng tỉnh có thể chỉ cần $10,000-$15,000, trường Seoul cần $18,000-$20,000. Gửi kỳ hạn 6-12 tháng, mở trước 3-6 tháng. Chỉ chấp nhận sổ mở tại quầy.', documentType: 'savings_book', required: true, warning: '⚠ D-2 yêu cầu tài chính cao hơn D-4-1. Mức cụ thể phụ thuộc vào trường và khu vực — xác nhận với trường trước khi mở sổ. Gửi trước 3-6 tháng.', rule: null },
           { id: 'B4-2', name: 'Xác nhận số dư + sao kê ngân hàng 3 tháng', description: 'Bản gốc, cấp trong 30 ngày. Sao kê phải thể hiện lịch sử ỔN ĐỊNH, không nạp tiền sốc trước khi lấy sao kê.', documentType: 'bank_statement', required: true, warning: '⚠ Không nạp tiền "sốc" rồi lấy sao kê ngay. Duy trì số dư ổn định 3-6 tháng!', rule: null },
           { id: 'B4-3', name: 'Giấy bảo lãnh tài chính', description: 'Nếu người bảo lãnh không phải tự thân.', documentType: 'sponsorship', required: false, rule: { sponsor_is_self: { eq: false } } },
           { id: 'B4-4', name: 'Giấy tờ chứng minh quan hệ', description: 'Quan hệ với người bảo lãnh.', documentType: 'relationship', required: false, rule: { sponsor_is_self: { eq: false } } },
@@ -732,7 +784,7 @@ window.CHECKLIST_DATA = {
           { id: 'B6-2', name: 'TB test - bệnh viện chỉ định', description: 'Bắt buộc. Nếu chưa chọn vùng: HN→BV Phổi TW, HCM→BV Chợ Rẫy/Phạm Ngọc Thạch/Thống Nhất. Giá trị 3 tháng.', documentType: 'health', required: true, warning: '⚠ Chỉ khám tại bệnh viện ĐSQ chỉ định!', rule: { consular_region: { eq: null } } },
           { id: 'B6-2-HN', name: 'TB test - KVAC Hà Nội', description: 'Khám tại BV Phổi Trung ương (464 Hoàng Hoa Thám, Ba Đình, HN). Có giá trị 3 tháng.', documentType: 'health', required: true, warning: '⚠ Chỉ khám tại BV Phổi TW!', rule: { consular_region: { eq: 'kvac_hanoi' } } },
           { id: 'B6-2-HCM', name: 'TB test - LSQ TP.HCM', description: 'Khám tại 1 trong 3 BV: Chợ Rẫy, Phạm Ngọc Thạch hoặc Thống Nhất (TP.HCM). Giá trị 3 tháng.', documentType: 'health', required: true, warning: '⚠ Chỉ khám tại BV ĐSQ chỉ định (Chợ Rẫy/Phạm Ngọc Thạch/Thống Nhất)!', rule: { consular_region: { eq: 'lsq_hcm' } } },
-          { id: 'B6-3', name: 'Bảo hiểm du học', description: 'Bắt buộc.', documentType: 'insurance', required: true, rule: null },
+          { id: 'B6-3', name: 'Bảo hiểm du học', description: 'Bảo hiểm du học bắt buộc — kiểm tra với trường vì một số trường cung cấp gói riêng.', documentType: 'insurance', required: true, rule: null },
           { id: 'B6-4', name: 'Nộp và theo dõi kết quả', description: 'Nộp hồ sơ tại cơ quan lãnh sự đã chọn, theo dõi online. Nếu chưa chọn vùng: xác định nơi nộp trước.', documentType: 'tracking', required: true, rule: { consular_region: { eq: null } } },
           { id: 'B6-4-HN', name: 'Nộp hồ sơ tại KVAC Hà Nội', description: 'Đến KVAC Hà Nội (Tầng 12, Discovery Complex, 302 Cầu Giấy, phường Cầu Giấy) trong giờ làm việc (08:00-16:30). Mang đầy đủ giấy tờ gốc + bản dịch công chứng. KVAC HN đã dừng đặt online — đến trực tiếp.', documentType: 'tracking', required: true, rule: { consular_region: { eq: 'kvac_hanoi' } } },
           { id: 'B6-4-HCM', name: 'Nộp hồ sơ tại LSQ Hàn Quốc TP.HCM', description: 'Đến LSQ Hàn Quốc tại TP.HCM (107 Nguyễn Du, Quận 1) đúng giờ hẹn. Mang đầy đủ giấy tờ gốc + bản dịch công chứng.', documentType: 'tracking', required: true, rule: { consular_region: { eq: 'lsq_hcm' } } }
@@ -752,7 +804,7 @@ window.CHECKLIST_DATA = {
           { id: 'ALERT-D2-4', name: ' Tính xác thực', description: 'Giả mạo giấy tờ sẽ bị cấm nhập cảnh Hàn Quốc. Mọi giấy tờ đều được xác minh.', documentType: 'general_warning', required: true, rule: null },
           { id: 'ALERT-D2-5', name: ' Giấy tờ phải nhất quán', description: 'Tên trên tất cả giấy tờ phải GIỐNG NHAU tuyệt đối. Sai 1 ký tự = từ chối.', documentType: 'general_warning', required: true, rule: null },
           { id: 'ALERT-D2-6', name: ' Study Plan phải cá nhân hóa', description: 'Không viết chung chung. Chỉ rõ mục tiêu, lý do chọn trường, kế hoạch tương lai.', documentType: 'general_warning', required: true, rule: null },
-          { id: 'ALERT-D2-7', name: ' Hợp pháp hóa lãnh sự (trước 11/09/2026)', description: 'Bắt buộc 3 bước: Công chứng → Bộ Ngoại giao → ĐSQ Hàn. Từ 11/09/2026: Apostille.', documentType: 'general_warning', required: true, rule: null }
+          { id: 'ALERT-D2-7', name: ' Hợp pháp hóa lãnh sự / Apostille', description: 'QUAN TRỌNG: Giấy tờ Việt Nam cần chứng nhận. ● TRƯỚC 11/09/2026: Công chứng → Bộ Ngoại giao → ĐSQ Hàn (3 bước). ● TỪ 11/09/2026: Chỉ cần Công chứng → Xin tem Apostille tại Cục Lãnh sự/Sở Ngoại vụ (KHÔNG cần qua ĐSQ Hàn vì Hàn Quốc là thành viên Công ước Apostille).', documentType: 'general_warning', required: true, rule: null }
         ]
       },
       // Module: Dịch thuật, Công chứng & Hợp pháp hóa D-2
@@ -765,9 +817,10 @@ window.CHECKLIST_DATA = {
           { id: 'B7-1', name: 'Dịch thuật tất cả giấy tờ sang tiếng Hàn/Anh', description: 'Bằng cấp, học bạ, sổ TK, giấy khai sinh, sổ hộ khẩu... Dịch tại Phòng Công chứng.', documentType: 'translate_all', required: true, rule: null },
           { id: 'B7-2', name: 'Công chứng bản dịch', description: 'Mang bản gốc + bản dịch đến Phòng Công chứng Nhà nước để công chứng.', documentType: 'notarize_translation', required: true, rule: null },
           { id: 'B7-3', name: 'Chứng nhận tại Bộ Ngoại giao (MOFA)', description: 'Sau công chứng → Sở Tư pháp hoặc Cục Lãnh sự để chứng nhận. 1-3 ngày.', documentType: 'mofa_certification', required: true, rule: null },
-          { id: 'B7-4', name: 'Hợp pháp hóa tại ĐSQ/LSQ Hàn Quốc', description: 'Bước cuối cùng. Từ 11/09/2026: thay bằng Apostille. 3-5 ngày.', documentType: 'consular_legalization', required: true, rule: { consular_region: { eq: null } } },
-          { id: 'B7-4-HN', name: 'Hợp pháp hóa tại ĐSQ Hàn Quốc (Hà Nội)', description: 'Mang giấy tờ đã có dấu Bộ Ngoại giao đến ĐSQ Hàn Quốc tại Hà Nội. 3-5 ngày. Từ 11/09/2026: Apostille.', documentType: 'consular_legalization', required: true, rule: { consular_region: { eq: 'kvac_hanoi' } } },
-          { id: 'B7-4-HCM', name: 'Hợp pháp hóa tại LSQ Hàn Quốc (TP.HCM)', description: 'Mang giấy tờ đã có dấu Bộ Ngoại giao đến LSQ Hàn Quốc tại TP.HCM (107 Nguyễn Du, Quận 1). 3-5 ngày. Từ 11/09/2026: Apostille.', documentType: 'consular_legalization', required: true, rule: { consular_region: { eq: 'lsq_hcm' } } }
+          { id: 'B7-4', name: 'Hợp pháp hóa tại ĐSQ/LSQ Hàn Quốc (đến 10/09/2026)', description: 'Chỉ cần nếu nộp hồ sơ trước 11/09/2026: Sau khi có dấu Bộ Ngoại giao, mang đến ĐSQ Hàn (Hà Nội) hoặc LSQ (TP.HCM). 3-5 ngày. Sau 11/09: dùng Apostille (B7-5).', documentType: 'consular_legalization', required: true, rule: { consular_region: { eq: null } } },
+          { id: 'B7-4-HN', name: 'Hợp pháp hóa tại ĐSQ Hàn Quốc (Hà Nội, đến 10/09/2026)', description: 'Mang giấy tờ đã có dấu Bộ Ngoại giao đến ĐSQ Hàn Quốc tại Hà Nội. Áp dụng đến 10/09/2026. Sau đó dùng Apostille (B7-5).', documentType: 'consular_legalization', required: true, rule: { consular_region: { eq: 'kvac_hanoi' } } },
+          { id: 'B7-4-HCM', name: 'Hợp pháp hóa tại LSQ Hàn Quốc (TP.HCM, đến 10/09/2026)', description: 'Mang giấy tờ đã có dấu Bộ Ngoại giao đến LSQ Hàn Quốc tại TP.HCM (107 Nguyễn Du, Quận 1). Áp dụng đến 10/09/2026. Sau đó dùng Apostille (B7-5).', documentType: 'consular_legalization', required: true, rule: { consular_region: { eq: 'lsq_hcm' } } },
+          { id: 'B7-5', name: 'Xin tem Apostille tại Cục Lãnh sự/Sở Ngoại vụ (từ 11/09/2026)', description: 'QUY TRÌNH MỚI: Sau công chứng, đến Cục Lãnh sự (Hà Nội, 44 Tràng Thi) hoặc Sở Ngoại vụ (TP.HCM, 6 Alexander De Rhodes) xin tem Apostille. KHÔNG cần qua ĐSQ Hàn. 1-3 ngày.', documentType: 'apostille', required: true, rule: null }
         ]
       },
       // Module rủi ro đặc thù D-2
@@ -1331,7 +1384,7 @@ window.CHECKLIST_DATA = {
           {
             id: 'C7-4',
             name: 'Hợp pháp hóa lãnh sự (ĐSQ Hàn Quốc tại Việt Nam hoặc tại Hàn)',
-            description: 'Giấy tờ mới từ Việt Nam cần hợp pháp hóa. Có thể làm tại ĐSQ Hàn tại VN hoặc tại Hàn Quốc qua ĐSQ VN tại Hàn. Từ 11/09/2026: Apostille thay thế.',
+            description: 'Giấy tờ mới từ Việt Nam cần hợp pháp hóa. ● TRƯỚC 11/09/2026: làm tại ĐSQ Hàn tại VN hoặc tại Hàn Quốc qua ĐSQ VN tại Hàn. ● TỪ 11/09/2026: Xin tem Apostille tại Việt Nam (Cục Lãnh sự/Sở Ngoại vụ) — do Hàn Quốc là thành viên Công ước Apostille, tem Apostille được công nhận trực tiếp tại Hàn, không cần làm thêm thủ tục nào tại Hàn.',
             documentType: 'consular_legalization',
             required: false,
             rule: null

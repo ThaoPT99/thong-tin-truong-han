@@ -1161,7 +1161,7 @@
             <li><span class="fg-tag fg-tag-red">Không</span> dùng sổ tiết kiệm online — ĐSQ chỉ chấp nhận sổ mở tại quầy giao dịch</li>
             <li><span class="fg-tag fg-tag-red">Không</span> nạp tiền "sốc" 1 lần rồi đi nộp hồ sơ ngay — sẽ bị từ chối</li>
             <li><span class="fg-tag fg-tag-green">Nên</span> mở sổ tiết kiệm <strong>trước 3-6 tháng</strong> — càng sớm càng tốt</li>
-            <li><span class="fg-tag fg-tag-green">Nên</span> giữ sổ tiết kiệm kỳ hạn 12 tháng (hoặc tối thiểu 6 tháng)</li>
+            <li><span class="fg-tag fg-tag-green">Nên</span> giữ sổ tiết kiệm kỳ hạn 6-12 tháng (tối thiểu 6 tháng, lý tưởng 12 tháng)</li>
             <li><span class="fg-tag fg-tag-blue">Sổ tiết kiệm + xác nhận số dư</span> phải cấp trong vòng 30 ngày trước khi nộp</li>
             <li><span class="fg-tag fg-tag-blue">Tất cả giấy tờ tài chính</span> cần dịch công chứng sang tiếng Hàn hoặc Anh</li>
             <li><strong>D-2:</strong> Cần sổ tiết kiệm <strong>18,000-20,000 USD</strong> (~450-500 triệu VND)</li>

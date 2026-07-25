@@ -4,7 +4,8 @@ const PRIORITY_LABELS = {
   job: "việc làm thêm",
   e7: "dễ chuyển E7",
   prestige: "trường uy tín",
-  "low-study": "học ít"
+  "low-study": "học ít",
+  language: "môi trường học tiếng tốt"
 };
 
 /** Parse nhanh ho so tu text: "nu, 20t, GPA 6.0, topik 2" */
@@ -75,6 +76,7 @@ function renderAdvisorApp(container) {
       const sel = container.querySelector('#advisor-visa-type');
       if (sel) sel.value = savedVisa;
       updateAdvisorKicker(container, savedVisa);
+      updateAdvisorPriorities(container, savedVisa);
     }
   }
 }
@@ -179,14 +181,17 @@ function getAdvisorTemplate() {
           </label>
         </div>
 
-        <fieldset class="advisor-priorities">
+        <fieldset class="advisor-priorities" id="advisor-priorities">
           <legend>Ưu tiên chính</legend>
-          <label><input type="checkbox" name="priorities" value="visa" checked> Dễ đỗ visa</label>
-          <label><input type="checkbox" name="priorities" value="cost"> Chi phí thấp</label>
-          <label><input type="checkbox" name="priorities" value="job" checked> Việc làm thêm</label>
-          <label><input type="checkbox" name="priorities" value="e7"> Dễ chuyển E7</label>
-          <label><input type="checkbox" name="priorities" value="prestige"> Trường uy tín</label>
-          <label><input type="checkbox" name="priorities" value="low-study"> Học ít</label>
+          <div id="advisor-priority-items" data-visa="D2-6">
+            <!-- Priorities will be re-rendered by JS when visa type changes -->
+            <label><input type="checkbox" name="priorities" value="visa" checked> Dễ đỗ visa</label>
+            <label><input type="checkbox" name="priorities" value="cost"> Chi phí thấp</label>
+            <label><input type="checkbox" name="priorities" value="job" checked> Việc làm thêm</label>
+            <label><input type="checkbox" name="priorities" value="e7"> Dễ chuyển E7</label>
+            <label><input type="checkbox" name="priorities" value="prestige"> Trường uy tín</label>
+            <label><input type="checkbox" name="priorities" value="low-study"> Học ít</label>
+          </div>
         </fieldset>
 
         <div class="advisor-actions">
@@ -280,6 +285,8 @@ function bindAdvisorEvents(container) {
       var value = this.value;
       try { localStorage.setItem('advisor_visa_type', value); } catch(e) {}
       updateAdvisorKicker(container, value);
+      // Cập nhật priority options theo loại visa
+      updateAdvisorPriorities(container, value);
     });
   }
 
@@ -367,7 +374,7 @@ function scoreSchool(schoolId, school, profile) {
   if (profiles[schoolId]) {
     rules = Object.assign({}, profiles[schoolId]);
   } else {
-    rules = buildFallbackAdvisorProfile(school) || {};
+    rules = buildFallbackAdvisorProfile(school, profile.visaType) || {};
   }
   // Prefer canonical region from SCHOOLS_DATA when provided
   if (school && school.region) {
@@ -376,6 +383,8 @@ function scoreSchool(schoolId, school, profile) {
   const reasons = [];
   const risks = [];
   let score = 55;
+
+  const isD41 = profile.visaType === 'D4-1';
 
   if (rules.gender === "female" && profile.gender !== "female") {
     score -= 80;
@@ -393,16 +402,29 @@ function scoreSchool(schoolId, school, profile) {
     reasons.push("Độ tuổi nằm trong nhóm hồ sơ " + getVisaTypeKickerText(profile.visaType || 'D2-6') + " thường dễ xử lý hơn.");
   }
 
-  if (profile.gpa >= rules.minGpa + 0.5) {
-    score += 12;
-    reasons.push(`GPA ${profile.gpa.toFixed(1)} cao hơn mức tham chiếu của trường.`);
-  } else if (profile.gpa >= rules.minGpa) {
-    score += 6;
-    reasons.push(`GPA đạt mức tham chiếu của trường (${rules.minGpa}).`);
+  // ─── GPA: D4-1 không quan trọng bằng D2-6 ───
+  if (isD41) {
+    // D4-1: học tiếng, GPA không phải yếu tố quyết định
+    if (profile.gpa >= rules.minGpa) {
+      score += 4;
+      reasons.push(`GPA ${profile.gpa.toFixed(1)} đạt yêu cầu cơ bản cho visa học tiếng.`);
+    } else if (profile.gpa > 0) {
+      score -= 5;
+      risks.push(`GPA ${profile.gpa.toFixed(1)} hơi thấp nhưng D4-1 không yêu cầu GPA cao.`);
+    }
   } else {
-    const gap = (rules.minGpa - profile.gpa).toFixed(1);
-    score -= Math.min(24, 8 + gap * 5);
-    risks.push(`GPA thấp hơn mức tham chiếu khoảng ${gap} điểm, cần cân nhắc phương án dự phòng.`);
+    // D2-6: GPA quan trọng (scoring cũ)
+    if (profile.gpa >= rules.minGpa + 0.5) {
+      score += 12;
+      reasons.push(`GPA ${profile.gpa.toFixed(1)} cao hơn mức tham chiếu của trường.`);
+    } else if (profile.gpa >= rules.minGpa) {
+      score += 6;
+      reasons.push(`GPA đạt mức tham chiếu của trường (${rules.minGpa}).`);
+    } else {
+      const gap = (rules.minGpa - profile.gpa).toFixed(1);
+      score -= Math.min(24, 8 + gap * 5);
+      risks.push(`GPA thấp hơn mức tham chiếu khoảng ${gap} điểm, cần cân nhắc phương án dự phòng.`);
+    }
   }
 
   if (profile.absences <= rules.maxAbsences) {
@@ -413,15 +435,31 @@ function scoreSchool(schoolId, school, profile) {
     risks.push(`Số buổi nghỉ vượt ngưỡng tham chiếu ${rules.maxAbsences} buổi.`);
   }
 
-  if (profile.korean === "topik3") {
-    score += 12;
-    reasons.push("Có TOPIK 3 trở lên là điểm cộng mạnh cho visa và chuyển chuyên ngành.");
-  } else if (profile.korean === "topik2" || profile.korean === "sejong2b") {
-    score += 9;
-    reasons.push("Có TOPIK 2/Sejong 2B giúp hồ sơ an toàn hơn.");
+  // ─── Tiếng Hàn: D4-1 đánh giá khác D2-6 ───
+  if (isD41) {
+    // D4-1: học sinh đi Hàn để HỌC tiếng, nên chưa có TOPIK là bình thường
+    if (profile.korean === "topik3") {
+      score += 8;
+      reasons.push("Có TOPIK 3 — lợi thế lớn khi xin visa D4-1 và có thể xếp lớp cao hơn.");
+    } else if (profile.korean === "topik2" || profile.korean === "sejong2b") {
+      score += 5;
+      reasons.push("Có nền tảng tiếng Hàn cơ bản — dễ hoà nhập khi sang Hàn.");
+    } else {
+      // Không trừ điểm — D4-1 chấp nhận học sinh chưa biết tiếng Hàn
+      reasons.push("Chưa có tiếng Hàn nhưng D4-1 được thiết kế cho người mới bắt đầu.");
+    }
   } else {
-    score -= rules.interviewDifficulty >= 4 ? 8 : 3;
-    risks.push("Chưa có chứng chỉ tiếng Hàn, nên ưu tiên trường ít rủi ro phỏng vấn hơn.");
+    // D2-6: cần tiếng Hàn để học chuyên ngành
+    if (profile.korean === "topik3") {
+      score += 12;
+      reasons.push("Có TOPIK 3 trở lên là điểm cộng mạnh cho visa và chuyển chuyên ngành.");
+    } else if (profile.korean === "topik2" || profile.korean === "sejong2b") {
+      score += 9;
+      reasons.push("Có TOPIK 2/Sejong 2B giúp hồ sơ an toàn hơn.");
+    } else {
+      score -= rules.interviewDifficulty >= 4 ? 8 : 3;
+      risks.push("Chưa có chứng chỉ tiếng Hàn, nên ưu tiên trường ít rủi ro phỏng vấn hơn.");
+    }
   }
 
   if (profile.visaFail === "yes") {
@@ -466,6 +504,7 @@ function scoreSchool(schoolId, school, profile) {
     if (priority === "cost") score += (6 - rules.costLevel) * 3;
     if (priority === "prestige" && rules.tags.includes("prestige")) score += 14;
     if (priority === "low-study") score += (6 - rules.studyLoad) * 2;
+    if (priority === "language") score += rules.tags.includes("language") ? 12 : 3;
   });
 
   addPriorityReasons(profile, rules, reasons);
@@ -487,7 +526,7 @@ function normalizeAdvisorScore(rawScore) {
   return Math.max(4, Math.min(98, Math.round(curved)));
 }
 
-function buildFallbackAdvisorProfile(school) {
+function buildFallbackAdvisorProfile(school, visaType) {
   const text = [
     school?.name,
     school?.nameKr,
@@ -495,18 +534,28 @@ function buildFallbackAdvisorProfile(school) {
     ...(school?.advantages || [])
   ].join(" ").toLowerCase();
 
+  const isD41 = visaType === 'D4-1';
+  const isD26 = !isD41;
+
   return {
     gender: text.includes("nữ") || text.includes("여자") ? "female" : "all",
-    minGpa: 5.5,
-    maxAbsences: 25,
+    // D4-1 (học tiếng) không yêu cầu GPA cao — ai cũng có thể học tiếng
+    minGpa: isD41 ? 4.0 : 5.5,
+    // D4-1 thường thoáng về chuyên cần hơn D2-6
+    maxAbsences: isD41 ? 40 : 25,
     region: text.includes("seoul") ? "seoul" : text.includes("gyeonggi") || text.includes("incheon") ? "near-seoul" : text.includes("busan") ? "busan" : text.includes("gwangju") ? "gwangju" : "province",
-    costLevel: text.includes("chi phí thấp") || text.includes("học phí rẻ") ? 2 : 3,
-    visaChance: text.includes("tỷ lệ đỗ") || text.includes("visa tốt") ? 4 : 3,
+    // D4-1 thường có chi phí thấp hơn D2-6 (học tiếng vs chuyên ngành)
+    costLevel: text.includes("chi phí thấp") || text.includes("học phí rẻ") ? 2 : (isD41 ? 3 : 3),
+    // D4-1 visa thường dễ hơn D2-6 (không cần MOU)
+    visaChance: text.includes("tỷ lệ đỗ") || text.includes("visa tốt") ? 4 : (isD41 ? 4 : 3),
     jobOpportunity: text.includes("việc làm nhiều") || text.includes("làm thêm") ? 4 : 3,
-    e7Opportunity: text.includes("e7") ? 4 : 3,
-    studyLoad: text.includes("học nặng") ? 4 : 3,
-    interviewDifficulty: text.includes("phỏng vấn") ? 4 : 3,
-    tags: []
+    // E7 không phù hợp cho D4-1 (học tiếng không thể chuyển E7 trực tiếp)
+    e7Opportunity: isD41 ? 1 : (text.includes("e7") ? 4 : 3),
+    // D4-1 học nhẹ hơn (tiếng vs chuyên ngành)
+    studyLoad: text.includes("học nặng") ? 4 : (isD41 ? 2 : 3),
+    // D4-1 phỏng vấn thường nhẹ nhàng hơn
+    interviewDifficulty: text.includes("phỏng vấn") ? 3 : (isD41 ? 2 : 3),
+    tags: isD41 ? ['language'] : []
   };
 }
 
@@ -522,6 +571,9 @@ function addPriorityReasons(profile, rules, reasons) {
   }
   if (profile.priorities.includes("low-study") && rules.studyLoad <= 2) {
     reasons.push("Lịch học/khối lượng học thuộc nhóm nhẹ hơn.");
+  }
+  if (profile.priorities.includes("language") && rules.tags.includes("language")) {
+    reasons.push("Trường có thế mạnh đào tạo tiếng Hàn — phù hợp với mục tiêu học ngôn ngữ.");
   }
 }
 
@@ -725,9 +777,57 @@ async function saveAdvisorDataToDB(profile, results, analysisResult, source) {
   }
 }
 
+// ─── Cập nhật priority options theo visa type ───
+function updateAdvisorPriorities(container, visaType) {
+  const itemsEl = container ? container.querySelector('#advisor-priority-items') : document.getElementById('advisor-priority-items');
+  if (!itemsEl) return;
+
+  const isD41 = visaType === 'D4-1';
+
+  // D2-6 priorities: đầy đủ (kể cả E7)
+  // D4-1 priorities: ẩn E7 (không phù hợp), thêm language (môi trường học tiếng)
+  const d26Items = [
+    { value: 'visa', label: 'Dễ đỗ visa', checked: true },
+    { value: 'cost', label: 'Chi phí thấp', checked: false },
+    { value: 'job', label: 'Việc làm thêm', checked: true },
+    { value: 'e7', label: 'Dễ chuyển E7', checked: false },
+    { value: 'prestige', label: 'Trường uy tín', checked: false },
+    { value: 'low-study', label: 'Học ít', checked: false },
+  ];
+
+  const d41Items = [
+    { value: 'visa', label: 'Dễ đỗ visa', checked: true },
+    { value: 'cost', label: 'Chi phí thấp', checked: false },
+    { value: 'job', label: 'Việc làm thêm', checked: false },
+    { value: 'language', label: 'Môi trường học tiếng tốt', checked: true },
+    { value: 'prestige', label: 'Trường uy tín', checked: false },
+    { value: 'low-study', label: 'Học ít', checked: false },
+  ];
+
+  const items = isD41 ? d41Items : d26Items;
+
+  // Lưu checked states trước khi render lại
+  itemsEl.innerHTML = items.map(function(item) {
+    var checkedAttr = item.checked ? ' checked' : '';
+    return '<label><input type="checkbox" name="priorities" value="' + item.value + '"' + checkedAttr + '> ' + item.label + '</label>';
+  }).join('');
+  itemsEl.dataset.visa = visaType;
+}
+
 // ─── Expose for testing ───
 // Vite's static export extraction doesn't detect function declarations in this file,
 // so we expose them on window for unit tests to access.
 if (typeof window !== 'undefined') {
   window.parseQuickProfile = parseQuickProfile;
+  window.updateAdvisorPriorities = updateAdvisorPriorities;
+}
+
+// ─── Render priority options on initial load ───
+if (typeof document !== 'undefined') {
+  document.addEventListener('DOMContentLoaded', function() {
+    var sel = document.getElementById('advisor-visa-type');
+    if (sel) {
+      updateAdvisorPriorities(null, sel.value);
+    }
+  });
 }

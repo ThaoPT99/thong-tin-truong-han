@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="referrer" content="strict-origin-when-cross-origin">
+    <link rel="icon" type="image/png" href="/images/og-image.png" sizes="1200x630">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect x='20' y='10' width='60' height='80' rx='4' fill='none' stroke='%231B3A6B' stroke-width='5'/><path d='M35 35h30M35 50h30M35 65h20' stroke='%231B3A6B' stroke-width='4' stroke-linecap='round'/></svg>">
     <title>Visa D2-6 & Thông tin trường Hàn (D2-6) | Thông tin trường Hàn</title>
 
@@ -14,7 +15,10 @@
     <meta property="og:description" id="og-desc" content="Tra cứu danh sách trường Hàn Quốc cho Visa D2-6 & D4-1: điều kiện, hồ sơ và so sánh lựa chọn." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://thongtintruonghan.vercel.app/" />
-    <meta property="og:image" content="https://thongtintruonghan.vercel.app/images/logo-d26-horizontal.svg" />
+    <meta property="og:image" content="https://thongtintruonghan.vercel.app/images/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:image" content="https://thongtintruonghan.vercel.app/images/og-image.png" />
 
     <meta name="twitter:card" content="summary_large_image" />
 
@@ -456,7 +460,21 @@
           localStorage.removeItem('student_token');
           localStorage.removeItem('student_refresh_token');
           localStorage.removeItem('student_user');
-          var btn = document.getElementById('authBtn');
+          localStorage.removeItem('checklist_data');
+          localStorage.removeItem('checklist_profile');
+          localStorage.removeItem('d26AdvisorLastResult');
+          localStorage.removeItem('study_plan_draft');
+          localStorage.removeItem('journey_stage');
+          localStorage.removeItem('aiChatMessages');
+          localStorage.removeItem('studentAgentMessages');
+          localStorage.removeItem('d26ChecklistState');
+          // Xoá tất cả key bắt đầu bằng checklist_ (dữ liệu form nhập)
+          for (var i = localStorage.length - 1; i >= 0; i--) {
+            var k = localStorage.key(i);
+            if (k && k.indexOf('checklist_') === 0 && k !== 'checklist_data') {
+              localStorage.removeItem(k);
+            }
+          }          var btn = document.getElementById('authBtn');
           if (btn) btn.classList.remove('is-logged-in');
           var txt = document.getElementById('authBtnText');
           if (txt) txt.textContent = 'Đăng nhập';
@@ -493,15 +511,28 @@
                 localStorage.setItem('student_refresh_token', refreshData.refresh_token);
               }
               return refreshData.access_token;
-            } else {
-              localStorage.removeItem('student_token');
-              localStorage.removeItem('student_refresh_token');
-              localStorage.removeItem('student_user');
-              var btn = document.getElementById('authBtn');
-              if (btn) btn.classList.remove('is-logged-in');
-              var txt = document.getElementById('authBtnText');
-              if (txt) txt.textContent = 'Đăng nhập';
-              return null;
+            } else {          localStorage.removeItem('student_token');
+          localStorage.removeItem('student_refresh_token');
+          localStorage.removeItem('student_user');
+          localStorage.removeItem('checklist_data');
+          localStorage.removeItem('checklist_profile');
+          localStorage.removeItem('d26AdvisorLastResult');
+          localStorage.removeItem('study_plan_draft');
+          localStorage.removeItem('journey_stage');
+          localStorage.removeItem('aiChatMessages');
+          localStorage.removeItem('studentAgentMessages');
+          localStorage.removeItem('d26ChecklistState');
+          // Xoá tất cả key bắt đầu bằng checklist_ (dữ liệu form nhập)
+          for (var i = localStorage.length - 1; i >= 0; i--) {
+            var k = localStorage.key(i);
+            if (k && k.indexOf('checklist_') === 0 && k !== 'checklist_data') {
+              localStorage.removeItem(k);
+            }
+          }          var btn = document.getElementById('authBtn');
+          if (btn) btn.classList.remove('is-logged-in');
+          var txt = document.getElementById('authBtnText');
+          if (txt) txt.textContent = 'Đăng nhập';
+          return null;
             }
           })();
         }
@@ -525,7 +556,21 @@
           localStorage.removeItem('student_token');
           localStorage.removeItem('student_refresh_token');
           localStorage.removeItem('student_user');
-          location.reload();
+          localStorage.removeItem('checklist_data');
+          localStorage.removeItem('checklist_profile');
+          localStorage.removeItem('d26AdvisorLastResult');
+          localStorage.removeItem('study_plan_draft');
+          localStorage.removeItem('journey_stage');
+          localStorage.removeItem('aiChatMessages');
+          localStorage.removeItem('studentAgentMessages');
+          localStorage.removeItem('d26ChecklistState');
+          // Xoá tất cả key bắt đầu bằng checklist_ (dữ liệu form nhập)
+          for (var i = localStorage.length - 1; i >= 0; i--) {
+            var k = localStorage.key(i);
+            if (k && k.indexOf('checklist_') === 0 && k !== 'checklist_data') {
+              localStorage.removeItem(k);
+            }
+          }          location.reload();
         }
         return;
       }

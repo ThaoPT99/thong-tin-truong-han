@@ -140,7 +140,11 @@ function buildSchoolHtml(school, semesterInfo) {
   <meta property="og:description" content="${escapeHtml(desc)}">
   <meta property="og:type" content="website">
   <meta property="og:url" content="${fullUrl}">
-  <meta property="og:image" content="${SITE_URL}/images/logo-d26-horizontal.svg">
+  <meta property="og:image" content="${SITE_URL}/images/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="${SITE_URL}/images/og-image.png">
 
   <meta name="twitter:card" content="summary_large_image">
 
