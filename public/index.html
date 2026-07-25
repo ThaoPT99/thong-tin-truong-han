@@ -384,15 +384,39 @@
       var toggle = document.getElementById('sidebarToggle');
       var backdrop = document.getElementById('sidebarBackdrop');
       var shell = document.querySelector('.app-shell');
+      var sidebar = document.querySelector('.app-sidebar');
       if (toggle && backdrop) {
+        // Toggle sidebar
         toggle.addEventListener('click', function(e) {
           e.stopPropagation();
-          shell.classList.toggle('sidebar-open');
-          toggle.setAttribute('aria-label', shell.classList.contains('sidebar-open') ? 'Đóng menu' : 'Mở menu');
+          var isOpen = shell.classList.toggle('sidebar-open');
+          toggle.setAttribute('aria-label', isOpen ? 'Đóng menu' : 'Mở menu');
+          document.body.classList.toggle('sidebar-open', isOpen);
         });
+        // Close on backdrop click
         backdrop.addEventListener('click', function() {
           shell.classList.remove('sidebar-open');
           toggle.setAttribute('aria-label', 'Mở menu');
+          document.body.classList.remove('sidebar-open');
+        });
+        // Close sidebar when clicking a nav item (on mobile)
+        if (sidebar) {
+          sidebar.querySelectorAll('.tab-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+              if (window.innerWidth <= 900) {
+                shell.classList.remove('sidebar-open');
+                toggle.setAttribute('aria-label', 'Mở menu');
+                document.body.classList.remove('sidebar-open');
+              }
+            });
+          });
+        }
+        // Close sidebar on window resize to desktop
+        window.addEventListener('resize', function() {
+          if (window.innerWidth > 900) {
+            shell.classList.remove('sidebar-open');
+            document.body.classList.remove('sidebar-open');
+          }
         });
       }
 

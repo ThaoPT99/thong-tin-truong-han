@@ -4244,6 +4244,49 @@ html {
     border-color: #2563eb;
     color: #2563eb;
 }
+/* Hamburger animate to X when open */
+.sidebar-open .sidebar-hamburger svg {
+    transition: transform 0.3s ease;
+}
+.sidebar-open .sidebar-hamburger svg path:nth-child(1) {
+    transform-origin: center;
+    animation: hamTopToX 0.3s ease forwards;
+}
+.sidebar-open .sidebar-hamburger svg path:nth-child(2) {
+    animation: hamMidToX 0.3s ease forwards;
+}
+.sidebar-open .sidebar-hamburger svg path:nth-child(3) {
+    transform-origin: center;
+    animation: hamBottomToX 0.3s ease forwards;
+}
+
+@keyframes hamTopToX {
+    50% { transform: translateY(0); }
+    100% { transform: translateY(6px) rotate(45deg); }
+}
+@keyframes hamMidToX {
+    100% { opacity: 0; }
+}
+@keyframes hamBottomToX {
+    50% { transform: translateY(0); }
+    100% { transform: translateY(-6px) rotate(-45deg); }
+}
+
+/* Reset hamburger when closing */
+.sidebar-hamburger svg path {
+    transition: all 0.3s ease;
+}
+
+/* Body scroll lock when sidebar open */
+body.sidebar-open {
+    overflow: hidden;
+}
+
+/* Better sidebar shadow on mobile */
+.sidebar-open .app-sidebar {
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
+}
+
 
 .hamburger-label {
     display: none;
