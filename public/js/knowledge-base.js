@@ -189,20 +189,7 @@
   };
 
   function showArticleDetail(container, article) {
-    const contentHtml = (article.content || '').split('\n').map(function(p) {
-      const line = p.trim();
-      if (!line) return '<br>';
-      if (line.startsWith('**') && line.endsWith('**')) {
-        return '<h4>' + escapeHtml(line.replace(/\*\*/g, '')) + '</h4>';
-      }
-      if (line.match(/^\d\.\s/)) {
-        return '<div class="kb-detail-step">' + escapeHtml(line) + '</div>';
-      }
-      if (line.startsWith('•') || line.startsWith('-')) {
-        return '<li>' + escapeHtml(line.replace(/^[•\-]\s*/, '')) + '</li>';
-      }
-      return '<p>' + escapeHtml(line) + '</p>';
-    }).join('');
+    const contentHtml = renderRichContent(article.content || '');
 
     container.innerHTML = `
       <div class="kb-detail-header">
@@ -332,6 +319,111 @@
   function getCatLabel(cat) {
     const found = CATEGORIES.find(function(c) { return c.id === cat; });
     return found ? found.label : cat;
+  }
+
+  // ─── Rich Content Renderer ───
+  function renderRichContent(content) {
+    const lines = content.split('\n');
+    var inTable = false;
+    var tableRows = [];
+    var result = [];
+
+    for (var i = 0; i < lines.length; i++) {
+      var raw = lines[i];
+      var line = raw.trim();
+
+      // ── Table handling ──
+      if (line.startsWith('|') && line.endsWith('|')) {
+        // Table row
+        if (line.indexOf('---') >= 0 && line.indexOf('|') >= 0) {
+          // Separator row — skip
+          continue;
+        }
+        inTable = true;
+        var cols = line.split('|').filter(function(c) { return c.trim() !== ''; });
+        var cells = cols.map(function(c) { return '<td>' + c.trim() + '</td>'; }).join('');
+        tableRows.push('<tr>' + cells + '</tr>');
+        continue;
+      } else if (inTable) {
+        // End of table
+        if (tableRows.length > 0) {
+          var header = tableRows[0];
+          var body = tableRows.slice(1);
+          result.push('<div class="kb-table-wrap"><table class="kb-table"><thead>' + header.replace(/<td>/g, '<th>').replace(/<\/td>/g, '</th>') + '</thead><tbody>' + body.join('') + '</tbody></table></div>');
+        }
+        inTable = false;
+        tableRows = [];
+      }
+
+      // ── Empty line ──
+      if (!line) {
+        result.push('<br>');
+        continue;
+      }
+
+      // ── Separator (━━━━━) ──
+      if (line.match(/^[━═]+$/)) {
+        result.push('<hr class="kb-hr">');
+        continue;
+      }
+
+      // ── Heading with ** ** ──
+      if (line.startsWith('**') && line.endsWith('**') && line.length > 6) {
+        result.push('<h4 class="kb-section-title">' + escapeHtml(line.replace(/\*\*/g, '')) + '</h4>');
+        continue;
+      }
+
+      // ── InfoBox: 📌 MẸO / ⚠️ LƯU Ý / 🚫 SAI LẦM / 📊 THỐNG KÊ / 📝 VÍ DỤ / 💡 CASE STUDY ──
+      var infoBoxMatch = line.match(/^([📌⚠️🚫📊📝💡])\s\*\*([^*]+)\*\*:/);
+      if (infoBoxMatch) {
+        var icon = infoBoxMatch[1];
+        var label = infoBoxMatch[2];
+        var text = line.substring(line.indexOf('**:') + 3).trim();
+        var boxClass = 'kb-infobox';
+        if (icon === '⚠️') boxClass += ' kb-infobox-warning';
+        else if (icon === '🚫') boxClass += ' kb-infobox-error';
+        else if (icon === '📊') boxClass += ' kb-infobox-stats';
+        else if (icon === '📝') boxClass += ' kb-infobox-example';
+        else if (icon === '💡') boxClass += ' kb-infobox-case';
+        else boxClass += ' kb-infobox-tip';
+
+        var html = '<div class="' + boxClass + '">';
+        html += '<div class="kb-infobox-label">' + icon + ' ' + escapeHtml(label) + '</div>';
+        html += '<div class="kb-infobox-text">' + parseInlineMarkup(text) + '</div>';
+        html += '</div>';
+        result.push(html);
+        continue;
+      }
+
+      // ── Numbered step: Number. ──
+      if (line.match(/^\d+\.\s/)) {
+        result.push('<div class="kb-detail-step">' + escapeHtml(line) + '</div>');
+        continue;
+      }
+
+      // ── Bullet list: • or - ──
+      if (line.startsWith('•') || line.startsWith('-')) {
+        result.push('<li>' + parseInlineMarkup(line.replace(/^[•\-]\s*/, '')) + '</li>');
+        continue;
+      }
+
+      // ── Regular paragraph ──
+      result.push('<p>' + parseInlineMarkup(line) + '</p>');
+    }
+
+    // If table was open at end
+    if (inTable && tableRows.length > 0) {
+      var header = tableRows[0];
+      var body = tableRows.slice(1);
+      result.push('<div class="kb-table-wrap"><table class="kb-table"><thead>' + header.replace(/<td>/g, '<th>').replace(/<\/td>/g, '</th>') + '</thead><tbody>' + body.join('') + '</tbody></table></div>');
+    }
+
+    return result.join('\n');
+  }
+
+  // ─── Inline markup: bold (**text**) ───
+  function parseInlineMarkup(text) {
+    return escapeHtml(text).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
   }
 
   function escapeHtml(str) {
