@@ -170,6 +170,13 @@
 
   // ─── Check + render ───
   function checkAndRender() {
+    // Chỉ hiển thị khi đã đăng nhập
+    if (!localStorage.getItem('student_token')) {
+      var existing = document.querySelector('.rw-banner');
+      if (existing) existing.remove();
+      return;
+    }
+
     var result = assessRisks();
     
     // Bổ sung cảnh báo tài chính từ finance-guide nếu có
