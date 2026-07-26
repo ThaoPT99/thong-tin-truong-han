@@ -1,7 +1,7 @@
 // /api/auth/student.js — Student auth: register, login, verify, profile
 // Dùng Supabase Auth admin API (service_role key) + student_profiles table
 const { supabase, supabaseServiceKey, supabaseUrl } = require('../../lib/supabase');
-const { sendNewAdvisorSubmissionAlert } = require('../../lib/telegram');
+const { sendNewAdvisorSubmissionAlert, sendNewAccountAlert } = require('../../lib/telegram');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback-dev-secret';
 
@@ -287,6 +287,8 @@ module.exports = async (req, res) => {
       case 'chat-clear': return await handleChatClear(req, res);
       // ═══ Phase 5: Login Log ═══
       case 'log-login': return await handleLogLogin(req, res);
+      // ═══ Activity Tracking ═══
+      case 'log-activity': return await handleLogActivity(req, res);
       // ═══ Phase 5: Notification (kiểm tra admin_note mới) ═══
       case 'check-notifications': return await handleCheckNotifications(req, res);
       // ═══ Phase 2: Document upload ═══
@@ -400,6 +402,18 @@ async function handleRegister(req, res) {
     const sessionData = await sessionRes.json();
 
     clearRateLimit(ip);
+
+    // Gửi thông báo Telegram cho admin
+    try {
+      await sendNewAccountAlert({
+        fullName: fullName || '',
+        phone: phone || '',
+        email: email.toLowerCase().trim(),
+        createdAt: new Date().toLocaleString('vi-VN'),
+      });
+    } catch (notifErr) {
+      console.warn('Send new account notification error:', notifErr.message);
+    }
 
     return res.status(201).json({
       success: true,
@@ -929,6 +943,56 @@ async function handleLogLogin(req, res) {
     return res.json({ success: true });
   } catch (err) {
     console.error('Log login error:', err);
+    return res.json({ success: true }); // Silent fail
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+// Activity Tracking — ghi lại hành vi người dùng trên site
+// ════════════════════════════════════════════════════════════
+
+async function handleLogActivity(req, res) {
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+
+  const auth = req.headers.authorization;
+  if (!auth || !auth.startsWith('Bearer ')) return res.status(401).json({ error: 'Missing token' });
+  const token = auth.split(' ')[1];
+
+  try {
+    const profileId = await getProfileIdFromToken(token);
+    if (!profileId) return res.status(404).json({ error: 'Profile not found' });
+
+    const { activityType, page, details } = req.body || {};
+    if (!activityType) return res.status(400).json({ error: 'activityType is required' });
+
+    const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.socket?.remoteAddress || '';
+
+    // Get profile info để lưu kèm
+    const { data: profile } = await supabase
+      .from('student_profiles')
+      .select('email, full_name')
+      .eq('id', profileId)
+      .maybeSingle();
+
+    await supabase.from('student_activity_logs').insert({
+      student_id: profileId,
+      email: profile?.email || '',
+      full_name: profile?.full_name || '',
+      activity_type: activityType,
+      page: page || '',
+      details: details || {},
+      ip: ip,
+      user_agent: (req.headers['user-agent'] || '').substring(0, 500),
+    });
+
+    // Update last_active
+    await supabase.from('student_profiles').update({
+      last_active: new Date().toISOString(),
+    }).eq('id', profileId);
+
+    return res.json({ success: true });
+  } catch (err) {
+    console.error('Log activity error:', err);
     return res.json({ success: true }); // Silent fail
   }
 }

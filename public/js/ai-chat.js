@@ -189,6 +189,11 @@
     if (input) { input.value = ''; input.disabled = false; input.focus(); }
     if (sendBtn) sendBtn.disabled = false;
     isSending = false;
+
+    // Track chat activity (fire-and-forget)
+    if (window.logActivity) {
+      window.logActivity('chat', { messagePreview: (text || '').substring(0, 100) });
+    }
   }
 
   // ─── Persist ───

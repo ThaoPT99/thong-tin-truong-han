@@ -152,6 +152,11 @@ function saveRecentSchool(schoolId) {
     .filter(id => getSchoolById(id))
     .slice(0, 5);
   try { localStorage.setItem("recentSchools", JSON.stringify(next)); } catch (e) {}
+  // Track school view
+  var school = getSchoolById(schoolId);
+  if (school && window.logActivity) {
+    window.logActivity('view_school', { schoolSlug: schoolId, schoolName: school.name });
+  }
 }
 
 function renderRecentSchools() {

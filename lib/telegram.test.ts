@@ -156,4 +156,95 @@ describe('Telegram helpers', () => {
       expect(callBody.text).toContain('Osan University');
     });
   });
+
+  describe('sendNewAccountAlert', () => {
+    it('should format new account registration alert with all fields', async () => {
+      process.env.TELEGRAM_BOT_TOKEN = '123:abc';
+      process.env.TELEGRAM_ADMIN_CHAT_ID = '-999';
+      const mockFetch = vi.fn().mockResolvedValue({ ok: true, json: () => Promise.resolve({}) });
+      vi.stubGlobal('fetch', mockFetch);
+
+      const { sendNewAccountAlert } = await import('./telegram.js');
+      await sendNewAccountAlert({
+        fullName: 'Nguyen Van B',
+        phone: '0909123456',
+        email: 'nguyenvanb@email.com',
+        createdAt: '26/07/2026 14:30:00',
+      });
+
+      const callBody = JSON.parse(mockFetch.mock.calls[0][1].body);
+      expect(callBody.text).toContain('Nguyen Van B');
+      expect(callBody.text).toContain('0909123456');
+      expect(callBody.text).toContain('nguyenvanb@email.com');
+      expect(callBody.text).toContain('26/07/2026');
+      expect(callBody.text).toContain('Tài khoản mới đăng ký');
+      expect(callBody.parse_mode).toBe('HTML');
+    });
+
+    it('should handle missing name gracefully (empty string)', async () => {
+      process.env.TELEGRAM_BOT_TOKEN = '123:abc';
+      process.env.TELEGRAM_ADMIN_CHAT_ID = '-999';
+      const mockFetch = vi.fn().mockResolvedValue({ ok: true, json: () => Promise.resolve({}) });
+      vi.stubGlobal('fetch', mockFetch);
+
+      const { sendNewAccountAlert } = await import('./telegram.js');
+      await sendNewAccountAlert({
+        fullName: '',
+        phone: '0909123456',
+        email: 'test@email.com',
+      });
+
+      const callBody = JSON.parse(mockFetch.mock.calls[0][1].body);
+      expect(callBody.text).toContain('Không rõ');
+      expect(callBody.text).toContain('0909123456');
+    });
+
+    it('should handle missing name when field is undefined', async () => {
+      process.env.TELEGRAM_BOT_TOKEN = '123:abc';
+      process.env.TELEGRAM_ADMIN_CHAT_ID = '-999';
+      const mockFetch = vi.fn().mockResolvedValue({ ok: true, json: () => Promise.resolve({}) });
+      vi.stubGlobal('fetch', mockFetch);
+
+      const { sendNewAccountAlert } = await import('./telegram.js');
+      // fullName is not provided at all
+      await sendNewAccountAlert({
+        phone: '0909123456',
+        email: 'test@email.com',
+      });
+
+      const callBody = JSON.parse(mockFetch.mock.calls[0][1].body);
+      expect(callBody.text).toContain('Không rõ');
+      expect(callBody.text).toContain('0909123456');
+    });
+
+    it('should include disable_web_page_preview in request', async () => {
+      process.env.TELEGRAM_BOT_TOKEN = '123:abc';
+      process.env.TELEGRAM_ADMIN_CHAT_ID = '-999';
+      const mockFetch = vi.fn().mockResolvedValue({ ok: true, json: () => Promise.resolve({}) });
+      vi.stubGlobal('fetch', mockFetch);
+
+      const { sendNewAccountAlert } = await import('./telegram.js');
+      await sendNewAccountAlert({
+        fullName: 'Test',
+        phone: '0909123456',
+        email: 'test@email.com',
+      });
+
+      const callBody = JSON.parse(mockFetch.mock.calls[0][1].body);
+      expect(callBody.disable_web_page_preview).toBe(true);
+    });
+
+    it('should return null when Telegram not configured', async () => {
+      delete process.env.TELEGRAM_BOT_TOKEN;
+
+      const { sendNewAccountAlert } = await import('./telegram.js');
+      const result = await sendNewAccountAlert({
+        fullName: 'Test',
+        phone: '0909123456',
+        email: 'test@email.com',
+      });
+
+      expect(result).toBeNull();
+    });
+  });
 });

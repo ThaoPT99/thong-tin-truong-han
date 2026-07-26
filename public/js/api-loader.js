@@ -263,6 +263,69 @@ window.trackAnalytics = function(type, data) {
   }
 };
 
+// ─── Activity Tracking Helper (dùng cho mọi trang, yêu cầu đã đăng nhập) ───
+window.logActivity = async function(activityType, details) {
+  var token = '';
+  try { token = localStorage.getItem('student_token') || ''; } catch(e) {}
+  if (!token) return;
+  try {
+    var page = window.location.pathname + window.location.search;
+    await fetch('/api/auth/student?action=log-activity', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token,
+      },
+      body: JSON.stringify({
+        activityType: activityType,
+        page: page,
+        details: details || {},
+      }),
+    });
+  } catch(e) { /* silent */ }
+};
+
+// ═══ Auto-track page views + tab switches when logged in ═══
+(function initAutoTracking() {
+  try {
+    if (!localStorage.getItem('student_token')) return;
+  } catch(e) { return; }
+  // Track page view on load
+  var pageType = 'home';
+  var path = window.location.pathname;
+  if (path.includes('/schools/') || path.includes('/school/')) pageType = 'school_detail';
+  else if (path.includes('/tu-lam-ho-so')) pageType = 'self_guide';
+  else if (path.includes('/sach-tuyen-sinh')) pageType = 'partner_book';
+  window.logActivity('page_view', { pageType: pageType, path: path });
+
+  // Watch for tab changes (dùng event listener thay polling)
+  var lastTrackedTab = '';
+  document.addEventListener('click', function(e) {
+    var tabBtn = e.target.closest('.tab-btn[data-school]');
+    if (tabBtn) {
+      var tabName = tabBtn.dataset.school;
+      if (tabName && tabName !== lastTrackedTab) {
+        lastTrackedTab = tabName;
+        window.logActivity('tab_switch', { tab: tabName });
+      }
+    }
+  });
+
+  // Also watch for tab changes triggered programmatically (e.g. showSchool)
+  var origShowSchool = window.showSchool;
+  if (typeof origShowSchool === 'function') {
+    window.showSchool = function(schoolId) {
+      origShowSchool(schoolId);
+      // Track will be picked up by the click handler above for tab buttons
+      // For programmatic calls, track if it's a known school tab
+      if (schoolId && schoolId !== lastTrackedTab) {
+        lastTrackedTab = schoolId;
+        window.logActivity('tab_switch', { tab: schoolId, source: 'programmatic' });
+      }
+    };
+  }
+})();
+
 window.REGION_LABELS = {
   any: "không ưu tiên khu vực",
   seoul: "Seoul",

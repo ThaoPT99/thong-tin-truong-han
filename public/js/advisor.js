@@ -269,6 +269,10 @@ function bindAdvisorEvents(container) {
     if (typeof window.trackAnalytics === 'function') {
       window.trackAnalytics('event', { eventType: 'advisor_analyze', eventData: { region: profile.region, visaType: profile.visaType, priorities: profile.priorities } });
     }
+    // Track activity
+    if (window.logActivity) {
+      window.logActivity('advisor', { visaType: profile.visaType, region: profile.region, priorities: profile.priorities });
+    }
     // Auto-save to database if logged in
     await saveAdvisorDataToDB(profile, results);
   });
@@ -744,6 +748,11 @@ async function saveAdvisorDataToDB(profile, results, analysisResult, source) {
     }
   } catch(e) {}
   
+  // Track activity
+  if (window.logActivity) {
+    window.logActivity('tool_use', { tool: 'advisor_submit', visaType: profile.visaType });
+  }
+
   try {
     var body = {
       email: email,

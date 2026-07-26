@@ -585,6 +585,11 @@
     if (input) { input.value = ''; input.disabled = false; input.focus(); }
     if (sendBtn) sendBtn.disabled = false;
     isSending = false;
+
+    // Track student agent chat activity
+    if (window.logActivity) {
+      window.logActivity('chat', { source: 'student-agent', messagePreview: (text || '').substring(0, 100) });
+    }
   }
 
   // ─── Get student auth token ───

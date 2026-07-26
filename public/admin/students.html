@@ -137,6 +137,9 @@
         <button type="button" class="admin-tab role-director" data-tab="progress" style="padding:8px 18px;border:none;background:none;font-weight:600;font-size:0.9rem;cursor:pointer;color:var(--gray-500);">
           Tiến độ hồ sơ
         </button>
+        <button type="button" class="admin-tab role-director" data-tab="activity" style="padding:8px 18px;border:none;background:none;font-weight:600;font-size:0.9rem;cursor:pointer;color:var(--gray-500);">
+          📋 Hoat dong
+        </button>
       </div>
 
       <!-- Tab progress CSS -->
@@ -244,6 +247,40 @@
             </div>
             <div id="progress-empty" class="empty-state" style="display:none">
               <p>Chưa có học sinh nào bắt đầu khai báo hồ sơ.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Activity Logs -->
+      <div class="admin-tab-content" id="tab-activity" style="display:none">
+        <div class="card">
+          <div class="card-header">
+            <h3>📋 Lịch sử hoạt động của người dùng</h3>
+            <p style="font-size:0.85rem;color:var(--gray-400);margin-top:4px;">Xem các hành động của học sinh trên site: xem trường, chat, tìm kiếm, sử dụng công cụ...</p>
+            <div class="toolbar" style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;">
+              <input type="text" id="activity-search" class="progress-search" style="width:auto;flex:1;min-width:200px;margin-bottom:0" placeholder="Tìm theo email..." oninput="filterActivityLogs()">
+              <select id="activity-type-filter" style="min-height:2.45rem;padding:0.45rem 0.7rem;border:1px solid var(--gray-300);border-radius:8px;font:inherit;font-size:.88rem;" onchange="filterActivityLogs()">
+                <option value="">Tất cả loại</option>
+                <option value="page_view">Xem trang</option>
+                <option value="tab_switch">Chuyển tab</option>
+                <option value="tool_use">Sử dụng công cụ</option>
+                <option value="advisor">Tư vấn</option>
+                <option value="chat">Chat AI</option>
+                <option value="checklist">Hồ sơ</option>
+                <option value="search">Tìm kiếm</option>
+                <option value="document">Giấy tờ</option>
+                <option value="save_school">Lưu trường</option>
+                <option value="view_school">Xem trường</option>
+              </select>
+            </div>
+          </div>
+          <div class="card-body">
+            <div id="activity-list" class="student-grid">
+              <div class="loading-state"><div class="spinner"></div> Đang tải dữ liệu...</div>
+            </div>
+            <div id="activity-empty" class="empty-state" style="display:none">
+              <p>Chưa có hoạt động nào được ghi lại.</p>
             </div>
           </div>
         </div>
@@ -616,6 +653,8 @@ document.querySelectorAll('.admin-tab').forEach(function(tab) {
       loadRegisteredAccounts();
     } else if (tabName === 'progress') {
       loadProgressData();
+    } else if (tabName === 'activity') {
+      loadActivityLogs();
     }
   });
 });
@@ -1045,6 +1084,128 @@ function renderAdvisorSubmissions(data) {
       '</div>' +
     '</div>';
   }).join('');
+}
+
+// ─── Activity Logs ───
+var activityLogsData = [];
+
+async function loadActivityLogs() {
+  var container = document.getElementById('activity-list');
+  var empty = document.getElementById('activity-empty');
+  if (!container) return;
+  
+  container.innerHTML = '<div class="loading-state"><div class="spinner"></div> Dang tai du lieu...</div>';
+  empty.style.display = 'none';
+  
+  try {
+    var res = await api('GET', '/admin/students?view=activity-logs&limit=200');
+    activityLogsData = res.data || [];
+    renderActivityLogs(activityLogsData);
+  } catch (err) {
+    container.innerHTML = '<div class="empty-state" style="color:var(--danger)">Loi: ' + escapeHtml(err.message) + '</div>';
+  }
+}
+
+var ACTIVITY_TYPE_LABELS = {
+  page_view: 'Xem trang',
+  tab_switch: 'Chuyển tab',
+  tool_use: 'Công cụ',
+  advisor: 'Tư vấn',
+  chat: 'Chat AI',
+  search: 'Tìm kiếm',
+  checklist: 'Hồ sơ',
+  document: 'Giấy tờ',
+  save_school: 'Lưu trường',
+  view_school: 'Xem trường',
+};
+
+var ACTIVITY_TYPE_COLORS = {
+  page_view: '#6366f1',
+  tab_switch: '#8b5cf6',
+  tool_use: '#f59e0b',
+  advisor: '#059669',
+  chat: '#2563eb',
+  search: '#0891b2',
+  checklist: '#d97706',
+  document: '#7c3aed',
+  save_school: '#dc2626',
+  view_school: '#0f766e',
+};
+
+function getActivityTypeBadge(type) {
+  var label = ACTIVITY_TYPE_LABELS[type] || type;
+  var color = ACTIVITY_TYPE_COLORS[type] || '#6b7280';
+  return '<span style="display:inline-block;padding:2px 8px;border-radius:999px;font-size:.7rem;font-weight:600;background:' + color + '20;color:' + color + ';white-space:nowrap">' + escapeHtml(label) + '</span>';
+}
+
+function renderActivityLogs(data) {
+  var container = document.getElementById('activity-list');
+  var empty = document.getElementById('activity-empty');
+  
+  if (!data || data.length === 0) {
+    container.style.display = 'none';
+    empty.style.display = 'block';
+    return;
+  }
+  
+  container.style.display = 'grid';
+  empty.style.display = 'none';
+  
+  container.innerHTML = data.map(function(log) {
+    var detailsStr = '';
+    if (log.details && Object.keys(log.details).length > 0) {
+      try {
+        var details = typeof log.details === 'string' ? JSON.parse(log.details) : log.details;
+        var parts = [];
+        if (details.pageType) parts.push('Loai: ' + details.pageType);
+        if (details.tab) parts.push('Tab: ' + details.tab);
+        if (details.path) parts.push('Path: ' + details.path);
+        if (details.query) parts.push('Tu khoa: ' + details.query);
+        if (details.schoolSlug) parts.push('Truong: ' + details.schoolSlug);
+        if (details.schoolName) parts.push('Truong: ' + details.schoolName);
+        detailsStr = parts.join(' • ');
+        if (detailsStr.length > 150) detailsStr = detailsStr.substring(0, 150) + '...';
+      } catch(e) { detailsStr = ''; }
+    }
+    
+    var pageStr = log.page || '';
+    if (pageStr.length > 80) pageStr = pageStr.substring(0, 80) + '...';
+    
+    return '<div class="student-card" style="cursor:default;grid-template-columns:1fr">' +
+      '<div>' +
+        '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">' +
+          '<span class="s-name" style="font-size:.88rem">' + escapeHtml(log.full_name || log.email || 'Khach') + '</span>' +
+          getActivityTypeBadge(log.activity_type) +
+        '</div>' +
+        '<div class="s-meta">' +
+          '<span>' + escapeHtml(log.email || '') + '</span>' +
+          '<span>' + new Date(log.created_at).toLocaleString('vi-VN') + '</span>' +
+          (log.ip ? '<span>IP: ' + escapeHtml(log.ip) + '</span>' : '') +
+        '</div>' +
+        (pageStr ? '<div class="s-school">📄 ' + escapeHtml(pageStr) + '</div>' : '') +
+        (detailsStr ? '<div class="s-next">📌 ' + detailsStr + '</div>' : '') +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function filterActivityLogs() {
+  var q = document.getElementById('activity-search').value.toLowerCase().trim();
+  var typeFilter = document.getElementById('activity-type-filter').value;
+  
+  var filtered = activityLogsData;
+  if (q) {
+    filtered = filtered.filter(function(log) {
+      return (log.email || '').toLowerCase().includes(q) ||
+        (log.full_name || '').toLowerCase().includes(q);
+    });
+  }
+  if (typeFilter) {
+    filtered = filtered.filter(function(log) {
+      return log.activity_type === typeFilter;
+    });
+  }
+  renderActivityLogs(filtered);
 }
 
 loadAll();
