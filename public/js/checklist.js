@@ -919,15 +919,12 @@
       html += `
         <div class="pa-overall">
           <div class="pa-overall-header">
-            <div class="pa-score-ring">
-              <svg viewBox="0 0 36 36" class="pa-score-svg">
-                <path class="pa-score-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
-                <path class="pa-score-fill" stroke="${scoreColor}" stroke-dasharray="${scoreWidth}, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
-                <text x="18" y="20.5" class="pa-score-text" fill="${scoreColor}">${scoreWidth}</text>
-              </svg>
+            <div class="pa-risk-badge" style="background:${scoreColor}18;border:2px solid ${scoreColor};border-radius:14px;padding:12px 20px;text-align:center;min-width:120px">
+              <div style="font-size:2.2rem;line-height:1">${overall.icon || '🟡'}</div>
+              <div class="pa-overall-label ${scoreLevelClass}" style="color:${scoreColor};font-weight:800;font-size:1rem;margin-top:4px">${overall.label}</div>
+              <div style="font-size:0.75rem;color:var(--gray-400);margin-top:2px">Điểm: ${overall.score}/100</div>
             </div>
             <div class="pa-overall-info">
-              <div class="pa-overall-label ${scoreLevelClass}">${overall.label}</div>
               <div class="pa-overall-sub">
                 <span class="pa-stat pa-stat-strong">${overall.summary.strengths} điểm mạnh</span>
                 <span class="pa-stat-sep">·</span>
@@ -941,7 +938,7 @@
           </div>
 
           <div class="pa-decisions">
-            <div class="pa-decisions-title">Quyết định sau phân tích:</div>
+            <div class="pa-decisions-title">Kết luận:</div>
             <ul class="pa-decisions-list">
               ${overall.decisions.map(function(d) { return '<li>' + escapeHtml(d) + '</li>'; }).join('')}
             </ul>
@@ -1047,7 +1044,7 @@
       // Risks
       if (group.risks.length > 0) {
         html += '<div class="pa-sub-section pa-section-risk"><div class="pa-sub-title">Rủi ro</div><ul>' +
-          group.risks.map(function(r) { return '<li>' + escapeHtml(r) + '</li>'; }).join('') + '</ul></div>';
+          group.risks.map(function(r) { return '<li>' + escapeHtml(r.text || r) + '</li>'; }).join('') + '</ul></div>';
       }
 
       // Missing evidence
@@ -1214,7 +1211,7 @@
           }
           if (g.risks && g.risks.length > 0) {
             html += '<div class="pa-ai-sub ai-risk"><span class="pa-ai-sub-label">Rủi ro</span><ul>' +
-              g.risks.map(function(r) { return '<li>' + escapeHtml(r) + '</li>'; }).join('') + '</ul></div>';
+              g.risks.map(function(r) { return '<li>' + escapeHtml(r.text || r) + '</li>'; }).join('') + '</ul></div>';
           }
           if (g.missingEvidence && g.missingEvidence.length > 0) {
             html += '<div class="pa-ai-sub ai-missing"><span class="pa-ai-sub-label">Thiếu</span><ul>' +
