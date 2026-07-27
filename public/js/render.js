@@ -2165,6 +2165,7 @@ function showSchool(viewId) {
   const advisor = document.getElementById("advisor-content");
   const costEl = document.getElementById("cost-content");
   const checklistEl = document.getElementById("checklist-content");
+  const knowledgeEl = document.getElementById("knowledge-content");
   const newsEl = document.getElementById("news-content");
 
   // Set currentVisaType based on view
