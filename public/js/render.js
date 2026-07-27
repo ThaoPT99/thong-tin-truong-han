@@ -1162,7 +1162,7 @@ function getInitialView() {
   const schoolId = params.get("school");
   if (schoolId && getSchoolById(schoolId)) return schoolId;
   const view = params.get("view");
-  if (["advisor", "compare", "map", "extra", "ebook", "schools", "d4-1", "cost", "checklist", "knowledge"].includes(view)) return view;
+  if (["advisor", "compare", "map", "extra", "ebook", "schools", "d4-1", "cost", "checklist", "knowledge", "news"].includes(view)) return view;
   // Check visa_type param
   const vt = params.get("visa_type");
   if (vt === 'D4-1') return 'd4-1';
@@ -2165,7 +2165,7 @@ function showSchool(viewId) {
   const advisor = document.getElementById("advisor-content");
   const costEl = document.getElementById("cost-content");
   const checklistEl = document.getElementById("checklist-content");
-  const knowledgeEl = document.getElementById("knowledge-content");
+  const newsEl = document.getElementById("news-content");
 
   // Set currentVisaType based on view
   if (viewId === 'd4-1') {
@@ -2202,7 +2202,7 @@ function showSchool(viewId) {
   updatePageMeta(viewId, getSchoolById(viewId));
 
   const hideAll = () => {
-    [content, schools, compare, extra, map, ebook, advisor, costEl, checklistEl, knowledgeEl].forEach(el => el?.classList.add("hidden"));
+    [content, schools, compare, extra, map, ebook, advisor, costEl, checklistEl, knowledgeEl, newsEl].forEach(el => el?.classList.add("hidden"));
   };
 
   // Track page views
@@ -2293,6 +2293,13 @@ function showSchool(viewId) {
     knowledgeEl.classList.remove("hidden");
     if (typeof window.renderKnowledgeBase === "function") window.renderKnowledgeBase(knowledgeEl);
     else knowledgeEl.innerHTML = `<div class="empty"><p>Đang tải Kiến thức...</p></div>`;
+    return;
+  }
+
+  if (viewId === "news") {
+    hideAll();
+    newsEl.classList.remove("hidden");
+    renderNews(newsEl);
     return;
   }
 
@@ -2389,6 +2396,75 @@ function init() {
     console.error(e);
   }
 }
+
+// ─── News Section ───
+function renderNews(container) {
+  container.innerHTML = `
+    <section class="news-view">
+      <div class="news-head">
+        <p class="advisor-kicker">📰 Tin tức & Thành tích</p>
+        <h2>Tin tức du học Hàn Quốc</h2>
+        <p>Hình ảnh visa đỗ, tiễn bay, thành tích và tin tức du học mới nhất</p>
+      </div>
+      <div class="news-filter-bar">
+        <button type="button" class="news-filter-btn active" data-cat="all" onclick="filterNewsPosts('all')">Tất cả</button>
+        <button type="button" class="news-filter-btn" data-cat="visa" onclick="filterNewsPosts('visa')">✅ Visa đỗ</button>
+        <button type="button" class="news-filter-btn" data-cat="sendoff" onclick="filterNewsPosts('sendoff')">✈️ Tiễn bay</button>
+        <button type="button" class="news-filter-btn" data-cat="success" onclick="filterNewsPosts('success')">🏆 Thành tích</button>
+        <button type="button" class="news-filter-btn" data-cat="news" onclick="filterNewsPosts('news')">📰 Tin tức</button>
+      </div>
+      <div id="news-grid" class="news-grid">
+        <div class="news-loading">Đang tải tin tức...</div>
+      </div>
+    </section>
+  `;
+  loadNewsPosts('all', container);
+}
+
+async function loadNewsPosts(category, container) {
+  const grid = container.querySelector('#news-grid');
+  if (!grid) return;
+  grid.innerHTML = '<div class="news-loading">Đang tải tin tức...</div>';
+  try {
+    const url = '/api/news?limit=50' + (category && category !== 'all' ? '&category=' + category : '');
+    const res = await fetch(url);
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error);
+    const posts = json.data || [];
+    if (posts.length === 0) {
+      grid.innerHTML = '<div class="news-empty">Chưa có tin tức nào. Quay lại sau nhé!</div>';
+      return;
+    }
+    let html = posts.map(post => {
+      const imgs = (post.image_urls || []).filter(Boolean);
+      const imgHtml = imgs.length > 0 
+        ? `<div class="news-card-images">${imgs.slice(0, 3).map(u => `<img src="${escapeHtml(u)}" alt="" onerror="this.style.display='none'">`).join('')}</div>`
+        : '';
+      const catLabel = { 'news': '📰 Tin tức', 'visa': '✅ Visa đỗ', 'sendoff': '✈️ Tiễn bay', 'success': '🏆 Thành tích' };
+      const date = post.created_at ? new Date(post.created_at).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '';
+      return `<div class="news-card">
+        ${imgHtml}
+        <div class="news-card-body">
+          <span class="news-cat-tag news-cat-${escapeHtml(post.category || 'news')}">${catLabel[post.category] || '📰'}</span>
+          <h3>${escapeHtml(post.title)}</h3>
+          ${post.content ? `<p>${escapeHtml(post.content.substring(0, 200))}${post.content.length > 200 ? '...' : ''}</p>` : ''}
+          <span class="news-date">${date}</span>
+        </div>
+      </div>`;
+    }).join('');
+    grid.innerHTML = html;
+  } catch (err) {
+    grid.innerHTML = '<div class="news-empty" style="color:#dc2626;">Lỗi tải tin tức: ' + escapeHtml(err.message) + '</div>';
+  }
+}
+
+window.filterNewsPosts = function(category) {
+  document.querySelectorAll('.news-filter-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.cat === category);
+  });
+  const container = document.getElementById('news-content');
+  loadNewsPosts(category, container);
+};
 
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", init);
