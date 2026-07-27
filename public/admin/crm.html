@@ -29,12 +29,13 @@
     .crm-table .sub-cell { font-size:.78rem; color:#94a3b8; margin-top:2px; }
 
     .status-badge { display:inline-block; padding:3px 10px; border-radius:20px; font-size:.72rem; font-weight:600; white-space:nowrap; }
-    .status-new { background:#f1f5f9; color:#475569; }
-    .status-contacted { background:#dbeafe; color:#1d4ed8; }
-    .status-consulting { background:#fef3c7; color:#92400e; }
-    .status-enrolled { background:#d1fae5; color:#065f46; }
-    .status-converted { background:#ede9fe; color:#5b21b6; }
-    .status-dropped { background:#fee2e2; color:#dc2626; }
+    .status-submitted { background:#dbeafe; color:#1d4ed8; }
+    .status-processing { background:#fef3c7; color:#92400e; }
+    .status-approved { background:#d1fae5; color:#065f46; }
+    .status-rejected { background:#fee2e2; color:#dc2626; }
+    .status-enrolled { background:#ede9fe; color:#5b21b6; }
+    .status-flown { background:#e0f2fe; color:#0369a1; }
+    .status-dropped { background:#f1f5f9; color:#64748b; }
 
     .source-badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:.7rem; font-weight:600; }
     .source-yes { background:#fef3c7; color:#92400e; }
@@ -325,12 +326,13 @@
         <div class="crm-form-row">
           <div><label for="field-status">Trạng thái</label>
             <select id="field-status">
-              <option value="new">📌 Mới</option>
-              <option value="contacted">📞 Đã liên hệ</option>
-              <option value="consulting">💬 Đang tư vấn</option>
-              <option value="enrolled">📝 Đã ghi danh</option>
-              <option value="converted">✅ Chuyển đổi</option>
-              <option value="dropped">❌ Rơi rụng</option>
+              <option value="submitted">📄 Đã nộp hồ sơ</option>
+              <option value="processing">🔄 Đang xử lý visa</option>
+              <option value="approved">✅ Đã cấp visa</option>
+              <option value="rejected">❌ Bị từ chối</option>
+              <option value="enrolled">📚 Đã nhập học</option>
+              <option value="flown">✈️ Đã bay</option>
+              <option value="dropped">⛔ Rơi rụng</option>
             </select>
           </div>
           <div></div>
@@ -368,8 +370,8 @@ document.getElementById('sidebar-user').textContent=user.email||'Admin';
 const API='/api/crm';
 function getAuthHeaders(){const t=localStorage.getItem('admin_token');return t?{'Authorization':'Bearer '+t,'Content-Type':'application/json'}:{'Content-Type':'application/json'};}
 
-function statusLabel(s){const m={'new':'📌 Mới','contacted':'📞 Đã LH','consulting':'💬 Đang TV','enrolled':'📝 Ghi danh','converted':'✅ Chuyển đổi','dropped':'❌ Rơi rụng'};return m[s]||s;}
-function statusClass(s){return 'status-'+(s||'new');}
+function statusLabel(s){const m={'submitted':'📄 Đã nộp HS','processing':'🔄 Đang xử lý','approved':'✅ Đã cấp visa','rejected':'❌ Bị từ chối','enrolled':'📚 Đã nhập học','flown':'✈️ Đã bay','dropped':'⛔ Rơi rụng'};return m[s]||s;}
+function statusClass(s){return 'status-'+(s||'submitted');}
 function formatDate(v){if(!v)return'—';return new Date(v).toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric'});}
 function formatCurrency(n){if(!n||n===0)return'—';return parseInt(n).toLocaleString('vi-VN')+'₫';}
 function escapeHtml(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
