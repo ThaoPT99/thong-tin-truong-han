@@ -215,7 +215,7 @@
 
       <!-- Section 3: Phụ huynh -->
       <div class="crm-form-section">
-        <h3><span class="section-icon">👨‍👩‍👧‍👦</span> Thông tin phụ huynh</h3>
+        <h3><span class="section-icon">👨‍👩‍👧‍👦</span> Thông tin phụ huynh & BHP</h3>
         <div class="crm-form-row">
           <div><label for="field-father_name">Họ tên Bố *</label><input type="text" id="field-father_name" placeholder="VD: Nguyễn Văn B"></div>
           <div><label for="field-father_dob">Ngày sinh của Bố (yy.mm.dd)</label><input type="date" id="field-father_dob"></div>
@@ -231,6 +231,28 @@
         <div class="crm-form-row">
           <div><label for="field-mother_phone">Số điện thoại Mẹ *</label><input type="text" id="field-mother_phone" placeholder="VD: 091xxxxxxx"></div>
           <div></div>
+        </div>
+        <div class="crm-form-row">
+          <div>
+            <label for="field-bhp_relative">🛡️ Người thân BHP bên Hàn</label>
+            <select id="field-bhp_relative" onchange="toggleBhpNote()">
+              <option value="">— Không có —</option>
+              <option value="Bố">Bố</option>
+              <option value="Mẹ">Mẹ</option>
+              <option value="Anh trai">Anh trai</option>
+              <option value="Chị gái">Chị gái</option>
+              <option value="Em trai">Em trai</option>
+              <option value="Em gái">Em gái</option>
+              <option value="Chú">Chú</option>
+              <option value="Bác">Bác</option>
+              <option value="Ông">Ông</option>
+              <option value="Bà">Bà</option>
+              <option value="Khác">Khác</option>
+            </select>
+          </div>
+          <div style="display:flex;align-items:flex-end;">
+            <input type="text" id="field-bhp_note_ext" placeholder="Ghi chú BHP (VD: số điện thoại, địa chỉ)" style="display:none;">
+          </div>
         </div>
       </div>
 
@@ -300,11 +322,10 @@
             <div><label for="field-family_members">Số thành viên trong gia đình</label><input type="number" id="field-family_members" min="1" value="4"></div>
             <div><label for="field-father_job">Nghề nghiệp của bố</label><input type="text" id="field-father_job" placeholder="VD: Kinh doanh"></div>
           </div>
-          <div class="crm-form-row">
-            <div><label for="field-mother_job">Nghề nghiệp của mẹ</label><input type="text" id="field-mother_job" placeholder="VD: Giáo viên"></div>
-            <div><div style="margin-top:1.5rem;"><div class="checkbox-row"><input type="checkbox" id="field-has_bhp"><label for="field-has_bhp">Có BHP bên Hàn?</label></div></div></div>
-          </div>
-          <div class="crm-form-row full"><input type="text" id="field-bhp_note" placeholder="Ghi chú BHP (nếu có)"></div>
+      <div class="crm-form-row">
+        <div><label for="field-mother_job">Nghề nghiệp của mẹ</label><input type="text" id="field-mother_job" placeholder="VD: Giáo viên"></div>
+        <div></div>
+      </div>
         </div>
       </div>
 
@@ -468,13 +489,12 @@ async function uploadCrmFile(event, fieldId){
 /* ─── Modal ─── */
 const FIELD_IDS = [
   'full_name','birth_date','birthplace','id_number',
-  'issue_date','issue_place','phone','email','passport_url','avatar_url',
-  'father_name','father_dob','father_phone','mother_name','mother_dob','mother_phone',
+  'issue_date','issue_place','phone','email','passport_url','avatar_url',          'father_name','father_dob','father_phone','mother_name','mother_dob','mother_phone','bhp_relative','bhp_note_ext',
   'primary_school','secondary_school','high_school','university','gpa','absences','post_high_school',
   'vn_school','vn_major','kr_school','kr_major',
   'language_cert','cd_class','sejong_class',
   'payment_count','payment_amount','is_source','status','sale_note',
-  'family_members','father_job','mother_job','has_bhp','bhp_note',
+  'family_members','father_job','mother_job',
 ];
 
 function resetFields(){
@@ -496,6 +516,7 @@ function openCreateModal(){
   document.getElementById('file-previews').style.display='none';
   document.getElementById('audit-section').style.display='none';
   toggleSourceFields();
+  toggleBhpNote();
   document.getElementById('modal-overlay').style.display='flex';
 }
 
@@ -512,12 +533,12 @@ async function openEditModal(id){
       const el=document.getElementById('field-'+f);
       if(!el)return;
       let val=null;
-      if(['is_source','has_bhp'].includes(f)){
-        val=f==='is_source'?s.is_source:(s.family_info||{}).has_bhp;
+      if(['is_source'].includes(f)){
+        val=s.is_source;
         el.checked=val===true;
-      }else if(['family_members','father_job','mother_job','bhp_note'].includes(f)){
+      }else if(['family_members','father_job','mother_job'].includes(f)){
         const fi=s.family_info||{};
-        const map={'family_members':'members','father_job':'father_job','mother_job':'mother_job','bhp_note':'bhp_note'};
+        const map={'family_members':'members','father_job':'father_job','mother_job':'mother_job'};
         val=fi[map[f]];
         if(el.type==='number')el.value=val||(f==='family_members'?4:0);
         else el.value=val||'';
@@ -530,6 +551,7 @@ async function openEditModal(id){
     });
 
     toggleSourceFields();
+    toggleBhpNote();
     document.getElementById('save-btn').textContent='Lưu thay đổi';
     document.getElementById('form-error').textContent='';
     renderAuditLogs(logs);
@@ -539,6 +561,7 @@ async function openEditModal(id){
 
 function closeModal(){document.getElementById('modal-overlay').style.display='none';}
 function toggleSourceFields(){document.getElementById('source-fields').classList.toggle('hidden',!document.getElementById('field-is_source').checked);}
+function toggleBhpNote(){document.getElementById('field-bhp_note_ext').style.display=document.getElementById('field-bhp_relative').value?'block':'none';}
 
 async function saveStudent(e){
   e.preventDefault();
@@ -549,10 +572,11 @@ async function saveStudent(e){
   const isSource=document.getElementById('field-is_source').checked;
   const data={};
   FIELD_IDS.forEach(f=>{
-    if(['is_source','has_bhp'].includes(f))return;
-    if(['family_members','father_job','mother_job','bhp_note'].includes(f))return;
+    if(['is_source'].includes(f))return;
+    if(['family_members','father_job','mother_job'].includes(f))return;
     const el=document.getElementById('field-'+f);
     if(!el)return;
+    if(el.type==='checkbox')return;
     if(el.type==='number')data[f]=parseInt(el.value)||0;
     else if(el.type==='date')data[f]=el.value||null;
     else data[f]=el.value.trim();
@@ -562,8 +586,6 @@ async function saveStudent(e){
     members:parseInt(document.getElementById('field-family_members').value)||4,
     father_job:document.getElementById('field-father_job').value.trim(),
     mother_job:document.getElementById('field-mother_job').value.trim(),
-    has_bhp:document.getElementById('field-has_bhp').checked,
-    bhp_note:document.getElementById('field-bhp_note').value.trim(),
   }:{};for(const k in data){if(data[k]===''||data[k]===null)delete data[k];}
 
   document.getElementById('save-btn').disabled=true;

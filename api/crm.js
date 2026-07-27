@@ -20,6 +20,7 @@ const ALLOWED_FIELDS = [
   'vn_school', 'vn_major', 'kr_school', 'kr_major',
   'language_cert', 'cd_class', 'sejong_class',
   'payment_count', 'payment_amount',
+  'bhp_relative',
   'is_source', 'family_info', 'status', 'sale_note',
 ];
 
@@ -36,6 +37,7 @@ const FIELD_LABELS = {
   'kr_school': 'Trường HQ', 'kr_major': 'CN HQ',
   'language_cert': 'Chứng chỉ', 'cd_class': 'Lớp CĐ', 'sejong_class': 'Lớp Sejong',
   'payment_count': 'SL đóng', 'payment_amount': 'Số tiền',
+  'bhp_relative': 'Người thân BHP',
   'is_source': 'HS nguồn', 'family_info': 'Gia đình',
   'status': 'Trạng thái', 'sale_note': 'Ghi chú',
 };
