@@ -68,14 +68,18 @@ function setupSidebarByRole() {
   const studentsTab = document.querySelector('.sidebar-nav a[href="students.html"]');
   
   if (role === 'sale') {
-    // Ẩn các tab director
-    directorTabs.forEach(el => el.style.display = 'none');
+    // Ẩn TẤT CẢ tab trong sidebar, chỉ chừa CRM
+    document.querySelectorAll('.sidebar-nav a').forEach(el => {
+      if (!el.getAttribute('href').includes('crm.html')) {
+        el.style.display = 'none';
+      }
+    });
     
-    // Redirect nếu đang ở trang không cho phép
+    // Chỉ cho phép CRM
     const currentPage = window.location.pathname.split('/').pop();
-    const allowedPages = ['students.html', 'login.html', 'crm.html'];
+    const allowedPages = ['crm.html', 'login.html'];
     if (!allowedPages.includes(currentPage)) {
-      window.location.href = '/admin/students.html';
+      window.location.href = '/admin/crm.html';
     }
   } else if (role === 'director') {
     // Director thấy tất cả
