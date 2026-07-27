@@ -127,13 +127,12 @@
     </div>
 
     <div class="crm-stats" id="stats-bar">
-      <div class="crm-stat-card" data-filter="all"><div class="crm-stat-number" id="stat-all">0</div><div class="crm-stat-label">Tất cả</div></div>
-      <div class="crm-stat-card" data-filter="new"><div class="crm-stat-number" id="stat-new">0</div><div class="crm-stat-label">📌 Mới</div></div>
-      <div class="crm-stat-card" data-filter="contacted"><div class="crm-stat-number" id="stat-contacted">0</div><div class="crm-stat-label">📞 Đã LH</div></div>
-      <div class="crm-stat-card" data-filter="consulting"><div class="crm-stat-number" id="stat-consulting">0</div><div class="crm-stat-label">💬 Đang TV</div></div>
-      <div class="crm-stat-card" data-filter="enrolled"><div class="crm-stat-number" id="stat-enrolled">0</div><div class="crm-stat-label">📝 Đã ghi danh</div></div>
-      <div class="crm-stat-card" data-filter="converted"><div class="crm-stat-number" id="stat-converted">0</div><div class="crm-stat-label">✅ Chuyển đổi</div></div>
-      <div class="crm-stat-card" data-filter="dropped"><div class="crm-stat-number" id="stat-dropped">0</div><div class="crm-stat-label">❌ Rơi rụng</div></div>
+      <div class="crm-stat-card" data-filter="all"><div class="crm-stat-number" id="stat-all">0</div><div class="crm-stat-label">📋 Tất cả</div></div>
+      <div class="crm-stat-card" data-filter="has_bhp"><div class="crm-stat-number" id="stat-has-bhp">0</div><div class="crm-stat-label">🛡️ Có BHP</div></div>
+      <div class="crm-stat-card" data-filter="no_bhp"><div class="crm-stat-number" id="stat-no-bhp">0</div><div class="crm-stat-label">🛡️ Không BHP</div></div>
+      <div class="crm-stat-card" data-filter="source"><div class="crm-stat-number" id="stat-source">0</div><div class="crm-stat-label">📦 Nguồn</div></div>
+      <div class="crm-stat-card" data-filter="professional"><div class="crm-stat-number" id="stat-professional">0</div><div class="crm-stat-label">Chuyên nghiệp</div></div>
+      <div class="crm-stat-card" data-filter="payment" style="background:#f0fdf4;border-color:#86efac;cursor:default;"><div class="crm-stat-number" id="stat-total-payment" style="color:#059669;">0₫</div><div class="crm-stat-label">💰 Tổng tiền đã đóng</div></div>
     </div>
 
     <div class="crm-toolbar">
@@ -141,7 +140,7 @@
       <div class="crm-source-toggle">
         <button class="active" data-source="all" onclick="setSourceFilter('all')">Tất cả</button>
         <button data-source="source" onclick="setSourceFilter('source')">📦 Nguồn</button>
-        <button data-source="normal" onclick="setSourceFilter('normal')">Thường</button>
+        <button data-source="normal" onclick="setSourceFilter('normal')">Chuyên nghiệp</button>
       </div>
     </div>
 
@@ -381,12 +380,17 @@ async function loadStudents(){
   document.getElementById('empty-state').style.display='none';
   try{
     const p=new URLSearchParams({limit:'500'});
-    if(currentFilter!=='all')p.set('status',currentFilter);
     if(currentSource==='source')p.set('is_source','true');else if(currentSource==='normal')p.set('is_source','false');
     const sv=document.getElementById('search-input').value.trim();if(sv)p.set('search',sv);
     const r=await fetch(API+'?'+p.toString(),{headers:getAuthHeaders()});
     const j=await r.json();if(!j.success)throw new Error(j.error||'Lỗi');
-    allStudents=j.data||[];renderTable(allStudents);updateStats(allStudents);
+    allStudents=j.data||[];
+    let filtered=allStudents;
+    if(currentFilter==='has_bhp')filtered=allStudents.filter(s=>s.bhp_relative);
+    else if(currentFilter==='no_bhp')filtered=allStudents.filter(s=>!s.bhp_relative);
+    else if(currentFilter==='source')filtered=allStudents.filter(s=>s.is_source);
+    else if(currentFilter==='professional')filtered=allStudents.filter(s=>!s.is_source);
+    renderTable(filtered);updateStats(allStudents);
     document.getElementById('loading').style.display='none';
     if(allStudents.length===0)document.getElementById('empty-state').style.display='block';
     else document.getElementById('crm-list').style.display='block';
@@ -395,12 +399,12 @@ async function loadStudents(){
 
 function updateStats(st){
   document.getElementById('stat-all').textContent=st.length;
-  document.getElementById('stat-new').textContent=st.filter(s=>s.status==='new').length;
-  document.getElementById('stat-contacted').textContent=st.filter(s=>s.status==='contacted').length;
-  document.getElementById('stat-consulting').textContent=st.filter(s=>s.status==='consulting').length;
-  document.getElementById('stat-enrolled').textContent=st.filter(s=>s.status==='enrolled').length;
-  document.getElementById('stat-converted').textContent=st.filter(s=>s.status==='converted').length;
-  document.getElementById('stat-dropped').textContent=st.filter(s=>s.status==='dropped').length;
+  document.getElementById('stat-has-bhp').textContent=st.filter(s=>s.bhp_relative).length;
+  document.getElementById('stat-no-bhp').textContent=st.filter(s=>!s.bhp_relative).length;
+  document.getElementById('stat-source').textContent=st.filter(s=>s.is_source).length;
+  document.getElementById('stat-professional').textContent=st.filter(s=>!s.is_source).length;
+  const total=st.reduce((sum,s)=>sum+(parseInt(s.payment_amount)||0),0);
+  document.getElementById('stat-total-payment').textContent=total>0?parseInt(total).toLocaleString('vi-VN')+'₫':'0₫';
 }
 
 function renderTable(students){
@@ -411,7 +415,7 @@ function renderTable(students){
     const parentInfo = (s.father_name||s.mother_name)
       ? '<div>'+escapeHtml(s.father_name||'')+'</div><div class="sub-cell">'+escapeHtml(s.mother_name||'')+'</div>'
       : '<span style="color:#94a3b8;">—</span>';
-    const sourceBadge=s.is_source?'<span class="source-badge source-yes">📦 Nguồn</span>':'<span class="source-badge source-no">Thường</span>';
+    const sourceBadge=s.is_source?'<span class="source-badge source-yes">📦 Nguồn</span>':'<span class="source-badge source-no">Chuyên nghiệp</span>';
     html+='<tr>'+
       '<td>'+nameHtml+'</td>'+
       '<td style="font-size:.82rem;">'+(s.phone?'<div>'+escapeHtml(s.phone)+'</div>'+(s.email?'<div class="sub-cell">'+escapeHtml(s.email)+'</div>':''):'<span style="color:#94a3b8;">—</span>')+'</td>'+
@@ -426,20 +430,16 @@ function renderTable(students){
   });
   html+='</tbody></table>';
   container.innerHTML=html;
-  const totalPayment=students.reduce((sum,s)=>sum+(parseInt(s.payment_amount)||0),0);
-  if(totalPayment>0){
-    const statsEl=document.getElementById('stats-bar');
-    const es=document.getElementById('payment-summary');if(es)es.remove();
-    const sum=document.createElement('div');sum.id='payment-summary';
-    sum.style.cssText='grid-column:1/-1;background:#f0fdf4;border-color:#86efac;';sum.className='crm-stat-card';sum.style.cursor='default';
-    sum.innerHTML='<div class="crm-stat-number" style="color:#059669;">'+formatCurrency(totalPayment)+'</div><div class="crm-stat-label">Tổng tiền đã đóng</div>';
-    statsEl.appendChild(sum);
-  }
 }
 
 document.querySelectorAll('.crm-stat-card').forEach(el=>{
   el.addEventListener('click',function(){
-    const f=this.dataset.filter;if(f==='all'||f===undefined)return;
+    const f=this.dataset.filter;
+    if(!f||f==='payment')return;
+    if(f==='all'){
+      currentFilter='all';document.querySelectorAll('.crm-stat-card').forEach(c=>c.classList.remove('active'));this.classList.add('active');loadStudents();
+      return;
+    }
     currentFilter=f;document.querySelectorAll('.crm-stat-card').forEach(c=>c.classList.remove('active'));this.classList.add('active');loadStudents();
   });
 });
