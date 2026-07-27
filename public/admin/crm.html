@@ -235,24 +235,15 @@
         <div class="crm-form-row">
           <div>
             <label for="field-bhp_relative">🛡️ Người thân BHP bên Hàn</label>
-            <select id="field-bhp_relative" onchange="toggleBhpNote()">
+            <select id="field-bhp_relative">
               <option value="">— Không có —</option>
               <option value="Bố">Bố</option>
               <option value="Mẹ">Mẹ</option>
-              <option value="Anh trai">Anh trai</option>
-              <option value="Chị gái">Chị gái</option>
-              <option value="Em trai">Em trai</option>
-              <option value="Em gái">Em gái</option>
-              <option value="Chú">Chú</option>
-              <option value="Bác">Bác</option>
-              <option value="Ông">Ông</option>
-              <option value="Bà">Bà</option>
-              <option value="Khác">Khác</option>
+              <option value="Anh">Anh</option>
+              <option value="Chị">Chị</option>
             </select>
           </div>
-          <div style="display:flex;align-items:flex-end;">
-            <input type="text" id="field-bhp_note_ext" placeholder="Ghi chú BHP (VD: số điện thoại, địa chỉ)" style="display:none;">
-          </div>
+          <div></div>
         </div>
       </div>
 
@@ -489,7 +480,7 @@ async function uploadCrmFile(event, fieldId){
 /* ─── Modal ─── */
 const FIELD_IDS = [
   'full_name','birth_date','birthplace','id_number',
-  'issue_date','issue_place','phone','email','passport_url','avatar_url',          'father_name','father_dob','father_phone','mother_name','mother_dob','mother_phone','bhp_relative','bhp_note_ext',
+  'issue_date','issue_place','phone','email','passport_url','avatar_url',          'father_name','father_dob','father_phone','mother_name','mother_dob','mother_phone','bhp_relative',
   'primary_school','secondary_school','high_school','university','gpa','absences','post_high_school',
   'vn_school','vn_major','kr_school','kr_major',
   'language_cert','cd_class','sejong_class',
@@ -516,7 +507,6 @@ function openCreateModal(){
   document.getElementById('file-previews').style.display='none';
   document.getElementById('audit-section').style.display='none';
   toggleSourceFields();
-  toggleBhpNote();
   document.getElementById('modal-overlay').style.display='flex';
 }
 
@@ -551,7 +541,6 @@ async function openEditModal(id){
     });
 
     toggleSourceFields();
-    toggleBhpNote();
     document.getElementById('save-btn').textContent='Lưu thay đổi';
     document.getElementById('form-error').textContent='';
     renderAuditLogs(logs);
@@ -561,7 +550,6 @@ async function openEditModal(id){
 
 function closeModal(){document.getElementById('modal-overlay').style.display='none';}
 function toggleSourceFields(){document.getElementById('source-fields').classList.toggle('hidden',!document.getElementById('field-is_source').checked);}
-function toggleBhpNote(){document.getElementById('field-bhp_note_ext').style.display=document.getElementById('field-bhp_relative').value?'block':'none';}
 
 async function saveStudent(e){
   e.preventDefault();
