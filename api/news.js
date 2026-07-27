@@ -5,12 +5,7 @@
 // PUT /api/news?id=xxx — Cập nhật bài viết (admin)
 // DELETE /api/news?id=xxx — Xoá bài viết (admin)
 
-const { createClient } = require('@supabase/supabase-js');
-
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_KEY
-);
+const { supabase } = require('../lib/supabase');
 
 module.exports = async (req, res) => {
   // CORS
