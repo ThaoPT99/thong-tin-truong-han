@@ -6,6 +6,8 @@
 // DELETE /api/crm?id=xxx    — Xoá học sinh
 
 const { supabase } = require('../lib/supabase');
+const jwt = require('jsonwebtoken');
+const JWT_SECRET = process.env.JWT_SECRET;
 
 const ALLOWED_FIELDS = [
   'full_name', 'birth_date', 'birthplace', 'id_number',
@@ -151,10 +153,18 @@ async function checkAdminAuth(req) {
   if (!auth || !auth.startsWith('Bearer ')) return false;
   const token = auth.slice(7);
   if (token === process.env.ADMIN_API_KEY) return true;
+  // Cách 1: Supabase Auth JWT (dùng cho auth/student)
   try {
     const { data: { user }, error } = await supabase.auth.getUser(token);
     if (user && !error) return true;
   } catch(e) {}
+  // Cách 2: Custom JWT (admin login dùng JWT_SECRET)
+  if (JWT_SECRET) {
+    try {
+      const decoded = jwt.verify(token, JWT_SECRET);
+      if (decoded && decoded.id) return true;
+    } catch(e) {}
+  }
   return false;
 }
 
