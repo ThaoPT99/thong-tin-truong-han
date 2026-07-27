@@ -86,11 +86,13 @@ module.exports = async (req, res) => {
         const { data, error } = await supabase.from('crm_students').insert(payload).select().single();
         if (error) throw error;
 
-        await supabase.from('crm_audit_logs').insert({
-          student_id: data.id, action: 'created',
-          changes: { full_name: { new: payload.full_name } },
-          changed_by: changedBy || 'unknown',
-        }).catch(e => console.error('Audit error:', e));
+        try {
+          await supabase.from('crm_audit_logs').insert({
+            student_id: data.id, action: 'created',
+            changes: { full_name: { new: payload.full_name } },
+            changed_by: changedBy || 'unknown',
+          });
+        } catch (e) { console.error('Audit error:', e); }
         return res.status(201).json({ success: true, data });
       }
 
@@ -115,9 +117,11 @@ module.exports = async (req, res) => {
           }
         }
         if (Object.keys(changes).length > 0) {
-          await supabase.from('crm_audit_logs').insert({
-            student_id: id, action: 'updated', changes, changed_by: changedBy || 'unknown',
-          }).catch(e => console.error('Audit error:', e));
+          try {
+            await supabase.from('crm_audit_logs').insert({
+              student_id: id, action: 'updated', changes, changed_by: changedBy || 'unknown',
+            });
+          } catch (e) { console.error('Audit error:', e); }
         }
         return res.status(200).json({ success: true, data });
       }
@@ -128,11 +132,13 @@ module.exports = async (req, res) => {
         const { data: delData } = await supabase.from('crm_students').select('full_name').eq('id', id).single();
         if (!delData) return res.status(404).json({ success: false, error: 'Không tìm thấy' });
 
-        await supabase.from('crm_audit_logs').insert({
-          student_id: id, action: 'deleted',
-          changes: { full_name: { old: delData.full_name } },
-          changed_by: changedBy || 'unknown',
-        }).catch(e => console.error('Audit error:', e));
+        try {
+          await supabase.from('crm_audit_logs').insert({
+            student_id: id, action: 'deleted',
+            changes: { full_name: { old: delData.full_name } },
+            changed_by: changedBy || 'unknown',
+          });
+        } catch (e) { console.error('Audit error:', e); }
 
         const { error } = await supabase.from('crm_students').delete().eq('id', id);
         if (error) throw error;
