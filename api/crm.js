@@ -1,192 +1,139 @@
 // api/crm.js — API cho CRM Quản lý học sinh (dành cho sale)
-// GET    /api/crm           — Lấy danh sách học sinh (admin)
-// GET    /api/crm?id=xxx    — Lấy chi tiết 1 học sinh + audit logs (admin)
-// POST   /api/crm           — Tạo học sinh mới (admin)
-// PUT    /api/crm?id=xxx    — Cập nhật thông tin học sinh (admin)
-// DELETE /api/crm?id=xxx    — Xoá học sinh (admin)
+// GET    /api/crm           — Lấy danh sách học sinh
+// GET    /api/crm?id=xxx    — Lấy chi tiết 1 học sinh + audit logs
+// POST   /api/crm           — Tạo học sinh mới
+// PUT    /api/crm?id=xxx    — Cập nhật thông tin
+// DELETE /api/crm?id=xxx    — Xoá học sinh
 
 const { supabase } = require('../lib/supabase');
 
+const ALLOWED_FIELDS = [
+  'full_name', 'birth_date', 'birthplace', 'id_number',
+  'issue_date', 'issue_place', 'phone', 'email',
+  'passport_url', 'avatar_url',
+  'father_name', 'father_dob', 'father_phone',
+  'mother_name', 'mother_dob', 'mother_phone',
+  'primary_school', 'secondary_school', 'high_school', 'university',
+  'gpa', 'absences', 'post_high_school',
+  'vn_school', 'vn_major', 'kr_school', 'kr_major',
+  'language_cert', 'cd_class', 'sejong_class',
+  'payment_count', 'payment_amount',
+  'is_source', 'family_info', 'status', 'sale_note',
+];
+
+const FIELD_LABELS = {
+  'full_name': 'Họ tên', 'birth_date': 'Ngày sinh', 'birthplace': 'Quê quán',
+  'id_number': 'CCCD/HC', 'issue_date': 'Ngày cấp', 'issue_place': 'Nơi cấp',
+  'phone': 'SĐT HS', 'email': 'Email', 'passport_url': 'Hộ chiếu', 'avatar_url': 'Ảnh thẻ',
+  'father_name': 'Tên bố', 'father_dob': 'NS bố', 'father_phone': 'SĐT bố',
+  'mother_name': 'Tên mẹ', 'mother_dob': 'NS mẹ', 'mother_phone': 'SĐT mẹ',
+  'primary_school': 'Trường C1', 'secondary_school': 'Trường C2',
+  'high_school': 'Trường C3', 'university': 'CĐ/ĐH',
+  'gpa': 'Điểm TB', 'absences': 'Buổi nghỉ', 'post_high_school': 'Sau THPT',
+  'vn_school': 'Trường VN', 'vn_major': 'CN VN',
+  'kr_school': 'Trường HQ', 'kr_major': 'CN HQ',
+  'language_cert': 'Chứng chỉ', 'cd_class': 'Lớp CĐ', 'sejong_class': 'Lớp Sejong',
+  'payment_count': 'SL đóng', 'payment_amount': 'Số tiền',
+  'is_source': 'HS nguồn', 'family_info': 'Gia đình',
+  'status': 'Trạng thái', 'sale_note': 'Ghi chú',
+};
+
 module.exports = async (req, res) => {
-  // CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   try {
     const { method, query, body } = req;
-
-    // Check admin auth
     let isAdmin = false;
-    try { isAdmin = await checkAdminAuth(req); } catch(e) { /* ignore */ }
+    try { isAdmin = await checkAdminAuth(req); } catch(e) {}
     if (!isAdmin) return res.status(401).json({ success: false, error: 'Unauthorized' });
-
-    // Current user for audit log
     const changedBy = getCurrentUserEmail(req);
 
     switch (method) {
-      // ─── GET ───
       case 'GET': {
         if (query.id) {
-          const { data, error } = await supabase
-            .from('crm_students')
-            .select('*')
-            .eq('id', query.id)
-            .single();
+          const { data, error } = await supabase.from('crm_students').select('*').eq('id', query.id).single();
           if (error) return res.status(404).json({ success: false, error: 'Không tìm thấy' });
-
-          // Also fetch audit logs
-          const { data: logs } = await supabase
-            .from('crm_audit_logs')
-            .select('*')
-            .eq('student_id', query.id)
-            .order('created_at', { ascending: false })
-            .limit(50);
-
+          const { data: logs } = await supabase.from('crm_audit_logs').select('*')
+            .eq('student_id', query.id).order('created_at', { ascending: false }).limit(50);
           return res.status(200).json({ success: true, data: { ...data, audit_logs: logs || [] } });
         }
-
-        let dbQuery = supabase.from('crm_students').select('*');
-        if (query.status) dbQuery = dbQuery.eq('status', query.status);
-        if (query.is_source === 'true') dbQuery = dbQuery.eq('is_source', true);
-        if (query.is_source === 'false') dbQuery = dbQuery.eq('is_source', false);
-        if (query.search) dbQuery = dbQuery.ilike('full_name', '%' + query.search + '%');
-        dbQuery = dbQuery.order('created_at', { ascending: false });
-        if (query.limit) dbQuery = dbQuery.limit(parseInt(query.limit) || 100);
-
-        const { data, error } = await dbQuery;
+        let q = supabase.from('crm_students').select('*');
+        if (query.status) q = q.eq('status', query.status);
+        if (query.is_source === 'true') q = q.eq('is_source', true);
+        if (query.is_source === 'false') q = q.eq('is_source', false);
+        if (query.search) q = q.ilike('full_name', '%' + query.search + '%');
+        q = q.order('created_at', { ascending: false });
+        if (query.limit) q = q.limit(parseInt(query.limit) || 100);
+        const { data, error } = await q;
         if (error) throw error;
         return res.status(200).json({ success: true, data: data || [] });
       }
 
-      // ─── POST: Tạo mới + audit log ───
       case 'POST': {
-        const {
-          full_name, birth_date, birthplace, id_number,
-          vn_school, vn_major, kr_school, kr_major,
-          language_cert, cd_class, sejong_class,
-          payment_count, payment_amount,
-          is_source, family_info, status, sale_note,
-        } = body || {};
+        if (!body?.full_name) return res.status(400).json({ success: false, error: 'Thiếu họ tên' });
 
-        if (!full_name) return res.status(400).json({ success: false, error: 'Thiếu họ tên học sinh' });
+        const payload = {};
+        for (const f of ALLOWED_FIELDS) {
+          if (body[f] !== undefined) payload[f] = body[f];
+        }
+        if (payload.is_source !== true) payload.is_source = false;
 
-        const { data, error } = await supabase
-          .from('crm_students')
-          .insert({
-            full_name,
-            birth_date: birth_date || null,
-            birthplace: birthplace || '',
-            id_number: id_number || '',
-            vn_school: vn_school || '',
-            vn_major: vn_major || '',
-            kr_school: kr_school || '',
-            kr_major: kr_major || '',
-            language_cert: language_cert || '',
-            cd_class: cd_class || '',
-            sejong_class: sejong_class || '',
-            payment_count: payment_count || 0,
-            payment_amount: payment_amount || 0,
-            is_source: is_source === true,
-            family_info: family_info || {},
-            status: status || 'new',
-            sale_note: sale_note || '',
-          })
-          .select()
-          .single();
-
+        const { data, error } = await supabase.from('crm_students').insert(payload).select().single();
         if (error) throw error;
 
-        // Audit log
         await supabase.from('crm_audit_logs').insert({
-          student_id: data.id,
-          action: 'created',
-          changes: { full_name: { new: full_name } },
+          student_id: data.id, action: 'created',
+          changes: { full_name: { new: payload.full_name } },
           changed_by: changedBy || 'unknown',
         }).catch(e => console.error('Audit error:', e));
-
         return res.status(201).json({ success: true, data });
       }
 
-      // ─── PUT: Cập nhật + audit log ───
       case 'PUT': {
         const { id } = query;
         if (!id) return res.status(400).json({ success: false, error: 'Thiếu ID' });
+        const { data: oldData } = await supabase.from('crm_students').select('*').eq('id', id).single();
+        if (!oldData) return res.status(404).json({ success: false, error: 'Không tìm thấy' });
 
-        // Fetch old data for diff
-        const { data: oldData, error: fetchError } = await supabase
-          .from('crm_students').select('*').eq('id', id).single();
-        if (fetchError || !oldData) return res.status(404).json({ success: false, error: 'Không tìm thấy' });
-
-        const allowedFields = [
-          'full_name', 'birth_date', 'birthplace', 'id_number',
-          'vn_school', 'vn_major', 'kr_school', 'kr_major',
-          'language_cert', 'cd_class', 'sejong_class',
-          'payment_count', 'payment_amount',
-          'is_source', 'family_info', 'status', 'sale_note',
-        ];
-
-        const updates = {};
-        for (const field of allowedFields) {
-          if (body[field] !== undefined) updates[field] = body[field];
+        const updates = { updated_at: new Date().toISOString() };
+        for (const f of ALLOWED_FIELDS) {
+          if (body[f] !== undefined) updates[f] = body[f];
         }
-        updates.updated_at = new Date().toISOString();
 
-        const { data, error } = await supabase
-          .from('crm_students')
-          .update(updates)
-          .eq('id', id)
-          .select()
-          .single();
-
+        const { data, error } = await supabase.from('crm_students').update(updates).eq('id', id).select().single();
         if (error) throw error;
 
-        // Compute diff for audit log
         const changes = {};
-        for (const field of allowedFields) {
-          const oldVal = JSON.stringify(oldData[field]);
-          const newVal = JSON.stringify(data[field]);
-          if (oldVal !== newVal) {
-            changes[field] = { old: oldData[field], new: data[field] };
+        for (const f of ALLOWED_FIELDS) {
+          if (JSON.stringify(oldData[f]) !== JSON.stringify(data[f])) {
+            changes[f] = { old: oldData[f], new: data[f] };
           }
         }
-
         if (Object.keys(changes).length > 0) {
           await supabase.from('crm_audit_logs').insert({
-            student_id: id,
-            action: 'updated',
-            changes,
-            changed_by: changedBy || 'unknown',
+            student_id: id, action: 'updated', changes, changed_by: changedBy || 'unknown',
           }).catch(e => console.error('Audit error:', e));
         }
-
         return res.status(200).json({ success: true, data });
       }
 
-      // ─── DELETE: Xoá + audit log ───
       case 'DELETE': {
         const { id } = query;
         if (!id) return res.status(400).json({ success: false, error: 'Thiếu ID' });
-
-        // Get student name before delete for audit
-        const { data: delData } = await supabase
-          .from('crm_students').select('full_name').eq('id', id).single();
+        const { data: delData } = await supabase.from('crm_students').select('full_name').eq('id', id).single();
         if (!delData) return res.status(404).json({ success: false, error: 'Không tìm thấy' });
 
-        // Audit log BEFORE delete (FK có ON DELETE SET NULL, cần insert trước khi parent bị xoá)
         await supabase.from('crm_audit_logs').insert({
-          student_id: id,
-          action: 'deleted',
+          student_id: id, action: 'deleted',
           changes: { full_name: { old: delData.full_name } },
           changed_by: changedBy || 'unknown',
         }).catch(e => console.error('Audit error:', e));
 
-        // Then delete the student (SET NULL sẽ tự động clear FK trên audit log cũ)
         const { error } = await supabase.from('crm_students').delete().eq('id', id);
         if (error) throw error;
-
         return res.status(200).json({ success: true });
       }
 
@@ -207,7 +154,7 @@ async function checkAdminAuth(req) {
   try {
     const { data: { user }, error } = await supabase.auth.getUser(token);
     if (user && !error) return true;
-  } catch(e) { /* not a valid JWT */ }
+  } catch(e) {}
   return false;
 }
 
@@ -217,12 +164,11 @@ function getCurrentUserEmail(req) {
   const token = auth.slice(7);
   if (token === process.env.ADMIN_API_KEY) return 'admin_script';
   try {
-    // Try to decode JWT payload without verification (just to get email)
     const parts = token.split('.');
     if (parts.length === 3) {
       const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString());
       return payload.email || payload.sub || null;
     }
-  } catch(e) { /* silent */ }
+  } catch(e) {}
   return null;
 }

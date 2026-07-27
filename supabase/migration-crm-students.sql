@@ -10,6 +10,29 @@ CREATE TABLE IF NOT EXISTS crm_students (
   birth_date      DATE,
   birthplace      TEXT,             -- Quê quán
   id_number       VARCHAR(50),      -- Số CCCD / Hộ chiếu
+  issue_date      DATE,             -- Ngày cấp CCCD
+  issue_place     TEXT,             -- Nơi cấp CCCD
+  phone           VARCHAR(20),      -- Số điện thoại học sinh
+  email           VARCHAR(200),     -- Email học sinh
+  passport_url    TEXT,             -- URL file hộ chiếu
+  avatar_url      TEXT,             -- URL ảnh thẻ
+
+  -- ─── Phụ huynh ───
+  father_name     VARCHAR(200),
+  father_dob      DATE,
+  father_phone    VARCHAR(20),
+  mother_name     VARCHAR(200),
+  mother_dob      DATE,
+  mother_phone    VARCHAR(20),
+
+  -- ─── Học vấn ───
+  primary_school   VARCHAR(200),    -- Trường C1
+  secondary_school VARCHAR(200),    -- Trường C2
+  high_school      VARCHAR(200),    -- Trường C3
+  university       VARCHAR(200),    -- Trường CĐ/ĐH
+  gpa              TEXT,            -- Điểm TB (VD: "7.5 - 8.0 - 8.5")
+  absences         TEXT,            -- Số buổi nghỉ (VD: "6 - 4 - 0")
+  post_high_school TEXT,            -- Sau THPT đi đâu?
 
   -- ─── Trường Việt ───
   vn_school       VARCHAR(200),

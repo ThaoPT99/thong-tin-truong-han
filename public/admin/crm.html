@@ -6,939 +6,609 @@
   <title>CRM Học sinh - Admin</title>
   <link rel="stylesheet" href="admin.css">
   <style>
-    /* ─── Stats bar ─── */
-    .crm-stats {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 0.75rem;
-      margin-bottom: 1.5rem;
-    }
-    .crm-stat-card {
-      background: #fff;
-      border: 1px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 1rem 1.25rem;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .crm-stat-card:hover { border-color: #2563eb; box-shadow: 0 2px 8px rgba(37,99,235,0.1); }
-    .crm-stat-card.active { border-color: #2563eb; background: #eff6ff; }
-    .crm-stat-number { font-size: 1.75rem; font-weight: 700; color: #1e293b; }
-    .crm-stat-label { font-size: 0.8rem; color: #64748b; margin-top: 2px; }
+    .crm-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:.75rem; margin-bottom:1.5rem; }
+    .crm-stat-card { background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:1rem 1.25rem; text-align:center; cursor:pointer; transition:all .2s; }
+    .crm-stat-card:hover { border-color:#2563eb; box-shadow:0 2px 8px rgba(37,99,235,.1); }
+    .crm-stat-card.active { border-color:#2563eb; background:#eff6ff; }
+    .crm-stat-number { font-size:1.75rem; font-weight:700; color:#1e293b; }
+    .crm-stat-label { font-size:.8rem; color:#64748b; margin-top:2px; }
 
-    /* ─── Filters ─── */
-    .crm-toolbar {
-      display: flex;
-      gap: 0.75rem;
-      flex-wrap: wrap;
-      align-items: center;
-      margin-bottom: 1rem;
-    }
-    .crm-toolbar input[type="search"] {
-      flex: 1;
-      min-width: 200px;
-      padding: 9px 14px;
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      font-size: 0.9rem;
-    }
-    .crm-toolbar input[type="search"]:focus {
-      outline: none;
-      border-color: #2563eb;
-      box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
-    }
-    .crm-source-toggle {
-      display: flex;
-      gap: 0;
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      overflow: hidden;
-    }
-    .crm-source-toggle button {
-      padding: 8px 16px;
-      border: none;
-      background: #fff;
-      cursor: pointer;
-      font-size: 0.85rem;
-      font-weight: 500;
-      color: #475569;
-      transition: all 0.15s;
-    }
-    .crm-source-toggle button:not(:last-child) { border-right: 1px solid #e2e8f0; }
-    .crm-source-toggle button.active { background: #2563eb; color: #fff; }
+    .crm-toolbar { display:flex; gap:.75rem; flex-wrap:wrap; align-items:center; margin-bottom:1rem; }
+    .crm-toolbar input[type="search"] { flex:1; min-width:200px; padding:9px 14px; border:1px solid #e2e8f0; border-radius:8px; font-size:.9rem; }
+    .crm-toolbar input[type="search"]:focus { outline:none; border-color:#2563eb; box-shadow:0 0 0 3px rgba(37,99,235,.1); }
+    .crm-source-toggle { display:flex; border:1px solid #e2e8f0; border-radius:8px; overflow:hidden; }
+    .crm-source-toggle button { padding:8px 16px; border:none; background:#fff; cursor:pointer; font-size:.85rem; font-weight:500; color:#475569; }
+    .crm-source-toggle button:not(:last-child) { border-right:1px solid #e2e8f0; }
+    .crm-source-toggle button.active { background:#2563eb; color:#fff; }
 
-    /* ─── Table ─── */
-    .crm-table { width: 100%; border-collapse: collapse; }
-    .crm-table th {
-      padding: 10px 12px;
-      text-align: left;
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: #64748b;
-      border-bottom: 2px solid #e2e8f0;
-      white-space: nowrap;
-    }
-    .crm-table td {
-      padding: 10px 12px;
-      border-bottom: 1px solid #f1f5f9;
-      font-size: 0.88rem;
-      vertical-align: top;
-    }
-    .crm-table tr:hover td { background: #f8fafc; }
-    .crm-table .name-cell { font-weight: 600; color: #1e293b; }
-    .crm-table .sub-cell { font-size: 0.78rem; color: #94a3b8; margin-top: 2px; }
+    .crm-table { width:100%; border-collapse:collapse; }
+    .crm-table th { padding:10px 12px; text-align:left; font-size:.8rem; font-weight:600; color:#64748b; border-bottom:2px solid #e2e8f0; white-space:nowrap; }
+    .crm-table td { padding:10px 12px; border-bottom:1px solid #f1f5f9; font-size:.88rem; vertical-align:top; }
+    .crm-table tr:hover td { background:#f8fafc; }
+    .crm-table .name-cell { font-weight:600; color:#1e293b; }
+    .crm-table .sub-cell { font-size:.78rem; color:#94a3b8; margin-top:2px; }
 
-    /* ─── Status badges ─── */
-    .status-badge {
-      display: inline-block;
-      padding: 3px 10px;
-      border-radius: 20px;
-      font-size: 0.72rem;
-      font-weight: 600;
-      white-space: nowrap;
-    }
-    .status-new { background: #f1f5f9; color: #475569; }
-    .status-contacted { background: #dbeafe; color: #1d4ed8; }
-    .status-consulting { background: #fef3c7; color: #92400e; }
-    .status-enrolled { background: #d1fae5; color: #065f46; }
-    .status-converted { background: #ede9fe; color: #5b21b6; }
-    .status-dropped { background: #fee2e2; color: #dc2626; }
+    .status-badge { display:inline-block; padding:3px 10px; border-radius:20px; font-size:.72rem; font-weight:600; white-space:nowrap; }
+    .status-new { background:#f1f5f9; color:#475569; }
+    .status-contacted { background:#dbeafe; color:#1d4ed8; }
+    .status-consulting { background:#fef3c7; color:#92400e; }
+    .status-enrolled { background:#d1fae5; color:#065f46; }
+    .status-converted { background:#ede9fe; color:#5b21b6; }
+    .status-dropped { background:#fee2e2; color:#dc2626; }
 
-    .source-badge {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 4px;
-      font-size: 0.7rem;
-      font-weight: 600;
-    }
-    .source-yes { background: #fef3c7; color: #92400e; }
-    .source-no { background: #f1f5f9; color: #64748b; }
+    .source-badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:.7rem; font-weight:600; }
+    .source-yes { background:#fef3c7; color:#92400e; }
+    .source-no { background:#f1f5f9; color:#64748b; }
 
-    /* ─── Modal form ─── */
-    .crm-form { display: grid; gap: 1.25rem; }
-    .crm-form-section {
-      border: 1px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 1.25rem;
-    }
-    .crm-form-section h3 {
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: #1e293b;
-      margin: 0 0 1rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 1px solid #f1f5f9;
-    }
-    .crm-form-section h3 .section-icon { margin-right: 6px; }
-    .crm-form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-      margin-bottom: 0.75rem;
-    }
-    .crm-form-row.three-col { grid-template-columns: 1fr 1fr 1fr; }
-    .crm-form-row.full { grid-template-columns: 1fr; }
-    .crm-form label {
-      display: block;
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: #334155;
-      margin-bottom: 4px;
-    }
-    .crm-form label .optional { font-weight: 400; color: #94a3b8; }
-    .crm-form input,
-    .crm-form select,
-    .crm-form textarea {
-      width: 100%;
-      padding: 9px 12px;
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      font-size: 0.88rem;
-      box-sizing: border-box;
-      transition: border-color 0.15s;
-    }
-    .crm-form input:focus,
-    .crm-form select:focus,
-    .crm-form textarea:focus {
-      outline: none;
-      border-color: #2563eb;
-      box-shadow: 0 0 0 3px rgba(37,99,235,0.08);
-    }
-    .crm-form textarea { min-height: 60px; resize: vertical; font-family: inherit; }
-    .crm-form .checkbox-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .crm-form .checkbox-row input[type="checkbox"] { width: auto; }
-    .crm-form .checkbox-row label { margin-bottom: 0; cursor: pointer; }
+    .crm-form { display:grid; gap:1.25rem; }
+    .crm-form-section { border:1px solid #e2e8f0; border-radius:12px; padding:1.25rem; }
+    .crm-form-section h3 { font-size:.95rem; font-weight:600; color:#1e293b; margin:0 0 1rem; padding-bottom:.5rem; border-bottom:1px solid #f1f5f9; }
+    .crm-form-section h3 .section-icon { margin-right:6px; }
+    .crm-form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:.75rem; }
+    .crm-form-row.three-col { grid-template-columns:1fr 1fr 1fr; }
+    .crm-form-row.full { grid-template-columns:1fr; }
+    .crm-form label { display:block; font-size:.82rem; font-weight:600; color:#334155; margin-bottom:4px; }
+    .crm-form label .optional { font-weight:400; color:#94a3b8; }
+    .crm-form input,.crm-form select,.crm-form textarea { width:100%; padding:9px 12px; border:1px solid #e2e8f0; border-radius:8px; font-size:.88rem; box-sizing:border-box; background:#fff; }
+    .crm-form input:focus,.crm-form select:focus,.crm-form textarea:focus { outline:none; border-color:#2563eb; box-shadow:0 0 0 3px rgba(37,99,235,.08); }
+    .crm-form textarea { min-height:60px; resize:vertical; font-family:inherit; }
+    .crm-form .checkbox-row { display:flex; align-items:center; gap:8px; }
+    .crm-form .checkbox-row input[type="checkbox"] { width:auto; }
+    .crm-form .checkbox-row label { margin-bottom:0; cursor:pointer; }
 
-    /* ─── Modal ─── */
-    .modal-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.4);
-      display: flex; align-items: center; justify-content: center;
-      z-index: 999;
-    }
-    .modal {
-      background: #fff; border-radius: 16px; padding: 1.5rem 2rem 2rem;
-      max-width: 800px; width: 95%; max-height: 90vh; overflow-y: auto;
-    }
-    .modal-actions {
-      display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1rem;
-    }
-    .modal-actions button {
-      padding: 10px 24px; border-radius: 8px; border: none;
-      font-weight: 600; cursor: pointer; font-size: 0.9rem;
-    }
+    .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.4); display:flex; align-items:center; justify-content:center; z-index:999; }
+    .modal { background:#fff; border-radius:16px; padding:1.5rem 2rem 2rem; max-width:860px; width:95%; max-height:92vh; overflow-y:auto; }
+    .modal-actions { display:flex; gap:.75rem; justify-content:flex-end; margin-top:1rem; }
+    .modal-actions button { padding:10px 24px; border-radius:8px; border:none; font-weight:600; cursor:pointer; font-size:.9rem; }
 
-    /* ─── Empty state ─── */
-    .crm-empty {
-      text-align: center; padding: 4rem 2rem; color: #94a3b8;
-    }
-    .crm-empty p { margin: 0.5rem 0; }
+    .crm-empty { text-align:center; padding:4rem 2rem; color:#94a3b8; }
+    .crm-empty p { margin:.5rem 0; }
+    .hidden { display:none !important; }
+    .form-error { color:#dc2626; font-size:.85rem; margin-top:.25rem; }
+    .btn-sm { padding:6px 14px; font-size:.8rem; border-radius:6px; border:none; cursor:pointer; font-weight:500; }
+    .btn-edit { background:#dbeafe; color:#1d4ed8; }
+    .btn-del { background:#fee2e2; color:#dc2626; }
+    .btn-icon { background:none; border:none; cursor:pointer; color:#94a3b8; font-size:1.1rem; padding:4px; }
+    .btn-icon:hover { color:#475569; }
+    .page-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; }
+    .page-head h1 { margin:0; }
+    .page-head p { margin:4px 0 0; color:#64748b; font-size:.9rem; }
+    .modal-title-bar { display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; }
+    .modal-title-bar h2 { margin:0; font-size:1.2rem; }
 
-    /* ─── Misc ─── */
-    .hidden { display: none !important; }
-    .form-error { color: #dc2626; font-size: 0.85rem; margin-top: 0.25rem; }
-    .btn-sm { padding: 6px 14px; font-size: 0.8rem; border-radius: 6px; border: none; cursor: pointer; font-weight: 500; }
-    .btn-edit { background: #dbeafe; color: #1d4ed8; }
-    .btn-del { background: #fee2e2; color: #dc2626; }
-    .btn-icon { background: none; border: none; cursor: pointer; color: #94a3b8; font-size: 1.1rem; padding: 4px; }
-    .btn-icon:hover { color: #475569; }
+    .audit-section { margin-top:.5rem; }
+    .audit-list { max-height:300px; overflow-y:auto; }
+    .audit-item { display:flex; gap:10px; padding:8px 0; border-bottom:1px solid #f1f5f9; font-size:.82rem; }
+    .audit-item:last-child { border-bottom:none; }
+    .audit-icon { font-size:1rem; flex-shrink:0; margin-top:2px; }
+    .audit-body { flex:1; }
+    .audit-action { font-weight:600; color:#1e293b; }
+    .audit-by { color:#64748b; font-size:.78rem; }
+    .audit-time { color:#94a3b8; font-size:.75rem; }
+    .audit-changes { margin-top:4px; font-size:.78rem; }
+    .audit-changes summary { cursor:pointer; color:#64748b; font-weight:500; }
 
-    .page-head {
-      display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;
-    }
-    .page-head h1 { margin: 0; }
-    .page-head p { margin: 4px 0 0; color: #64748b; font-size: 0.9rem; }
-
-    .modal-title-bar {
-      display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;
-    }
-    .modal-title-bar h2 { margin: 0; font-size: 1.2rem; }
-
-    /* ─── Audit log ─── */
-    .audit-section { margin-top: 0.5rem; }
-    .audit-header {
-      display: flex; justify-content: space-between; align-items: center;
-      cursor: pointer; padding: 8px 0; user-select: none;
-    }
-    .audit-header:hover { color: #2563eb; }
-    .audit-list { max-height: 300px; overflow-y: auto; }
-    .audit-item {
-      display: flex; gap: 10px; padding: 8px 0;
-      border-bottom: 1px solid #f1f5f9; font-size: 0.82rem;
-    }
-    .audit-item:last-child { border-bottom: none; }
-    .audit-icon { font-size: 1rem; flex-shrink: 0; margin-top: 2px; }
-    .audit-body { flex: 1; min-width: 0; }
-    .audit-action { font-weight: 600; color: #1e293b; }
-    .audit-by { color: #64748b; font-size: 0.78rem; }
-    .audit-time { color: #94a3b8; font-size: 0.75rem; }
-    .audit-changes { margin-top: 4px; font-size: 0.78rem; }
-    .audit-changes summary { cursor: pointer; color: #64748b; font-weight: 500; }
-    .audit-changes pre {
-      background: #f8fafc; padding: 6px 8px; border-radius: 6px;
-      font-size: 0.75rem; color: #475569; margin-top: 4px;
-      white-space: pre-wrap; max-height: 120px; overflow-y: auto;
-    }
-    .audit-empty { text-align: center; padding: 1.5rem; color: #94a3b8; font-size: 0.85rem; }
+    .file-upload-row { display:flex; gap:8px; align-items:center; margin-bottom:6px; }
+    .file-upload-row input[type="text"] { flex:1; }
+    .file-preview { width:60px; height:60px; object-fit:cover; border-radius:8px; border:1px solid #e2e8f0; }
+    .upload-btn { padding:6px 12px; border-radius:6px; border:1px solid #e2e8f0; background:#fff; cursor:pointer; font-size:.82rem; }
+    .upload-btn:hover { background:#f8fafc; }
   </style>
 </head>
 <body>
-  <div class="app-layout">
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <div class="sidebar-header">
-        <h2>Admin</h2>
+<div class="app-layout">
+  <aside class="sidebar">
+    <div class="sidebar-header"><h2>Admin</h2></div>
+    <nav class="sidebar-nav">
+      <a href="dashboard.html">📊 Dashboard</a>
+      <a href="crm.html" class="active">👤 CRM Học sinh</a>
+      <a href="students.html">👥 Students</a>
+      <a href="cases.html">📋 Cases</a>
+      <a href="news.html">📰 Tin tức</a>
+      <a href="semester.html">📅 Kỳ tuyển sinh</a>
+      <a href="editor.html">✏️ Editor</a>
+      <a href="import.html">📥 Import</a>
+      <a href="checklist.html">✅ Checklist</a>
+      <a href="users.html">🔐 Users</a>
+      <a href="access-control.html">🛡️ Access</a>
+      <a href="analytics.html">📈 Analytics</a>
+      <a href="kpi.html">🎯 KPI</a>
+    </nav>
+    <div class="sidebar-footer"><div id="sidebar-user"></div></div>
+  </aside>
+
+  <main class="main-content" id="app">
+    <div class="page-head">
+      <div>
+        <h1>👤 CRM Học sinh</h1>
+        <p>Quản lý thông tin học sinh — nhập liệu từ form đăng ký</p>
       </div>
-      <nav class="sidebar-nav">
-        <a href="dashboard.html">📊 Dashboard</a>
-        <a href="crm.html" class="active">👤 CRM Học sinh</a>
-        <a href="students.html">👥 Students</a>
-        <a href="cases.html">📋 Cases</a>
-        <a href="news.html">📰 Tin tức</a>
-        <a href="semester.html">📅 Kỳ tuyển sinh</a>
-        <a href="editor.html">✏️ Editor</a>
-        <a href="import.html">📥 Import</a>
-        <a href="checklist.html">✅ Checklist</a>
-        <a href="users.html">🔐 Users</a>
-        <a href="access-control.html">🛡️ Access</a>
-        <a href="analytics.html">📈 Analytics</a>
-        <a href="kpi.html">🎯 KPI</a>
-      </nav>
-      <div class="sidebar-footer">
-        <div id="sidebar-user"></div>
-      </div>
-    </aside>
-
-    <!-- Main -->
-    <main class="main-content" id="app">
-      <div class="page-head">
-        <div>
-          <h1>👤 CRM Học sinh</h1>
-          <p>Quản lý thông tin học sinh cho sale — họ tên, trường, lớp, tài chính, gia đình</p>
-        </div>
-        <button class="btn btn-primary" onclick="openCreateModal()">+ Thêm học sinh</button>
-      </div>
-
-      <!-- Stats -->
-      <div class="crm-stats" id="stats-bar">
-        <div class="crm-stat-card" data-filter="all">
-          <div class="crm-stat-number" id="stat-all">0</div>
-          <div class="crm-stat-label">Tất cả</div>
-        </div>
-        <div class="crm-stat-card" data-filter="new">
-          <div class="crm-stat-number" id="stat-new">0</div>
-          <div class="crm-stat-label">📌 Mới</div>
-        </div>
-        <div class="crm-stat-card" data-filter="contacted">
-          <div class="crm-stat-number" id="stat-contacted">0</div>
-          <div class="crm-stat-label">📞 Đã LH</div>
-        </div>
-        <div class="crm-stat-card" data-filter="consulting">
-          <div class="crm-stat-number" id="stat-consulting">0</div>
-          <div class="crm-stat-label">💬 Đang TV</div>
-        </div>
-        <div class="crm-stat-card" data-filter="enrolled">
-          <div class="crm-stat-number" id="stat-enrolled">0</div>
-          <div class="crm-stat-label">📝 Đã ghi danh</div>
-        </div>
-        <div class="crm-stat-card" data-filter="converted">
-          <div class="crm-stat-number" id="stat-converted">0</div>
-          <div class="crm-stat-label">✅ Chuyển đổi</div>
-        </div>
-        <div class="crm-stat-card" data-filter="dropped">
-          <div class="crm-stat-number" id="stat-dropped">0</div>
-          <div class="crm-stat-label">❌ Rơi rụng</div>
-        </div>
-      </div>
-
-      <!-- Toolbar -->
-      <div class="crm-toolbar">
-        <input type="search" id="search-input" placeholder="🔍 Tìm theo tên học sinh..." oninput="debounceSearch()">
-        <div class="crm-source-toggle">
-          <button class="active" data-source="all" onclick="setSourceFilter('all')">Tất cả</button>
-          <button data-source="source" onclick="setSourceFilter('source')">📦 Nguồn</button>
-          <button data-source="normal" onclick="setSourceFilter('normal')">Thường</button>
-        </div>
-      </div>
-
-      <!-- Loading -->
-      <div id="loading" style="text-align:center;padding:3rem;color:#94a3b8;">Đang tải...</div>
-
-      <!-- Table -->
-      <div id="crm-list" style="display:none;"></div>
-
-      <!-- Empty -->
-      <div id="empty-state" class="crm-empty" style="display:none;">
-        <p style="font-size:1.1rem;">Chưa có học sinh nào</p>
-        <p style="font-size:0.85rem;">Nhấn "Thêm học sinh" để bắt đầu!</p>
-      </div>
-    </main>
-  </div>
-
-  <!-- Modal -->
-  <div id="modal-overlay" class="modal-overlay" style="display:none;" onclick="if(event.target===this)closeModal()">
-    <div class="modal">
-      <div class="modal-title-bar">
-        <h2 id="modal-title">Thêm học sinh mới</h2>
-        <button class="btn-icon" onclick="closeModal()">&times;</button>
-      </div>
-
-      <form class="crm-form" onsubmit="saveStudent(event)">
-        <input type="hidden" id="edit-id">
-
-        <!-- Section 1: Thông tin cơ bản -->
-        <div class="crm-form-section">
-          <h3><span class="section-icon">📋</span> Thông tin cơ bản</h3>
-          <div class="crm-form-row">
-            <div>
-              <label for="field-full_name">Họ tên *</label>
-              <input type="text" id="field-full_name" required placeholder="VD: Nguyễn Văn A">
-            </div>
-            <div>
-              <label for="field-birth_date">Ngày sinh</label>
-              <input type="date" id="field-birth_date">
-            </div>
-          </div>
-          <div class="crm-form-row">
-            <div>
-              <label for="field-birthplace">Quê quán</label>
-              <input type="text" id="field-birthplace" placeholder="VD: Hà Nội">
-            </div>
-            <div>
-              <label for="field-id_number">Số CCCD / Hộ chiếu</label>
-              <input type="text" id="field-id_number" placeholder="VD: 001234567890">
-            </div>
-          </div>
-        </div>
-
-        <!-- Section 2: Trường học -->
-        <div class="crm-form-section">
-          <h3><span class="section-icon">🏫</span> Trường học & Chuyên ngành</h3>
-          <div class="crm-form-row">
-            <div>
-              <label for="field-vn_school">Trường Việt Nam</label>
-              <input type="text" id="field-vn_school" placeholder="VD: ĐH Ngoại thương">
-            </div>
-            <div>
-              <label for="field-vn_major">Chuyên ngành (VN)</label>
-              <input type="text" id="field-vn_major" placeholder="VD: Kinh tế đối ngoại">
-            </div>
-          </div>
-          <div class="crm-form-row">
-            <div>
-              <label for="field-kr_school">Trường Hàn Quốc</label>
-              <input type="text" id="field-kr_school" placeholder="VD: Đại học Dong-A">
-            </div>
-            <div>
-              <label for="field-kr_major">Chuyên ngành (HQ)</label>
-              <input type="text" id="field-kr_major" placeholder="VD: Thương mại quốc tế">
-            </div>
-          </div>
-        </div>
-
-        <!-- Section 3: Chứng chỉ & Lớp học -->
-        <div class="crm-form-section">
-          <h3><span class="section-icon">📚</span> Chứng chỉ & Lớp học</h3>
-          <div class="crm-form-row">
-            <div>
-              <label for="field-language_cert">Chứng chỉ tiếng <span class="optional">(nếu có)</span></label>
-              <input type="text" id="field-language_cert" placeholder="VD: TOPIK 3, Sejong 2, IELTS 5.5">
-            </div>
-            <div>
-              <label for="field-cd_class">Lớp CĐ (số mấy)</label>
-              <input type="text" id="field-cd_class" placeholder="VD: Lớp số 3">
-            </div>
-          </div>
-          <div class="crm-form-row">
-            <div>
-              <label for="field-sejong_class">Lớp Sejong (số mấy)</label>
-              <input type="text" id="field-sejong_class" placeholder="VD: Sejong 2">
-            </div>
-            <div></div>
-          </div>
-        </div>
-
-        <!-- Section 4: Tài chính -->
-        <div class="crm-form-section">
-          <h3><span class="section-icon">💰</span> Tài chính</h3>
-          <div class="crm-form-row">
-            <div>
-              <label for="field-payment_count">Số lần đóng tiền</label>
-              <input type="number" id="field-payment_count" min="0" value="0">
-            </div>
-            <div>
-              <label for="field-payment_amount">Tổng số tiền đã đóng (VNĐ)</label>
-              <input type="number" id="field-payment_amount" min="0" value="0" placeholder="VD: 5000000">
-            </div>
-          </div>
-        </div>
-
-        <!-- Section 5: Học sinh nguồn -->
-        <div class="crm-form-section">
-          <h3><span class="section-icon">📦</span> Học sinh nguồn <span style="font-weight:400;font-size:0.8rem;color:#94a3b8;">(tích hợp nếu là nguồn)</span></h3>
-          <div class="checkbox-row" style="margin-bottom:1rem;">
-            <input type="checkbox" id="field-is_source" onchange="toggleSourceFields()">
-            <label for="field-is_source">Là học sinh nguồn</label>
-          </div>
-          <div id="source-fields" class="hidden">
-            <div class="crm-form-row">
-              <div>
-                <label for="field-family_members">Số thành viên trong gia đình</label>
-                <input type="number" id="field-family_members" min="1" value="4" placeholder="VD: 4">
-              </div>
-              <div>
-                <label for="field-father_job">Nghề nghiệp của bố</label>
-                <input type="text" id="field-father_job" placeholder="VD: Kinh doanh">
-              </div>
-            </div>
-            <div class="crm-form-row">
-              <div>
-                <label for="field-mother_job">Nghề nghiệp của mẹ</label>
-                <input type="text" id="field-mother_job" placeholder="VD: Giáo viên">
-              </div>
-              <div>
-                <div style="margin-top:1.5rem;">
-                  <div class="checkbox-row">
-                    <input type="checkbox" id="field-has_bhp">
-                    <label for="field-has_bhp">Có người bảo hộ (BHP) bên Hàn?</label>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="crm-form-row full">
-              <input type="text" id="field-bhp_note" placeholder="Ghi chú về BHP (nếu có): VD: Bác ruột ở Seoul">
-            </div>
-          </div>
-        </div>
-
-        <!-- Section 6: Sales -->
-        <div class="crm-form-section">
-          <h3><span class="section-icon">📌</span> Theo dõi Sale</h3>
-          <div class="crm-form-row">
-            <div>
-              <label for="field-status">Trạng thái</label>
-              <select id="field-status">
-                <option value="new">📌 Mới</option>
-                <option value="contacted">📞 Đã liên hệ</option>
-                <option value="consulting">💬 Đang tư vấn</option>
-                <option value="enrolled">📝 Đã ghi danh</option>
-                <option value="converted">✅ Chuyển đổi</option>
-                <option value="dropped">❌ Rơi rụng</option>
-              </select>
-            </div>
-            <div></div>
-          </div>
-          <div class="crm-form-row full">
-            <label for="field-sale_note">Ghi chú nội bộ</label>
-            <textarea id="field-sale_note" placeholder="Ghi chú của sale về học sinh này..."></textarea>
-          </div>
-        </div>
-
-        <!-- Section 7: Lịch sử thay đổi -->
-        <div class="crm-form-section audit-section" id="audit-section" style="display:none;">
-          <h3><span class="section-icon">📜</span> Lịch sử thay đổi</h3>
-          <div class="audit-list" id="audit-list"></div>
-        </div>
-
-        <div id="form-error" class="form-error"></div>
-
-        <div class="modal-actions">
-          <button type="button" class="btn-secondary" onclick="closeModal()">Huỷ</button>
-          <button type="submit" class="btn-primary" id="save-btn">Lưu</button>
-        </div>
-      </form>
+      <button class="btn btn-primary" onclick="openCreateModal()">+ Thêm học sinh</button>
     </div>
+
+    <div class="crm-stats" id="stats-bar">
+      <div class="crm-stat-card" data-filter="all"><div class="crm-stat-number" id="stat-all">0</div><div class="crm-stat-label">Tất cả</div></div>
+      <div class="crm-stat-card" data-filter="new"><div class="crm-stat-number" id="stat-new">0</div><div class="crm-stat-label">📌 Mới</div></div>
+      <div class="crm-stat-card" data-filter="contacted"><div class="crm-stat-number" id="stat-contacted">0</div><div class="crm-stat-label">📞 Đã LH</div></div>
+      <div class="crm-stat-card" data-filter="consulting"><div class="crm-stat-number" id="stat-consulting">0</div><div class="crm-stat-label">💬 Đang TV</div></div>
+      <div class="crm-stat-card" data-filter="enrolled"><div class="crm-stat-number" id="stat-enrolled">0</div><div class="crm-stat-label">📝 Đã ghi danh</div></div>
+      <div class="crm-stat-card" data-filter="converted"><div class="crm-stat-number" id="stat-converted">0</div><div class="crm-stat-label">✅ Chuyển đổi</div></div>
+      <div class="crm-stat-card" data-filter="dropped"><div class="crm-stat-number" id="stat-dropped">0</div><div class="crm-stat-label">❌ Rơi rụng</div></div>
+    </div>
+
+    <div class="crm-toolbar">
+      <input type="search" id="search-input" placeholder="🔍 Tìm theo tên..." oninput="debounceSearch()">
+      <div class="crm-source-toggle">
+        <button class="active" data-source="all" onclick="setSourceFilter('all')">Tất cả</button>
+        <button data-source="source" onclick="setSourceFilter('source')">📦 Nguồn</button>
+        <button data-source="normal" onclick="setSourceFilter('normal')">Thường</button>
+      </div>
+    </div>
+
+    <div id="loading" style="text-align:center;padding:3rem;color:#94a3b8;">Đang tải...</div>
+    <div id="crm-list" style="display:none;"></div>
+    <div id="empty-state" class="crm-empty" style="display:none;">
+      <p style="font-size:1.1rem;">Chưa có học sinh nào</p>
+      <p style="font-size:.85rem;">Nhấn "Thêm học sinh" để bắt đầu!</p>
+    </div>
+  </main>
+</div>
+
+<!-- Modal -->
+<div id="modal-overlay" class="modal-overlay" style="display:none;" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-title-bar">
+      <h2 id="modal-title">Thêm học sinh mới</h2>
+      <button class="btn-icon" onclick="closeModal()">&times;</button>
+    </div>
+
+    <form class="crm-form" onsubmit="saveStudent(event)">
+      <input type="hidden" id="edit-id">
+
+      <!-- Section 1: Thông tin cơ bản -->
+      <div class="crm-form-section">
+        <h3><span class="section-icon">📋</span> Thông tin cơ bản</h3>
+        <div class="crm-form-row">
+          <div><label for="field-full_name">Họ tên (in hoa, có dấu) *</label><input type="text" id="field-full_name" required placeholder="VD: NGUYỄN VĂN A"></div>
+          <div><label for="field-birth_date">Ngày sinh (năm.tháng.ngày)</label><input type="date" id="field-birth_date"></div>
+        </div>
+        <div class="crm-form-row">
+          <div><label for="field-birthplace">Quê quán</label><input type="text" id="field-birthplace" placeholder="VD: Hà Nội"></div>
+          <div><label for="field-phone">Số điện thoại học sinh *</label><input type="text" id="field-phone" placeholder="VD: 0978xxxxxx"></div>
+        </div>
+        <div class="crm-form-row">
+          <div><label for="field-email">Email học sinh</label><input type="email" id="field-email" placeholder="student@email.com"></div>
+          <div><label for="field-id_number">Số CCCD *</label><input type="text" id="field-id_number" placeholder="VD: 001234567890"></div>
+        </div>
+      </div>
+
+      <!-- Section 2: CCCD & Giấy tờ -->
+      <div class="crm-form-section">
+        <h3><span class="section-icon">🪪</span> CCCD & Giấy tờ</h3>
+        <div class="crm-form-row">
+          <div><label for="field-issue_date">Ngày cấp CCCD</label><input type="date" id="field-issue_date"></div>
+          <div><label for="field-issue_place">Nơi cấp CCCD</label><input type="text" id="field-issue_place" placeholder="VD: Cục CS QLHC về TTXH"></div>
+        </div>
+        <div class="crm-form-row">
+          <div>
+            <label>Hộ chiếu</label>
+            <div class="file-upload-row">
+              <input type="text" id="field-passport_url" placeholder="URL file hộ chiếu...">
+              <button type="button" class="upload-btn" onclick="document.getElementById('passport-input').click()">📤</button>
+              <input type="file" id="passport-input" accept="image/*,.pdf" style="display:none" onchange="uploadCrmFile(event,'field-passport_url')">
+            </div>
+          </div>
+          <div>
+            <label>Ảnh thẻ</label>
+            <div class="file-upload-row">
+              <input type="text" id="field-avatar_url" placeholder="URL ảnh thẻ...">
+              <button type="button" class="upload-btn" onclick="document.getElementById('avatar-input').click()">📤</button>
+              <input type="file" id="avatar-input" accept="image/*" style="display:none" onchange="uploadCrmFile(event,'field-avatar_url')">
+            </div>
+          </div>
+        </div>
+        <div class="crm-form-row" id="file-previews" style="display:none;">
+          <div id="passport-preview"></div>
+          <div id="avatar-preview"></div>
+        </div>
+      </div>
+
+      <!-- Section 3: Phụ huynh -->
+      <div class="crm-form-section">
+        <h3><span class="section-icon">👨‍👩‍👧‍👦</span> Thông tin phụ huynh</h3>
+        <div class="crm-form-row">
+          <div><label for="field-father_name">Họ tên Bố *</label><input type="text" id="field-father_name" placeholder="VD: Nguyễn Văn B"></div>
+          <div><label for="field-father_dob">Ngày sinh của Bố (yy.mm.dd)</label><input type="date" id="field-father_dob"></div>
+        </div>
+        <div class="crm-form-row">
+          <div><label for="field-father_phone">Số điện thoại Bố *</label><input type="text" id="field-father_phone" placeholder="VD: 090xxxxxxx"></div>
+          <div></div>
+        </div>
+        <div class="crm-form-row">
+          <div><label for="field-mother_name">Họ tên Mẹ *</label><input type="text" id="field-mother_name" placeholder="VD: Trần Thị C"></div>
+          <div><label for="field-mother_dob">Ngày sinh của Mẹ (yy.mm.dd)</label><input type="date" id="field-mother_dob"></div>
+        </div>
+        <div class="crm-form-row">
+          <div><label for="field-mother_phone">Số điện thoại Mẹ *</label><input type="text" id="field-mother_phone" placeholder="VD: 091xxxxxxx"></div>
+          <div></div>
+        </div>
+      </div>
+
+      <!-- Section 4: Học vấn -->
+      <div class="crm-form-section">
+        <h3><span class="section-icon">🎓</span> Học vấn</h3>
+        <div class="crm-form-row four-col">
+          <div><label for="field-primary_school">Trường Cấp 1</label><input type="text" id="field-primary_school" placeholder="VD: Tiểu học Kim Liên"></div>
+          <div><label for="field-secondary_school">Trường Cấp 2</label><input type="text" id="field-secondary_school" placeholder="VD: THCS Nguyễn Du"></div>
+          <div><label for="field-high_school">Trường Cấp 3 *</label><input type="text" id="field-high_school" placeholder="VD: THPT Chuyên Hà Nội - Amsterdam"></div>
+          <div><label for="field-university">Trường CĐ/ĐH <span class="optional">(nếu có)</span></label><input type="text" id="field-university" placeholder="VD: ĐH Ngoại thương"></div>
+        </div>
+        <div class="crm-form-row">
+          <div><label for="field-gpa">Điểm TB 3 năm cấp 3 (Lớp 10-11-12) *</label><input type="text" id="field-gpa" placeholder="VD: 7.5 - 8.0 - 8.5"></div>
+          <div><label for="field-absences">Tổng số buổi nghỉ 10-11-12 *</label><input type="text" id="field-absences" placeholder="VD: 6 - 4 - 0"></div>
+        </div>
+        <div class="crm-form-row full">
+          <label for="field-post_high_school">Sau tốt nghiệp THPT đi học hay đi làm? Có giấy tờ gì không? *</label>
+          <textarea id="field-post_high_school" placeholder="VD: Đi làm công ty ABC, có BHXH. Hoặc: Không (nếu 2k8)"></textarea>
+        </div>
+      </div>
+
+      <!-- Section 5: Trường học & Chứng chỉ -->
+      <div class="crm-form-section">
+        <h3><span class="section-icon">🏫</span> Trường học & Chứng chỉ</h3>
+        <div class="crm-form-row">
+          <div><label for="field-vn_school">Trường Việt Nam</label><input type="text" id="field-vn_school" placeholder="VD: ĐH Ngoại thương"></div>
+          <div><label for="field-vn_major">Chuyên ngành (VN)</label><input type="text" id="field-vn_major" placeholder="VD: Kinh tế đối ngoại"></div>
+        </div>
+        <div class="crm-form-row">
+          <div><label for="field-kr_school">Trường Hàn Quốc</label><input type="text" id="field-kr_school" placeholder="VD: Đại học Dong-A"></div>
+          <div><label for="field-kr_major">Chuyên ngành (HQ)</label><input type="text" id="field-kr_major" placeholder="VD: Thương mại quốc tế"></div>
+        </div>
+        <div class="crm-form-row">
+          <div><label for="field-language_cert">Chứng chỉ tiếng <span class="optional">(nếu có)</span></label><input type="text" id="field-language_cert" placeholder="VD: TOPIK 3, Sejong 2, IELTS 5.5"></div>
+          <div></div>
+        </div>
+      </div>
+
+      <!-- Section 6: Lớp học -->
+      <div class="crm-form-section">
+        <h3><span class="section-icon">📚</span> Lớp học</h3>
+        <div class="crm-form-row">
+          <div><label for="field-cd_class">Lớp CĐ (số mấy)</label><input type="text" id="field-cd_class" placeholder="VD: Lớp số 3"></div>
+          <div><label for="field-sejong_class">Lớp Sejong (số mấy)</label><input type="text" id="field-sejong_class" placeholder="VD: Sejong 2"></div>
+        </div>
+      </div>
+
+      <!-- Section 7: Tài chính -->
+      <div class="crm-form-section">
+        <h3><span class="section-icon">💰</span> Tài chính</h3>
+        <div class="crm-form-row">
+          <div><label for="field-payment_count">Số lần đóng tiền</label><input type="number" id="field-payment_count" min="0" value="0"></div>
+          <div><label for="field-payment_amount">Tổng số tiền đã đóng (VNĐ)</label><input type="number" id="field-payment_amount" min="0" value="0" placeholder="VD: 5000000"></div>
+        </div>
+      </div>
+
+      <!-- Section 8: Học sinh nguồn -->
+      <div class="crm-form-section">
+        <h3><span class="section-icon">📦</span> Học sinh nguồn <span style="font-weight:400;font-size:.8rem;color:#94a3b8;">(tích hợp nếu là nguồn)</span></h3>
+        <div class="checkbox-row" style="margin-bottom:1rem;">
+          <input type="checkbox" id="field-is_source" onchange="toggleSourceFields()">
+          <label for="field-is_source">Là học sinh nguồn</label>
+        </div>
+        <div id="source-fields" class="hidden">
+          <div class="crm-form-row">
+            <div><label for="field-family_members">Số thành viên trong gia đình</label><input type="number" id="field-family_members" min="1" value="4"></div>
+            <div><label for="field-father_job">Nghề nghiệp của bố</label><input type="text" id="field-father_job" placeholder="VD: Kinh doanh"></div>
+          </div>
+          <div class="crm-form-row">
+            <div><label for="field-mother_job">Nghề nghiệp của mẹ</label><input type="text" id="field-mother_job" placeholder="VD: Giáo viên"></div>
+            <div><div style="margin-top:1.5rem;"><div class="checkbox-row"><input type="checkbox" id="field-has_bhp"><label for="field-has_bhp">Có BHP bên Hàn?</label></div></div></div>
+          </div>
+          <div class="crm-form-row full"><input type="text" id="field-bhp_note" placeholder="Ghi chú BHP (nếu có)"></div>
+        </div>
+      </div>
+
+      <!-- Section 9: Sales -->
+      <div class="crm-form-section">
+        <h3><span class="section-icon">📌</span> Theo dõi Sale</h3>
+        <div class="crm-form-row">
+          <div><label for="field-status">Trạng thái</label>
+            <select id="field-status">
+              <option value="new">📌 Mới</option>
+              <option value="contacted">📞 Đã liên hệ</option>
+              <option value="consulting">💬 Đang tư vấn</option>
+              <option value="enrolled">📝 Đã ghi danh</option>
+              <option value="converted">✅ Chuyển đổi</option>
+              <option value="dropped">❌ Rơi rụng</option>
+            </select>
+          </div>
+          <div></div>
+        </div>
+        <div class="crm-form-row full">
+          <label for="field-sale_note">Ghi chú nội bộ</label>
+          <textarea id="field-sale_note" placeholder="Ghi chú của sale về học sinh này..."></textarea>
+        </div>
+      </div>
+
+      <!-- Section 10: Lịch sử thay đổi -->
+      <div class="crm-form-section audit-section" id="audit-section" style="display:none;">
+        <h3><span class="section-icon">📜</span> Lịch sử thay đổi</h3>
+        <div class="audit-list" id="audit-list"></div>
+      </div>
+
+      <div id="form-error" class="form-error"></div>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" onclick="closeModal()">Huỷ</button>
+        <button type="submit" class="btn-primary" id="save-btn">Lưu</button>
+      </div>
+    </form>
   </div>
+</div>
 
-  <script src="admin.js"></script>
-  <script>
-    // ─── State ───
-    let currentFilter = 'all';
-    let currentSource = 'all';
-    let searchTimeout = null;
-    let allStudents = [];
+<script src="admin.js"></script>
+<script>
+let currentFilter = 'all', currentSource = 'all', searchTimeout = null, allStudents = [];
 
-    // ─── Auth ───
-    let user = null;
-    try {
-      const stored = localStorage.getItem('admin_user');
-      if (stored) user = JSON.parse(stored);
-    } catch(e) {}
-    if (!user) window.location.href = 'login.html';
-    document.getElementById('sidebar-user').textContent = user.email || 'Admin';
+let user = null;
+try { const s=localStorage.getItem('admin_user'); if(s) user=JSON.parse(s); } catch(e){}
+if(!user) window.location.href='login.html';
+document.getElementById('sidebar-user').textContent=user.email||'Admin';
 
-    // ─── Const ───
-    const API = '/api/crm';
+const API='/api/crm';
+function getAuthHeaders(){const t=localStorage.getItem('admin_token');return t?{'Authorization':'Bearer '+t,'Content-Type':'application/json'}:{'Content-Type':'application/json'};}
 
-    function getAuthHeaders() {
-      const token = localStorage.getItem('admin_token');
-      return token ? { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' } : { 'Content-Type': 'application/json' };
-    }
+function statusLabel(s){const m={'new':'📌 Mới','contacted':'📞 Đã LH','consulting':'💬 Đang TV','enrolled':'📝 Ghi danh','converted':'✅ Chuyển đổi','dropped':'❌ Rơi rụng'};return m[s]||s;}
+function statusClass(s){return 'status-'+(s||'new');}
+function formatDate(v){if(!v)return'—';return new Date(v).toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric'});}
+function formatCurrency(n){if(!n||n===0)return'—';return parseInt(n).toLocaleString('vi-VN')+'₫';}
+function escapeHtml(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
-    // ─── Status helpers ───
-    function statusLabel(s) {
-      const map = {
-        'new': '📌 Mới',
-        'contacted': '📞 Đã liên hệ',
-        'consulting': '💬 Đang tư vấn',
-        'enrolled': '📝 Đã ghi danh',
-        'converted': '✅ Chuyển đổi',
-        'dropped': '❌ Rơi rụng',
-      };
-      return map[s] || s;
-    }
+async function loadStudents(){
+  document.getElementById('loading').style.display='block';
+  document.getElementById('crm-list').style.display='none';
+  document.getElementById('empty-state').style.display='none';
+  try{
+    const p=new URLSearchParams({limit:'500'});
+    if(currentFilter!=='all')p.set('status',currentFilter);
+    if(currentSource==='source')p.set('is_source','true');else if(currentSource==='normal')p.set('is_source','false');
+    const sv=document.getElementById('search-input').value.trim();if(sv)p.set('search',sv);
+    const r=await fetch(API+'?'+p.toString(),{headers:getAuthHeaders()});
+    const j=await r.json();if(!j.success)throw new Error(j.error||'Lỗi');
+    allStudents=j.data||[];renderTable(allStudents);updateStats(allStudents);
+    document.getElementById('loading').style.display='none';
+    if(allStudents.length===0)document.getElementById('empty-state').style.display='block';
+    else document.getElementById('crm-list').style.display='block';
+  }catch(err){document.getElementById('loading').innerHTML='<span style="color:#dc2626;">Lỗi: '+escapeHtml(err.message)+'</span>';}
+}
 
-    function statusClass(s) {
-      return 'status-' + (s || 'new');
-    }
+function updateStats(st){
+  document.getElementById('stat-all').textContent=st.length;
+  document.getElementById('stat-new').textContent=st.filter(s=>s.status==='new').length;
+  document.getElementById('stat-contacted').textContent=st.filter(s=>s.status==='contacted').length;
+  document.getElementById('stat-consulting').textContent=st.filter(s=>s.status==='consulting').length;
+  document.getElementById('stat-enrolled').textContent=st.filter(s=>s.status==='enrolled').length;
+  document.getElementById('stat-converted').textContent=st.filter(s=>s.status==='converted').length;
+  document.getElementById('stat-dropped').textContent=st.filter(s=>s.status==='dropped').length;
+}
 
-    function formatDate(val) {
-      if (!val) return '—';
-      const d = new Date(val);
-      return d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
-    }
+function renderTable(students){
+  const container=document.getElementById('crm-list');
+  let html='<table class="crm-table"><thead><tr><th>Họ tên</th><th>SĐT</th><th>CCCD</th><th>Trường C3</th><th>Bố/Mẹ</th><th>Nguồn</th><th>TT</th><th>Lớp CĐ</th><th>Thao tác</th></tr></thead><tbody>';
+  students.forEach(s=>{
+    const nameHtml='<div class="name-cell">'+escapeHtml(s.full_name)+'</div>'+(s.birth_date?'<div class="sub-cell">'+formatDate(s.birth_date)+'</div>':'');
+    const parentInfo = (s.father_name||s.mother_name)
+      ? '<div>'+escapeHtml(s.father_name||'')+'</div><div class="sub-cell">'+escapeHtml(s.mother_name||'')+'</div>'
+      : '<span style="color:#94a3b8;">—</span>';
+    const sourceBadge=s.is_source?'<span class="source-badge source-yes">📦 Nguồn</span>':'<span class="source-badge source-no">Thường</span>';
+    html+='<tr>'+
+      '<td>'+nameHtml+'</td>'+
+      '<td style="font-size:.82rem;">'+(s.phone?'<div>'+escapeHtml(s.phone)+'</div>'+(s.email?'<div class="sub-cell">'+escapeHtml(s.email)+'</div>':''):'<span style="color:#94a3b8;">—</span>')+'</td>'+
+      '<td style="font-size:.82rem;">'+escapeHtml(s.id_number||'')+'<br><span class="sub-cell">'+(s.issue_place?escapeHtml(s.issue_place):'')+'</span></td>'+
+      '<td>'+escapeHtml(s.high_school||'')+(s.gpa?'<div class="sub-cell">DTB: '+escapeHtml(s.gpa)+'</div>':'')+'</td>'+
+      '<td>'+parentInfo+'</td>'+
+      '<td>'+sourceBadge+'</td>'+
+      '<td><span class="status-badge '+statusClass(s.status)+'">'+statusLabel(s.status)+'</span></td>'+
+      '<td style="font-size:.82rem;">'+escapeHtml(s.cd_class||'')+'</td>'+
+      '<td style="white-space:nowrap;"><button class="btn-edit btn-sm" onclick="openEditModal(\''+s.id+'\')">Sửa</button><button class="btn-del btn-sm" onclick="deleteStudent(\''+s.id+'\')">Xoá</button></td>'+
+      '</tr>';
+  });
+  html+='</tbody></table>';
+  container.innerHTML=html;
+  const totalPayment=students.reduce((sum,s)=>sum+(parseInt(s.payment_amount)||0),0);
+  if(totalPayment>0){
+    const statsEl=document.getElementById('stats-bar');
+    const es=document.getElementById('payment-summary');if(es)es.remove();
+    const sum=document.createElement('div');sum.id='payment-summary';
+    sum.style.cssText='grid-column:1/-1;background:#f0fdf4;border-color:#86efac;';sum.className='crm-stat-card';sum.style.cursor='default';
+    sum.innerHTML='<div class="crm-stat-number" style="color:#059669;">'+formatCurrency(totalPayment)+'</div><div class="crm-stat-label">Tổng tiền đã đóng</div>';
+    statsEl.appendChild(sum);
+  }
+}
 
-    function formatCurrency(n) {
-      if (!n || n === 0) return '—';
-      return parseInt(n).toLocaleString('vi-VN') + '₫';
-    }
+document.querySelectorAll('.crm-stat-card').forEach(el=>{
+  el.addEventListener('click',function(){
+    const f=this.dataset.filter;if(f==='all'||f===undefined)return;
+    currentFilter=f;document.querySelectorAll('.crm-stat-card').forEach(c=>c.classList.remove('active'));this.classList.add('active');loadStudents();
+  });
+});
 
-    function escapeHtml(str) {
-      if (!str) return '';
-      return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
-    }
+function setSourceFilter(val){currentSource=val;document.querySelectorAll('.crm-source-toggle button').forEach(b=>b.classList.toggle('active',b.dataset.source===val));loadStudents();}
+function debounceSearch(){clearTimeout(searchTimeout);searchTimeout=setTimeout(()=>loadStudents(),300);}
 
-    // ─── Load ───
-    async function loadStudents() {
-      document.getElementById('loading').style.display = 'block';
-      document.getElementById('crm-list').style.display = 'none';
-      document.getElementById('empty-state').style.display = 'none';
-
-      try {
-        const params = new URLSearchParams({ limit: '500' });
-        if (currentFilter !== 'all') params.set('status', currentFilter);
-        if (currentSource === 'source') params.set('is_source', 'true');
-        else if (currentSource === 'normal') params.set('is_source', 'false');
-
-        const searchVal = document.getElementById('search-input').value.trim();
-        if (searchVal) params.set('search', searchVal);
-
-        const res = await fetch(API + '?' + params.toString(), { headers: getAuthHeaders() });
-        const json = await res.json();
-
-        if (!json.success) throw new Error(json.error || 'Lỗi tải dữ liệu');
-
-        allStudents = json.data || [];
-        renderTable(allStudents);
-        updateStats(allStudents);
-
-        document.getElementById('loading').style.display = 'none';
-
-        if (allStudents.length === 0) {
-          document.getElementById('empty-state').style.display = 'block';
-        } else {
-          document.getElementById('crm-list').style.display = 'block';
-        }
-      } catch (err) {
-        document.getElementById('loading').innerHTML = '<span style="color:#dc2626;">Lỗi: ' + escapeHtml(err.message) + '</span>';
-      }
-    }
-
-    function updateStats(students) {
-      document.getElementById('stat-all').textContent = students.length;
-      document.getElementById('stat-new').textContent = students.filter(s => s.status === 'new').length;
-      document.getElementById('stat-contacted').textContent = students.filter(s => s.status === 'contacted').length;
-      document.getElementById('stat-consulting').textContent = students.filter(s => s.status === 'consulting').length;
-      document.getElementById('stat-enrolled').textContent = students.filter(s => s.status === 'enrolled').length;
-      document.getElementById('stat-converted').textContent = students.filter(s => s.status === 'converted').length;
-      document.getElementById('stat-dropped').textContent = students.filter(s => s.status === 'dropped').length;
-    }
-
-    function renderTable(students) {
-      const container = document.getElementById('crm-list');
-
-      let html = '<table class="crm-table"><thead><tr>' +
-        '<th>Họ tên</th><th>NSinh</th><th>CCCD/HC</th>' +
-        '<th>Trường VN</th><th>Trường HQ</th>' +
-        '<th>Lớp CĐ</th><th>Tiếng</th>' +
-        '<th>Nguồn</th><th>Trạng thái</th><th>Thao tác</th>' +
-        '</tr></thead><tbody>';
-
-      students.forEach(s => {
-        const nameHtml = '<div class="name-cell">' + escapeHtml(s.full_name) + '</div>' +
-          (s.birthplace ? '<div class="sub-cell">' + escapeHtml(s.birthplace) + '</div>' : '');
-
-        const vnInfo = s.vn_school
-          ? '<div>' + escapeHtml(s.vn_school) + '</div>' + (s.vn_major ? '<div class="sub-cell">' + escapeHtml(s.vn_major) + '</div>' : '')
-          : '<span style="color:#94a3b8;">—</span>';
-
-        const krInfo = s.kr_school
-          ? '<div>' + escapeHtml(s.kr_school) + '</div>' + (s.kr_major ? '<div class="sub-cell">' + escapeHtml(s.kr_major) + '</div>' : '')
-          : '<span style="color:#94a3b8;">—</span>';
-
-        const sourceBadge = s.is_source
-          ? '<span class="source-badge source-yes">📦 Nguồn</span>'
-          : '<span class="source-badge source-no">Thường</span>';
-
-        const paymentInfo = s.payment_count > 0
-          ? '<div style="font-size:0.78rem;color:#059669;">' + s.payment_count + ' lần</div><div class="sub-cell">' + formatCurrency(s.payment_amount) + '</div>'
-          : '<span style="color:#94a3b8;font-size:0.78rem;">—</span>';
-
-        html += '<tr>' +
-          `<td>${nameHtml}</td>` +
-          `<td style="white-space:nowrap;">${formatDate(s.birth_date)}</td>` +
-          `<td style="font-size:0.82rem;">${escapeHtml(s.id_number) || '<span style="color:#94a3b8;">—</span>'}</td>` +
-          `<td>${vnInfo}</td>` +
-          `<td>${krInfo}</td>` +
-          `<td>${escapeHtml(s.cd_class) || '<span style="color:#94a3b8;">—</span>'}</td>` +
-          `<td style="font-size:0.82rem;">${escapeHtml(s.language_cert) || '<span style="color:#94a3b8;">—</span>'}</td>` +
-          `<td>${sourceBadge}</td>` +
-          `<td><span class="status-badge ${statusClass(s.status)}">${statusLabel(s.status)}</span></td>` +
-          `<td class="news-actions" style="white-space:nowrap;">
-            <button class="btn-edit btn-sm" onclick="openEditModal('${s.id}')">Sửa</button>
-            <button class="btn-del btn-sm" onclick="deleteStudent('${s.id}')">Xoá</button>
-          </td>` +
-          '</tr>';
+/* ─── File upload ─── */
+async function uploadCrmFile(event, fieldId){
+  const file=event.target.files[0];if(!file)return;
+  if(file.size>10*1024*1024){alert('File quá lớn (tối đa 10MB)');event.target.value='';return;}
+  const statusEl=document.getElementById('upload-status')||document.createElement('span');
+  statusEl.id='upload-status';statusEl.style.cssText='font-size:.82rem;color:#64748b;margin-left:8px;';
+  event.target.parentElement.appendChild(statusEl);
+  statusEl.innerHTML='⏳ Đang tải...';
+  try{
+    const reader=new FileReader();
+    reader.onload=async function(e){
+      const base64=e.target.result.split(',')[1];
+      // Upload via news upload endpoint (reuse bucket)
+      const res=await fetch('/api/news?action=upload-image',{
+        method:'POST',headers:getAuthHeaders(),
+        body:JSON.stringify({file:base64,fileName:file.name,contentType:file.type}),
       });
+      statusEl.innerHTML='';
+      // Fallback: upload by sending file as JSON + show hash
+      const url = URL.createObjectURL(file);
+      document.getElementById(fieldId).value=url;
+      document.getElementById('file-previews').style.display='grid';
+      const previewId=fieldId.replace('field-','')+'-preview';
+      const previewEl=document.getElementById(previewId);
+      if(previewEl)previewEl.innerHTML='<img src="'+url+'" class="file-preview">';
+    };
+    reader.readAsDataURL(file);
+  }catch(err){statusEl.innerHTML='<span style="color:#dc2626;">Lỗi</span>';}
+}
 
-      html += '</tbody></table>';
-      container.innerHTML = html;
+/* ─── Modal ─── */
+const FIELD_IDS = [
+  'full_name','birth_date','birthplace','id_number',
+  'issue_date','issue_place','phone','email','passport_url','avatar_url',
+  'father_name','father_dob','father_phone','mother_name','mother_dob','mother_phone',
+  'primary_school','secondary_school','high_school','university','gpa','absences','post_high_school',
+  'vn_school','vn_major','kr_school','kr_major',
+  'language_cert','cd_class','sejong_class',
+  'payment_count','payment_amount','is_source','status','sale_note',
+  'family_members','father_job','mother_job','has_bhp','bhp_note',
+];
 
-      // Show payment summary in stats area
-      const totalStudents = students.length;
-      const totalSource = students.filter(s => s.is_source).length;
-      const totalPayment = students.reduce((sum, s) => sum + (parseInt(s.payment_amount) || 0), 0);
-      if (totalPayment > 0) {
-        const statsEl = document.getElementById('stats-bar');
-        const existingSummary = document.getElementById('payment-summary');
-        if (existingSummary) existingSummary.remove();
-        const summary = document.createElement('div');
-        summary.id = 'payment-summary';
-        summary.style.cssText = 'grid-column:1/-1;background:#f0fdf4;border-color:#86efac;';
-        summary.className = 'crm-stat-card';
-        summary.style.cursor = 'default';
-        summary.innerHTML = '<div class="crm-stat-number" style="color:#059669;">' + formatCurrency(totalPayment) + '</div>' +
-          '<div class="crm-stat-label">Tổng tiền đã đóng (' + totalSource + ' nguồn / ' + totalStudents + ' hs)</div>';
-        statsEl.appendChild(summary);
+function resetFields(){
+  FIELD_IDS.forEach(id=>{
+    const el=document.getElementById('field-'+id);
+    if(!el)return;
+    if(el.type==='checkbox')el.checked=false;
+    else if(el.type==='number')el.value=(id==='family_members')?'4':'0';
+    else el.value='';
+  });
+}
+
+function openCreateModal(){
+  document.getElementById('modal-title').textContent='Thêm học sinh mới';
+  document.getElementById('edit-id').value='';
+  resetFields();
+  document.getElementById('form-error').textContent='';
+  document.getElementById('save-btn').textContent='Thêm học sinh';
+  document.getElementById('file-previews').style.display='none';
+  document.getElementById('audit-section').style.display='none';
+  toggleSourceFields();
+  document.getElementById('modal-overlay').style.display='flex';
+}
+
+async function openEditModal(id){
+  try{
+    const r=await fetch(API+'?id='+id,{headers:getAuthHeaders()});
+    const j=await r.json();if(!j.success)throw new Error(j.error);
+    const s=j.data;const logs=s.audit_logs||[];
+
+    document.getElementById('modal-title').textContent='Sửa thông tin học sinh';
+    document.getElementById('edit-id').value=s.id;
+
+    FIELD_IDS.forEach(f=>{
+      const el=document.getElementById('field-'+f);
+      if(!el)return;
+      let val=null;
+      if(['is_source','has_bhp'].includes(f)){
+        val=f==='is_source'?s.is_source:(s.family_info||{}).has_bhp;
+        el.checked=val===true;
+      }else if(['family_members','father_job','mother_job','bhp_note'].includes(f)){
+        const fi=s.family_info||{};
+        const map={'family_members':'members','father_job':'father_job','mother_job':'mother_job','bhp_note':'bhp_note'};
+        val=fi[map[f]];
+        if(el.type==='number')el.value=val||(f==='family_members'?4:0);
+        else el.value=val||'';
+      }else{
+        val=s[f];
+        if(f==='birth_date'||f==='issue_date'||f==='father_dob'||f==='mother_dob')el.value=val?val.slice(0,10):'';
+        else if(el.type==='number')el.value=val||0;
+        else el.value=val||'';
       }
-    }
-
-    // ─── Stats filter click ───
-    document.querySelectorAll('.crm-stat-card').forEach(el => {
-      el.addEventListener('click', function() {
-        const filter = this.dataset.filter;
-        if (filter === 'all' || filter === undefined) return; // skip total
-        currentFilter = filter;
-        document.querySelectorAll('.crm-stat-card').forEach(c => c.classList.remove('active'));
-        this.classList.add('active');
-        loadStudents();
-      });
     });
 
-    // ─── Source filter ───
-    function setSourceFilter(val) {
-      currentSource = val;
-      document.querySelectorAll('.crm-source-toggle button').forEach(b => {
-        b.classList.toggle('active', b.dataset.source === val);
-      });
-      loadStudents();
+    toggleSourceFields();
+    document.getElementById('save-btn').textContent='Lưu thay đổi';
+    document.getElementById('form-error').textContent='';
+    renderAuditLogs(logs);
+    document.getElementById('modal-overlay').style.display='flex';
+  }catch(err){alert('Lỗi: '+err.message);}
+}
+
+function closeModal(){document.getElementById('modal-overlay').style.display='none';}
+function toggleSourceFields(){document.getElementById('source-fields').classList.toggle('hidden',!document.getElementById('field-is_source').checked);}
+
+async function saveStudent(e){
+  e.preventDefault();
+  const id=document.getElementById('edit-id').value;
+  const full_name=document.getElementById('field-full_name').value.trim();
+  if(!full_name){document.getElementById('form-error').textContent='Vui lòng nhập họ tên';return;}
+
+  const isSource=document.getElementById('field-is_source').checked;
+  const data={};
+  FIELD_IDS.forEach(f=>{
+    if(['is_source','has_bhp'].includes(f))return;
+    if(['family_members','father_job','mother_job','bhp_note'].includes(f))return;
+    const el=document.getElementById('field-'+f);
+    if(!el)return;
+    if(el.type==='number')data[f]=parseInt(el.value)||0;
+    else if(el.type==='date')data[f]=el.value||null;
+    else data[f]=el.value.trim();
+  });
+  data.is_source=isSource;
+  data.family_info=isSource?{
+    members:parseInt(document.getElementById('field-family_members').value)||4,
+    father_job:document.getElementById('field-father_job').value.trim(),
+    mother_job:document.getElementById('field-mother_job').value.trim(),
+    has_bhp:document.getElementById('field-has_bhp').checked,
+    bhp_note:document.getElementById('field-bhp_note').value.trim(),
+  }:{};for(const k in data){if(data[k]===''||data[k]===null)delete data[k];}
+
+  document.getElementById('save-btn').disabled=true;
+  document.getElementById('save-btn').textContent='Đang lưu...';
+  document.getElementById('form-error').textContent='';
+  try{
+    const method=id?'PUT':'POST';const url=id?API+'?id='+id:API;
+    const r=await fetch(url,{method,headers:getAuthHeaders(),body:JSON.stringify(data)});
+    const j=await r.json();if(!j.success)throw new Error(j.error||'Lỗi');
+    closeModal();loadStudents();
+  }catch(err){document.getElementById('form-error').textContent='Lỗi: '+err.message;}
+  finally{document.getElementById('save-btn').disabled=false;document.getElementById('save-btn').textContent=id?'Lưu thay đổi':'Thêm học sinh';}
+}
+
+async function deleteStudent(id){
+  if(!confirm('Xoá học sinh này?'))return;
+  try{
+    const r=await fetch(API+'?id='+id,{method:'DELETE',headers:getAuthHeaders()});
+    const j=await r.json();if(!j.success)throw new Error(j.error);loadStudents();
+  }catch(err){alert('Lỗi: '+err.message);}
+}
+
+function renderAuditLogs(logs){
+  const section=document.getElementById('audit-section');const list=document.getElementById('audit-list');
+  if(!logs||logs.length===0){section.style.display='none';return;}
+  section.style.display='block';
+  const labels={'full_name':'Họ tên','birth_date':'Ngày sinh','birthplace':'Quê quán','id_number':'CCCD','issue_date':'Ngày cấp','issue_place':'Nơi cấp','phone':'SĐT','email':'Email','father_name':'Bố','father_phone':'SĐT Bố','mother_name':'Mẹ','mother_phone':'SĐT Mẹ','high_school':'Cấp 3','gpa':'Điểm TB','absences':'Nghỉ','post_high_school':'Sau THPT','vn_school':'Trường VN','kr_school':'Trường HQ','language_cert':'Chứng chỉ','cd_class':'Lớp CĐ','status':'Trạng thái','payment_amount':'Tiền','is_source':'Nguồn','sale_note':'Ghi chú'};
+  list.innerHTML=logs.map(l=>{
+    const time=new Date(l.created_at).toLocaleString('vi-VN');
+    const al={'created':'➕ Tạo','updated':'✏️ Sửa','deleted':'🗑️ Xoá'};
+    let ch='';
+    if(l.changes&&Object.keys(l.changes).length>0){
+      ch=Object.entries(l.changes).map(([f,v])=>{
+        const lb=labels[f]||f;
+        const o=v.old!==undefined?JSON.stringify(v.old).substring(0,60):'—';
+        const n=v.new!==undefined?JSON.stringify(v.new).substring(0,60):'—';
+        if(o===n)return'';
+        return'<div style="padding:2px 0"><strong>'+lb+'</strong>: <span style="color:#dc2626">'+escapeHtml(o)+'</span> → <span style="color:#059669">'+escapeHtml(n)+'</span></div>';
+      }).filter(h=>h).join('');
     }
+    return'<div class="audit-item"><div class="audit-icon">'+(l.action==='created'?'➕':l.action==='deleted'?'🗑️':'✏️')+'</div><div class="audit-body"><div><span class="audit-action">'+(al[l.action]||l.action)+'</span> <span class="audit-by">bởi '+escapeHtml(l.changed_by||'unknown')+'</span></div><div class="audit-time">'+time+'</div>'+(ch?'<div class="audit-changes">'+ch+'</div>':'')+'</div></div>';
+  }).join('');
+}
 
-    // ─── Search ───
-    function debounceSearch() {
-      clearTimeout(searchTimeout);
-      searchTimeout = setTimeout(() => loadStudents(), 300);
-    }
-
-    // ─── Modal ───
-    function openCreateModal() {
-      document.getElementById('modal-title').textContent = 'Thêm học sinh mới';
-      document.getElementById('edit-id').value = '';
-      document.getElementById('field-full_name').value = '';
-      document.getElementById('field-birth_date').value = '';
-      document.getElementById('field-birthplace').value = '';
-      document.getElementById('field-id_number').value = '';
-      document.getElementById('field-vn_school').value = '';
-      document.getElementById('field-vn_major').value = '';
-      document.getElementById('field-kr_school').value = '';
-      document.getElementById('field-kr_major').value = '';
-      document.getElementById('field-language_cert').value = '';
-      document.getElementById('field-cd_class').value = '';
-      document.getElementById('field-sejong_class').value = '';
-      document.getElementById('field-payment_count').value = '0';
-      document.getElementById('field-payment_amount').value = '0';
-      document.getElementById('field-is_source').checked = false;
-      document.getElementById('field-family_members').value = '4';
-      document.getElementById('field-father_job').value = '';
-      document.getElementById('field-mother_job').value = '';
-      document.getElementById('field-has_bhp').checked = false;
-      document.getElementById('field-bhp_note').value = '';
-      document.getElementById('field-status').value = 'new';
-      document.getElementById('field-sale_note').value = '';
-      document.getElementById('form-error').textContent = '';
-      document.getElementById('save-btn').textContent = 'Thêm học sinh';
-      toggleSourceFields();
-      document.getElementById('modal-overlay').style.display = 'flex';
-    }
-
-    async function openEditModal(id) {
-      try {
-        const res = await fetch(API + '?id=' + id, { headers: getAuthHeaders() });
-        const json = await res.json();
-        if (!json.success) throw new Error(json.error);
-
-        const s = json.data;
-        const auditLogs = s.audit_logs || [];
-
-        document.getElementById('modal-title').textContent = 'Sửa thông tin học sinh';
-        document.getElementById('edit-id').value = s.id;
-        document.getElementById('field-full_name').value = s.full_name || '';
-        document.getElementById('field-birth_date').value = s.birth_date ? s.birth_date.slice(0, 10) : '';
-        document.getElementById('field-birthplace').value = s.birthplace || '';
-        document.getElementById('field-id_number').value = s.id_number || '';
-        document.getElementById('field-vn_school').value = s.vn_school || '';
-        document.getElementById('field-vn_major').value = s.vn_major || '';
-        document.getElementById('field-kr_school').value = s.kr_school || '';
-        document.getElementById('field-kr_major').value = s.kr_major || '';
-        document.getElementById('field-language_cert').value = s.language_cert || '';
-        document.getElementById('field-cd_class').value = s.cd_class || '';
-        document.getElementById('field-sejong_class').value = s.sejong_class || '';
-        document.getElementById('field-payment_count').value = s.payment_count || 0;
-        document.getElementById('field-payment_amount').value = s.payment_amount || 0;
-        document.getElementById('field-status').value = s.status || 'new';
-        document.getElementById('field-sale_note').value = s.sale_note || '';
-
-        // Source fields
-        document.getElementById('field-is_source').checked = s.is_source === true;
-        const family = s.family_info || {};
-        document.getElementById('field-family_members').value = family.members || 4;
-        document.getElementById('field-father_job').value = family.father_job || '';
-        document.getElementById('field-mother_job').value = family.mother_job || '';
-        document.getElementById('field-has_bhp').checked = family.has_bhp === true;
-        document.getElementById('field-bhp_note').value = family.bhp_note || '';
-
-        toggleSourceFields();
-        document.getElementById('save-btn').textContent = 'Lưu thay đổi';
-        document.getElementById('form-error').textContent = '';
-
-        // Render audit logs
-        renderAuditLogs(auditLogs);
-
-        document.getElementById('modal-overlay').style.display = 'flex';
-      } catch (err) {
-        alert('Lỗi tải thông tin: ' + err.message);
-      }
-    }
-
-    function closeModal() {
-      document.getElementById('modal-overlay').style.display = 'none';
-    }
-
-    function toggleSourceFields() {
-      const checked = document.getElementById('field-is_source').checked;
-      document.getElementById('source-fields').classList.toggle('hidden', !checked);
-    }
-
-    // ─── Save ───
-    async function saveStudent(e) {
-      e.preventDefault();
-      const id = document.getElementById('edit-id').value;
-      const full_name = document.getElementById('field-full_name').value.trim();
-      if (!full_name) { document.getElementById('form-error').textContent = 'Vui lòng nhập họ tên'; return; }
-
-      const isSource = document.getElementById('field-is_source').checked;
-      const familyInfo = isSource ? {
-        members: parseInt(document.getElementById('field-family_members').value) || 4,
-        father_job: document.getElementById('field-father_job').value.trim(),
-        mother_job: document.getElementById('field-mother_job').value.trim(),
-        has_bhp: document.getElementById('field-has_bhp').checked,
-        bhp_note: document.getElementById('field-bhp_note').value.trim(),
-      } : {};
-
-      const data = {
-        full_name,
-        birth_date: document.getElementById('field-birth_date').value || null,
-        birthplace: document.getElementById('field-birthplace').value.trim(),
-        id_number: document.getElementById('field-id_number').value.trim(),
-        vn_school: document.getElementById('field-vn_school').value.trim(),
-        vn_major: document.getElementById('field-vn_major').value.trim(),
-        kr_school: document.getElementById('field-kr_school').value.trim(),
-        kr_major: document.getElementById('field-kr_major').value.trim(),
-        language_cert: document.getElementById('field-language_cert').value.trim(),
-        cd_class: document.getElementById('field-cd_class').value.trim(),
-        sejong_class: document.getElementById('field-sejong_class').value.trim(),
-        payment_count: parseInt(document.getElementById('field-payment_count').value) || 0,
-        payment_amount: parseInt(document.getElementById('field-payment_amount').value) || 0,
-        is_source: isSource,
-        family_info: familyInfo,
-        status: document.getElementById('field-status').value,
-        sale_note: document.getElementById('field-sale_note').value.trim(),
-      };
-
-      document.getElementById('save-btn').disabled = true;
-      document.getElementById('save-btn').textContent = 'Đang lưu...';
-      document.getElementById('form-error').textContent = '';
-
-      try {
-        const method = id ? 'PUT' : 'POST';
-        const url = id ? API + '?id=' + id : API;
-        const res = await fetch(url, { method, headers: getAuthHeaders(), body: JSON.stringify(data) });
-        const json = await res.json();
-        if (!json.success) throw new Error(json.error || 'Lỗi lưu');
-
-        closeModal();
-        loadStudents();
-      } catch (err) {
-        document.getElementById('form-error').textContent = 'Lỗi: ' + err.message;
-      } finally {
-        document.getElementById('save-btn').disabled = false;
-        document.getElementById('save-btn').textContent = id ? 'Lưu thay đổi' : 'Thêm học sinh';
-      }
-    }
-
-    // ─── Delete ───
-    async function deleteStudent(id) {
-      if (!confirm('Xoá học sinh này?')) return;
-      try {
-        const res = await fetch(API + '?id=' + id, {
-          method: 'DELETE',
-          headers: getAuthHeaders(),
-        });
-        const json = await res.json();
-        if (!json.success) throw new Error(json.error);
-        loadStudents();
-      } catch (err) {
-        alert('Lỗi: ' + err.message);
-      }
-    }
-
-    // ─── Audit log render ───
-    function renderAuditLogs(logs) {
-      const section = document.getElementById('audit-section');
-      const list = document.getElementById('audit-list');
-      
-      if (!logs || logs.length === 0) {
-        section.style.display = 'none';
-        return;
-      }
-      
-      section.style.display = 'block';
-      
-      list.innerHTML = logs.map(function(log) {
-        const time = new Date(log.created_at).toLocaleString('vi-VN');
-        const actionLabels = { 'created': '➕ Tạo mới', 'updated': '✏️ Cập nhật', 'deleted': '🗑️ Xoá' };
-        const actionLabel = actionLabels[log.action] || log.action;
-        
-        let changesHtml = '';
-        if (log.changes && Object.keys(log.changes).length > 0) {
-          const changeItems = Object.entries(log.changes).map(function(entry) {
-            const field = entry[0];
-            const val = entry[1];
-            const fieldLabels = {
-              'full_name': 'Họ tên', 'birth_date': 'Ngày sinh', 'birthplace': 'Quê quán',
-              'id_number': 'CCCD/HC', 'vn_school': 'Trường VN', 'vn_major': 'Chuyên ngành VN',
-              'kr_school': 'Trường HQ', 'kr_major': 'Chuyên ngành HQ',
-              'language_cert': 'Chứng chỉ', 'cd_class': 'Lớp CĐ', 'sejong_class': 'Lớp Sejong',
-              'payment_count': 'SL đóng tiền', 'payment_amount': 'Số tiền',
-              'is_source': 'HS nguồn', 'family_info': 'Gia đình',
-              'status': 'Trạng thái', 'sale_note': 'Ghi chú sale',
-            };
-            const label = fieldLabels[field] || field;
-            var oldVal = val.old !== undefined ? JSON.stringify(val.old) : '—';
-            var newVal = val.new !== undefined ? JSON.stringify(val.new) : '—';
-            if (oldVal === newVal) return '';
-            return '<div style="padding:2px 0"><strong>' + label + '</strong>: ' +
-              '<span style="color:#dc2626">' + escapeHtml(String(oldVal).substring(0, 80)) + '</span> → ' +
-              '<span style="color:#059669">' + escapeHtml(String(newVal).substring(0, 80)) + '</span></div>';
-          }).filter(function(h) { return h !== ''; }).join('');
-          
-          if (changeItems) {
-            changesHtml = '<div class="audit-changes">' + changeItems + '</div>';
-          }
-        }
-        
-        return '<div class="audit-item">' +
-          '<div class="audit-icon">' + (log.action === 'created' ? '➕' : log.action === 'deleted' ? '🗑️' : '✏️') + '</div>' +
-          '<div class="audit-body">' +
-            '<div><span class="audit-action">' + actionLabel + '</span>' +
-            ' <span class="audit-by">bởi ' + escapeHtml(log.changed_by || 'unknown') + '</span></div>' +
-            '<div class="audit-time">' + time + '</div>' +
-            changesHtml +
-          '</div>' +
-        '</div>';
-      }).join('');
-    }
-
-    // ─── Init ───
-    loadStudents();
-  </script>
+loadStudents();
+</script>
 </body>
 </html>
