@@ -435,7 +435,7 @@ function renderTable(students){
   const start=(currentPage-1)*pageSize, end=Math.min(start+pageSize,total);
   const page=students.slice(start,end);
 
-  let html='<div class="crm-table-wrap"><table class="crm-table"><thead><tr><th>Họ tên</th><th>Liên hệ</th><th>🎓 Học vấn</th><th>🏫 Trường HQ</th><th>🛡️ BHP</th><th>📜 Chứng chỉ</th><th>Nguồn</th><th>TT</th><th>Thao tác</th></tr></thead><tbody>';
+  let html='<div class="crm-table-wrap"><table class="crm-table"><thead><tr><th>Họ tên</th><th>Liên hệ</th><th>🎓 Học vấn</th><th>🏫 Trường HQ</th><th>🛡️ BHP</th><th>📜 Chứng chỉ</th><th>💰 Tiền</th><th>Nguồn</th><th>TT</th><th>Thao tác</th></tr></thead><tbody>';
   page.forEach(s=>{
     const age = s.birth_date ? Math.floor((new Date() - new Date(s.birth_date)) / (365.25 * 24 * 60 * 60 * 1000)) : null;
     const gpaAvg = calcGpaAvg(s.gpa);
@@ -461,7 +461,7 @@ function renderTable(students){
       '<td>'+eduHtml+'</td>'+
       '<td>'+krHtml+'</td>'+
       '<td>'+bhpHtml+'</td>'+
-      '<td style="font-size:.82rem;">'+certHtml+'</td>'+
+      '<td style="font-size:.82rem;">'+certHtml+'</td>'+'<td style="font-weight:600;white-space:nowrap;">'+formatCurrency(s.payment_amount)+'</td>'+
       '<td>'+sourceBadge+'</td>'+
       '<td><span class="status-badge '+statusClass(s.status)+'">'+statusLabel(s.status)+'</span></td>'+
       '<td style="white-space:nowrap;"><button class="btn-edit btn-sm" onclick="openEditModal(\''+s.id+'\')">Sửa</button><button class="btn-del btn-sm" onclick="deleteStudent(\''+s.id+'\')">Xoá</button></td>'+
