@@ -138,8 +138,6 @@
       <div class="crm-stat-card" data-filter="source"><div class="crm-stat-number" id="stat-source">0</div><div class="crm-stat-label">📦 Nguồn</div></div>
       <div class="crm-stat-card" data-filter="professional"><div class="crm-stat-number" id="stat-professional">0</div><div class="crm-stat-label">Chuyên nghiệp</div></div>
       <div class="crm-stat-card" data-filter="payment" style="background:#f0fdf4;border-color:#86efac;cursor:default;"><div class="crm-stat-number" id="stat-total-payment" style="color:#059669;">0₫</div><div class="crm-stat-label">💰 Tổng tiền đã đóng</div></div>
-      <div class="crm-stat-card" data-filter="has_cert"><div class="crm-stat-number" id="stat-has-cert">0</div><div class="crm-stat-label">📜 Có chứng chỉ</div></div>
-      <div class="crm-stat-card" data-filter="no_cert"><div class="crm-stat-number" id="stat-no-cert">0</div><div class="crm-stat-label">📜 Chưa có C.C</div></div>
     </div>
 
     <div class="crm-toolbar">
@@ -400,8 +398,7 @@ async function loadStudents(){
     else if(currentFilter==='no_bhp')filtered=allStudents.filter(s=>!s.bhp_relative);
     else if(currentFilter==='source')filtered=allStudents.filter(s=>s.is_source);
     else if(currentFilter==='professional')filtered=allStudents.filter(s=>!s.is_source);
-    else if(currentFilter==='has_cert')filtered=allStudents.filter(s=>s.language_cert);
-    else if(currentFilter==='no_cert')filtered=allStudents.filter(s=>!s.language_cert);
+
     filteredStudents=filtered;renderTable(filtered);updateStats(allStudents);
     document.getElementById('loading').style.display='none';
     if(allStudents.length===0)document.getElementById('empty-state').style.display='block';
@@ -416,8 +413,6 @@ function updateStats(st){
   document.getElementById('stat-source').textContent=st.filter(s=>s.is_source).length;
   document.getElementById('stat-professional').textContent=st.filter(s=>!s.is_source).length;    const total=st.reduce((sum,s)=>sum+(parseInt(s.payment_amount)||0),0);
   document.getElementById('stat-total-payment').textContent=total>0?parseInt(total).toLocaleString('vi-VN')+'₫':'0₫';
-  document.getElementById('stat-has-cert').textContent=st.filter(s=>s.language_cert).length;
-  document.getElementById('stat-no-cert').textContent=st.filter(s=>!s.language_cert).length;
   }
 
 function renderTable(students){
