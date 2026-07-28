@@ -22,12 +22,25 @@
     .crm-source-toggle button:not(:last-child) { border-right:1px solid #e2e8f0; }
     .crm-source-toggle button.active { background:#2563eb; color:#fff; }
 
-    .crm-table { width:100%; border-collapse:collapse; }
-    .crm-table th { padding:10px 12px; text-align:left; font-size:.8rem; font-weight:600; color:#64748b; border-bottom:2px solid #e2e8f0; white-space:nowrap; }
-    .crm-table td { padding:10px 12px; border-bottom:1px solid #f1f5f9; font-size:.88rem; vertical-align:top; }
-    .crm-table tr:hover td { background:#f8fafc; }
+    .crm-table-wrap { overflow-x:auto; border:1px solid #e2e8f0; border-radius:12px; }
+    .crm-table { width:100%; border-collapse:collapse; min-width:900px; }
+    .crm-table th { padding:10px 12px; text-align:left; font-size:.8rem; font-weight:600; color:#64748b; border-bottom:2px solid #e2e8f0; white-space:nowrap; background:#fff; }
+    .crm-table td { padding:10px 12px; border-bottom:1px solid #f1f5f9; font-size:.88rem; vertical-align:top; background:#fff; }
+    .crm-table tr:nth-child(even) td { background:#f8fafc; }
+    .crm-table tr:hover td { background:#eef2ff !important; }
+    .crm-table th:first-child, .crm-table td:first-child { position:sticky; left:0; z-index:1; }
+    .crm-table th:first-child { z-index:3; }
     .crm-table .name-cell { font-weight:600; color:#1e293b; }
     .crm-table .sub-cell { font-size:.78rem; color:#94a3b8; margin-top:2px; }
+
+    /* Pagination */
+    .crm-pagination { display:flex; align-items:center; justify-content:space-between; padding:10px 4px; gap:8px; flex-wrap:wrap; }
+    .crm-pagination .page-info { font-size:.85rem; color:#64748b; }
+    .crm-pagination .page-btns { display:flex; gap:4px; }
+    .crm-pagination button { min-width:36px; height:36px; padding:4px 12px; border:1px solid #e2e8f0; border-radius:8px; background:#fff; cursor:pointer; font-size:.85rem; color:#475569; font-weight:500; transition:all .15s; }
+    .crm-pagination button:hover:not(:disabled) { border-color:#2563eb; color:#2563eb; background:#eff6ff; }
+    .crm-pagination button.active { background:#2563eb; color:#fff; border-color:#2563eb; }
+    .crm-pagination button:disabled { opacity:.4; cursor:default; }
 
     .status-badge { display:inline-block; padding:3px 10px; border-radius:20px; font-size:.72rem; font-weight:600; white-space:nowrap; }
     .status-submitted { background:#dbeafe; color:#1d4ed8; }
@@ -364,7 +377,7 @@
 
 <script src="admin.js"></script>
 <script>
-let currentFilter = 'all', currentSource = 'all', searchTimeout = null, allStudents = [], filteredStudents = [];
+let currentFilter = 'all', currentSource = 'all', searchTimeout = null, allStudents = [], filteredStudents = [], currentPage = 1, pageSize = 25;
 
 let user = null;
 try { const s=localStorage.getItem('admin_user'); if(s) user=JSON.parse(s); } catch(e){}
@@ -399,7 +412,7 @@ async function loadStudents(){
     else if(currentFilter==='source')filtered=allStudents.filter(s=>s.is_source);
     else if(currentFilter==='professional')filtered=allStudents.filter(s=>!s.is_source);
 
-    filteredStudents=filtered;renderTable(filtered);updateStats(allStudents);
+    filteredStudents=filtered;currentPage=1;renderTable(filtered);updateStats(allStudents);
     document.getElementById('loading').style.display='none';
     if(allStudents.length===0)document.getElementById('empty-state').style.display='block';
     else document.getElementById('crm-list').style.display='block';
@@ -417,8 +430,13 @@ function updateStats(st){
 
 function renderTable(students){
   const container=document.getElementById('crm-list');
-  let html='<table class="crm-table"><thead><tr><th>Họ tên</th><th>Liên hệ</th><th>🎓 Học vấn</th><th>🏫 Trường HQ</th><th>🛡️ BHP</th><th>📜 Chứng chỉ</th><th>Nguồn</th><th>TT</th><th>Thao tác</th></tr></thead><tbody>';
-  students.forEach(s=>{
+  const total=students.length, totalPages=Math.ceil(total/pageSize)||1;
+  if(currentPage>totalPages)currentPage=totalPages;
+  const start=(currentPage-1)*pageSize, end=Math.min(start+pageSize,total);
+  const page=students.slice(start,end);
+
+  let html='<div class="crm-table-wrap"><table class="crm-table"><thead><tr><th>Họ tên</th><th>Liên hệ</th><th>🎓 Học vấn</th><th>🏫 Trường HQ</th><th>🛡️ BHP</th><th>📜 Chứng chỉ</th><th>Nguồn</th><th>TT</th><th>Thao tác</th></tr></thead><tbody>';
+  page.forEach(s=>{
     const age = s.birth_date ? Math.floor((new Date() - new Date(s.birth_date)) / (365.25 * 24 * 60 * 60 * 1000)) : null;
     const gpaAvg = calcGpaAvg(s.gpa);
     const absSum = calcAbsencesSum(s.absences);
@@ -449,8 +467,33 @@ function renderTable(students){
       '<td style="white-space:nowrap;"><button class="btn-edit btn-sm" onclick="openEditModal(\''+s.id+'\')">Sửa</button><button class="btn-del btn-sm" onclick="deleteStudent(\''+s.id+'\')">Xoá</button></td>'+
       '</tr>';
   });
-  html+='</tbody></table>';
+  html+='</tbody></table></div>';
+
+  // Pagination
+  html+='<div class="crm-pagination">'+
+    '<span class="page-info">Hiển thị '+(total?start+1:0)+'-'+end+' / '+total+' học sinh</span>'+
+    '<div class="page-btns">'+
+      '<button onclick="changePage(1)" '+(currentPage<=1?'disabled':'')+' title="Đầu">⏮</button>'+
+      '<button onclick="changePage('+(currentPage-1)+')" '+(currentPage<=1?'disabled':'')+' title="Trước">◀</button>';
+  const maxShow=5;
+  let pStart=Math.max(1,currentPage-Math.floor(maxShow/2)), pEnd=Math.min(totalPages,pStart+maxShow-1);
+  if(pEnd-pStart+1<maxShow)pStart=Math.max(1,pEnd-maxShow+1);
+  for(let i=pStart;i<=pEnd;i++){
+    html+='<button onclick="changePage('+i+')" '+(i===currentPage?'class="active"':'')+'>'+i+'</button>';
+  }
+  html+='<button onclick="changePage('+(currentPage+1)+')" '+(currentPage>=totalPages?'disabled':'')+' title="Sau">▶</button>'+
+    '<button onclick="changePage('+totalPages+')" '+(currentPage>=totalPages?'disabled':'')+' title="Cuối">⏭</button>'+
+    '</div></div>';
+
   container.innerHTML=html;
+}
+
+function changePage(n){
+  const totalPages=Math.ceil(filteredStudents.length/pageSize)||1;
+  if(n<1||n>totalPages)return;
+  currentPage=n;
+  renderTable(filteredStudents);
+  document.querySelector('.crm-table-wrap')?.scrollIntoView({behavior:'smooth',block:'start'});
 }
 
 document.querySelectorAll('.crm-stat-card').forEach(el=>{
