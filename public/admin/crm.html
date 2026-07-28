@@ -267,9 +267,7 @@
       <!-- Section 4: Học vấn -->
       <div class="crm-form-section">
         <h3><span class="section-icon">🎓</span> Học vấn</h3>
-        <div class="crm-form-row four-col">
-          <div><label for="field-primary_school">Trường Cấp 1</label><input type="text" id="field-primary_school" placeholder="VD: Tiểu học Kim Liên"></div>
-          <div><label for="field-secondary_school">Trường Cấp 2</label><input type="text" id="field-secondary_school" placeholder="VD: THCS Nguyễn Du"></div>
+        <div class="crm-form-row">
           <div><label for="field-high_school">Trường Cấp 3 *</label><input type="text" id="field-high_school" placeholder="VD: THPT Chuyên Hà Nội - Amsterdam"></div>
           <div><label for="field-university">Trường CĐ/ĐH <span class="optional">(nếu có)</span></label><input type="text" id="field-university" placeholder="VD: ĐH Ngoại thương"></div>
         </div>
@@ -576,7 +574,7 @@ async function uploadCrmFile(event, fieldId){
 const FIELD_IDS = [
   'full_name','birth_date','birthplace','id_number',
   'issue_date','issue_place','phone','email','passport_url','avatar_url',          'father_name','father_dob','father_phone','mother_name','mother_dob','mother_phone','bhp_relative',
-  'primary_school','secondary_school','high_school','university','gpa','absences','post_high_school',
+  'high_school','university','gpa','absences','post_high_school',
   'vn_school','vn_major','kr_school','kr_major',
   'language_cert','cd_class','sejong_class',
   'payment_count','payment_amount','is_source','status','sale_note',
