@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CRM Học sinh - Admin</title>
   <link rel="stylesheet" href="admin.css">
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
   <style>
     .crm-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:.75rem; margin-bottom:1.5rem; }
     .crm-stat-card { background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:1rem 1.25rem; text-align:center; cursor:pointer; transition:all .2s; }
@@ -124,7 +125,10 @@
         <h1>👤 CRM Học sinh</h1>
         <p>Quản lý thông tin học sinh — nhập liệu từ form đăng ký</p>
       </div>
-      <button class="btn btn-primary" onclick="openCreateModal()">+ Thêm học sinh</button>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-success" onclick="exportExcel()" style="background:#059669;color:#fff;padding:10px 20px;border:none;border-radius:8px;font-weight:600;cursor:pointer;font-size:.9rem;">📥 Xuất Excel</button>
+        <button class="btn btn-primary" onclick="openCreateModal()">+ Thêm học sinh</button>
+      </div>
     </div>
 
     <div class="crm-stats" id="stats-bar">
@@ -134,6 +138,8 @@
       <div class="crm-stat-card" data-filter="source"><div class="crm-stat-number" id="stat-source">0</div><div class="crm-stat-label">📦 Nguồn</div></div>
       <div class="crm-stat-card" data-filter="professional"><div class="crm-stat-number" id="stat-professional">0</div><div class="crm-stat-label">Chuyên nghiệp</div></div>
       <div class="crm-stat-card" data-filter="payment" style="background:#f0fdf4;border-color:#86efac;cursor:default;"><div class="crm-stat-number" id="stat-total-payment" style="color:#059669;">0₫</div><div class="crm-stat-label">💰 Tổng tiền đã đóng</div></div>
+      <div class="crm-stat-card" data-filter="has_cert"><div class="crm-stat-number" id="stat-has-cert">0</div><div class="crm-stat-label">📜 Có chứng chỉ</div></div>
+      <div class="crm-stat-card" data-filter="no_cert"><div class="crm-stat-number" id="stat-no-cert">0</div><div class="crm-stat-label">📜 Chưa có C.C</div></div>
     </div>
 
     <div class="crm-toolbar">
@@ -360,7 +366,7 @@
 
 <script src="admin.js"></script>
 <script>
-let currentFilter = 'all', currentSource = 'all', searchTimeout = null, allStudents = [];
+let currentFilter = 'all', currentSource = 'all', searchTimeout = null, allStudents = [], filteredStudents = [];
 
 let user = null;
 try { const s=localStorage.getItem('admin_user'); if(s) user=JSON.parse(s); } catch(e){}
@@ -375,6 +381,8 @@ function statusClass(s){return 'status-'+(s||'submitted');}
 function formatDate(v){if(!v)return'—';return new Date(v).toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric'});}
 function formatCurrency(n){if(!n||n===0)return'—';return parseInt(n).toLocaleString('vi-VN')+'₫';}
 function escapeHtml(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function calcGpaAvg(raw){if(!raw)return null;const nums=raw.split('-').map(s=>parseFloat(s.trim())).filter(n=>!isNaN(n));if(nums.length===0)return null;return nums.reduce((a,b)=>a+b,0)/nums.length;}
+function calcAbsencesSum(raw){if(!raw)return null;const nums=raw.split('-').map(s=>parseInt(s.trim())).filter(n=>!isNaN(n));if(nums.length===0)return null;return nums.reduce((a,b)=>a+b,0);}
 
 async function loadStudents(){
   document.getElementById('loading').style.display='block';
@@ -392,7 +400,9 @@ async function loadStudents(){
     else if(currentFilter==='no_bhp')filtered=allStudents.filter(s=>!s.bhp_relative);
     else if(currentFilter==='source')filtered=allStudents.filter(s=>s.is_source);
     else if(currentFilter==='professional')filtered=allStudents.filter(s=>!s.is_source);
-    renderTable(filtered);updateStats(allStudents);
+    else if(currentFilter==='has_cert')filtered=allStudents.filter(s=>s.language_cert);
+    else if(currentFilter==='no_cert')filtered=allStudents.filter(s=>!s.language_cert);
+    filteredStudents=filtered;renderTable(filtered);updateStats(allStudents);
     document.getElementById('loading').style.display='none';
     if(allStudents.length===0)document.getElementById('empty-state').style.display='block';
     else document.getElementById('crm-list').style.display='block';
@@ -404,29 +414,43 @@ function updateStats(st){
   document.getElementById('stat-has-bhp').textContent=st.filter(s=>s.bhp_relative).length;
   document.getElementById('stat-no-bhp').textContent=st.filter(s=>!s.bhp_relative).length;
   document.getElementById('stat-source').textContent=st.filter(s=>s.is_source).length;
-  document.getElementById('stat-professional').textContent=st.filter(s=>!s.is_source).length;
-  const total=st.reduce((sum,s)=>sum+(parseInt(s.payment_amount)||0),0);
+  document.getElementById('stat-professional').textContent=st.filter(s=>!s.is_source).length;    const total=st.reduce((sum,s)=>sum+(parseInt(s.payment_amount)||0),0);
   document.getElementById('stat-total-payment').textContent=total>0?parseInt(total).toLocaleString('vi-VN')+'₫':'0₫';
-}
+  document.getElementById('stat-has-cert').textContent=st.filter(s=>s.language_cert).length;
+  document.getElementById('stat-no-cert').textContent=st.filter(s=>!s.language_cert).length;
+  }
 
 function renderTable(students){
   const container=document.getElementById('crm-list');
-  let html='<table class="crm-table"><thead><tr><th>Họ tên</th><th>SĐT</th><th>CCCD</th><th>Trường C3</th><th>Bố/Mẹ</th><th>Nguồn</th><th>TT</th><th>Lớp CĐ</th><th>Thao tác</th></tr></thead><tbody>';
+  let html='<table class="crm-table"><thead><tr><th>Họ tên</th><th>Liên hệ</th><th>🎓 Học vấn</th><th>🏫 Trường HQ</th><th>🛡️ BHP</th><th>📜 Chứng chỉ</th><th>Nguồn</th><th>TT</th><th>Thao tác</th></tr></thead><tbody>';
   students.forEach(s=>{
-    const nameHtml='<div class="name-cell">'+escapeHtml(s.full_name)+'</div>'+(s.birth_date?'<div class="sub-cell">'+formatDate(s.birth_date)+'</div>':'');
-    const parentInfo = (s.father_name||s.mother_name)
-      ? '<div>'+escapeHtml(s.father_name||'')+'</div><div class="sub-cell">'+escapeHtml(s.mother_name||'')+'</div>'
-      : '<span style="color:#94a3b8;">—</span>';
+    const age = s.birth_date ? Math.floor((new Date() - new Date(s.birth_date)) / (365.25 * 24 * 60 * 60 * 1000)) : null;
+    const gpaAvg = calcGpaAvg(s.gpa);
+    const absSum = calcAbsencesSum(s.absences);
+    const nameHtml='<div class="name-cell">'+escapeHtml(s.full_name)+'</div>'+
+      (s.birth_date?'<div class="sub-cell">'+formatDate(s.birth_date)+(age!==null?' · '+age+'t':'')+'</div>':'');
+    const contactHtml='<div>'+escapeHtml(s.phone||'—')+'</div>'+(s.email?'<div class="sub-cell">'+escapeHtml(s.email)+'</div>':'');
+    const gpaColor = gpaAvg!==null && gpaAvg < 6.0 ? '#dc2626' : (gpaAvg!==null && gpaAvg < 6.5 ? '#d97706' : '#059669');
+    const absColor = absSum!==null && absSum > 20 ? '#dc2626' : (absSum!==null && absSum > 15 ? '#d97706' : '#059669');
+    const eduHtml='<div>'+escapeHtml(s.high_school||'—')+'</div>'+
+      (gpaAvg!==null||absSum!==null?'<div class="sub-cell">'+
+        (gpaAvg!==null?'<span style="font-weight:600;color:'+gpaColor+'">📊 TB: '+gpaAvg.toFixed(1)+'</span>':'')+
+        (gpaAvg!==null&&absSum!==null?' <span style="color:#94a3b8">·</span> ':'')+
+        (absSum!==null?'<span style="font-weight:600;color:'+absColor+'">📅 Tổng: '+absSum+' nghỉ</span>':'')+
+        '</div>':'');
+    const krHtml=s.kr_school?'<div>'+escapeHtml(s.kr_school)+'</div>'+(s.kr_major?'<div class="sub-cell">'+escapeHtml(s.kr_major)+'</div>':''):'<span style="color:#94a3b8;">—</span>';
+    const bhpHtml=s.bhp_relative?'<span style="font-weight:600;color:#7c3aed;">🛡️ '+escapeHtml(s.bhp_relative)+'</span>':'<span style="color:#94a3b8;">—</span>';
+    const certHtml=s.language_cert?'<div>'+escapeHtml(s.language_cert)+'</div>':'<span style="color:#94a3b8;">—</span>';
     const sourceBadge=s.is_source?'<span class="source-badge source-yes">📦 Nguồn</span>':'<span class="source-badge source-no">Chuyên nghiệp</span>';
     html+='<tr>'+
       '<td>'+nameHtml+'</td>'+
-      '<td style="font-size:.82rem;">'+(s.phone?'<div>'+escapeHtml(s.phone)+'</div>'+(s.email?'<div class="sub-cell">'+escapeHtml(s.email)+'</div>':''):'<span style="color:#94a3b8;">—</span>')+'</td>'+
-      '<td style="font-size:.82rem;">'+escapeHtml(s.id_number||'')+'<br><span class="sub-cell">'+(s.issue_place?escapeHtml(s.issue_place):'')+'</span></td>'+
-      '<td>'+escapeHtml(s.high_school||'')+(s.gpa?'<div class="sub-cell">DTB: '+escapeHtml(s.gpa)+'</div>':'')+'</td>'+
-      '<td>'+parentInfo+'</td>'+
+      '<td style="font-size:.82rem;">'+contactHtml+'</td>'+
+      '<td>'+eduHtml+'</td>'+
+      '<td>'+krHtml+'</td>'+
+      '<td>'+bhpHtml+'</td>'+
+      '<td style="font-size:.82rem;">'+certHtml+'</td>'+
       '<td>'+sourceBadge+'</td>'+
       '<td><span class="status-badge '+statusClass(s.status)+'">'+statusLabel(s.status)+'</span></td>'+
-      '<td style="font-size:.82rem;">'+escapeHtml(s.cd_class||'')+'</td>'+
       '<td style="white-space:nowrap;"><button class="btn-edit btn-sm" onclick="openEditModal(\''+s.id+'\')">Sửa</button><button class="btn-del btn-sm" onclick="deleteStudent(\''+s.id+'\')">Xoá</button></td>'+
       '</tr>';
   });
@@ -448,6 +472,37 @@ document.querySelectorAll('.crm-stat-card').forEach(el=>{
 
 function setSourceFilter(val){currentSource=val;document.querySelectorAll('.crm-source-toggle button').forEach(b=>b.classList.toggle('active',b.dataset.source===val));loadStudents();}
 function debounceSearch(){clearTimeout(searchTimeout);searchTimeout=setTimeout(()=>loadStudents(),300);}
+
+/* ─── Excel Export ─── */
+function exportExcel(){
+  if(!filteredStudents||filteredStudents.length===0){alert('Không có dữ liệu để xuất!');return;}
+  const data=filteredStudents.map(s=>({
+    'Họ tên': s.full_name||'',
+    'Ngày sinh': s.birth_date?new Date(s.birth_date).toLocaleDateString('vi-VN'):'',
+    'SĐT': s.phone||'',
+    'Email': s.email||'',
+    'CCCD': s.id_number||'',
+    'Trường C3': s.high_school||'',
+    'GPA TB': calcGpaAvg(s.gpa)||'',
+    'Tổng buổi nghỉ': calcAbsencesSum(s.absences)||'',
+    'Sau THPT': s.post_high_school||'',
+    'Trường VN': s.vn_school||'',
+    'Trường HQ': s.kr_school||'',
+    'Ngành HQ': s.kr_major||'',
+    'Chứng chỉ': s.language_cert||'',
+    'BHP': s.bhp_relative||'',
+    'Bố': s.father_name||'',
+    'Mẹ': s.mother_name||'',
+    'Nguồn': s.is_source?'Có':'Không',
+    'Trạng thái': statusLabel(s.status),
+    'Số tiền đã đóng': s.payment_amount?parseInt(s.payment_amount).toLocaleString('vi-VN')+'₫':'',
+    'Ghi chú': s.sale_note||'',
+  }));
+  const wb=XLSX.utils.book_new();
+  const ws=XLSX.utils.json_to_sheet(data);
+  XLSX.utils.book_append_sheet(wb,ws,'CRM Học sinh');
+  XLSX.writeFile(wb,'CRM_Hoc_sinh_'+new Date().toISOString().slice(0,10)+'.xlsx');
+}
 
 /* ─── File upload ─── */
 async function uploadCrmFile(event, fieldId){
