@@ -2461,7 +2461,7 @@ async function loadNewsPosts(category, container) {
       const catLabel = { 'news': 'Tin tức', 'visa': 'Visa đỗ', 'sendoff': 'Tiễn bay', 'success': 'Thành tích' };
       const date = post.created_at ? new Date(post.created_at).toLocaleDateString('vi-VN', { day: '2-digit', month: 'long', year: 'numeric' }) : '';
       const cat = post.category || 'news';
-      const excerpt = post.content ? post.content.replace(/<[^>]*>/g, '').substring(0, 160) : '';
+      const excerpt = post.content ? post.content.replace(/<[^>]*>/g, '').substring(0, 350) : '';
       return `<div class="news-card" data-news-index="${idx}" onclick="openNewsDetail(${idx})">
         ${firstImg ? `<div class="news-card-img-wrap"><img src="${escapeHtml(firstImg)}" alt="" loading="lazy" onerror="this.style.display='none'"><div class="news-card-img-overlay"></div></div>` : `<div class="news-card-img-wrap news-card-img-placeholder"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg></div>`}
         <div class="news-card-body">

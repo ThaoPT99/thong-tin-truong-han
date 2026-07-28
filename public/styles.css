@@ -8802,22 +8802,22 @@ body.sidebar-open {
   border-radius: 999px;
   border: 1px solid var(--border, #334155);
   background: transparent;
-  color: var(--text-muted, #94a3b8);
+  color: var(--text, #334155);
   font-size: 0.85rem;
   cursor: pointer;
   transition: all 0.25s ease;
   font-weight: 500;
 }
 .news-filter-btn:hover {
-  border-color: var(--primary, #3b82f6);
-  color: var(--text, #f1f5f9);
-  background: rgba(59, 130, 246, 0.08);
+  border-color: var(--primary, #2563eb);
+  color: var(--primary, #2563eb);
+  background: rgba(37, 99, 235, 0.08);
 }
 .news-filter-btn.active {
-  background: var(--primary, #3b82f6);
+  background: var(--primary, #2563eb);
   color: #fff;
-  border-color: var(--primary, #3b82f6);
-  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+  border-color: var(--primary, #2563eb);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
 }
 
 /* Grid */
@@ -8981,20 +8981,20 @@ body.sidebar-open {
   white-space: nowrap;
 }
 .news-cat-news {
-  background: rgba(59, 130, 246, 0.15);
-  color: #60a5fa;
+  background: rgba(37, 99, 235, 0.12);
+  color: #1d4ed8;
 }
 .news-cat-visa {
-  background: rgba(16, 185, 129, 0.15);
-  color: #34d399;
+  background: rgba(5, 150, 105, 0.12);
+  color: #065f46;
 }
 .news-cat-sendoff {
-  background: rgba(251, 191, 36, 0.15);
-  color: #fbbf24;
+  background: rgba(217, 119, 6, 0.12);
+  color: #b45309;
 }
 .news-cat-success {
-  background: rgba(139, 92, 246, 0.15);
-  color: #a78bfa;
+  background: rgba(124, 58, 237, 0.12);
+  color: #6d28d9;
 }
 
 .news-date {
