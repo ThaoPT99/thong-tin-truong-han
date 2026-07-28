@@ -2399,6 +2399,8 @@ function init() {
 }
 
 // ─── News Section ───
+let allNewsPosts = [];
+
 function renderNews(container) {
   container.innerHTML = `
     <section class="news-view">
@@ -2409,13 +2411,26 @@ function renderNews(container) {
       </div>
       <div class="news-filter-bar">
         <button type="button" class="news-filter-btn active" data-cat="all" onclick="filterNewsPosts('all')">Tất cả</button>
-        <button type="button" class="news-filter-btn" data-cat="visa" onclick="filterNewsPosts('visa')">✅ Visa đỗ</button>
-        <button type="button" class="news-filter-btn" data-cat="sendoff" onclick="filterNewsPosts('sendoff')">✈️ Tiễn bay</button>
-        <button type="button" class="news-filter-btn" data-cat="success" onclick="filterNewsPosts('success')">🏆 Thành tích</button>
-        <button type="button" class="news-filter-btn" data-cat="news" onclick="filterNewsPosts('news')">📰 Tin tức</button>
+        <button type="button" class="news-filter-btn" data-cat="visa" onclick="filterNewsPosts('visa')">Visa đỗ</button>
+        <button type="button" class="news-filter-btn" data-cat="sendoff" onclick="filterNewsPosts('sendoff')">Tiễn bay</button>
+        <button type="button" class="news-filter-btn" data-cat="success" onclick="filterNewsPosts('success')">Thành tích</button>
+        <button type="button" class="news-filter-btn" data-cat="news" onclick="filterNewsPosts('news')">Tin tức</button>
       </div>
       <div id="news-grid" class="news-grid">
-        <div class="news-loading">Đang tải tin tức...</div>
+        <div class="news-loading">
+          <div class="news-loading-spinner"></div>
+          <span>Đang tải tin tức...</span>
+        </div>
+      </div>
+      
+      <!-- Detail view (hidden by default) -->
+      <div id="news-detail" class="news-detail-view hidden">
+        <button type="button" class="news-detail-back" onclick="closeNewsDetail()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5m7-7-7 7 7 7"/></svg>
+          Quay lại danh sách
+        </button>
+        <article id="news-detail-content" class="news-detail-content"></article>
+        <div id="news-detail-footer" class="news-detail-footer"></div>
       </div>
     </section>
   `;
@@ -2424,38 +2439,45 @@ function renderNews(container) {
 
 async function loadNewsPosts(category, container) {
   const grid = container.querySelector('#news-grid');
+  const detail = container.querySelector('#news-detail');
   if (!grid) return;
-  grid.innerHTML = '<div class="news-loading">Đang tải tin tức...</div>';
+  grid.classList.remove('hidden');
+  if (detail) detail.classList.add('hidden');
+  grid.innerHTML = '<div class="news-loading"><div class="news-loading-spinner"></div><span>Đang tải tin tức...</span></div>';
   try {
     const url = '/api/news?limit=50' + (category && category !== 'all' ? '&category=' + category : '');
     const res = await fetch(url);
     const json = await res.json();
     if (!json.success) throw new Error(json.error);
     const posts = json.data || [];
+    allNewsPosts = posts;
     if (posts.length === 0) {
-      grid.innerHTML = '<div class="news-empty">Chưa có tin tức nào. Quay lại sau nhé!</div>';
+      grid.innerHTML = '<div class="news-empty-state"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="14" y2="11"/></svg><p>Chưa có tin tức nào. Quay lại sau nhé!</p></div>';
       return;
     }
-    let html = posts.map(post => {
+    let html = posts.map((post, idx) => {
       const imgs = (post.image_urls || []).filter(Boolean);
-      const imgHtml = imgs.length > 0 
-        ? `<div class="news-card-images">${imgs.slice(0, 3).map(u => `<img src="${escapeHtml(u)}" alt="" onerror="this.style.display='none'">`).join('')}</div>`
-        : '';
-      const catLabel = { 'news': '📰 Tin tức', 'visa': '✅ Visa đỗ', 'sendoff': '✈️ Tiễn bay', 'success': '🏆 Thành tích' };
-      const date = post.created_at ? new Date(post.created_at).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '';
-      return `<div class="news-card">
-        ${imgHtml}
+      const firstImg = imgs.length > 0 ? imgs[0] : null;
+      const catLabel = { 'news': 'Tin tức', 'visa': 'Visa đỗ', 'sendoff': 'Tiễn bay', 'success': 'Thành tích' };
+      const date = post.created_at ? new Date(post.created_at).toLocaleDateString('vi-VN', { day: '2-digit', month: 'long', year: 'numeric' }) : '';
+      const cat = post.category || 'news';
+      const excerpt = post.content ? post.content.replace(/<[^>]*>/g, '').substring(0, 160) : '';
+      return `<div class="news-card" data-news-index="${idx}" onclick="openNewsDetail(${idx})">
+        ${firstImg ? `<div class="news-card-img-wrap"><img src="${escapeHtml(firstImg)}" alt="" loading="lazy" onerror="this.style.display='none'"><div class="news-card-img-overlay"></div></div>` : `<div class="news-card-img-wrap news-card-img-placeholder"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg></div>`}
         <div class="news-card-body">
-          <span class="news-cat-tag news-cat-${escapeHtml(post.category || 'news')}">${catLabel[post.category] || '📰'}</span>
-          <h3>${escapeHtml(post.title)}</h3>
-          ${post.content ? `<p>${escapeHtml(post.content.substring(0, 200))}${post.content.length > 200 ? '...' : ''}</p>` : ''}
-          <span class="news-date">${date}</span>
+          <div class="news-card-meta">
+            <span class="news-cat-tag news-cat-${escapeHtml(cat)}">${catLabel[cat] || cat}</span>
+            ${date ? `<span class="news-date">${date}</span>` : ''}
+          </div>
+          <h3 class="news-card-title">${escapeHtml(post.title)}</h3>
+          ${excerpt ? `<p class="news-card-excerpt">${escapeHtml(excerpt)}</p>` : ''}
+          <span class="news-card-readmore">Đọc tiếp</span>
         </div>
       </div>`;
     }).join('');
     grid.innerHTML = html;
   } catch (err) {
-    grid.innerHTML = '<div class="news-empty" style="color:#dc2626;">Lỗi tải tin tức: ' + escapeHtml(err.message) + '</div>';
+    grid.innerHTML = '<div class="news-empty-state" style="color:#ef4444;"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><p>Lỗi tải tin tức: ' + escapeHtml(err.message) + '</p></div>';
   }
 }
 
@@ -2465,6 +2487,81 @@ window.filterNewsPosts = function(category) {
   });
   const container = document.getElementById('news-content');
   loadNewsPosts(category, container);
+};
+
+// ─── News Detail View ───
+window.openNewsDetail = function(index) {
+  const post = allNewsPosts[index];
+  if (!post) return;
+  const container = document.getElementById('news-content');
+  const grid = container.querySelector('#news-grid');
+  const detail = container.querySelector('#news-detail');
+  const content = container.querySelector('#news-detail-content');
+  const footer = container.querySelector('#news-detail-footer');
+  if (!detail || !content) return;
+  
+  grid.classList.add('hidden');
+  detail.classList.remove('hidden');
+  
+  const imgs = (post.image_urls || []).filter(Boolean);
+  const catLabel = { 'news': 'Tin tức', 'visa': 'Visa đỗ', 'sendoff': 'Tiễn bay', 'success': 'Thành tích' };
+  const cat = post.category || 'news';
+  const date = post.created_at ? new Date(post.created_at).toLocaleDateString('vi-VN', { day: '2-digit', month: 'long', year: 'numeric' }) : '';
+  
+  // Build content HTML - render the post content safely
+  let bodyHtml = '';
+  if (post.content) {
+    bodyHtml = post.content;
+  }
+  
+  content.innerHTML = `
+    <div class="news-detail-header">
+      <div class="news-detail-cat-row">
+        <span class="news-cat-tag news-cat-${escapeHtml(cat)}">${catLabel[cat] || cat}</span>
+        ${date ? `<span class="news-detail-date">${date}</span>` : ''}
+      </div>
+      <h1 class="news-detail-title">${escapeHtml(post.title)}</h1>
+    </div>
+    ${imgs.length > 0 ? `<div class="news-detail-hero-img"><img src="${escapeHtml(imgs[0])}" alt="" onerror="this.style.display='none'"><div class="news-detail-img-count">+${imgs.length - 1} ảnh</div></div>` : ''}
+    <div class="news-detail-body">
+      ${bodyHtml || '<p>Nội dung đang được cập nhật...</p>'}
+    </div>
+    ${imgs.length > 1 ? `<div class="news-detail-gallery"><h3>Thư viện ảnh</h3><div class="news-detail-gallery-grid">${imgs.slice(1).map(u => `<img src="${escapeHtml(u)}" alt="" loading="lazy" onerror="this.style.display='none'">`).join('')}</div></div>` : ''}
+  `;
+  
+  // Footer with share
+  const shareUrl = window.location.origin + window.location.pathname + '?view=news';
+  const shareText = escapeHtml(post.title);
+  footer.innerHTML = `
+    <div class="news-detail-share">
+      <span>Chia sẻ:</span>
+      <button type="button" onclick="navigator.clipboard.writeText('${shareUrl}')" title="Copy link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        Copy link
+      </button>
+      <button type="button" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}','_blank')" title="Chia sẻ Facebook">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+        Facebook
+      </button>
+    </div>
+  `;
+  
+  // Scroll to top of detail
+  detail.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  
+  // Track view
+  if (window.trackAnalytics) {
+    window.trackAnalytics('event', { eventType: 'news_detail_view', eventData: { postId: post.id, title: post.title } });
+  }
+};
+
+window.closeNewsDetail = function() {
+  const container = document.getElementById('news-content');
+  const grid = container.querySelector('#news-grid');
+  const detail = container.querySelector('#news-detail');
+  if (grid) grid.classList.remove('hidden');
+  if (detail) detail.classList.add('hidden');
+  container.querySelector('.news-view')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 };
 
 if (document.readyState === "loading") {
