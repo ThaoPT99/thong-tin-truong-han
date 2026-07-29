@@ -2368,6 +2368,278 @@ Tra ve JSON:
   }
 
   // ═══════════════════════════════════════════════════
+  // ─── Action: Generate Korean Docs (action=generate-korean-docs)
+  // 🇰🇷 Tao 4 tai lieu tieng Han cho ho so visa
+  // ═══════════════════════════════════════════════════
+  async function handleGenerateKoreanDocs(req, res) {
+    const apiKey = getDeepSeekKey();
+    if (!apiKey) {
+      return res.json({ success: false, error: 'AI chưa được cấu hình.' });
+    }
+
+    const data = req.body || {};
+    const {
+      fullName, koreanName, dob, phone, email, address,
+      visaType, school, whyKorea, goal,
+      education, gradYear, prevSchool, koreanLevel, visaFail, gapYear,
+      sponsor, monthlyIncome, incomeSource, savings, occupation
+    } = data;
+
+    if (!fullName || !whyKorea) {
+      return res.status(400).json({ success: false, error: 'Thiếu thông tin bắt buộc (họ tên, lý do du học)' });
+    }
+
+    try {
+      const eduLabels = {
+        highschool: 'Tốt nghiệp THPT',
+        college: 'Cao đẳng / Đang học ĐH',
+        university: 'Tốt nghiệp Đại học',
+        postgrad: 'Sau Đại học',
+      };
+      const krLabels = {
+        none: 'Chưa có', sejong2b: 'Sejong 2B', topik1: 'TOPIK 1',
+        topik2: 'TOPIK 2', topik3: 'TOPIK 3', 'topik4+': 'TOPIK 4+'
+      };
+      const sponsorLabels = {
+        self: 'Tự bảo lãnh', parent: 'Cha/Mẹ', relative: 'Người thân'
+      };
+      const incomeLabels = {
+        salary: 'lương', business: 'kinh doanh', freelance: 'tự do',
+        rental: 'cho thuê', agriculture: 'nông nghiệp', invest: 'đầu tư', multiple: 'nhiều nguồn'
+      };
+      const visaTypeLabel = visaType || 'D-4-1';
+
+      // ─── SYSTEM PROMPT ───
+      const systemPrompt = `Bạn là chuyên gia soạn thảo hồ sơ du học Hàn Quốc (한국 유학 서류 전문가) với 15 năm kinh nghiệm. Bạn đã từng giúp hàng trăm học sinh Việt Nam xin thành công visa D2-6, D-4-1 và D-2.
+
+Bạn viết tiếng Hàn xuất sắc — văn phong trang trọng, tự nhiên, đúng chuẩn 한국어, sử dụng kính ngữ (존댓말, 하십시오체) và từ vựng học thuật phù hợp với hồ sở xin visa du học.
+
+─═─═─═─═─═─═─═─═─═─═─═─═─═─═─═─═─═─═─═─
+NHIỆM VỤ:
+Dựa trên thông tin học sinh dưới đây, hãy viết 4 tài liệu bằng tiếng Hàn chuẩn (한국어) theo cấu trúc sau:
+─═─═─═─═─═─═─═─═─═─═─═─═─═─═─═─═─═─═─═─
+
+═══════════════════════════════════════════
+TÀI LIỆU 1: 자기소개서 (Self-Introduction Letter) — 400-600자
+═══════════════════════════════════════════
+
+1. [서두] — 인사말
+   • "저는 OOO입니다." — họ tên, ngày sinh, quốc tịch (Việt Nam)
+   • Quê quán (tỉnh/thành phố)
+
+2. [학력 및 성장 과정]
+   • Học vấn: trường đã/đang học, chuyên ngành (nếu có), năm tốt nghiệp
+   • Thành tích nổi bật (GPA nếu tốt, hoạt động ngoại khoá)
+   • Tính cách: chăm chỉ, trách nhiệm, cầu tiến (근면, 성실, 책임감)
+
+3. [한국에 대한 관심]
+   • Lý do yêu thích Hàn Quốc: văn hoá, ẩm thực, công nghệ, K-culture...
+   • Kỷ niệm hoặc trải nghiệm với Hàn Quốc (nếu có)
+   • Mong muốn học tiếng Hàn và tìm hiểu sâu về đất nước Hàn Quốc
+
+4. [성격 및 장점]
+   • Điểm mạnh: tinh thần học hỏi, thích nghi nhanh, hoà đồng
+   • Mục tiêu cá nhân: trở thành cầu nối văn hoá Việt-Hàn
+
+5. [마무리] — Lời cảm ơn, hứa hẹn học tập nghiêm túc
+
+
+═══════════════════════════════════════════
+TÀI LIỆU 2: 학업계획서 (Study Plan) — 800-1000자
+═══════════════════════════════════════════
+
+1. [지원 동기] — Lý do chọn du học Hàn Quốc
+   • Chất lượng giáo dục Hàn Quốc, môi trường học tập quốc tế
+   • Nếu có chọn trường cụ thể → nêu tên trường và lý do chọn trường đó
+   • Ngành học quan tâm (nếu có thông tin)
+
+2. [단계별 학습 목표] — Mục tiêu học tập theo từng giai đoạn
+   • Giai đoạn 1 (6 tháng đầu): Làm quen môi trường, học tiếng Hàn cơ bản, mục tiêu TOPIK 2
+   • Giai đoạn 2 (6-12 tháng): Nâng cao trình độ, mục tiêu TOPIK 3, tham gia hoạt động ngoại khoá
+   • Giai đoạn 3 (1-2 năm): TOPIK 4+, học chuyên ngành (nếu D2-6/D2), chuẩn bị định hướng sau tốt nghiệp
+   • Từng giai đoạn có KPI cụ thể (điểm số, chứng chỉ)
+
+3. [TOPIK 목표]
+   • Cam kết thi TOPIK đúng lộ trình
+   • Số giờ tự học mỗi ngày/tuần
+   • Phương pháp học (học trên lớp, tự học, giao tiếp với người Hàn)
+
+4. [졸업 후 계획] — Dự định sau khi tốt nghiệp (RẤT QUAN TRỌNG)
+   • TUYỆT ĐỐI cam kết về Việt Nam sau khi học xong
+   • Kế hoạch cụ thể: làm việc tại VN, ứng dụng kiến thức tiếng Hàn vào công việc
+   • Nếu định hướng làm việc tại Hàn → nói rõ là E7 sau khi tích luỹ đủ kinh nghiệm
+   • (QUAN TRỌNG) Không được đề cập ý định ở lại bất hợp pháp hay làm thêm quá nhiều
+
+5. [귀국 약속] — Cam kết về nước
+   • Gia đình, người thân tại Việt Nam — ràng buộc với quê hương
+   • Kế hoạch đóng góp cho xã hội Việt Nam sau khi về nước
+
+
+═══════════════════════════════════════════
+TÀI LIỆU 3: 재정 진술서 (Financial Statement) — 400-600자
+═══════════════════════════════════════════
+
+1. [재정 지원자 소개]
+   • Người bảo lãnh tài chính: ${sponsorLabels[sponsor] || sponsor || 'tự bảo lãnh'}
+   • (Nếu là cha/mẹ/người thân) Giới thiệu nghề nghiệp, công việc hiện tại: ${occupation || 'không rõ'}
+   • Người bảo lãnh có thu nhập ổn định và đủ khả năng chi trả
+
+2. [수입 원천] — Nguồn thu nhập
+   • Mô tả chi tiết nguồn thu nhập: ${incomeLabels[incomeSource] || 'thu nhập ổn định'}
+   • Số tiền thu nhập hàng tháng (nếu có): ${monthlyIncome ? monthlyIncome.toLocaleString() + ' USD' : ''}
+   • Dòng thu nhập ổn định, liên tục, có giấy tờ chứng minh đầy đủ
+
+3. [예금 내역] — Thông tin sổ tiết kiệm
+   • Số tiền trong sổ: ${savings ? savings.toLocaleString() + ' USD (한국 원화로 약 ' + (savings * 1300).toLocaleString() + '원)' : ''}
+   • Sổ tiết kiệm được mở tại ngân hàng uy tín tại Việt Nam
+   • Nguồn gốc số tiền hợp pháp, minh bạch
+
+4. [학비 및 생활비 지불 약속]
+   • Cam kết chi trả toàn bộ học phí + sinh hoạt phí trong suốt thời gian học
+   • Số tiền đủ để trang trải học tập và sinh hoạt
+   • Không phụ thuộc vào thu nhập làm thêm tại Hàn
+
+5. [자금 출처의 합법성 확인]
+   • Cam kết nguồn tiền hợp pháp, có chứng từ đầy đủ
+   • Sẵn sàng cung cấp giấy tờ chứng minh khi ĐSQ yêu cầu
+
+
+═══════════════════════════════════════════
+TÀI LIỆU 4: 통합 서류 (Combined Document) — Bản tổng hợp
+═══════════════════════════════════════════
+
+1. [표지] — Trang bìa
+   • Tiêu đề: "유학 신청 서류" (Hồ sơ xin du học)
+   • Họ tên học sinh, ngày tháng
+   • Tạo ấn tượng chuyên nghiệp
+
+2. Sắp xếp theo thứ tự:
+   자기소개서 → 학업계획서 → 재정 진술서
+
+3. Giữa các phần có dấu phân cách rõ ràng (--- 페이지 구분 ---)
+
+
+─═─═─═─═─═─═─═─═─═─═─═─═─═─═─═─═─═─═─═─
+QUY TẮC VIẾT — TUÂN THỦ NGHIÊM NGẶT
+─═─═─═─═─═─═─═─═─═─═─═─═─═─═─═─═─═─═─═─
+
+1. 📝 NGÔN NGỮ: Viết HOÀN TOÀN bằng tiếng Hàn (한국어).
+   • TUYỆT ĐỐI không viết tiếng Việt hay tiếng Anh trong nội dung chính.
+   • Dùng văn phong: 하십시오체 (존댓말) — lịch sự, trang trọng.
+   • Sử dụng từ ngữ học thuật phù hợp với hồ sơ xin visa.
+   • Viết câu hoàn chỉnh, có chủ ngữ — vị ngữ rõ ràng.
+
+2. 🎯 CÁ NHÂN HOÁ: Dùng thông tin học sinh được cung cấp.
+   • KHÔNG thêm thông tin hư cấu.
+   • Nếu thiếu thông tin → viết chung chung nhưng vẫn đúng ngữ cảnh.
+   • Mỗi tài liệu phải mang màu sắc riêng của học sinh đó.
+
+3. ⚠️ XỬ LÝ TRƯỜNG HỢP ĐẶC BIỆT:
+   • (visaFail) Trượt visa: Thể hiện sự trưởng thành sau lần trượt, khắc phục điểm yếu, hồ sơ lần này đã được chuẩn bị kỹ lưỡng hơn. KHÔNG đổ lỗi cho người khác.
+   • (gapYear) Khoảng trống: Giải trình tích cực — thời gian đó dùng để học tiếng Hàn, tích luỹ kinh nghiệm sống, làm việc (nếu có), hoặc chuẩn bị hồ sơ kỹ càng hơn.
+   • (koreanLevel thấp) Tiếng Hàn yếu: Thể hiện quyết tâm học, cam kết đạt TOPIK trong thời gian ngắn nhất.
+   • (tuổi cao / GPA thấp): Nhấn mạnh kinh nghiệm sống, mục tiêu rõ ràng, kế hoạch học tập cụ thể.
+
+4. 📐 ĐỘ DÀI:
+   • 자기소개서: 400-600자 (khoảng 300-500 từ)
+   • 학업계획서: 800-1000자 (khoảng 600-800 từ)
+   • 재정 진술서: 400-600자 (khoảng 300-500 từ)
+   • 통합 서류: tổng hợp các phần trên (không cần viết lại)
+
+5. 📋 ĐỊNH DẠNG XUẤT:
+   • CHỈ trả về JSON, không có text mở đầu hay kết thúc.
+   • Nội dung các tài liệu phải có xuống dòng (\\n) hợp lý để dễ đọc.
+   • Dùng dấu câu tiếng Hàn chuẩn (마침표., 쉼표,, 물음표?, 느낌표!).
+   • Số: dùng số Ả Rập (1, 2, 3...) thay vì Hán tự.
+   • Có thể dùng dấu gạch đầu dòng (-) nếu cần, nhưng ưu tiên văn xuôi mạch lạc.
+
+6. ❌ TỪ KỴ — KHÔNG ĐƯỢC VIẾT:
+   • Không đề cập đến "làm thêm" / "kiếm tiền" / "알바" như mục đích chính
+   • Không đề cập ý định "ở lại" / "định cư" bất hợp pháp
+   • Không chỉ trích Việt Nam hay so sánh tiêu cực
+   • Không dùng từ lóng, từ viết tắt, tiếng lóng Hàn Quốc
+   • Không dùng emoji (😊, 👍, etc.)
+
+─═─═─═─═─═─═─═─═─═─═─═─═─═─═─═─═─═─═─═─
+
+Định dạng JSON trả về:
+{
+  "success": true,
+  "documents": {
+    "selfIntro": "Nội dung 자기소개서 bằng tiếng Hàn...\\n\\n2. ...",
+    "studyPlan": "Nội dung 학업계획서 bằng tiếng Hàn...\\n\\n3. ...",
+    "finance": "Nội dung 재정 진술서 bằng tiếng Hàn...",
+    "combined": "=== 유학 신청 서류 ===\\n\\n[자기소개서]\\n...\\n\\n--- 페이지 구분 ---\\n\\n[학업계획서]\\n..."
+  }
+}`;
+
+      // ─── USER PROMPT ───
+      const userMessage = `Thông tin học sinh:
+- Họ tên: ${fullName}${koreanName ? ` (Tên Hàn: ${koreanName})` : ''}
+- Ngày sinh: ${dob || 'Không rõ'}
+- SĐT: ${phone || 'Không rõ'}
+- Email: ${email || 'Không rõ'}
+- Địa chỉ: ${address || 'Không rõ'}
+- Loại visa: ${visaTypeLabel}
+- Trường dự định: ${school || 'Chưa rõ'}
+
+Thông tin học tập:
+- Học vấn: ${eduLabels[education] || education || 'Không rõ'}
+- Năm tốt nghiệp: ${gradYear || 'Không rõ'}
+- Trường học tại VN: ${prevSchool || 'Không rõ'}
+- Trình độ tiếng Hàn: ${krLabels[koreanLevel] || koreanLevel || 'Chưa có'}
+- Gap year: ${gapYear || 'Không có'}
+- Lịch sử visa: ${visaFail === 'yes' ? 'Đã từng trượt visa' : 'Chưa từng trượt'}
+
+Mục đích du học:
+- Lý do chọn Hàn Quốc: ${whyKorea}
+- Mục tiêu học tập: ${goal}
+
+Thông tin tài chính:
+- Người bảo lãnh: ${sponsorLabels[sponsor] || sponsor || 'Không rõ'}
+- Nguồn thu nhập: ${incomeLabels[incomeSource] || incomeSource || 'Không rõ'}
+- Thu nhập hàng tháng: ${monthlyIncome ? monthlyIncome.toLocaleString() + ' USD' : 'Không rõ'}
+- Sổ tiết kiệm: ${savings ? savings.toLocaleString() + ' USD' : 'Không rõ'}
+- Nghề nghiệp người BL: ${occupation || 'Không rõ'}
+
+${visaFail === 'yes' ? 'LƯU Ý: Học sinh đã từng trượt visa. Cần giải trình và thể hiện sự khắc phục điểm yếu trong hồ sơ.' : ''}
+${gapYear ? 'LƯU Ý: Học sinh có gap year ' + gapYear + '. Cần giải trình tích cực.' : ''}
+
+Hãy viết 4 tài liệu bằng tiếng Hàn theo định dạng JSON ở trên.`;
+
+      const result = await callDeepSeek(
+        [{ role: 'system', content: systemPrompt }, { role: 'user', content: userMessage }],
+        { temperature: 0.4, maxTokens: 4000, timeout: 45000 }
+      );
+
+      if (result) {
+        try {
+          const jsonStr = result.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+          const parsed = JSON.parse(jsonStr);
+          if (parsed.documents) {
+            return res.json({ success: true, documents: parsed.documents });
+          }
+          return res.json({ success: true, documents: parsed });
+        } catch (e) {
+          // Fallback: try to extract sections from raw text
+          const doc = {
+            selfIntro: result,
+            studyPlan: result,
+            finance: result,
+            combined: result
+          };
+          return res.json({ success: true, documents: doc, warning: 'Không parse được JSON, trả về raw text' });
+        }
+      }
+
+      return res.json({ success: false, error: 'AI không phản hồi, vui lòng thử lại.' });
+    } catch (err) {
+      console.error('Generate Korean docs error:', err);
+      return res.json({ success: false, error: err.message });
+    }
+  }
+
+  // ═══════════════════════════════════════════════════
   // ─── Action: Translate Study Plan (action=translate-study-plan)
   // Dich Study Plan tu tieng Viet sang tieng Han
   // ═══════════════════════════════════════════════════
@@ -3110,6 +3382,7 @@ module.exports = async (req, res) => {
       case 'chat-web': return await handleChatWeb(req, res);
       case 'generate-checklist': return await handleGenerateChecklist(req, res);
       case 'review-study-plan': return await handleReviewStudyPlan(req, res);
+      case 'generate-korean-docs': return await handleGenerateKoreanDocs(req, res);
       case 'translate-study-plan': return await handleTranslateStudyPlan(req, res);
       case 'interview-simulator': return await handleInterviewSimulator(req, res);
       case 'student-agent': return await handleStudentAgent(req, res);

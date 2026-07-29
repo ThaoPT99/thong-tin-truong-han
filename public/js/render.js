@@ -1162,7 +1162,7 @@ function getInitialView() {
   const schoolId = params.get("school");
   if (schoolId && getSchoolById(schoolId)) return schoolId;
   const view = params.get("view");
-  if (["advisor", "compare", "map", "extra", "ebook", "schools", "d4-1", "cost", "checklist", "knowledge", "news"].includes(view)) return view;
+  if (["advisor", "compare", "map", "extra", "ebook", "schools", "d4-1", "cost", "checklist", "knowledge", "news", "korean-docs"].includes(view)) return view;
   // Check visa_type param
   const vt = params.get("visa_type");
   if (vt === 'D4-1') return 'd4-1';
@@ -2301,6 +2301,20 @@ function showSchool(viewId) {
     hideAll();
     newsEl.classList.remove("hidden");
     renderNews(newsEl);
+    return;
+  }
+
+  if (viewId === "korean-docs") {
+    hideAll();
+    var koreanDocsEl = document.getElementById('korean-docs-content');
+    if (koreanDocsEl) {
+      koreanDocsEl.classList.remove("hidden");
+      if (typeof window.renderKoreanDocs === "function") {
+        window.renderKoreanDocs(koreanDocsEl);
+      } else {
+        koreanDocsEl.innerHTML = '<div class="guide-view"><div class="kd-widget"><p>Đang tải Trợ lý Hồ sơ Tiếng Hàn...</p></div></div>';
+      }
+    }
     return;
   }
 
