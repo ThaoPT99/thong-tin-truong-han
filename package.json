@@ -32,7 +32,8 @@
     "bcryptjs": "^3.0.3",
     "dotenv": "^17.4.2",
     "jsonwebtoken": "^9.0.3",
-    "pg": "^8.21.0"
+    "pg": "^8.21.0",
+    "stripe": "^22.3.2"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",

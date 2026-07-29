@@ -2519,6 +2519,155 @@ TÀI LIỆU 4: 통합 서류 (Combined Document) — Bản tổng hợp
 3. Giữa các phần có dấu phân cách rõ ràng (--- 페이지 구분 ---)
 
 
+═══════════════════════════════════════════
+KIẾN THỨC NỀN TẢNG VỀ VISA — QUY CHUẨN HỒ SƠ
+═══════════════════════════════════════════
+
+Để viết tài liệu đúng quy chuẩn, bạn cần nắm vững các kiến thức sau:
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. ĐẶC ĐIỂM CÁC LOẠI VISA DU HỌC
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+• D-4-1 (Học tiếng Hàn): Thời hạn 6 tháng/lần, gia hạn tối đa 2 năm. KHÔNG yêu cầu TOPIK đầu vào. Tài chính $10,000+. Làm thêm sau 6 tháng (10-25h/tuần tuỳ TOPIK). Có thể chuyển lên D-2 sau khi đạt TOPIK 3+.
+• D-2 (Đại học chính quy): Thời hạn 1-2 năm/lần. Yêu cầu TOPIK 3+ hoặc IELTS 5.5+. Tài chính $10,000-$20,000. Làm thêm 25-30h/tuần. Có thể ở lại E7 sau tốt nghiệp.
+  - D-2-1: Cao đẳng (Associate Degree)
+  - D-2-2: Cử nhân (Bachelor's Degree)
+  - D-2-6: Trao đổi sinh viên (Exchange Student) — dễ xin hơn D-2-2
+• D-2-6 (Trao đổi): Dành cho sinh viên đang học tại trường VN có hợp tác với trường Hàn. Thời hạn 1-2 học kỳ. TOPIK thường yêu cầu 2+. Tài chính $8,000-$10,000. Có thể chuyển tiếp lên D-2-2.
+
+💡 NGUYÊN TẮC CHỌN LOẠI VISA TRONG TÀI LIỆU:
+- Nếu visaType = D-4-1: Nhấn mạnh mục đích học tiếng Hàn, lộ trình lên TOPIK, cam kết về nước
+- Nếu visaType = D-2 hoặc D-2-6: Nhấn mạnh định hướng học thuật, chuyên ngành, kế hoạch nghiên cứu, cơ hội việc làm song phương
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2. YÊU CẦU TÀI CHÍNH CHUẨN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+• D-4-1: Tối thiểu $10,000 (~250 triệu VND), khuyến nghị $12,000-15,000
+• D-2 (tỉnh): $10,000, khuyến nghị $15,000
+• D-2 (Seoul): $15,000-20,000, khuyến nghị $20,000+
+• Sổ tiết kiệm phải mở tại quầy giao dịch (không chấp nhận online). Kỳ hạn 12 tháng khuyến nghị.
+• Thời điểm mở: tối thiểu 3 tháng trước khi nộp, khuyến nghị 6 tháng.
+• Sao kê phải thể hiện lịch sử giao dịch ỔN ĐỊNH, tránh nạp tiền "sốc".
+• Hồ sơ có sổ TK mở trước 6 tháng có tỉ lệ đậu cao hơn 35% so với mở trước 1-2 tháng.
+• K-Study (sổ đóng băng ngân hàng Hàn Quốc tại VN) được ĐSQ ưu tiên cao hơn sổ thường.
+  - D-4-1: 8,000,000-10,000,000 KRW (~$6,000-$7,500)
+  - D-2: 15,000,000-20,000,000 KRW (~$11,000-$15,000)
+
+💡 CÁCH VIẾT PHẦN TÀI CHÍNH TRONG 재정 진술서:
+- Luôn thể hiện nguồn thu nhập ỔN ĐỊNH, DÀI HẠN, có giấy tờ chứng minh
+- Nếu thu nhập hàng tháng thấp (dưới $500/tháng): kết hợp nhiều nguồn (lương + kinh doanh + cho thuê + tài sản)
+- Người bảo lãnh là nông dân: nhấn mạnh tài sản đảm bảo (đất đai, sổ TK lớn)
+- Người bảo lãnh đã nghỉ hưu: nhấn mạnh sổ hưu + tích luỹ + con cái hỗ trợ
+- KHÔNG nói "đi vay mượn để du học" — ĐSQ sẽ từ chối ngay
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+3. STUDY PLAN VIẾT ĐÚNG CHUẨN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Đây là giấy tờ QUAN TRỌNG NHẤT. Một Study Plan tốt có thể bù đắp điểm yếu:
+
+📐 ĐỘ DÀI CHUẨN:
+- D-4-1: 500-800 từ (600-1000자 tiếng Hàn)
+- D-2: 800-1200 từ (1000-1500자 tiếng Hàn)
+
+📝 CẤU TRÚC 3 PHẦN CHUẨN:
+1. MỞ ĐẦU (100-200자): Giới thiệu bản thân, lý do CHỌN HÀN QUỐC (cụ thể: giáo dục, chi phí, gần VN, cơ hội). KHÔNG nói "thích K-pop/fim Hàn".
+2. NỘI DUNG CHÍNH (400-600자):
+   - Giai đoạn 1 (6 tháng đầu): Học tiếng Hàn, thi TOPIK 2, chuyên cần 95%+
+   - Giai đoạn 2 (6-12 tháng): Nâng lên TOPIK 3-4, hoạt động ngoại khoá
+   - Giai đoạn 3 (1-2 năm): TOPIK 4+, học chuyên ngành, chuẩn bị tốt nghiệp
+   - Mỗi giai đoạn có KPI cụ thể (TOPIK target, điểm số)
+3. KẾT LUẬN (100-150자): Cam kết về nước, kế hoạch đóng góp cho VN, ràng buộc gia đình tại VN
+
+🚫 TUYỆT ĐỐI TRÁNH:
+- Không sao chép mẫu từ mạng — đây là lý do trượt hàng đầu
+- Không nói "ở lại làm việc" như mục đích chính
+- Không viết chung chung (VD: "Em thích Hàn Quốc")
+- Lý do trượt Study Plan thường gặp: 200 từ, không có mốc thời gian, sao chép mẫu
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+4. GIẤY TỜ HỒ SƠ BẮT BUỘC
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Khi viết tài liệu, hãy tham khảo danh sách giấy tờ chuẩn sau để tài liệu phù hợp:
+
+NHÓM HÀNH CHÍNH:
+• Đơn xin visa KSD0-2014 (chỉ điền bằng Hàn hoặc Anh, không chấp nhận tiếng Việt từ 13/04/2025)
+• Hộ chiếu hạn 6 tháng+ + CCCD + Sổ hộ khẩu + Giấy khai sinh (bản sao công chứng)
+• Ảnh thẻ 3.5x4.5cm nền trắng (2-4 ảnh)
+
+NHÓM HỌC VẤN:
+• Bằng THPT + học bạ + dịch công chứng (Hàn hoặc Anh)
+• Bằng ĐH + bảng điểm (nếu đã học)
+• Chứng chỉ ngoại ngữ: TOPIK / IELTS (nếu có — điểm cộng lớn)
+• Giải trình gap year nếu tốt nghiệp > 6 tháng
+
+NHÓM TRƯỜNG HÀN:
+• Admission Letter (bản gốc)
+• Invoice học phí (bản gốc)
+
+NHÓM TÀI CHÍNH:
+• Sổ tiết kiệm + xác nhận số dư (cấp trong 30 ngày)
+• Sao kê 3 tháng + giấy tờ thu nhập (HĐLĐ, sao kê lương)
+• Cam kết bảo lãnh + giấy tờ quan hệ
+
+GIẤY TỜ BỔ SUNG THEO HOÀN CẢNH:
+• Trượt visa: Giải trình nguyên nhân + hồ sơ cũ
+• Gap year > 2 năm: Giải trình + xác nhận công việc
+• Người bảo lãnh không phải cha mẹ: Giấy cam kết + giấy tờ quan hệ
+• GPA thấp (< 5.0): Giải trình học tập
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+5. LƯU Ý KHI GIẢI TRÌNH CÁC TRƯỜNG HỢP ĐẶC BIỆT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+KHI HỌC SINH CÓ VẤN ĐỀ, CẦN VIẾT GIẢI TRÌNH TRONG TÀI LIỆU NHƯ SAU:
+
+⚠️ TRƯỢT VISA (~40% do tài chính, ~30% do Study Plan):
+- Không đổ lỗi cho ĐSQ/người khác
+- Phân tích nguyên nhân trượt (hồ sơ lần trước thiếu sót gì?)
+- Thể hiện lần này đã khắc phục: tài chính rõ ràng hơn, Study Plan chi tiết hơn, bổ sung chứng chỉ
+- Tự tin: "Tôi đã học hỏi từ lần trượt trước và chuẩn bị kỹ lưỡng hơn"
+
+⚠️ GAP YEAR:
+- Luôn giải trình TÍCH CỰC: Học tiếng Hàn, làm việc tích luỹ kinh nghiệm, chuẩn bị hồ sơ
+- Có giấy tờ chứng minh hoạt động trong thời gian gap year (nếu có)
+- KHÔNG nói "ở nhà chơi" hay "không làm gì"
+
+⚠️ GPA THẤP (< 5.0):
+- Thừa nhận điểm yếu nhưng cam kết cải thiện
+- Nhấn mạnh: môi trường học tập mới, quyết tâm cao hơn
+- Có thể nói chương trình học ở VN chưa phù hợp với năng lực
+
+⚠️ TUỔI CAO (> 25 tuổi):
+- Nhấn mạnh kinh nghiệm sống, mục tiêu rõ ràng, định hướng nghề nghiệp cụ thể
+- Giải trình tại sao đi du học muộn (cần thiết cho công việc, muốn nâng cao trình độ)
+- Cam kết về nước mạnh mẽ hơn (có công việc, gia đình tại VN)
+
+⚠️ TIẾNG HÀN YẾU (chưa có TOPIK hoặc TOPIK 1-2):
+- Thể hiện quyết tâm học, lộ trình thi TOPIK rõ ràng
+- Cam kết số giờ tự học mỗi ngày (VD: 4-6 tiếng/ngày)
+- Phương pháp học cụ thể (học trên lớp, tự học, giao tiếp)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+6. NGUYÊN TẮC VÀNG CHO TÀI LIỆU VISA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. ✍️ NHẤT QUÁN: Thông tin trong 4 tài liệu phải KHỚP với nhau (tên, tuổi, trường, tài chính...)
+2. 🎯 CỤ THỂ: Có số liệu, mốc thời gian, tên trường, ngành học rõ ràng
+3. 💪 TỰ TIN: Thể hiện quyết tâm nhưng khiêm tốn, không khoác lác
+4. 🏠 CAM KẾT VỀ NƯỚC: Đây là yếu tố SỐNG CÒN — phải thể hiện rõ ràng, thuyết phục, có dẫn chứng (gia đình, việc làm, tài sản tại VN)
+5. 🤝 KHÔNG DỐI TRÁ: Một khi bị phát hiện khai báo sai → cấm visa vĩnh viễn
+
+⚠️ NHỮNG CÂU NÓI GÂY MẤT ĐIỂM TUYỆT ĐỐI TRÁNH:
+- "Tôi muốn ở lại Hàn Quốc làm việc sau khi học" (nếu không có chiến lược E7 rõ ràng)
+- "Tôi sẽ làm thêm để trang trải học phí" → thể hiện không đủ tài chính
+- "Tôi chọn trường này vì bạn bè tôi cũng học" → thiếu cá nhân hoá
+- "Gia đình tôi vay mượn để cho tôi đi học" → không đủ tài chính
+
+
 ─═─═─═─═─═─═─═─═─═─═─═─═─═─═─═─═─═─═─═─
 QUY TẮC VIẾT — TUÂN THỦ NGHIÊM NGẶT
 ─═─═─═─═─═─═─═─═─═─═─═─═─═─═─═─═─═─═─═─
@@ -2636,6 +2785,142 @@ Hãy viết 4 tài liệu bằng tiếng Hàn theo định dạng JSON ở trên
     } catch (err) {
       console.error('Generate Korean docs error:', err);
       return res.json({ success: false, error: err.message });
+    }
+  }
+
+  // ═══════════════════════════════════════════════════
+  // ─── Action: Check Consistency (action=check-consistency)
+  // 🔍 Premium: Kiem tra cheo 4 tai lieu tieng Han
+  // ═══════════════════════════════════════════════════
+  async function handleCheckConsistency(req, res) {
+    const apiKey = getDeepSeekKey();
+    if (!apiKey) {
+      return res.json({ success: false, error: 'AI chưa được cấu hình.', result: null });
+    }
+
+    const { documents, profile } = req.body || {};
+    if (!documents || typeof documents !== 'object') {
+      return res.status(400).json({ success: false, error: 'Missing documents data' });
+    }
+
+    try {
+      const docText = `
+Tài liệu 1 - 자기소개서 (Self-Introduction):
+${(documents.selfIntro || '').substring(0, 2000)}
+
+Tài liệu 2 - 학업계획서 (Study Plan):
+${(documents.studyPlan || '').substring(0, 2000)}
+
+Tài liệu 3 - 재정 진술서 (Financial Statement):
+${(documents.finance || '').substring(0, 2000)}
+
+Tài liệu 4 - 통합 서류 (Combined):
+${(documents.combined || '').substring(0, 2000)}
+`;
+
+      const systemPrompt = `Bạn là chuyên gia kiểm định hồ sơ du học Hàn Quốc (Visa Document Auditor).
+
+NHIỆM VỤ:
+Đọc 4 tài liệu tiếng Hàn trong hồ sơ xin visa du học và kiểm tra:
+1. Tính nhất quán: Thông tin giữa các tài liệu có khớp nhau không? (tên, ngày tháng, số tiền, trường...)
+2. Lỗi ngữ pháp tiếng Hàn: Có lỗi nghiêm trọng nào không?
+3. Văn phong: Có phù hợp với hồ sơ visa (trang trọng, 존댓말) không?
+4. Mức độ thuyết phục: Có đủ sức thuyết phục ĐSQ không?
+
+Trả về JSON CHỈ gồm:
+{
+  "score": <0-100>,
+  "summary": "Tổng quan ngắn",
+  "issues": [{"severity": "high|medium|low", "title": "...", "description": "...", "suggestion": "..."}],
+  "suggestions": ["Gợi ý 1", "Gợi ý 2"]
+}`;
+
+      const userMessage = `Hãy kiểm tra 4 tài liệu tiếng Hàn sau:\n${docText}`;
+
+      const result = await callDeepSeek(
+        [{ role: 'system', content: systemPrompt }, { role: 'user', content: userMessage }],
+        { temperature: 0.2, maxTokens: 2000, timeout: 30000 }
+      );
+
+      if (result) {
+        try {
+          const jsonStr = result.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+          const parsed = JSON.parse(jsonStr);
+          return res.json({ success: true, result: parsed });
+        } catch (e) {
+          return res.json({ success: true, result: { score: 70, summary: 'Phân tích không hoàn chỉnh, vui lòng thử lại.', issues: [], suggestions: [] } });
+        }
+      }
+
+      return res.json({ success: false, error: 'AI không phản hồi', result: null });
+    } catch (err) {
+      console.error('Check consistency error:', err.message);
+      return res.json({ success: false, error: err.message, result: null });
+    }
+  }
+
+  // ═══════════════════════════════════════════════════
+  // ─── Action: Visa Score (action=visa-score)
+  // 📊 Premium: Cham diem ho so du hoc
+  // ═══════════════════════════════════════════════════
+  async function handleVisaScore(req, res) {
+    const apiKey = getDeepSeekKey();
+    if (!apiKey) {
+      return res.json({ success: false, error: 'AI chưa được cấu hình.', score: null });
+    }
+
+    const { gpa, korean, visaFail, finance, visaType } = req.body || {};
+
+    try {
+      const systemPrompt = `Bạn là chuyên gia phân tích hồ sơ visa du học Hàn Quốc với 15 năm kinh nghiệm.
+
+NHIỆM VỤ:
+Dựa trên thông tin hồ sơ, hãy:
+1. Tính điểm từng nhóm (0-100): học lực, tiếng Hàn, tài chính, lịch sử visa, độ phù hợp visa
+2. Dự đoán tỉ lệ đậu visa (%)
+3. Đưa ra gợi ý cải thiện
+
+QUY TẮC CHẤM ĐIỂM:
+- Học lực: GPA >= 8.0 → 90+, GPA >= 6.5 → 70+, GPA >= 5.0 → 50+, GPA < 5.0 → 30-
+- Tiếng Hàn: TOPIK 4+ → 90, TOPIK 3 → 75, TOPIK 2 → 60, Sejong 2B → 45, Chưa có → 30
+- Tài chính: >= $20,000 → 90, >= $15,000 → 80, >= $10,000 → 65, < $10,000 → 40
+- Lịch sử visa: Chưa trượt → 85, Đã trượt → 40 (cần giải trình)
+- Loại visa: D-4-1 dễ hơn D-2-6, D-2 khó nhất
+
+Trả về JSON:
+{
+  "totalScore": <0-100>,
+  "approvalPercent": <0-100>,
+  "categories": [{"name": "...", "score": <0-100>, "description": "..."}],
+  "recommendations": ["..."]
+}`;
+
+      const userMessage = `Phân tích hồ sơ visa sau:
+- Loại visa: ${visaType || 'D-4-1'}
+- GPA: ${gpa || 'Chưa rõ'}
+- Tiếng Hàn: ${korean || 'none'}
+- Đã từng trượt visa: ${visaFail === 'yes' ? 'Có' : 'Không'}
+- Sổ tiết kiệm: $${finance || 0}`;
+
+      const result = await callDeepSeek(
+        [{ role: 'system', content: systemPrompt }, { role: 'user', content: userMessage }],
+        { temperature: 0.2, maxTokens: 2000, timeout: 30000 }
+      );
+
+      if (result) {
+        try {
+          const jsonStr = result.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+          const parsed = JSON.parse(jsonStr);
+          return res.json({ success: true, score: parsed.totalScore, details: parsed });
+        } catch (e) {
+          return res.json({ success: true, score: 65, details: { categories: [], recommendations: ['Vui lòng thử lại để có kết quả chính xác hơn.'] } });
+        }
+      }
+
+      return res.json({ success: false, error: 'AI không phản hồi', score: null });
+    } catch (err) {
+      console.error('Visa score error:', err.message);
+      return res.json({ success: false, error: err.message, score: null });
     }
   }
 
@@ -3383,6 +3668,8 @@ module.exports = async (req, res) => {
       case 'generate-checklist': return await handleGenerateChecklist(req, res);
       case 'review-study-plan': return await handleReviewStudyPlan(req, res);
       case 'generate-korean-docs': return await handleGenerateKoreanDocs(req, res);
+      case 'check-consistency': return await handleCheckConsistency(req, res);
+      case 'visa-score': return await handleVisaScore(req, res);
       case 'translate-study-plan': return await handleTranslateStudyPlan(req, res);
       case 'interview-simulator': return await handleInterviewSimulator(req, res);
       case 'student-agent': return await handleStudentAgent(req, res);

@@ -1162,7 +1162,7 @@ function getInitialView() {
   const schoolId = params.get("school");
   if (schoolId && getSchoolById(schoolId)) return schoolId;
   const view = params.get("view");
-  if (["advisor", "compare", "map", "extra", "ebook", "schools", "d4-1", "cost", "checklist", "knowledge", "news", "korean-docs"].includes(view)) return view;
+  if (["advisor", "compare", "map", "extra", "ebook", "schools", "d4-1", "cost", "checklist", "knowledge", "news", "korean-docs", "pricing"].includes(view)) return view;
   // Check visa_type param
   const vt = params.get("visa_type");
   if (vt === 'D4-1') return 'd4-1';
@@ -2313,6 +2313,21 @@ function showSchool(viewId) {
         window.renderKoreanDocs(koreanDocsEl);
       } else {
         koreanDocsEl.innerHTML = '<div class="guide-view"><div class="kd-widget"><p>Đang tải Trợ lý Hồ sơ Tiếng Hàn...</p></div></div>';
+      }
+    }
+    return;
+  }
+
+  // ─── Premium Pricing Page ───
+  if (viewId === "pricing") {
+    hideAll();
+    var pricingEl = document.getElementById('pricing-content');
+    if (pricingEl) {
+      pricingEl.classList.remove("hidden");
+      if (typeof window.renderPricing === "function") {
+        window.renderPricing(pricingEl);
+      } else {
+        pricingEl.innerHTML = '<div class="pricing-section"><p>Đang tải thông tin...</p></div>';
       }
     }
     return;
