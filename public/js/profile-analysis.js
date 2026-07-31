@@ -129,7 +129,7 @@
     // Vùng lãnh sự (Consular Region)
     if (profile.consularRegion) {
       if (profile.consularRegion === 'kvac_hanoi') {
-        result.strengths.push('Nộp hồ sơ tại KVAC Hà Nội — quy trình quen thuộc, thời gian xử lý 5-15 ngày làm việc.');
+        result.strengths.push('Nộp hồ sơ tại KVAC Hà Nội — quy trình quen thuộc, thời gian xử lý 13-20 ngày làm việc.');
         result.actions.push('Đến KVAC Hà Nội (Tầng 12, Discovery Complex, 302 Cầu Giấy, phường Cầu Giấy) trong giờ làm việc 08:00-16:30. KVAC HN đã dừng đặt lịch online từ 06/04/2026 — đến trực tiếp lấy số thứ tự.');
         result.actions.push('Khám lao phổi tại BV Phổi Trung ương (Hoàng Hoa Thám, Hà Nội).');
         // Nếu khu vực rủi ro + KVAC Hà Nội = cảnh báo kép
@@ -144,7 +144,7 @@
       } else if (profile.consularRegion === 'lsq_hcm') {
         result.strengths.push('Nộp hồ sơ tại LSQ Hàn Quốc TP.HCM — tỉ lệ đậu visa thường cao hơn KVAC Hà Nội.');
         result.actions.push('Đặt lịch hẹn LSQ TP.HCM (địa chỉ: 107 Nguyễn Du, Quận 1).');
-        result.actions.push('Khám lao phổi tại một trong các bệnh viện: BV Chợ Rẫy, BV Phạm Ngọc Thạch hoặc BV Thống Nhất (TP.HCM).');
+        result.actions.push('Khám lao phổi tại bệnh viện ĐSQ chỉ định: BV Chợ Rẫy, Phước An (HEPA), ĐH Y Dược, Sante, Quốc tế Sài Gòn (TP.HCM) — kiểm tra danh sách mới trên website KVAC.');
       }
     } else {
       result.missingEvidence.push('Chưa chọn vùng lãnh sự (KVAC Hà Nội / LSQ TP.HCM).');

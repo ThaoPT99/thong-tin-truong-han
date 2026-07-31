@@ -765,7 +765,7 @@
     'A1-4': { step: 4, cost: '2,000đ', time: '5 phút', tip: 'Photo CCCD 2 mặt trên cùng 1 tờ giấy A4.' },
     'A1-5': { step: 5, cost: '10,000đ', time: '30 phút', tip: 'Photo sổ hộ khẩu. Hoặc xin CT07 tại Công an phường (miễn phí).' },
     'A1-6': { step: 6, cost: '20,000đ', time: '30 phút', tip: 'Xin bản sao tại UBND phường nơi đăng ký khai sinh.' },
-    'A1-7': { step: 7, cost: '500,000đ', time: '1 ngày', tip: 'Khám tại BV Phổi TW (HN) hoặc BV Chợ Rẫy (HCM). Kết quả có sau 3-5 ngày.' },
+    'A1-7': { step: 7, cost: '~300,000đ', time: '1 ngày', tip: 'Khám tại bệnh viện ĐSQ chỉ định (HN: BV Phổi TW, Hồng Ngọc...; HCM: Chợ Rẫy, Phước An HEPA...). Kiểm tra danh sách mới trên website KVAC.' },
     'A2-1': { step: 8, cost: '200,000đ', time: '1 ngày', tip: 'Mang bằng gốc đến Phòng Công chứng. Dịch sang tiếng Hàn (ưu tiên) hoặc Anh.' },
     'A2-2': { step: 9, cost: '200,000đ', time: '1 ngày', tip: 'Xin bảng điểm từ trường THPT. Dịch công chứng.' },
     'A4-1': { step: 10, cost: '8,000-10,000 USD', time: '1 ngày', tip: 'Mở tại quầy ngân hàng (không online). Kỳ hạn 12 tháng. Để sổ càng lâu càng tốt.' },

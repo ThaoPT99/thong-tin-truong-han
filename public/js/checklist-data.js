@@ -70,7 +70,7 @@ window.CHECKLIST_DATA = {
           {
             id: 'A1-7',
             name: 'Giấy khám lao phổi (TB test)',
-            description: 'Bắt buộc khám tại bệnh viện ĐSQ chỉ định. Nếu chưa chọn vùng lãnh sự: Hà Nội khám BV Phổi TW, TP.HCM khám BV Chợ Rẫy/Phạm Ngọc Thạch/Thống Nhất. Giấy có giá trị 3 tháng.',
+            description: 'Bắt buộc khám tại bệnh viện ĐSQ chỉ định. Nếu chưa chọn vùng lãnh sự: Hà Nội khám BV Phổi TW, TP.HCM khám BV Chợ Rẫy/Phước An (HEPA)/ĐH Y Dược/Sante/Quốc tế Sài Gòn. Giấy có giá trị 3 tháng.',
             documentType: 'tb_test',
             required: true,
             warning: '⚠ Chỉ khám tại bệnh viện ĐSQ chỉ định. Khám sai → không được chấp nhận!',
@@ -79,19 +79,19 @@ window.CHECKLIST_DATA = {
           {
             id: 'A1-7-HN',
             name: 'Giấy khám lao phổi (TB test) - KVAC Hà Nội',
-            description: 'Khám tại BV Phổi Trung ương (địa chỉ: 464 Hoàng Hoa Thám, Ba Đình, Hà Nội). Giấy có giá trị 3 tháng. Mang theo CCCD gốc khi đi khám.',
+            description: 'Khám tại bệnh viện ĐSQ chỉ định: BV Phổi Trung ương (463 Hoàng Hoa Thám, Ba Đình, Hà Nội), BV Hồng Ngọc, Hà Nội Family, Tràng An — kiểm tra danh sách mới trên website KVAC. Giấy có giá trị 3 tháng. Mang theo CCCD gốc khi đi khám.',
             documentType: 'tb_test',
             required: true,
-            warning: '⚠ Chỉ khám tại BV Phổi Trung ương (bệnh viện ĐSQ chỉ định). Khám sai → không được chấp nhận!',
+            warning: '⚠ Chỉ khám tại bệnh viện ĐSQ chỉ định (BV Phổi TW, Hồng Ngọc...) — danh sách thay đổi, kiểm tra website KVAC!',
             rule: { consular_region: { eq: 'kvac_hanoi' } }
           },
           {
             id: 'A1-7-HCM',
             name: 'Giấy khám lao phổi (TB test) - LSQ TP.HCM',
-            description: 'Khám tại 1 trong 3 bệnh viện ĐSQ chỉ định: (1) BV Chợ Rẫy, (2) BV Phạm Ngọc Thạch, (3) BV Thống Nhất (TP.HCM). Giấy có giá trị 3 tháng. Mang theo CCCD gốc.',
+            description: 'Khám tại bệnh viện ĐSQ chỉ định: BV Chợ Rẫy, Phước An (HEPA), BV ĐH Y Dược, BV Ngoại khoa Sante, BV Đa khoa Quốc tế Sài Gòn (TP.HCM). Giấy có giá trị 3 tháng. Mang theo CCCD gốc.',
             documentType: 'tb_test',
             required: true,
-            warning: '⚠ Chỉ khám tại 3 bệnh viện ĐSQ chỉ định. Khám sai → không được chấp nhận!',
+            warning: '⚠ Chỉ khám tại bệnh viện ĐSQ chỉ định — danh sách thay đổi, kiểm tra website KVAC!',
             rule: { consular_region: { eq: 'lsq_hcm' } }
           },
           {
@@ -350,7 +350,7 @@ window.CHECKLIST_DATA = {
           {
             id: 'A6-2',
             name: 'Giấy khám lao phổi (TB test)',
-            description: 'Bắt buộc khám tại bệnh viện ĐSQ chỉ định. Nếu chưa chọn vùng: Hà Nội → BV Phổi TW, TP.HCM → BV Chợ Rẫy/Phạm Ngọc Thạch/Thống Nhất. Giá trị 3 tháng.',
+            description: 'Bắt buộc khám tại bệnh viện ĐSQ chỉ định. Nếu chưa chọn vùng: Hà Nội → BV Phổi TW, TP.HCM → BV Chợ Rẫy/Phước An (HEPA)/ĐH Y Dược/Sante/Quốc tế Sài Gòn. Giá trị 3 tháng.',
             documentType: 'health_check',
             required: true,
             warning: '⚠ Khám SAI bệnh viện → giấy khám KHÔNG được chấp nhận. Kiểm tra danh sách mới nhất trên website KVAC trước khi đi.',
@@ -359,19 +359,19 @@ window.CHECKLIST_DATA = {
           {
             id: 'A6-2-HN',
             name: 'Giấy khám lao phổi - KVAC Hà Nội',
-            description: 'Khám tại BV Phổi Trung ương (464 Hoàng Hoa Thám, Ba Đình, HN). Mang theo CCCD gốc. Có giá trị 3 tháng.',
+            description: 'Khám tại bệnh viện ĐSQ chỉ định: BV Phổi Trung ương (463 Hoàng Hoa Thám, Ba Đình, HN), BV Hồng Ngọc, Hà Nội Family, Tràng An — kiểm tra danh sách mới trên website KVAC. Mang theo CCCD gốc. Có giá trị 3 tháng.',
             documentType: 'health_check',
             required: true,
-            warning: '⚠ Chỉ khám tại BV Phổi TW (bệnh viện ĐSQ chỉ định). Khám sai → không được chấp nhận!',
+            warning: '⚠ Chỉ khám tại bệnh viện ĐSQ chỉ định (BV Phổi TW, Hồng Ngọc...) — danh sách thay đổi, kiểm tra website KVAC!',
             rule: { consular_region: { eq: 'kvac_hanoi' } }
           },
           {
             id: 'A6-2-HCM',
             name: 'Giấy khám lao phổi - LSQ TP.HCM',
-            description: 'Khám tại 1 trong 3 bệnh viện: (1) BV Chợ Rẫy, (2) BV Phạm Ngọc Thạch hoặc (3) BV Thống Nhất (TP.HCM). Có giá trị 3 tháng. Mang theo CCCD gốc.',
+            description: 'Khám tại bệnh viện ĐSQ chỉ định: BV Chợ Rẫy, Phước An (HEPA), BV ĐH Y Dược, Sante, Quốc tế Sài Gòn (TP.HCM). Có giá trị 3 tháng. Mang theo CCCD gốc.',
             documentType: 'health_check',
             required: true,
-            warning: '⚠ Chỉ khám tại 3 bệnh viện ĐSQ chỉ định (Chợ Rẫy, Phạm Ngọc Thạch, Thống Nhất). Khám sai → không được chấp nhận!',
+            warning: '⚠ Chỉ khám tại bệnh viện ĐSQ chỉ định (Chợ Rẫy, Phước An HEPA, ĐH Y Dược...). Danh sách thay đổi — kiểm tra website KVAC. Khám sai → không được chấp nhận!',
             rule: { consular_region: { eq: 'lsq_hcm' } }
           },
           {
@@ -409,7 +409,7 @@ window.CHECKLIST_DATA = {
           {
             id: 'A6-5',
             name: 'Theo dõi kết quả visa',
-            description: 'Thời gian xử lý 5-20 ngày làm việc. Kiểm tra trạng thái online qua website KVAC hoặc app visaforkorea.',
+            description: 'Thời gian xử lý 13-20 ngày làm việc. Kiểm tra trạng thái online qua website KVAC hoặc app visaforkorea.',
             documentType: 'result_tracking',
             required: true,
             rule: null
@@ -437,7 +437,7 @@ window.CHECKLIST_DATA = {
           {
             id: 'ALERT-1',
             name: '⏳ Thời hạn giấy tờ 3 tháng',
-            description: 'Hầu hết giấy tờ (sổ TK, giấy khám sức khỏe, giấy nhập học, dịch công chứng) chỉ có giá trị 3 tháng kể từ ngày cấp. Kiểm tra kỹ trước khi nộp!',
+            description: 'Bản dịch công chứng không có thời hạn theo luật, nhưng KVAC/ĐSQ thường yêu cầu giấy tờ cấp gần ngày nộp. Riêng giấy khám lao phổi (3 tháng), xác nhận số dư ngân hàng (30 ngày), thư nhập học (tuỳ trường) có thời hạn cụ thể — kiểm tra kỹ trước khi nộp!',
             documentType: 'general_warning',
             required: true,
             rule: null
@@ -501,7 +501,7 @@ window.CHECKLIST_DATA = {
           {
             id: 'ALERT-9',
             name: ' Hợp pháp hóa lãnh sự / Apostille',
-            description: 'QUAN TRỌNG: Giấy tờ Việt Nam dùng cho Hàn Quốc cần chứng nhận hợp pháp hóa. ● TRƯỚC 11/09/2026: (1) Công chứng tại Phòng Công chứng → (2) Chứng nhận tại Sở Tư pháp/Bộ Ngoại giao → (3) Hợp pháp hóa tại ĐSQ Hàn Quốc (Hà Nội) hoặc LSQ (TP.HCM). ● TỪ 11/09/2026: Việt Nam chính thức áp dụng Công ước Apostille. Do Hàn Quốc cũng là thành viên, quy trình rút gọn: (1) Công chứng tại Phòng Công chứng → (2) Xin tem Apostille tại Cục Lãnh sự (Hà Nội) hoặc Sở Ngoại vụ (TP.HCM) — KHÔNG cần qua ĐSQ/LSQ Hàn Quốc nữa. Tiết kiệm 5-10 ngày làm việc.',
+            description: 'QUAN TRỌNG: Giấy tờ Việt Nam dùng cho Hàn Quốc cần chứng nhận hợp pháp hóa. ● TRƯỚC 11/09/2026: (1) Công chứng tại Phòng Công chứng → (2) Chứng nhận tại Sở Tư pháp/Bộ Ngoại giao → (3) Hợp pháp hóa tại ĐSQ Hàn Quốc (Hà Nội) hoặc LSQ (TP.HCM). ● TỪ 11/09/2026: Việt Nam chính thức áp dụng Công ước Apostille. Do Hàn Quốc cũng là thành viên, quy trình rút gọn: (1) Công chứng tại Phòng Công chứng → (2) Xin tem Apostille tại Cục Lãnh sự (Hà Nội) hoặc Sở Ngoại vụ (TP.HCM) — KHÔNG cần qua ĐSQ/LSQ Hàn Quốc nữa. Không mất lệ phí hợp pháp hóa tại ĐSQ/LSQ Hàn Quốc (lệ phí chứng nhận/Apostille 30,000đ/giấy tờ theo Thông tư 157/2016/TT-BTC; Nghị định 293/2026/NĐ-CP).',
             documentType: 'general_warning',
             required: true,
             rule: null
@@ -520,7 +520,7 @@ window.CHECKLIST_DATA = {
           {
             id: 'A7-1',
             name: 'Dịch thuật tất cả giấy tờ sang tiếng Hàn hoặc Anh',
-            description: 'Tất cả giấy tờ tiếng Việt (bằng cấp, học bạ, sổ TK, giấy khai sinh, sổ hộ khẩu...) cần dịch sang tiếng Hàn (ưu tiên) hoặc tiếng Anh. Dịch tại Phòng Công chứng hoặc công ty dịch thuật được cấp phép.',
+            description: 'Tất cả giấy tờ tiếng Việt (bằng cấp, học bạ, sổ TK, giấy khai sinh, sổ hộ khẩu...) cần dịch sang tiếng Hàn (ưu tiên) hoặc tiếng Anh. Dịch bởi công ty dịch thuật hoặc cá nhân người dịch (Phòng Công chứng KHÔNG dịch — chỉ chứng thực chữ ký người dịch ở bước A7-2).',
             documentType: 'translate_all',
             required: true,
             rule: null
@@ -536,7 +536,7 @@ window.CHECKLIST_DATA = {
           {
             id: 'A7-3',
             name: 'Chứng nhận tại Sở Tư pháp hoặc Bộ Ngoại giao (MOFA)',
-            description: 'Sau công chứng, mang đến Sở Tư pháp (Hà Nội/TP.HCM) hoặc Cục Lãnh sự - Bộ Ngoại giao (Hà Nội) để chứng nhận con dấu của Phòng Công chứng. Thời gian: 1-3 ngày làm việc.',
+            description: 'Sau công chứng, mang đến Sở Tư pháp (Hà Nội/TP.HCM) hoặc Cục Lãnh sự - Bộ Ngoại giao (Hà Nội) để chứng nhận con dấu của Phòng Công chứng. LƯU Ý: giấy tờ do Văn phòng Công chứng tư nhân công chứng cần xác nhận con dấu tại Sở Tư pháp trước khi nộp Cục Lãnh sự/Sở Ngoại vụ. Thời gian: 1-3 ngày làm việc.',
             documentType: 'mofa_certification',
             required: true,
             rule: null
@@ -568,7 +568,7 @@ window.CHECKLIST_DATA = {
           {
             id: 'A7-5',
             name: 'Xin tem Apostille tại Cục Lãnh sự / Sở Ngoại vụ (từ 11/09/2026)',
-            description: 'QUY TRÌNH MỚI từ 11/09/2026: Sau khi công chứng giấy tờ tại Phòng Công chứng, mang đến Cục Lãnh sự - Bộ Ngoại giao (Hà Nội, địa chỉ: 44 Tràng Thi, Hoàn Kiếm) hoặc Sở Ngoại vụ TP.HCM (địa chỉ: 6 Alexander De Rhodes, Quận 1) để xin đóng tem Apostille. KHÔNG cần mang sang ĐSQ/LSQ Hàn Quốc nữa vì Hàn Quốc là thành viên Công ước Apostille. Thời gian: 1-3 ngày làm việc.',
+            description: 'QUY TRÌNH MỚI từ 11/09/2026: Sau khi công chứng giấy tờ tại Phòng Công chứng, mang đến Cục Lãnh sự - Bộ Ngoại giao (Hà Nội, địa chỉ: 40 Trần Phú, Ba Đình) hoặc Sở Ngoại vụ TP.HCM (địa chỉ: 6 Alexandre de Rhodes, Quận 1) để xin đóng tem Apostille. KHÔNG cần mang sang ĐSQ/LSQ Hàn Quốc nữa vì Hàn Quốc là thành viên Công ước Apostille. Thời gian: 1-3 ngày làm việc.',
             documentType: 'apostille',
             required: true,
             rule: null
@@ -576,7 +576,7 @@ window.CHECKLIST_DATA = {
           {
             id: 'A7-5-HN',
             name: 'Xin tem Apostille tại Cục Lãnh sự (Hà Nội) - từ 11/09/2026',
-            description: 'Đến Cục Lãnh sự - Bộ Ngoại giao Việt Nam (44 Tràng Thi, Hoàn Kiếm, Hà Nội) để xin đóng tem Apostille cho giấy tờ. Mang theo: bản gốc + bản dịch đã công chứng. Thời gian: 1-3 ngày làm việc. KHÔNG cần qua ĐSQ Hàn Quốc.',
+            description: 'Đến Cục Lãnh sự - Bộ Ngoại giao Việt Nam (40 Trần Phú, Ba Đình, Hà Nội) để xin đóng tem Apostille cho giấy tờ. Mang theo: bản gốc + bản dịch đã công chứng. Thời gian: 1-3 ngày làm việc. KHÔNG cần qua ĐSQ Hàn Quốc.',
             documentType: 'apostille',
             required: true,
             rule: { consular_region: { eq: 'kvac_hanoi' } }
@@ -584,7 +584,7 @@ window.CHECKLIST_DATA = {
           {
             id: 'A7-5-HCM',
             name: 'Xin tem Apostille tại Sở Ngoại vụ (TP.HCM) - từ 11/09/2026',
-            description: 'Đến Sở Ngoại vụ TP.HCM (6 Alexander De Rhodes, Quận 1, TP.HCM) để xin đóng tem Apostille cho giấy tờ. Mang theo: bản gốc + bản dịch đã công chứng. Thời gian: 1-3 ngày làm việc. KHÔNG cần qua LSQ Hàn Quốc.',
+            description: 'Đến Sở Ngoại vụ TP.HCM (6 Alexandre de Rhodes, Quận 1, TP.HCM) để xin đóng tem Apostille cho giấy tờ. Mang theo: bản gốc + bản dịch đã công chứng. Thời gian: 1-3 ngày làm việc. KHÔNG cần qua LSQ Hàn Quốc.',
             documentType: 'apostille',
             required: true,
             rule: { consular_region: { eq: 'lsq_hcm' } }
@@ -715,9 +715,9 @@ window.CHECKLIST_DATA = {
           { id: 'B1-4', name: 'CCCD/CMND photo', description: 'Photo rõ ràng.', documentType: 'id_card', required: true, rule: null },
           { id: 'B1-5', name: 'Giấy khai sinh', description: 'Bản sao.', documentType: 'birth_certificate', required: true, rule: null },
           { id: 'B1-6', name: 'Sổ hộ khẩu hoặc Giấy xác nhận thông tin cư trú (CT07)', description: 'Photo sổ hộ khẩu hoặc xin CT07 tại Công an phường.', documentType: 'household_registration', required: true, rule: null },
-          { id: 'B1-7', name: 'Giấy khám lao phổi (TB test)', description: 'Khám tại bệnh viện ĐSQ chỉ định. Nếu chưa chọn vùng: HN→BV Phổi TW, HCM→BV Chợ Rẫy/Phạm Ngọc Thạch/Thống Nhất. Giá trị 3 tháng.', documentType: 'tb_test', required: true, warning: '⚠ Chỉ khám tại bệnh viện ĐSQ chỉ định — khám sai sẽ không được chấp nhận!', rule: { consular_region: { eq: null } } },
-          { id: 'B1-7-HN', name: 'TB test - KVAC Hà Nội', description: 'Khám tại BV Phổi Trung ương (464 Hoàng Hoa Thám, Ba Đình, HN). Có giá trị 3 tháng.', documentType: 'tb_test', required: true, warning: '⚠ Chỉ khám tại BV Phổi TW. Khám sai → không được chấp nhận!', rule: { consular_region: { eq: 'kvac_hanoi' } } },
-          { id: 'B1-7-HCM', name: 'TB test - LSQ TP.HCM', description: 'Khám tại 1 trong 3 BV: BV Chợ Rẫy, BV Phạm Ngọc Thạch hoặc BV Thống Nhất (TP.HCM). Giá trị 3 tháng.', documentType: 'tb_test', required: true, warning: '⚠ Chỉ khám tại 3 BV ĐSQ chỉ định! Khám sai → không được chấp nhận!', rule: { consular_region: { eq: 'lsq_hcm' } } },
+          { id: 'B1-7', name: 'Giấy khám lao phổi (TB test)', description: 'Khám tại bệnh viện ĐSQ chỉ định. Nếu chưa chọn vùng: HN→BV Phổi TW, HCM→BV Chợ Rẫy/Phước An (HEPA)/ĐH Y Dược/Sante/Quốc tế Sài Gòn. Giá trị 3 tháng.', documentType: 'tb_test', required: true, warning: '⚠ Chỉ khám tại bệnh viện ĐSQ chỉ định — khám sai sẽ không được chấp nhận!', rule: { consular_region: { eq: null } } },
+          { id: 'B1-7-HN', name: 'TB test - KVAC Hà Nội', description: 'Khám tại bệnh viện ĐSQ chỉ định: BV Phổi Trung ương (463 Hoàng Hoa Thám, Ba Đình, HN), BV Hồng Ngọc, Hà Nội Family, Tràng An — kiểm tra danh sách mới trên website KVAC. Có giá trị 3 tháng.', documentType: 'tb_test', required: true, warning: '⚠ Chỉ khám tại bệnh viện ĐSQ chỉ định (BV Phổi TW, Hồng Ngọc...) — danh sách thay đổi, kiểm tra website KVAC!', rule: { consular_region: { eq: 'kvac_hanoi' } } },
+          { id: 'B1-7-HCM', name: 'TB test - LSQ TP.HCM', description: 'Khám tại BV ĐSQ chỉ định: BV Chợ Rẫy, Phước An (HEPA), BV ĐH Y Dược, Sante, Quốc tế Sài Gòn (TP.HCM). Giá trị 3 tháng.', documentType: 'tb_test', required: true, warning: '⚠ Chỉ khám tại BV ĐSQ chỉ định — danh sách thay đổi, kiểm tra website KVAC!', rule: { consular_region: { eq: 'lsq_hcm' } } },
           { id: 'B1-8', name: 'Bản sao Giấy phép kinh doanh của trường Hàn', description: 'Trường Hàn cấp, có dấu đỏ. Xin sau khi hoàn tất thủ tục.', documentType: 'school_business_registration', required: true, source: 'school', rule: null }
         ]
       },
@@ -781,9 +781,9 @@ window.CHECKLIST_DATA = {
           { id: 'B6-1', name: 'Nộp hồ sơ KVAC', description: 'Nếu ở miền Bắc (từ Huế trở ra): đến trực tiếp KVAC Hà Nội (đã dừng đặt online từ 06/04/2026). Nếu ở miền Nam: đặt lịch online qua visaforkorea-hc.com.', documentType: 'kvac', required: true, rule: { consular_region: { eq: null } }, link: 'https://visaforkorea-vt.com/' },
           { id: 'B6-1-HN', name: 'Nộp hồ sơ tại KVAC Hà Nội', description: 'KVAC Hà Nội ĐÃ DỪNG đặt lịch online từ 06/04/2026. Đến trực tiếp KVAC (Tầng 12, Discovery Complex, 302 Cầu Giấy, phường Cầu Giấy) trong giờ làm việc (08:00-16:30) để lấy số. Nên đến sau 10h sáng.', documentType: 'kvac', required: true, rule: { consular_region: { eq: 'kvac_hanoi' } }, link: 'https://visaforkorea-vt.com/' },
           { id: 'B6-1-HCM', name: 'Đặt lịch hẹn KVAC TP.HCM', description: 'Đặt lịch online qua visaforkorea-hc.com, chọn KVAC TP.HCM (253 Điện Biên Phủ, Quận 3). Lịch thường thoáng hơn HN.', documentType: 'kvac', required: true, rule: { consular_region: { eq: 'lsq_hcm' } }, link: 'https://visaforkorea-hc.com/' },
-          { id: 'B6-2', name: 'TB test - bệnh viện chỉ định', description: 'Bắt buộc. Nếu chưa chọn vùng: HN→BV Phổi TW, HCM→BV Chợ Rẫy/Phạm Ngọc Thạch/Thống Nhất. Giá trị 3 tháng.', documentType: 'health', required: true, warning: '⚠ Chỉ khám tại bệnh viện ĐSQ chỉ định!', rule: { consular_region: { eq: null } } },
-          { id: 'B6-2-HN', name: 'TB test - KVAC Hà Nội', description: 'Khám tại BV Phổi Trung ương (464 Hoàng Hoa Thám, Ba Đình, HN). Có giá trị 3 tháng.', documentType: 'health', required: true, warning: '⚠ Chỉ khám tại BV Phổi TW!', rule: { consular_region: { eq: 'kvac_hanoi' } } },
-          { id: 'B6-2-HCM', name: 'TB test - LSQ TP.HCM', description: 'Khám tại 1 trong 3 BV: Chợ Rẫy, Phạm Ngọc Thạch hoặc Thống Nhất (TP.HCM). Giá trị 3 tháng.', documentType: 'health', required: true, warning: '⚠ Chỉ khám tại BV ĐSQ chỉ định (Chợ Rẫy/Phạm Ngọc Thạch/Thống Nhất)!', rule: { consular_region: { eq: 'lsq_hcm' } } },
+          { id: 'B6-2', name: 'TB test - bệnh viện chỉ định', description: 'Bắt buộc. Nếu chưa chọn vùng: HN→BV Phổi TW, HCM→BV Chợ Rẫy/Phước An (HEPA)/ĐH Y Dược/Sante/Quốc tế Sài Gòn. Giá trị 3 tháng.', documentType: 'health', required: true, warning: '⚠ Chỉ khám tại bệnh viện ĐSQ chỉ định!', rule: { consular_region: { eq: null } } },
+          { id: 'B6-2-HN', name: 'TB test - KVAC Hà Nội', description: 'Khám tại bệnh viện ĐSQ chỉ định: BV Phổi Trung ương (463 Hoàng Hoa Thám, Ba Đình, HN), BV Hồng Ngọc, Hà Nội Family, Tràng An — kiểm tra danh sách mới trên website KVAC. Có giá trị 3 tháng.', documentType: 'health', required: true, warning: '⚠ Chỉ khám tại bệnh viện ĐSQ chỉ định (BV Phổi TW, Hồng Ngọc...) — danh sách thay đổi, kiểm tra website KVAC!', rule: { consular_region: { eq: 'kvac_hanoi' } } },
+          { id: 'B6-2-HCM', name: 'TB test - LSQ TP.HCM', description: 'Khám tại BV ĐSQ chỉ định: Chợ Rẫy, Phước An (HEPA), ĐH Y Dược, Sante, Quốc tế Sài Gòn (TP.HCM). Giá trị 3 tháng.', documentType: 'health', required: true, warning: '⚠ Chỉ khám tại BV ĐSQ chỉ định — danh sách thay đổi, kiểm tra website KVAC!', rule: { consular_region: { eq: 'lsq_hcm' } } },
           { id: 'B6-3', name: 'Bảo hiểm du học', description: 'Bảo hiểm du học bắt buộc — kiểm tra với trường vì một số trường cung cấp gói riêng.', documentType: 'insurance', required: true, rule: null },
           { id: 'B6-4', name: 'Nộp và theo dõi kết quả', description: 'Nộp hồ sơ tại cơ quan lãnh sự đã chọn, theo dõi online. Nếu chưa chọn vùng: xác định nơi nộp trước.', documentType: 'tracking', required: true, rule: { consular_region: { eq: null } } },
           { id: 'B6-4-HN', name: 'Nộp hồ sơ tại KVAC Hà Nội', description: 'Đến KVAC Hà Nội (Tầng 12, Discovery Complex, 302 Cầu Giấy, phường Cầu Giấy) trong giờ làm việc (08:00-16:30). Mang đầy đủ giấy tờ gốc + bản dịch công chứng. KVAC HN đã dừng đặt online — đến trực tiếp.', documentType: 'tracking', required: true, rule: { consular_region: { eq: 'kvac_hanoi' } } },
@@ -798,7 +798,7 @@ window.CHECKLIST_DATA = {
         description: 'Những lưu ý sống còn để tránh bị trượt visa D-2.',
         required: true,
         items: [
-          { id: 'ALERT-D2-1', name: '⏳ Thời hạn giấy tờ 3 tháng', description: 'Hầu hết giấy tờ (sổ TK, giấy khám, giấy nhập học, dịch công chứng) chỉ có giá trị 3 tháng. Kiểm tra kỹ trước nộp!', documentType: 'general_warning', required: true, rule: null },
+          { id: 'ALERT-D2-1', name: '⏳ Thời hạn giấy tờ 3 tháng', description: 'Hầu hết giấy tờ có thời hạn cụ thể (giấy khám lao phổi 3 tháng, xác nhận số dư 30 ngày, thư nhập học tuỳ trường); bản dịch công chứng không có thời hạn theo luật nhưng nên cấp gần ngày nộp. Kiểm tra kỹ trước nộp!', documentType: 'general_warning', required: true, rule: null },
           { id: 'ALERT-D2-2', name: ' Sổ tiết kiệm mở tại quầy', description: 'KHÔNG chấp nhận sổ online. Mở trực tiếp tại quầy giao dịch. Kèm xác nhận số dư trong 30 ngày.', documentType: 'general_warning', required: true, rule: null },
           { id: 'ALERT-D2-3', name: ' D-2 yêu cầu tài chính cao hơn D-4-1', description: 'Sổ tiết kiệm cho D-2 dao động $10,000-$20,000 tuỳ trường/khu vực. Trường Seoul thường cần $18,000-$20,000, trường tỉnh có thể chỉ $10,000-$15,000. Xác nhận với trường trước khi mở sổ.', documentType: 'general_warning', required: true, rule: null },
           { id: 'ALERT-D2-4', name: ' Tính xác thực', description: 'Giả mạo giấy tờ sẽ bị cấm nhập cảnh Hàn Quốc. Mọi giấy tờ đều được xác minh.', documentType: 'general_warning', required: true, rule: null },
@@ -814,13 +814,13 @@ window.CHECKLIST_DATA = {
         icon: '',
         required: true,
         items: [
-          { id: 'B7-1', name: 'Dịch thuật tất cả giấy tờ sang tiếng Hàn/Anh', description: 'Bằng cấp, học bạ, sổ TK, giấy khai sinh, sổ hộ khẩu... Dịch tại Phòng Công chứng.', documentType: 'translate_all', required: true, rule: null },
+          { id: 'B7-1', name: 'Dịch thuật tất cả giấy tờ sang tiếng Hàn/Anh', description: 'Bằng cấp, học bạ, sổ TK, giấy khai sinh, sổ hộ khẩu... Dịch bởi công ty dịch thuật hoặc cá nhân người dịch (Phòng Công chứng KHÔNG dịch — chỉ chứng thực chữ ký người dịch ở bước B7-2).', documentType: 'translate_all', required: true, rule: null },
           { id: 'B7-2', name: 'Công chứng bản dịch', description: 'Mang bản gốc + bản dịch đến Phòng Công chứng Nhà nước để công chứng.', documentType: 'notarize_translation', required: true, rule: null },
-          { id: 'B7-3', name: 'Chứng nhận tại Bộ Ngoại giao (MOFA)', description: 'Sau công chứng → Sở Tư pháp hoặc Cục Lãnh sự để chứng nhận. 1-3 ngày.', documentType: 'mofa_certification', required: true, rule: null },
+          { id: 'B7-3', name: 'Chứng nhận tại Bộ Ngoại giao (MOFA)', description: 'Sau công chứng → Sở Tư pháp (nếu công chứng tại Văn phòng Công chứng tư nhân) hoặc Cục Lãnh sự để chứng nhận. 1-3 ngày.', documentType: 'mofa_certification', required: true, rule: null },
           { id: 'B7-4', name: 'Hợp pháp hóa tại ĐSQ/LSQ Hàn Quốc (đến 10/09/2026)', description: 'Chỉ cần nếu nộp hồ sơ trước 11/09/2026: Sau khi có dấu Bộ Ngoại giao, mang đến ĐSQ Hàn (Hà Nội) hoặc LSQ (TP.HCM). 3-5 ngày. Sau 11/09: dùng Apostille (B7-5).', documentType: 'consular_legalization', required: true, rule: { consular_region: { eq: null } } },
           { id: 'B7-4-HN', name: 'Hợp pháp hóa tại ĐSQ Hàn Quốc (Hà Nội, đến 10/09/2026)', description: 'Mang giấy tờ đã có dấu Bộ Ngoại giao đến ĐSQ Hàn Quốc tại Hà Nội. Áp dụng đến 10/09/2026. Sau đó dùng Apostille (B7-5).', documentType: 'consular_legalization', required: true, rule: { consular_region: { eq: 'kvac_hanoi' } } },
           { id: 'B7-4-HCM', name: 'Hợp pháp hóa tại LSQ Hàn Quốc (TP.HCM, đến 10/09/2026)', description: 'Mang giấy tờ đã có dấu Bộ Ngoại giao đến LSQ Hàn Quốc tại TP.HCM (107 Nguyễn Du, Quận 1). Áp dụng đến 10/09/2026. Sau đó dùng Apostille (B7-5).', documentType: 'consular_legalization', required: true, rule: { consular_region: { eq: 'lsq_hcm' } } },
-          { id: 'B7-5', name: 'Xin tem Apostille tại Cục Lãnh sự/Sở Ngoại vụ (từ 11/09/2026)', description: 'QUY TRÌNH MỚI: Sau công chứng, đến Cục Lãnh sự (Hà Nội, 44 Tràng Thi) hoặc Sở Ngoại vụ (TP.HCM, 6 Alexander De Rhodes) xin tem Apostille. KHÔNG cần qua ĐSQ Hàn. 1-3 ngày.', documentType: 'apostille', required: true, rule: null }
+          { id: 'B7-5', name: 'Xin tem Apostille tại Cục Lãnh sự/Sở Ngoại vụ (từ 11/09/2026)', description: 'QUY TRÌNH MỚI: Sau công chứng, đến Cục Lãnh sự (Hà Nội, 40 Trần Phú) hoặc Sở Ngoại vụ (TP.HCM, 6 Alexandre de Rhodes) xin tem Apostille. KHÔNG cần qua ĐSQ Hàn. 1-3 ngày.', documentType: 'apostille', required: true, rule: null }
         ]
       },
       // Module rủi ro đặc thù D-2
@@ -1218,7 +1218,7 @@ window.CHECKLIST_DATA = {
           {
             id: 'C6-2',
             name: 'Lệ phí xét duyệt chuyển đổi visa',
-            description: 'Nộp lệ phí tại Immigration. Khoảng 60,000-100,000 KRW (tùy loại visa). Chuẩn bị tiền mặt hoặc thẻ.',
+            description: 'Nộp lệ phí tại Immigration. Khoảng 100,000 KRW (phí chuyển đổi tư cách lưu trú). Chuẩn bị tiền mặt hoặc thẻ.',
             documentType: 'fee_payment',
             required: true,
             rule: null

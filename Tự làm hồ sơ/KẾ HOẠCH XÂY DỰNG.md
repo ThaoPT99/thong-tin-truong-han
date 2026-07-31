@@ -807,7 +807,7 @@ export const D4_1_CHECKLIST = {
         {
           id: 'A6-4',
           name: 'Theo dõi kết quả',
-          description: 'Thời gian xử lý: 5-20 ngày làm việc',
+          description: 'Thời gian xử lý: 13-20 ngày làm việc',
           required: true,
           document_type: 'result_tracking',
         },

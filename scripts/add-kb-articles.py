@@ -153,7 +153,7 @@ DỊCH VỤ CHÍNH
 Đăng nhập > Visit Reservation > Apply > Chọn văn phòng > Chọn mục đích > Chọn ngày giờ > In phiếu hẹn.
 
 GIA HẠN VISA ONLINE
-Application for Extension of Stay > Upload hộ chiếu, ARC, bảng điểm, xác nhận đang học, xác nhận số dư, NHI > Đóng phí ~60,000-100,000 KRW > Chờ 1-2 tuần.
+Application for Extension of Stay > Upload hộ chiếu, ARC, bảng điểm, xác nhận đang học, xác nhận số dư, NHI > Đóng phí 60,000 KRW > Chờ 1-2 tuần.
 
 LÀM THÊM: Application for Part-time Work Permit. Cần HĐLĐ + xác nhận trường + bảng điểm + TOPIK. Miễn phí.
 
