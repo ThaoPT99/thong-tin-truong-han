@@ -821,7 +821,7 @@
     profile = profile || {};
     var warnings = [];
     var visaType = profile.visaType || 'D-4-1';
-    var minSavings = (visaType === 'D-2' || visaType === 'D-2-6') ? 18000 : 10000;
+    var minSavings = (visaType === 'D-2' || visaType === 'D-2-6') ? 15000 : 10000;
     var savings = profile.savingsAmount || 0;
     var monthlyIncome = profile.monthlyIncome || 0;
     var savingsDuration = profile.savingsDurationMonths;
@@ -1164,7 +1164,7 @@
             <li><span class="fg-tag fg-tag-green">Nên</span> giữ sổ tiết kiệm kỳ hạn 6-12 tháng (tối thiểu 6 tháng, lý tưởng 12 tháng)</li>
             <li><span class="fg-tag fg-tag-blue">Sổ tiết kiệm + xác nhận số dư</span> phải cấp trong vòng 30 ngày trước khi nộp</li>
             <li><span class="fg-tag fg-tag-blue">Tất cả giấy tờ tài chính</span> cần dịch công chứng sang tiếng Hàn hoặc Anh</li>
-            <li><strong>D-2:</strong> Cần sổ tiết kiệm <strong>18,000-20,000 USD</strong> (~450-500 triệu VND)</li>
+            <li><strong>D-2:</strong> Cần sổ tiết kiệm <strong>10,000-20,000 USD</strong> tuỳ trường/khu vực (Seoul thường 18,000-20,000 USD, trường tỉnh 10,000-15,000 USD)</li>
             <li><strong>D-4-1:</strong> Cần sổ tiết kiệm <strong>10,000 USD</strong> (~250 triệu VND)</li>
           </ul>
         `;

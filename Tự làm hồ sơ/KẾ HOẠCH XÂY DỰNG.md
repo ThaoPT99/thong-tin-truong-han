@@ -712,7 +712,7 @@ export const D4_1_CHECKLIST = {
         {
           id: 'A4-1',
           name: 'Sổ tiết kiệm',
-          description: 'Tối thiểu 9,000 USD (~200 triệu VND), đủ kỳ hạn 1 tháng',
+          description: 'Tối thiểu 10,000 USD (~250 triệu VND), mở trước 3-6 tháng',
           required: true,
           document_type: 'savings_book',
         },

@@ -80,7 +80,7 @@ MẸO ÔN: Bắt đầu 3 tháng trước. Mỗi ngày 30-50 từ vựng. Làm 5
 
 GKS (GLOBAL KOREA SCHOLARSHIP) — HỌC BỔNG CHÍNH PHỦ TOÀN PHẦN
 Do NIIED cấp, gồm: 100% học phí + sinh hoạt phí ~1,000,000 KRW/tháng + vé máy bay + bảo hiểm + phí định cư.
-GKS-U (ĐH): dưới 25 tuổi, GPA 6.5+. GKS-G (Sau ĐH): dưới 40 tuổi, GPA 7.0+, ưu tiên TOPIK 4+.
+GKS-U (ĐH): dưới 25 tuổi, GPA ≥80% (hoặc top 20% lớp). GKS-G (Sau ĐH): dưới 40 tuổi, GPA ≥80% (hoặc top 20% lớp), ưu tiên TOPIK 4+.
 Nộp: GKS-G tháng 2, GKS-U tháng 9. Tỉ lệ cạnh tranh ~5-10%. Chi tiết: studyinkorea.go.kr.
 
 HỌC BỔNG TRƯỜNG THEO TOPIK & GPA

@@ -40,7 +40,7 @@
 - Invoice học phí
 
 **A4. Chứng minh tài chính** *(checklist chi tiết theo hoàn cảnh gia đình)*
-- Sổ tiết kiệm tối thiểu 10.000 USD, đủ kỳ hạn 1 tháng
+- Sổ tiết kiệm tối thiểu 10.000 USD, kỳ hạn 6-12 tháng, mở trước 3-6 tháng
 - Giấy cam kết bảo lãnh (nếu người đứng tên khác học sinh)
 - Giấy tờ chứng minh quan hệ với người bảo lãnh
 - Dịch công chứng toàn bộ
@@ -52,7 +52,7 @@
 
 **A6. Nộp hồ sơ & theo dõi**
 - Đặt lịch hẹn ĐSQ/LSQ
-- Theo dõi thời gian xét duyệt (5-10 ngày làm việc chuẩn)
+- Theo dõi thời gian xét duyệt (13-20 ngày làm việc — theo thông báo chính thức KVAC: D-2/D-4 = 20 ngày)
 - Nhắc lịch nộp trước 2 tháng so với ngày nhập cảnh dự kiến
 
 ### Module B — Visa D-2 (đại học chính quy)

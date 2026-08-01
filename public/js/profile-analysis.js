@@ -12,7 +12,7 @@
   const MAX_GAP_YEARS = 2;
   const RISKY_AGE = 28;
   const MIN_SAVINGS_D41 = 10000;
-  const MIN_SAVINGS_D2 = 18000;
+  const MIN_SAVINGS_D2 = 15000;
 
   // ─── Risk weights: mỗi rủi ro có mức độ ảnh hưởng khác nhau ───
   const RISK_WEIGHT = {
@@ -144,7 +144,7 @@
       } else if (profile.consularRegion === 'lsq_hcm') {
         result.strengths.push('Nộp hồ sơ tại LSQ Hàn Quốc TP.HCM — tỉ lệ đậu visa thường cao hơn KVAC Hà Nội.');
         result.actions.push('Đặt lịch hẹn LSQ TP.HCM (địa chỉ: 107 Nguyễn Du, Quận 1).');
-        result.actions.push('Khám lao phổi tại bệnh viện ĐSQ chỉ định: BV Chợ Rẫy, Phước An (HEPA), ĐH Y Dược, Sante, Quốc tế Sài Gòn (TP.HCM) — kiểm tra danh sách mới trên website KVAC.');
+        result.actions.push('Khám lao phổi tại bệnh viện ĐSQ chỉ định: Phước An (HEPA), ĐH Y Dược, Sante, Quốc tế Sài Gòn (TP.HCM) — kiểm tra danh sách mới trên website KVAC.');
       }
     } else {
       result.missingEvidence.push('Chưa chọn vùng lãnh sự (KVAC Hà Nội / LSQ TP.HCM).');

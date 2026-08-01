@@ -479,7 +479,7 @@
         d41: '600,000–1,500,000/kỳ' },
       { label: 'Hồ sơ tài chính',
         d26: 'Sổ TK 10,000+ USD + giải trình nguồn',
-        d41: 'Sổ TK 8,000–10,000 USD' },
+        d41: 'Sổ TK 10,000+ USD' },
       { label: 'Chứng minh MOU',
         d26: 'Cần MOU giữa 2 trường',
         d41: 'Không cần MOU phức tạp' },

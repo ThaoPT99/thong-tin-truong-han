@@ -53,7 +53,7 @@
     // 3. Tài chính thấp
     var savings = profile.savingsAmount || 0;
     var visaType = profile.visaType || 'D-4-1';
-    var minSavings = visaType === 'D-2' ? 18000 : 10000;
+    var minSavings = visaType === 'D-2' ? 15000 : 10000;
     if (savings > 0 && savings < minSavings) {
       warnings.push({ icon: '💰', text: 'Sổ tiết kiệm ' + savings.toLocaleString() + ' USD — chưa đủ mức tối thiểu ' + minSavings.toLocaleString() + ' USD cho ' + visaType + '.', action: 'Xem hướng dẫn', actionSchool: 'checklist' });
       score -= 15;
