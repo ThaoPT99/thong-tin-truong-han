@@ -210,8 +210,14 @@ function renderSchool(schoolId) {
     : videoLinkHtml || (s.video?.title ? `<span>${s.video.title}</span>` : "");
 
   const partnersToText = (arr) => arr && arr.length
-    ? arr.map(p => `<span class="partner-tag">${escapeHtml(p.code || "")}</span> ${escapeHtml(p.name || "")}`).join("<br>")
-    : `<span class="muted-empty">Đang cập nhật</span>`;
+    ? arr.map(p => {
+        const name = escapeHtml(p.name || p.code || "");
+        const code = (p.code && p.name)
+          ? ` <span class="muted-empty" style="font-size:0.82rem;">(${escapeHtml(p.code)})</span>`
+          : "";
+        return name + code;
+      }).join("<br>")
+    : "";
 
   const mainImg = s.images?.main && s.images.main !== 'images/placeholder.svg'
     ? `<img class="detail-hero-img" src="${escapeHtml(s.images.main)}" alt="${escapeHtml(s.name)}" onerror="this.style.display='none'">`
@@ -317,7 +323,7 @@ function renderSchool(schoolId) {
         </article>
         <article class="detail-card detail-card-wide">
           <h3>Trường CĐ/ĐH tại Việt Nam</h3>
-          <div>${(s.mou ? renderText(s.mou) : "") || partnersToText(s.partners)}</div>
+          <div>${partnersToText(s.partners) || renderText(s.mou) || `<span class="muted-empty">Đang cập nhật</span>`}</div>
         </article>
       </div>
       <div class="copy-toast" hidden>Đã copy thông tin trường</div>
