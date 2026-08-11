@@ -4186,38 +4186,6 @@ html {
     background: #f8fafc;
 }
 
-/* ─── Mobile Tab Bar (visible only on mobile, shows tabs directly) ─── */
-.mobile-tab-bar {
-    display: none;
-}
-
-@media (max-width: 900px) {
-    .mobile-tab-bar {
-        display: flex;
-        flex: 0 0 auto;
-        gap: 6px;
-        padding: 0.5rem 0.75rem;
-        overflow-x: auto;
-        overflow-y: hidden;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
-        background: #fff;
-        border-bottom: 1px solid #e2e8f0;
-        position: sticky;
-        top: 0;
-        z-index: 50;
-    }
-    .mobile-tab-bar::-webkit-scrollbar {
-        display: none;
-    }
-    .mobile-tab-bar .tab-btn {
-        flex: 0 0 auto;
-        white-space: nowrap;
-        font-size: 0.82rem;
-        padding: 0.45rem 0.75rem;
-    }
-}
-
 /* ─── Sidebar Hamburger (mobile) ─── */
 .sidebar-hamburger {
     display: none;
@@ -4400,12 +4368,6 @@ body.sidebar-open {
         padding: 0;
     }
 
-    /* Hide main nav tabs in sidebar on mobile — they're in .mobile-tab-bar now */
-    /* Only hide DIRECT children of .tabs-inner, not submenu items */
-    .app-sidebar .tabs-inner > .tab-btn[data-school],
-    .app-sidebar .tabs-inner > .sidebar-divider {
-        display: none;
-    }
     .app-sidebar .school-tabs {
         margin-top: 1rem;
     }
@@ -5926,11 +5888,6 @@ body.sidebar-open {
     .app-sidebar::after {
         display: none;
     }
-    /* Hide main tabs in sidebar on mobile */
-    .app-sidebar .tabs-inner > .tab-btn[data-school],
-    .app-sidebar .tabs-inner > .sidebar-divider {
-        display: none;
-    }
     .app-sidebar .school-tabs {
         margin-top: 0.5rem;
         background: transparent !important;
@@ -5962,34 +5919,6 @@ body.sidebar-open {
         font-size: 0.82rem !important;
         padding: 0.4rem 0.6rem !important;
         min-height: 2.2rem !important;
-    }
-
-    /* ─── Mobile Tab Bar ─── */
-    .mobile-tab-bar {
-        display: flex !important;
-        flex: 0 0 auto;
-        gap: 6px;
-        padding: 0.5rem 0.65rem;
-        overflow-x: auto;
-        overflow-y: hidden;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
-        background: #fff;
-        border-bottom: 1px solid #e2e8f0;
-        position: sticky;
-        top: 0;
-        z-index: 50;
-    }
-    .mobile-tab-bar::-webkit-scrollbar {
-        display: none;
-    }
-    .mobile-tab-bar .tab-btn {
-        flex: 0 0 auto;
-        white-space: nowrap;
-        font-size: 0.82rem;
-        padding: 0.4rem 0.7rem;
-        min-height: 2.2rem;
-        border-radius: 8px;
     }
 
     /* ─── School Grid ─── */
@@ -6387,11 +6316,8 @@ body.sidebar-open {
     }
 }
 
-/* ─── Hide mobile tab bar on desktop (≥901px) ─── */
+/* ─── Hide mobile menu controls on desktop (≥901px) ─── */
 @media (min-width: 901px) {
-    .mobile-tab-bar {
-        display: none !important;
-    }
     .sidebar-hamburger {
         display: none !important;
     }

@@ -2199,6 +2199,12 @@ function showSchool(viewId) {
     const tab = schoolVisa === 'D4-1' ? 'd4-1' : 'schools';
     document.querySelector(`[data-school="${tab}"]`)?.classList.add("active");
   }
+  // Mobile: hiển thị tên tab đang mở trên nút menu (hamburger)
+  const menuLabel = document.querySelector(".hamburger-label");
+  if (menuLabel) {
+    const activeSidebarTab = document.querySelector(".app-sidebar .tab-btn.active");
+    menuLabel.textContent = activeSidebarTab ? activeSidebarTab.textContent.trim() : "Menu";
+  }
   updateUrlForView(viewId);
   updatePageMeta(viewId, getSchoolById(viewId));
 
