@@ -55,20 +55,34 @@ function renderBullets(items, empty) {
   return '<ul class="dot-list compact">' + items.map(i => '<li>' + esc(i) + '</li>').join('') + '</ul>';
 }
 
+// Chuẩn hoá các mã lệch (typo) trong text MOU cũ về mã chuẩn
+const PARTNER_TYPO_MAP = { KTTU: 'KTTT', BCIT: 'BGIT', HPC: 'HPC-HP' };
+
+// Hiển thị đối tác VN với TÊN ĐẦY ĐỦ + mã viết tắt trong ngoặc, dạng 2 cột
 function renderPartnerTags(school) {
   const seen = {};
   const tags = [];
+  const add = (code, name) => {
+    const cc = PARTNER_TYPO_MAP[code] || code;
+    if (!cc || seen[cc]) return;
+    seen[cc] = true;
+    const match = (school.partners || []).find(x => x.code === cc || x.name === cc);
+    tags.push({ code: cc, name: (match && match.name) || name || '' });
+  };
+  // Ưu tiên dữ liệu partners (code + name) từ DB
+  (school.partners || []).forEach(p => add(p.code, p.name));
+  // MOU text chỉ chứa mã — map qua partners nếu có tên (kèm sửa mã lệch)
   if (school.mou) {
     school.mou.split(',').forEach(p => {
       const c = p.trim();
-      if (c && !seen[c]) { seen[c] = true; tags.push(c); }
+      if (c) add(c, '');
     });
   }
-  (school.partners || []).forEach(p => {
-    const k = p.code || p.name;
-    if (k && !seen[k]) { seen[k] = true; tags.push(k); }
-  });
-  return tags.length ? tags.join(' · ') : '<span class="muted">Đang cập nhật</span>';
+  if (!tags.length) return '<span class="muted">Đang cập nhật</span>';
+  return '<div style="display:flex;flex-wrap:wrap;gap:3px 14px;">' + tags.map(t => {
+    const codeHtml = t.code ? ' <span style="color:#64748b;font-size:9px;">(' + esc(t.code) + ')</span>' : '';
+    return '<div style="flex:0 0 calc(50% - 7px);min-width:0;line-height:1.6;">' + (t.name ? esc(t.name) : esc(t.code)) + codeHtml + '</div>';
+  }).join('') + '</div>';
 }
 
 function regionLabel(r) {
@@ -228,8 +242,9 @@ async function main() {
     const tuiLines = (s.tuition || '').split('\n').length + Math.floor((s.tuition || '').length / 45);
     const ktxLines = (s.ktx || '').split('\n').length + Math.floor((s.ktx || '').length / 45);
     h += Math.max(tuiLines, ktxLines) * 21 + secH + gap;
-    // Partners
-    h += 25 + gap;
+    // Partners (tên đầy đủ, 2 cột)
+    const partnerRows = Math.ceil(Math.max((s.partners || []).length, s.mou ? 15 : 0) / 2);
+    h += partnerRows * 18 + secH + gap;
     // Note card
     h += 80;
     // Available content height in print: ~940px (1017 − header 23 − body pad 48 − footer 8)
@@ -664,10 +679,12 @@ async function main() {
         </div>
       </div>
 
+      ${(s.partners && s.partners.length) || s.mou ? `
       <div style="margin-top:12px;">
         <h4 class="section-title">🤝 Đối tác Việt Nam</h4>
         <div class="partner-box">${renderPartnerTags(s)}</div>
       </div>
+      ` : ''}
 
       ${!needsSeparate && s.documents.length > 0 ? `
       <div style="margin-top:12px;">
@@ -769,8 +786,8 @@ async function main() {
     const tuitionShort = (s.tuition || '').replace(/\n/g, ' ').substring(0, 35) || '—';
     const ktxShort = (s.ktx || '').replace(/\n/g, ' ').substring(0, 30) || '—';
     let partnerStr = '—';
-    if (s.mou) partnerStr = esc(s.mou.substring(0, 18));
-    else if (s.partners.length) partnerStr = s.partners.length + ' đối tác';
+    if (s.partners.length) partnerStr = s.partners.length + ' đối tác VN';
+    else if (s.mou) partnerStr = esc(s.mou.substring(0, 18));
     return `<tr class="${regionClass(s.region)}">
       <td>${i + 1}</td>
       <td><strong>${esc(s.name)}</strong></td>
