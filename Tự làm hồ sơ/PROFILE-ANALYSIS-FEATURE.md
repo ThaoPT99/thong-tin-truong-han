@@ -87,7 +87,7 @@ window.analyzeStudentProfile(profile)
 | **Nhân thân** | Tuổi 18-25 là lý tưởng; >28 là rủi ro; Nam có rủi ro cao hơn nữ; Khu vực có tỉ lệ vi phạm cao (Nghệ An, Hà Tĩnh,...) |
 | **Học vấn** | GPA >= 7 tốt; GPA < 5 rủi ro; TOPIK 3+ lợi thế; Gap > 2 năm cần giải trình |
 | **Kinh nghiệm** | Có HĐLĐ = điểm mạnh; Gap + không việc = rủi ro |
-| **Tài chính** | Sổ tiết kiệm >= 10,000 USD (D-4-1) / 18,000 USD (D-2); Bảo lãnh từ người thân khác = rủi ro |
+| **Tài chính** | Sổ tiết kiệm >= 10,000 USD (D-4-1) / 10,000-20,000 USD tuỳ trường (D-2, trung bình 15,000 USD); Bảo lãnh từ người thân khác = rủi ro |
 | **Nhập cảnh** | Trượt visa = cần giải trình + chờ 3 tháng |
 | **Gia đình** | Người thân bất hợp pháp = rủi ro cực cao |
 

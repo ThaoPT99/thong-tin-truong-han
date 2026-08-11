@@ -2529,8 +2529,8 @@ KIẾN THỨC NỀN TẢNG VỀ VISA — QUY CHUẨN HỒ SƠ
 1. ĐẶC ĐIỂM CÁC LOẠI VISA DU HỌC
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-• D-4-1 (Học tiếng Hàn): Thời hạn 6 tháng/lần, gia hạn tối đa 2 năm. KHÔNG yêu cầu TOPIK đầu vào. Tài chính $10,000+. Làm thêm sau 6 tháng (10-25h/tuần tuỳ TOPIK). Có thể chuyển lên D-2 sau khi đạt TOPIK 3+.
-• D-2 (Đại học chính quy): Thời hạn 1-2 năm/lần. Yêu cầu TOPIK 3+ hoặc IELTS 5.5+. Tài chính $10,000-$20,000. Làm thêm 25-30h/tuần. Có thể ở lại E7 sau tốt nghiệp.
+• D-4-1 (Học tiếng Hàn): Thời hạn 6 tháng/lần, gia hạn tối đa 2 năm. KHÔNG yêu cầu TOPIK đầu vào. Tài chính $10,000+. Làm thêm sau 6 tháng (TOPIK 2+ → 20h/tuần, trường đạt chuẩn 25h; chưa đạt chuẩn chỉ 10h). Có thể chuyển lên D-2 sau khi đạt TOPIK 3+.
+• D-2 (Đại học chính quy): Thời hạn 1-2 năm/lần. Yêu cầu TOPIK 3+ hoặc IELTS 5.5+. Tài chính $10,000-$20,000. Làm thêm: ĐH 20h/tuần (trường đạt chuẩn 25h), Cao học 30h/tuần (cần TOPIK 4). Có thể ở lại E7 sau tốt nghiệp.
   - D-2-1: Cao đẳng (Associate Degree)
   - D-2-2: Cử nhân (Bachelor's Degree)
   - D-2-6: Trao đổi sinh viên (Exchange Student) — dễ xin hơn D-2-2
@@ -2550,7 +2550,7 @@ KIẾN THỨC NỀN TẢNG VỀ VISA — QUY CHUẨN HỒ SƠ
 • Sổ tiết kiệm phải mở tại quầy giao dịch (không chấp nhận online). Kỳ hạn 12 tháng khuyến nghị.
 • Thời điểm mở: tối thiểu 3 tháng trước khi nộp, khuyến nghị 6 tháng.
 • Sao kê phải thể hiện lịch sử giao dịch ỔN ĐỊNH, tránh nạp tiền "sốc".
-• Hồ sơ có sổ TK mở trước 6 tháng có tỉ lệ đậu cao hơn 35% so với mở trước 1-2 tháng.
+• Kinh nghiệm thực tế: hồ sơ có sổ TK mở trước 6 tháng thường được đánh giá cao hơn so với mở trước 1-2 tháng (không có thống kê chính thức).
 • K-Study (sổ đóng băng ngân hàng Hàn Quốc tại VN) được ĐSQ ưu tiên cao hơn sổ thường.
   - D-4-1: 8,000,000-10,000,000 KRW (~$6,000-$7,500)
   - D-2: 15,000,000-20,000,000 KRW (~$11,000-$15,000)

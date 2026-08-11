@@ -34,7 +34,7 @@ const d41Schools = [
       'Trống học < 2 năm',
       'Hạn chế học sinh khu vực miền Trung',
       'Bắt buộc mở K-study 10 triệu won',
-      'Trường nữ sinh (chỉ nhận nữ)'
+      'Trường nữ sinh — đại học chính quy chỉ nhận nữ; chương trình tiếng Hàn nhận cả nam và nữ'
     ],
     advantages: [
       'Trường nữ tư thục lâu đời tại Seoul (thành lập 1936)',
@@ -285,7 +285,7 @@ const d41Schools = [
     region: 'seoul',
     location: '25-2 Sungkyunkwan-ro, Jongno-gu, Seoul & Suwon, Gyeonggi',
     quota: 0,
-    tuition: 'Seoul: 1,780,000 KRW/kỳ / Suwon: 1,500,000 KRW/kỳ',
+    tuition: 'Seoul: 1,780,000 KRW/kỳ / Suwon: 1,500,000 KRW/kỳ (lưu ý: chương trình tiếng Hàn hiện tập trung tại campus Seoul)',
     ktx: 'Theo campus',
     intro: 'Sungkyunkwan University (SKKU) là trường đại học lâu đời nhất Hàn Quốc, được Samsung bảo trợ. SKKU có 2 campus: Seoul (Nhân văn) và Suwon (Khoa học). Lưu ý: Từ 2026, SKKU đã chuyển từ 6 kỳ/năm sang 4 kỳ/năm. Chương trình tiếng Hàn học thuật cao, phù hợp học lên chuyên ngành.',
     website: 'https://koreansli.skku.edu/',

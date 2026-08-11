@@ -579,7 +579,7 @@
     const vt = profile.visaType || 'D-4-1';
     const hints = {
       'D-4-1': 'Tối thiểu 10,000 USD (~250 triệu VND) cho D-4-1. Có thể cao hơn tuỳ trường.',
-      'D-2': 'Tối thiểu 18,000-20,000 USD (~450-500 triệu VND) cho D-2. Yêu cầu cao hơn D-4-1 đáng kể!',
+      'D-2': 'Tối thiểu 10,000-20,000 USD tuỳ trường/khu vực cho D-2 (Seoul thường 18,000-20,000 USD; trường tỉnh 10,000-15,000 USD). Yêu cầu cao hơn D-4-1 đáng kể!',
       'D4-to-D2': 'Thường yêu cầu 10,000-18,000 USD tuỳ trường. Nếu đã có visa D-4-1, một số trường chấp nhận mức thấp hơn.',
     };
     return hints[vt] || hints['D-4-1'];
@@ -587,7 +587,7 @@
 
   function getVisaMinSavings() {
     const vt = profile.visaType || 'D-4-1';
-    const thresholds = { 'D-4-1': 10000, 'D-2': 18000, 'D4-to-D2': 10000 };
+    const thresholds = { 'D-4-1': 10000, 'D-2': 15000, 'D4-to-D2': 10000 };
     return thresholds[vt] || 10000;
   }
 
