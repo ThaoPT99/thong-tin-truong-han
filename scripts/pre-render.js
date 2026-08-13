@@ -578,6 +578,13 @@ function buildSitemap(schools, semesterInfo) {
     <priority>1.0</priority>
   </url>`);
 
+  // Trang chương trình K-TECH Bridge (landing page tĩnh)
+  urls.push(`  <url>
+    <loc>${SITE_URL}/k-tech-bridge/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>`);
+
   // Trang từng trường
   for (const school of schools) {
     urls.push(`  <url>
