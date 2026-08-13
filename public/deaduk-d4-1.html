@@ -1,0 +1,1605 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cẩm nang Tuyển sinh Đại học Daeduk — Visa D4-1</title>
+<meta name="description" content="Cẩm nang tuyển sinh chương trình D4-1 tại Đại học Daeduk (Daejeon, Hàn Quốc): lộ trình học tiếng → chuyên ngành → thực tập hưởng lương 40–41 triệu/tháng, mạng lưới 65 doanh nghiệp đối tác, điều kiện tuyển sinh và gói tài chính.">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Noto+Sans:wght@400;600;700&family=Libre+Baskerville:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:  #1B3A6B;
+  --accent:#C0272D;
+  --blue:  #2E6DB4;
+  --gold:  #C9A84C;
+  --white: #fff;
+  --off-white: #f7f8fa;
+  --gray:  #6b7280;
+  --light-gray: #e8ecf0;
+  --text:  #1a1a2e;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background: #e9eef5;
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.65;
+}
+
+/* ─── Print button ─── */
+.print-btn {
+  position: fixed; top: 16px; right: 16px; z-index: 9999;
+  background: var(--accent); color: white;
+  border: none; padding: 10px 22px; border-radius: 6px;
+  font-family: 'Montserrat', sans-serif; font-weight: 700;
+  cursor: pointer; font-size: 13px; letter-spacing: 0.5px;
+  box-shadow: 0 4px 16px rgba(192,39,45,0.4);
+}
+.print-btn:hover { background: #a01f24; }
+
+/* ─── Page ─── */
+.page {
+  width: 595px;
+  min-height: 842px;
+  background: white;
+  margin: 0 auto 32px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+  page-break-after: always;
+}
+@media print {
+  body {
+    background: white;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  @page {
+    margin: 0;
+    size: A4;
+  }
+  .print-btn { display: none; }
+  .page {
+    width: 210mm;
+    height: 297mm;
+    min-height: 297mm;
+    padding: 14mm 18mm;
+    margin: 0;
+    box-shadow: none;
+    page-break-after: always;
+  }
+  .page-body {
+    padding: 8px 0 40px;
+    min-height: 0;
+  }
+  .side-bar { display: none; }
+  .backcover-stats {
+    backdrop-filter: none;
+    background: rgba(255,255,255,0.15);
+  }
+  .bc-card {
+    background: rgba(255,255,255,0.12);
+  }
+  .page-body-cover {
+    padding: 0;
+    min-height: 0;
+  }
+  .page-cover {
+    display: flex;
+    flex-direction: column;
+  }
+  .page-cover .page-body-cover {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .page-cover .cover-wrap {
+    flex: 1;
+    min-height: 0;
+    height: auto;
+  }
+  .page-cover .backcover-wrap {
+    flex: 1;
+    min-height: 0;
+    height: auto;
+  }
+  .page-header {
+    padding: 6px 0;
+  }
+  .cover-overlay {
+    background: linear-gradient(135deg, rgb(13 27 51 / 0%) 0%, rgb(13 27 51 / 0%) 45%, rgb(13 27 51 / 0%) 100%);
+  }
+  .cover-tagline {
+    backdrop-filter: none;
+    background: rgba(27,58,107,0.9);
+  }
+  .cover-bottom-bar {
+    backdrop-filter: none;
+    background: rgba(10,22,40,0.9);
+  }
+  .cover-accent-line {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+/* ─── Header ─── */
+.page-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 24px;
+  border-bottom: 1px solid var(--light-gray);
+  font-size: 11px;
+  color: var(--gray);
+}
+.ph-left { display: flex; align-items: center; gap: 6px; font-weight: 600; }
+.ph-logo { font-size: 14px; }
+.ph-right { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 10px; letter-spacing: 0.5px; color: var(--accent); }
+
+/* ─── Side accent ─── */
+.side-bar {
+  position: absolute; right:0; top:0; bottom:0;
+  width: 6px; background: var(--accent);
+}
+
+/* ─── Body ─── */
+.page-body {
+  padding: 12px 20px 40px;
+  min-height: 760px;
+  position: relative;
+}
+.page-body-cover { padding: 0; min-height: 842px; }
+
+/* ─── Footer ─── */
+.page-footer-bar {
+  position: absolute; bottom:0; left:0; right:0;
+  height: 8px; background: var(--accent);
+}
+.page-num {
+  position: absolute; bottom: 16px; left:50%; transform:translateX(-50%);
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700; font-size: 11px; color: var(--gray);
+}
+
+/* ─── Cover ─── */
+.cover-wrap {
+  min-height: 842px; position: relative; overflow: hidden;
+  display: flex; flex-direction: column;
+  background: #0d1b33;
+}
+.cover-bg-img {
+  position: absolute; inset:0;
+  background-size: cover; background-position: center;
+  opacity: 1;
+}
+.cover-overlay {
+  position: absolute; inset:0; z-index:1;
+  background: linear-gradient(135deg, rgb(13 27 51 / 0%) 0%, rgb(13 27 51 / 0%) 45%, rgb(13 27 51 / 0%) 100%);
+}
+.cover-accent-line {
+  position: absolute; top: 0; left: 0; right: 0; z-index:3;
+  height: 5px;
+  background: linear-gradient(90deg, var(--accent), var(--gold), var(--accent));
+}
+.cover-inner {
+  position: relative; z-index:2;
+  flex:1; display:flex; flex-direction:column;
+  padding: 50px 44px; justify-content: center;
+}
+.cover-badge {
+  display: inline-block; align-self:flex-start;
+  padding: 6px 18px;
+  background: rgba(0,0,0,0.55);
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  border-radius: 999px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700; font-size: 9px; letter-spacing: 2.5px;
+  text-transform: uppercase; margin-bottom: 24px;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.6);
+}
+.cover-title {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900; font-size: 46px; line-height: 1.08;
+  color: white; margin-bottom: 4px;
+  letter-spacing: -1px;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.4);
+}
+.cover-title .gold { color: var(--gold); }
+.cover-divider {
+  width: 60px; height: 3px;
+  background: linear-gradient(90deg, var(--gold), var(--accent));
+  margin: 12px 0 14px;
+  border-radius: 2px;
+}
+.cover-subtitle {
+  font-size: 13px; color: rgba(255,255,255,0.9);
+  margin-bottom: 10px; line-height: 1.6;
+  max-width: 430px;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+.cover-subtitle strong { color: var(--gold); }
+.cover-visa {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900; font-size: 60px; line-height: 1;
+  color: var(--accent); letter-spacing: -2px;
+  text-transform: uppercase; margin-bottom: 18px;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.4);
+}
+.cover-tagline {
+  display: inline-block; align-self:flex-start;
+  background: rgba(0,0,0,0.55);
+  border: 1px solid rgba(255,255,255,0.15);
+  backdrop-filter: blur(6px);
+  padding: 14px 22px; max-width: 360px;
+  border-radius: 6px;
+}
+.cover-tagline h3 {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800; font-size: 11px; color: var(--gold);
+  text-transform: uppercase; letter-spacing: 0.5px;
+  margin-bottom: 4px;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.5);
+}
+.cover-tagline p {
+  font-family: 'Libre Baskerville', serif;
+  font-style: italic; font-size: 10px; color: rgba(255,255,255,0.9);
+  line-height: 1.5;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.4);
+}
+.cover-bottom-bar {
+  position: absolute; bottom:0; left:0; right:0; z-index:3;
+  background: rgba(10,22,40,0.75);
+  backdrop-filter: blur(4px);
+  height: 44px;
+  display: flex; align-items: center; justify-content: center; gap: 24px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+.cover-bottom-bar span {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700; font-size: 9px; color: rgba(255,255,255,0.8);
+  letter-spacing: 2.5px; text-transform: uppercase;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+.cover-bottom-bar .sep { color: rgba(255,255,255,0.15); }
+
+/* ─── Titles ─── */
+.page-title {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900; font-size: 26px; line-height: 1.15;
+  color: var(--accent); text-transform: uppercase;
+  margin-bottom: 10px; letter-spacing: -0.3px;
+}
+.toc-title { text-align: center; font-size: 36px; margin: 20px 0; }
+.section-badge {
+  display: inline-block;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700; font-size: 10px; letter-spacing: 1.5px;
+  color: var(--accent); text-transform: uppercase;
+  margin-bottom: 2px;
+}
+.section-subtitle {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700; font-size: 13px; text-transform: uppercase;
+  color: var(--navy); margin: 10px 0 4px;
+  letter-spacing: 0.5px;
+}
+.section-title {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700; font-size: 11px; text-transform: uppercase;
+  color: var(--accent); letter-spacing: 0.3px;
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 2px; margin: 8px 0 4px;
+}
+
+/* ─── Body text ─── */
+.body-text { font-size: 13px; line-height: 1.7; color: #2a2a3a; }
+.body-text p { margin-bottom: 6px; }
+
+/* ─── TOC ─── */
+.toc-overlay-row {
+  margin-top: -50px;
+  position: relative;
+  z-index: 2;
+  background: linear-gradient(135deg, var(--navy) 0%, #264d8a 100%);
+  border-radius: 8px;
+  padding: 18px 20px 14px;
+  margin-left: 8px;
+  margin-right: 8px;
+}
+.toc-overlay-badge {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700; font-size: 8px; letter-spacing: 2px;
+  color: var(--gold); text-transform: uppercase;
+  margin-bottom: 2px;
+}
+.toc-overlay-title {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900; font-size: 32px;
+  color: white; line-height: 1.1;
+  letter-spacing: -0.5px;
+}
+.toc-overlay-sub {
+  font-size: 9px; color: rgba(255,255,255,0.5);
+  margin-top: 2px;
+}
+.toc-sections {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.toc-group {
+  border: 1px solid var(--light-gray);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.toc-group-title {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800; font-size: 10px;
+  color: var(--navy);
+  padding: 6px 12px;
+  background: var(--off-white);
+  border-bottom: 1px solid var(--light-gray);
+  letter-spacing: 0.5px;
+}
+.toc-group-items {
+  display: flex;
+  flex-direction: column;
+}
+.toc-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 12px;
+  border-bottom: 1px solid #f0f0f4;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+.toc-item:last-child { border-bottom: none; }
+.toc-item-icon {
+  font-size: 18px;
+  width: 28px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.toc-item-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.toc-item-label {
+  font-weight: 700;
+  font-size: 11px;
+  color: var(--navy);
+  line-height: 1.3;
+}
+.toc-item-desc {
+  font-size: 10px;
+  color: var(--gray);
+  line-height: 1.3;
+  margin-top: 1px;
+}
+.toc-item-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  flex-shrink: 0;
+}
+.toc-item-page {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  font-size: 11px;
+  color: var(--accent);
+}
+.toc-item-badge {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  font-size: 8px;
+  color: var(--gray);
+  background: var(--off-white);
+  padding: 1px 6px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.toc-stats {
+  display: flex;
+  gap: 0;
+  margin-top: 12px;
+  background: var(--off-white);
+  border: 1px solid var(--light-gray);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.toc-stat {
+  flex: 1;
+  text-align: center;
+  padding: 8px 4px;
+  border-right: 1px solid var(--light-gray);
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.toc-stat:last-child { border-right: none; }
+.toc-stat-num {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900;
+  font-size: 22px;
+  color: var(--accent);
+  line-height: 1;
+}
+.toc-stat-label {
+  font-size: 9px;
+  color: var(--gray);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+/* ─── Info cards ─── */
+.info-card {
+  padding: 10px 12px;
+  background: var(--off-white);
+  border: 1px solid var(--light-gray);
+  border-radius: 4px;
+  font-size: 12px; line-height: 1.55;
+  margin-bottom: 6px;
+}
+.info-card strong { color: var(--navy); display: block; margin-bottom: 2px; }
+.card-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 6px 0; }
+.card-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin: 6px 0; }
+.card-stack { margin: 6px 0; }
+.warn-box {
+  padding: 10px 12px;
+  border-left: 3px solid var(--gold);
+  background: #fffbeb;
+  font-size: 11px; margin: 8px 0; line-height: 1.55;
+}
+.tip-box {
+  padding: 10px 12px;
+  border-left: 3px solid var(--blue);
+  background: #f0f7ff;
+  font-size: 11px; margin: 8px 0; line-height: 1.55;
+}
+
+/* ─── Strength cards (why Daeduk) ─── */
+.str-card {
+  padding: 12px 14px;
+  background: var(--off-white);
+  border: 1px solid var(--light-gray);
+  border-left: 4px solid var(--accent);
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+.str-card .str-num {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900; font-size: 11px; color: var(--gold);
+  letter-spacing: 0.5px; margin-bottom: 2px;
+}
+.str-card strong {
+  display: block; color: var(--navy);
+  font-size: 13px; margin-bottom: 2px;
+}
+.str-card p { font-size: 11.5px; color: #444; }
+
+/* ─── Major chips ─── */
+.major-chip {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 14px;
+  background: #f0f4ff;
+  border: 1px solid #dbeafe;
+  border-radius: 6px;
+  font-size: 12.5px; font-weight: 700; color: var(--navy);
+  margin-bottom: 6px;
+}
+.major-chip .mc-num {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900; font-size: 10px; color: white;
+  background: linear-gradient(135deg, var(--accent), var(--gold));
+  border-radius: 4px; width: 22px; height: 22px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ─── Condition grid ─── */
+.cond-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 6px 0; }
+.cond-cell {
+  padding: 10px 12px;
+  background: var(--off-white);
+  border: 1px solid var(--light-gray);
+  border-radius: 4px;
+}
+.cond-cell .cc-label {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 9px; font-weight: 700; letter-spacing: 0.8px;
+  text-transform: uppercase; color: var(--gray);
+  margin-bottom: 2px;
+}
+.cond-cell .cc-value { font-size: 13px; font-weight: 800; color: var(--navy); }
+.cond-cell.hl { border-color: var(--accent); background: #fdf1f1; }
+.cond-cell.hl .cc-value { color: var(--accent); }
+
+/* ─── Route bar (D4-1 route) ─── */
+.route-bar {
+  display: flex; align-items: stretch; gap: 0;
+  margin: 10px 0; page-break-inside: avoid;
+}
+.route-step {
+  flex: 1; padding: 10px 6px; text-align: center;
+}
+.route-step .ri { font-size: 20px; display: block; margin-bottom: 2px; }
+.route-step .rl { font-weight: 800; font-size: 12px; display: block; }
+.route-step .rd { font-size: 9px; color: var(--gray); display: block; line-height: 1.4; }
+.route-arrow {
+  display: flex; align-items: center;
+  font-size: 20px; color: var(--gray); padding: 0 2px;
+}
+.r1 { background: #dbeafe; border-radius: 6px 0 0 6px; } .r1 .rl { color: #1d4ed8; }
+.r2 { background: #e0f2fe; } .r2 .rl { color: #0369a1; }
+.r3 { background: #ccfbf1; } .r3 .rl { color: #0f766e; }
+.r4 { background: #fef3c7; border-radius: 0 6px 6px 0; } .r4 .rl { color: #b45309; }
+
+/* ─── Timeline (6 giai đoạn) ─── */
+.timeline {
+  margin: 10px 0;
+  position: relative;
+}
+.tl-step {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 6px;
+}
+.tl-marker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 28px;
+  flex-shrink: 0;
+}
+.tl-dot {
+  width: 28px; height: 28px;
+  background: var(--navy);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900;
+  font-size: 12px;
+  position: relative;
+  z-index: 2;
+  flex-shrink: 0;
+}
+.tl-line {
+  width: 2px;
+  flex: 1;
+  background: linear-gradient(180deg, var(--navy) 0%, var(--accent) 100%);
+  margin: 2px 0;
+  min-height: 20px;
+}
+.tl-card {
+  flex: 1;
+  background: var(--off-white);
+  border: 1px solid var(--light-gray);
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin-bottom: 2px;
+}
+.tl-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 3px;
+}
+.tl-step-num {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 10px;
+  color: var(--accent);
+  letter-spacing: 0.5px;
+}
+.tl-step-time {
+  font-size: 10px;
+  color: var(--gray);
+  font-weight: 600;
+}
+.tl-card-title {
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--navy);
+  margin-bottom: 5px;
+  line-height: 1.3;
+}
+.tl-card-body {
+  font-size: 10.5px;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+/* ─── Deadline table ─── */
+.deadline-table { width: 100%; border-collapse: collapse; font-size: 11px; margin: 6px 0; }
+.deadline-table th {
+  background: var(--navy); color: white;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700; padding: 6px 8px; text-align: left;
+  font-size: 9px; text-transform: uppercase; letter-spacing: 0.5px;
+}
+.deadline-table td { padding: 6px 8px; border-bottom: 1px solid var(--light-gray); }
+.deadline-table tr:nth-child(even) td { background: var(--off-white); }
+.deadline-table .ddeadline { font-weight: 900; color: var(--accent); font-size: 12px; }
+
+/* ─── Finance box ─── */
+.fin-hero {
+  background: linear-gradient(135deg, var(--navy), #264d8a);
+  border-radius: 8px;
+  color: white;
+  padding: 16px 20px;
+  margin: 10px 0;
+  text-align: center;
+}
+.fin-hero .fh-label {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 9px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--gold);
+  margin-bottom: 4px;
+}
+.fin-hero .fh-price {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900; font-size: 44px; line-height: 1;
+  letter-spacing: -1px;
+}
+.fin-hero .fh-price small { font-size: 16px; font-weight: 700; color: rgba(255,255,255,0.7); }
+.fin-hero .fh-note { font-size: 10px; color: rgba(255,255,255,0.65); margin-top: 4px; }
+.fin-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 8px 0; }
+.fin-col {
+  border-radius: 6px;
+  padding: 12px 14px;
+}
+.fin-col.in { background: #ecfdf5; border: 1px solid #a7f3d0; }
+.fin-col.out { background: #fef2f2; border: 1px solid #fecaca; }
+.fin-col-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 10px; font-weight: 800; letter-spacing: 1px;
+  text-transform: uppercase; margin-bottom: 8px;
+}
+.fin-col.in .fin-col-title { color: #047857; }
+.fin-col.out .fin-col-title { color: #b91c1c; }
+.fin-item {
+  display: flex; gap: 8px; align-items: flex-start;
+  font-size: 11.5px; line-height: 1.5; color: #333;
+  padding: 3px 0;
+}
+.fin-item .ck { flex-shrink: 0; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 900; margin-top: 1px; }
+.fin-col.in .ck { background: rgba(16,185,129,0.18); color: #047857; }
+.fin-col.out .ck { background: rgba(220,38,38,0.12); color: #b91c1c; }
+.fin-item strong { color: var(--navy); }
+
+/* ─── Company list ─── */
+.company-note {
+  padding: 10px 12px;
+  background: #f0f4ff;
+  border: 1px solid #dbeafe;
+  border-left: 4px solid var(--blue);
+  border-radius: 4px;
+  font-size: 11.5px; line-height: 1.6; color: #333;
+  margin: 8px 0;
+}
+.company-note strong { color: var(--navy); }
+.industry-chips { display: flex; flex-wrap: wrap; gap: 5px; margin: 8px 0; }
+.ind-chip {
+  font-size: 10px; font-weight: 700;
+  padding: 4px 12px; border-radius: 999px;
+  background: var(--off-white);
+  border: 1.5px solid var(--light-gray);
+  color: var(--navy);
+}
+.company-table { width: 100%; border-collapse: collapse; font-size: 9.5px; margin: 6px 0; }
+.company-table th {
+  background: var(--navy); color: white;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700; padding: 5px 6px; text-align: left;
+  font-size: 8px; text-transform: uppercase; letter-spacing: 0.5px;
+}
+.company-table td { padding: 3px 6px; border-bottom: 1px solid var(--light-gray); vertical-align: top; line-height: 1.45; }
+.company-table tr:nth-child(even) td { background: var(--off-white); }
+.company-table .c-num { width: 22px; text-align: center; font-weight: 700; color: var(--accent); font-size: 9px; }
+.company-table .c-ko { color: var(--gray); font-size: 9px; }
+.company-table .c-vn { font-weight: 600; }
+.company-table tr.core td { background: #fdf3e0 !important; }
+.company-table tr.core .c-num::after { content: ' ★'; color: var(--gold); }
+
+/* ─── Visa advantage ─── */
+.visa-box {
+  border: 1.5px solid var(--blue);
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 10px 0;
+}
+.visa-box .vb-head {
+  background: linear-gradient(135deg, var(--blue), var(--navy));
+  color: white;
+  padding: 12px 16px;
+}
+.visa-box .vb-head .vb-tag {
+  display: inline-block;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 8px; font-weight: 800; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--gold);
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.25);
+  padding: 2px 10px; border-radius: 999px;
+  margin-bottom: 6px;
+}
+.visa-box .vb-head h3 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 15px; font-weight: 800;
+}
+.visa-box .vb-head p { font-size: 11px; color: rgba(255,255,255,0.8); margin-top: 2px; }
+.visa-box .vb-body { padding: 12px 16px; background: #f0f7ff; }
+.visa-box .vb-body ol { padding-left: 18px; font-size: 11.5px; line-height: 1.65; color: #333; }
+.visa-box .vb-body li { margin-bottom: 4px; }
+.visa-box .vb-body li strong { color: var(--navy); }
+
+/* ─── FAQ ─── */
+.faq-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin: 6px 0;
+}
+.faq-card {
+  padding: 10px 12px;
+  background: var(--off-white);
+  border: 1px solid var(--light-gray);
+  border-radius: 6px;
+  font-size: 11px; line-height: 1.55;
+}
+.faq-card strong {
+  display: block;
+  color: var(--navy);
+  margin-bottom: 2px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.faq-card p { font-size: 11px; color: var(--gray); margin: 0; }
+
+/* ─── Back Cover ─── */
+.backcover-wrap {
+  min-height: 842px; position: relative; overflow: hidden;
+  display: flex; flex-direction: column;
+  background: none;
+}
+.backcover-bg {
+  position: absolute; inset:0;
+  background-size: cover; background-position: center;
+  opacity: 1;
+}
+.backcover-overlay {
+  position: absolute; inset:0; z-index:1;
+  background: linear-gradient(135deg, rgb(13 27 51 / 0%) 0%, rgb(13 27 51 / 0%) 45%, rgb(13 27 51 / 0%) 100%);
+}
+.backcover-accent-bar {
+  position: absolute; left:0; right:0; top:0;
+  height: 5px;
+  background: linear-gradient(90deg, var(--accent), var(--gold), var(--accent));
+  z-index:2;
+}
+.backcover-top {
+  position: relative; z-index:2;
+  padding: 36px 30px 12px;
+}
+.backcover-badge {
+  display: inline-block;
+  padding: 4px 14px;
+  background: rgba(0,0,0,0.55);
+  border: 1px solid rgba(201,168,76,0.3);
+  border-radius: 999px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700; font-size: 8px; letter-spacing: 2px;
+  color: var(--gold); text-transform: uppercase;
+  margin-bottom: 10px;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.5);
+}
+.backcover-title {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900; font-size: 34px;
+  color: white; line-height: 1.1;
+  letter-spacing: -0.5px;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.8), 0 4px 40px rgba(0,0,0,0.5);
+}
+.backcover-divider {
+  width: 50px; height: 3px;
+  background: linear-gradient(90deg, var(--gold), var(--accent));
+  margin: 14px 0 16px;
+  border-radius: 2px;
+}
+.backcover-stats {
+  position: relative; z-index:2;
+  display: flex; gap: 0;
+  margin: 0 24px;
+  background: rgba(255,255,255,0.18);
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.35);
+}
+.bc-stat {
+  flex: 1; text-align: center;
+  padding: 16px 8px;
+  display: flex; flex-direction: column;
+  gap: 3px;
+  border-right: 1px solid rgba(255,255,255,0.2);
+}
+.bc-stat:last-child { border-right: none; }
+.bc-stat-num {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900; font-size: 28px;
+  color: var(--navy);
+  line-height: 1;
+  text-shadow: none;
+}
+.bc-stat-label {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700; font-size: 8px;
+  color: rgba(27,58,107,0.75);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-shadow: none;
+}
+.backcover-quote {
+  position: relative; z-index:2;
+  padding: 16px 30px;
+  flex: 1;
+  display: flex; flex-direction: column;
+  justify-content: center;
+}
+.bc-quote-mark {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 60px; line-height: 0.5;
+  color: var(--gold);
+  opacity: 0.5;
+  margin-bottom: 2px;
+}
+.backcover-quote p {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 12px; line-height: 1.65;
+  color: rgba(255,255,255,0.9);
+  font-style: italic;
+  max-width: 90%;
+  text-shadow: 0 1px 10px rgba(0,0,0,0.6);
+}
+.backcover-quote .bc-quote-author {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 9px;
+  color: rgba(255,255,255,0.4);
+  margin-top: 6px;
+  letter-spacing: 1px;
+  font-style: normal;
+  text-transform: uppercase;
+}
+.backcover-cards {
+  position: relative; z-index:2;
+  display: flex; gap: 10px;
+  padding: 0 24px 14px;
+}.bc-card {
+  flex: 1;
+  padding: 14px;
+  background: rgba(255,255,255,0.16);
+  border: 1px solid rgba(255,255,255,0.35);
+  border-radius: 8px;
+  text-decoration: none;
+  display: flex; flex-direction: column;
+  gap: 4px;
+  transition: background 0.2s, border-color 0.2s;
+}
+.bc-card:hover { 
+  background: rgba(255,255,255,0.3); 
+  border-color: rgba(201,168,76,0.6);
+}
+.bc-card-icon { font-size: 24px; }
+.bc-card-title {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800; font-size: 10px;
+  color: var(--navy);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-shadow: none;
+}
+.bc-card-desc {
+  font-size: 9px; color: rgba(27,58,107,0.75);
+  line-height: 1.4;
+  text-shadow: none;
+}
+.bc-card-link {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700; font-size: 8px;
+  color: var(--accent);
+  letter-spacing: 0.3px;
+  margin-top: 2px;
+}
+.backcover-footer {
+  position: relative; z-index:2;
+  padding: 0 30px 24px;
+  text-align: center;
+}
+.bc-footer-line {
+  width: 100%; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  margin-bottom: 10px;
+}
+.bc-footer-text {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700; font-size: 9px;
+  color: rgba(255,255,255,0.6);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+.bc-footer-sub {
+  font-size: 8px;
+  color: rgba(255,255,255,0.25);
+  margin-top: 3px;
+}
+
+/* ─── Utils ─── */
+.muted { color: var(--gray); font-style: italic; font-size: 10px; }
+ul.dot-list { padding-left: 16px; font-size: 12px; line-height: 1.55; }
+ul.dot-list li { margin-bottom: 2px; }
+</style>
+</head>
+<body>
+
+<button class="print-btn" onclick="window.print()">🖨 In / Xuất PDF</button>
+
+<!-- ═══════════════ PAGE 1: COVER ═══════════════ -->
+<div class="page page-cover">
+  <div class="page-body page-body-cover">
+    <div class="cover-wrap">
+      <div class="cover-accent-line"></div>
+      <div class="cover-bg-img" style="background-image:url('images/deaduk/cover-daeduk.jpg');"></div>
+      <div class="cover-overlay"></div>
+      <div class="cover-inner">
+        <div class="cover-badge">TÀI LIỆU TUYỂN SINH CHÍNH THỨC</div>
+        <div class="cover-title">대덕대학교<br><span class="gold">Đại học Daeduk</span></div>
+        <div class="cover-divider"></div>
+        <div class="cover-visa">Visa D4-1</div>
+        <div class="cover-subtitle"><strong>Học tập · Thực hành · Làm việc tại Hàn Quốc</strong><br>Chương trình đào tạo theo đơn đặt hàng doanh nghiệp — Chỉ tuyển <strong>100 sinh viên/kỳ</strong></div>
+        <div class="cover-tagline">
+          <h3>Cẩm nang tuyển sinh</h3>
+          <p>Lộ trình D4-1 → D2-1 → thực tập hưởng lương 40–41 triệu/tháng → cơ hội visa E-7</p>
+        </div>
+      </div>
+      <div class="cover-bottom-bar">
+        <span>Học chuyên ngành sớm</span>
+        <span class="sep">|</span>
+        <span>Thực tập hưởng lương</span>
+        <span class="sep">|</span>
+        <span>Cơ hội E-7</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ PAGE 2: TOC ═══════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="ph-left"><span class="ph-logo">🎓</span> Cẩm nang Tuyển sinh Đại học Daeduk</div>
+    <div class="ph-right">VISA D4-1 · DAEDUK</div>
+  </div>
+  <div class="side-bar"></div>
+  <div class="page-body">
+    <div class="toc-overlay-row">
+      <div class="toc-overlay-badge">NỘI DUNG</div>
+      <div class="toc-overlay-title">MỤC LỤC</div>
+      <div class="toc-overlay-sub">Cẩm nang Tuyển sinh chương trình D4-1 — Đại học Daeduk</div>
+    </div>
+
+    <div class="toc-sections">
+      <div class="toc-group">
+        <div class="toc-group-title">🎓 GIỚI THIỆU CHƯƠNG TRÌNH</div>
+        <div class="toc-group-items">
+          <div class="toc-item">
+            <div class="toc-item-icon">📌</div>
+            <div class="toc-item-body">
+              <span class="toc-item-label">Tổng quan chương trình D4-1</span>
+              <span class="toc-item-desc">Visa D4-1 là gì, lộ trình tổng thể tại Daeduk</span>
+            </div>
+            <div class="toc-item-right">
+              <span class="toc-item-page">tr. 3</span>
+              <span class="toc-item-badge">Phần 1</span>
+            </div>
+          </div>
+          <div class="toc-item">
+            <div class="toc-item-icon">⭐</div>
+            <div class="toc-item-body">
+              <span class="toc-item-label">Vì sao chọn Daeduk</span>
+              <span class="toc-item-desc">4 điểm mạnh của chương trình</span>
+            </div>
+            <div class="toc-item-right">
+              <span class="toc-item-page">tr. 3</span>
+              <span class="toc-item-badge">Phần 1</span>
+            </div>
+          </div>
+          <div class="toc-item">
+            <div class="toc-item-icon">🧭</div>
+            <div class="toc-item-body">
+              <span class="toc-item-label">Ngành đào tạo nổi bật</span>
+              <span class="toc-item-desc">5 nhóm ngành mũi nhọn của Daeduk</span>
+            </div>
+            <div class="toc-item-right">
+              <span class="toc-item-page">tr. 4</span>
+              <span class="toc-item-badge">Phần 2</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="toc-group">
+        <div class="toc-group-title">📋 ĐIỀU KIỆN &amp; LỘ TRÌNH</div>
+        <div class="toc-group-items">
+          <div class="toc-item">
+            <div class="toc-item-icon">📋</div>
+            <div class="toc-item-body">
+              <span class="toc-item-label">Điều kiện tuyển sinh</span>
+              <span class="toc-item-desc">Học lực, độ tuổi, gap học tập, chuyên cần</span>
+            </div>
+            <div class="toc-item-right">
+              <span class="toc-item-page">tr. 4</span>
+              <span class="toc-item-badge">Phần 2</span>
+            </div>
+          </div>
+          <div class="toc-item">
+            <div class="toc-item-icon">🛤️</div>
+            <div class="toc-item-body">
+              <span class="toc-item-label">Lộ trình 6 giai đoạn</span>
+              <span class="toc-item-desc">Từ học tiếng đến thực tập hưởng lương &amp; tìm việc</span>
+            </div>
+            <div class="toc-item-right">
+              <span class="toc-item-page">tr. 5</span>
+              <span class="toc-item-badge">Phần 3</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="toc-group">
+        <div class="toc-group-title">💰 CHI PHÍ &amp; LỊCH TUYỂN SINH</div>
+        <div class="toc-group-items">
+          <div class="toc-item">
+            <div class="toc-item-icon">📅</div>
+            <div class="toc-item-body">
+              <span class="toc-item-label">Hạn nộp hồ sơ 4 kỳ / năm</span>
+              <span class="toc-item-desc">Kỳ tháng 3, 6, 9, 12 — 100 suất/kỳ</span>
+            </div>
+            <div class="toc-item-right">
+              <span class="toc-item-page">tr. 6</span>
+              <span class="toc-item-badge">Phần 4</span>
+            </div>
+          </div>
+          <div class="toc-item">
+            <div class="toc-item-icon">💳</div>
+            <div class="toc-item-body">
+              <span class="toc-item-label">Tài chính chương trình</span>
+              <span class="toc-item-desc">Trọn gói 170 triệu — bao gồm / chưa bao gồm</span>
+            </div>
+            <div class="toc-item-right">
+              <span class="toc-item-page">tr. 6</span>
+              <span class="toc-item-badge">Phần 4</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="toc-group">
+        <div class="toc-group-title">🏢 DOANH NGHIỆP &amp; LỢI THẾ</div>
+        <div class="toc-group-items">
+          <div class="toc-item">
+            <div class="toc-item-icon">🏢</div>
+            <div class="toc-item-body">
+              <span class="toc-item-label">Mạng lưới 65+ doanh nghiệp đối tác</span>
+              <span class="toc-item-desc">Danh sách doanh nghiệp tham gia chương trình</span>
+            </div>
+            <div class="toc-item-right">
+              <span class="toc-item-page">tr. 7</span>
+              <span class="toc-item-badge">Phần 5</span>
+            </div>
+          </div>
+          <div class="toc-item">
+            <div class="toc-item-icon">🛂</div>
+            <div class="toc-item-body">
+              <span class="toc-item-label">Lợi thế xét duyệt visa</span>
+              <span class="toc-item-desc">Giấy xác nhận doanh nghiệp (기업 확인서)</span>
+            </div>
+            <div class="toc-item-right">
+              <span class="toc-item-page">tr. 8</span>
+              <span class="toc-item-badge">Phần 5</span>
+            </div>
+          </div>
+          <div class="toc-item">
+            <div class="toc-item-icon">❓</div>
+            <div class="toc-item-body">
+              <span class="toc-item-label">Câu hỏi thường gặp</span>
+              <span class="toc-item-desc">FAQ &amp; lưu ý dành cho học sinh, phụ huynh</span>
+            </div>
+            <div class="toc-item-right">
+              <span class="toc-item-page">tr. 8</span>
+              <span class="toc-item-badge">FAQ</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="toc-stats">
+      <div class="toc-stat"><span class="toc-stat-num">100</span><span class="toc-stat-label">SV/kỳ</span></div>
+      <div class="toc-stat"><span class="toc-stat-num">65+</span><span class="toc-stat-label">DN đối tác</span></div>
+      <div class="toc-stat"><span class="toc-stat-num">40–41tr</span><span class="toc-stat-label">Lương thực tập</span></div>
+      <div class="toc-stat"><span class="toc-stat-num">4</span><span class="toc-stat-label">Kỳ/năm</span></div>
+    </div>
+  </div>
+  <div class="page-footer-bar"></div>
+  <div class="page-num">2</div>
+</div>
+
+<!-- ═══════════════ PAGE 3: OVERVIEW + WHY DAEDUK ═══════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="ph-left"><span class="ph-logo">🎓</span> Cẩm nang Tuyển sinh Đại học Daeduk</div>
+    <div class="ph-right">VISA D4-1 · DAEDUK</div>
+  </div>
+  <div class="side-bar"></div>
+  <div class="page-body">
+    <span class="section-badge">PHẦN 1</span>
+    <h2 class="page-title" style="margin-top:2px;">Tổng quan chương trình D4-1</h2>
+    <div class="body-text">
+      <p>Chương trình <strong>D4-1</strong> là diện visa du học <strong>học tiếng Hàn Quốc</strong> dành cho sinh viên quốc tế. Tại Đại học Daeduk (Daejeon), sinh viên học tiếng Hàn tại Viện Ngôn ngữ trong <strong>06 tháng</strong>, sau đó chuyển tiếp lên học chuyên ngành theo lộ trình — chỉ cần đạt <strong>TOPIK 1</strong> và chuyên cần tốt.</p>
+      <p>Điểm khác biệt của Daeduk: chương trình được thiết kế theo <strong>đơn đặt hàng doanh nghiệp</strong> (주문식교육과정) — sinh viên được đào tạo đúng vị trí công việc, được doanh nghiệp phỏng vấn tuyển dụng và <strong>thực tập hưởng lương tới 40–41 triệu đồng/tháng</strong>.</p>
+    </div>
+    <div class="card-grid-2">
+      <div class="info-card"><strong>🎯 Đối tượng</strong>Đã tốt nghiệp THPT, độ tuổi 18–25, mong muốn học tập &amp; làm việc tại Hàn Quốc.</div>
+      <div class="info-card"><strong>📌 Visa</strong>D4-1 (học tiếng 6 tháng) → D2-1 (chuyên ngành) → D10 (tìm việc) → E-7.</div>
+      <div class="info-card"><strong>📍 Địa điểm</strong>68 Gajeong-ro, Yuseong-gu, Daejeon, Hàn Quốc — thành phố khoa học công nghệ.</div>
+      <div class="info-card"><strong>🎓 Chỉ tiêu</strong>Chỉ tuyển <strong>100 sinh viên/kỳ</strong> — đăng ký sớm để giữ suất.</div>
+    </div>
+
+    <div class="route-bar" style="margin-top:12px;">
+      <div class="route-step r1"><span class="ri">🇰🇷</span><span class="rl">D4-1</span><span class="rd">Học tiếng 6 tháng</span></div>
+      <div class="route-arrow">›</div>
+      <div class="route-step r2"><span class="ri">🎓</span><span class="rl">D2-1</span><span class="rd">Chuyên ngành</span></div>
+      <div class="route-arrow">›</div>
+      <div class="route-step r3"><span class="ri">💼</span><span class="rl">D10</span><span class="rd">Tìm việc làm</span></div>
+      <div class="route-arrow">›</div>
+      <div class="route-step r4"><span class="ri">🏆</span><span class="rl">E-7</span><span class="rd">Làm chuyên môn</span></div>
+    </div>
+
+    <span class="section-badge">PHẦN 1</span>
+    <h2 class="page-title" style="margin-top:10px;font-size:22px;">Vì sao chọn Daeduk?</h2>
+    <div style="margin-top:6px;">
+      <div class="str-card">
+        <div class="str-num">01</div>
+        <strong>Đào tạo thực hành</strong>
+        <p>Chương trình định hướng nghề nghiệp, gắn với thực tế công việc — không học lý thuyết suông.</p>
+      </div>
+      <div class="str-card">
+        <div class="str-num">02</div>
+        <strong>Kỹ thuật &amp; công nghệ hiện đại</strong>
+        <p>Thế mạnh đào tạo trong lĩnh vực kỹ thuật và công nghệ tiên tiến: ô tô, điện – điện tử, bán dẫn, AI, IT.</p>
+      </div>
+      <div class="str-card">
+        <div class="str-num">03</div>
+        <strong>Học tập tại doanh nghiệp</strong>
+        <p>Chú trọng kỹ năng ứng dụng và trải nghiệm thực tế ngay tại doanh nghiệp đối tác.</p>
+      </div>
+      <div class="str-card">
+        <div class="str-num">04</div>
+        <strong>Cơ hội việc làm tốt</strong>
+        <p>Việc làm sau tốt nghiệp gắn chặt với nhu cầu tuyển dụng thực tế của doanh nghiệp.</p>
+      </div>
+    </div>
+  </div>
+  <div class="page-footer-bar"></div>
+  <div class="page-num">3</div>
+</div>
+
+<!-- ═══════════════ PAGE 4: MAJORS + CONDITIONS ═══════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="ph-left"><span class="ph-logo">🎓</span> Cẩm nang Tuyển sinh Đại học Daeduk</div>
+    <div class="ph-right">VISA D4-1 · DAEDUK</div>
+  </div>
+  <div class="side-bar"></div>
+  <div class="page-body">
+    <span class="section-badge">PHẦN 2</span>
+    <h2 class="page-title" style="margin-top:2px;">Ngành đào tạo nổi bật</h2>
+    <div class="body-text"><p>Các ngành mũi nhọn của Đại học Daeduk — chọn ngành phù hợp với sở trường và định hướng làm việc tại Hàn Quốc:</p></div>
+    <div style="margin-top:4px;">
+      <div class="major-chip"><span class="mc-num">01</span>Công nghệ ô tô</div>
+      <div class="major-chip"><span class="mc-num">02</span>Kỹ thuật điện – điện tử</div>
+      <div class="major-chip"><span class="mc-num">03</span>Công nghệ thông tin (IT)</div>
+      <div class="major-chip"><span class="mc-num">04</span>Bán dẫn, AI và Phần mềm</div>
+      <div class="major-chip"><span class="mc-num">05</span>Điều dưỡng, chăm sóc sức khỏe</div>
+    </div>
+
+    <div style="margin:12px 0;border-top:1px solid var(--light-gray);"></div>
+
+    <span class="section-badge">PHẦN 2</span>
+    <h2 class="page-title" style="margin-top:2px;font-size:22px;">Điều kiện tuyển sinh</h2>
+    <div class="cond-grid">
+      <div class="cond-cell"><div class="cc-label">🎯 Đối tượng</div><div class="cc-value">Đã tốt nghiệp THPT</div></div>
+      <div class="cond-cell"><div class="cc-label">📊 Học lực</div><div class="cc-value">GPA từ 6.5 trở lên</div></div>
+      <div class="cond-cell"><div class="cc-label">🎂 Độ tuổi</div><div class="cc-value">Từ 18 – 25 tuổi</div></div>
+      <div class="cond-cell"><div class="cc-label">⏳ Gap học tập</div><div class="cc-value">Không quá 03 năm</div></div>
+      <div class="cond-cell"><div class="cc-label">📝 Chuyên cần</div><div class="cc-value">Nghỉ dưới 10 buổi / 3 năm THPT</div></div>
+      <div class="cond-cell hl"><div class="cc-label">🎓 Chỉ tiêu</div><div class="cc-value">100 sinh viên / kỳ</div></div>
+    </div>
+
+    <div class="warn-box">⚠️ <strong>Lưu ý:</strong> Điều kiện tuyển sinh có thể điều chỉnh theo từng kỳ. Luôn kiểm tra thông tin cập nhật mới nhất từ trường trước khi nộp hồ sơ.</div>
+
+    <div style="display:flex;gap:14px;margin-top:10px;">
+      <div style="flex:1;border:1px solid var(--light-gray);border-radius:6px;overflow:hidden;">
+        <div style="background:var(--navy);color:white;padding:8px 12px;font-family:'Montserrat',sans-serif;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;">🗣️ Yêu cầu tiếng Hàn</div>
+        <div style="padding:10px 12px;font-size:11.5px;line-height:1.6;background:#f0f7ff;">
+          <strong style="color:var(--navy);">Chưa biết tiếng Hàn vẫn có thể nộp hồ sơ.</strong><br>
+          Học tiếng 6 tháng tại Viện Ngôn ngữ Đại học Daeduk; đạt <strong>TOPIK 1</strong> + chuyên cần tốt là đủ điều kiện chuyển tiếp lên chuyên ngành.
+        </div>
+      </div>
+      <div style="flex:1;border:1px solid var(--light-gray);border-radius:6px;overflow:hidden;">
+        <div style="background:var(--accent);color:white;padding:8px 12px;font-family:'Montserrat',sans-serif;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;">🛂 Hồ sơ visa</div>
+        <div style="padding:10px 12px;font-size:11.5px;line-height:1.6;background:#fdf1f1;">
+          Trường hỗ trợ hoàn thiện hồ sơ và bổ sung <strong>giấy xác nhận doanh nghiệp (기업 확인서)</strong> liên quan chương trình thực tập để tăng tỷ lệ xét duyệt visa.
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="page-footer-bar"></div>
+  <div class="page-num">4</div>
+</div>
+
+<!-- ═══════════════ PAGE 5: 6-STAGE ROADMAP ═══════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="ph-left"><span class="ph-logo">🎓</span> Cẩm nang Tuyển sinh Đại học Daeduk</div>
+    <div class="ph-right">VISA D4-1 · DAEDUK</div>
+  </div>
+  <div class="side-bar"></div>
+  <div class="page-body">
+    <span class="section-badge">PHẦN 3</span>
+    <h2 class="page-title" style="margin-top:2px;">Lộ trình đào tạo → việc làm</h2>
+    <div class="body-text"><p>Chương trình gồm <strong>6 giai đoạn</strong>, từ học tiếng đến làm việc tại doanh nghiệp Hàn Quốc:</p></div>
+
+    <div class="timeline">
+      <div class="tl-step">
+        <div class="tl-marker"><div class="tl-dot">1</div><div class="tl-line"></div></div>
+        <div class="tl-card">
+          <div class="tl-card-header"><span class="tl-step-num">GIAI ĐOẠN 1</span><span class="tl-step-time">Visa D4-1</span></div>
+          <div class="tl-card-title">Học tiếng Hàn cơ bản</div>
+          <div class="tl-card-body">Làm quen môi trường học tập. Lên chuyên ngành sau <strong>06 tháng</strong> — chỉ cần <strong>TOPIK 1</strong> và chuyên cần tốt.</div>
+        </div>
+      </div>
+      <div class="tl-step">
+        <div class="tl-marker"><div class="tl-dot">2</div><div class="tl-line"></div></div>
+        <div class="tl-card">
+          <div class="tl-card-header"><span class="tl-step-num">GIAI ĐOẠN 2</span><span class="tl-step-time">Visa D2-1</span></div>
+          <div class="tl-card-title">Nâng cao tiếng Hàn + học chuyên ngành</div>
+          <div class="tl-card-body">Hướng tới chuẩn <strong>TOPIK 2</strong>. Học chuyên ngành tại Daeduk (yêu cầu tối thiểu TOPIK 1).</div>
+        </div>
+      </div>
+      <div class="tl-step">
+        <div class="tl-marker"><div class="tl-dot">3</div><div class="tl-line"></div></div>
+        <div class="tl-card">
+          <div class="tl-card-header"><span class="tl-step-num">GIAI ĐOẠN 3</span><span class="tl-step-time">Visa D2-1</span></div>
+          <div class="tl-card-title">Đào tạo chuyên ngành theo đơn đặt hàng</div>
+          <div class="tl-card-body">Đào tạo <strong>02 tháng</strong> với khối ngành kỹ thuật, giáo trình do doanh nghiệp đặt hàng.</div>
+        </div>
+      </div>
+      <div class="tl-step">
+        <div class="tl-marker"><div class="tl-dot">4</div><div class="tl-line"></div></div>
+        <div class="tl-card">
+          <div class="tl-card-header"><span class="tl-step-num">GIAI ĐOẠN 4</span><span class="tl-step-time">Visa D2-1</span></div>
+          <div class="tl-card-title">Phỏng vấn &amp; tuyển dụng trực tiếp</div>
+          <div class="tl-card-body">Doanh nghiệp trực tiếp phỏng vấn sinh viên theo tiêu chí đào tạo chuyên ngành.</div>
+        </div>
+      </div>
+      <div class="tl-step">
+        <div class="tl-marker"><div class="tl-dot">5</div><div class="tl-line"></div></div>
+        <div class="tl-card">
+          <div class="tl-card-header"><span class="tl-step-num">GIAI ĐOẠN 5</span><span class="tl-step-time">Visa D2-1</span></div>
+          <div class="tl-card-title">Thực tập hưởng lương tại doanh nghiệp</div>
+          <div class="tl-card-body">Thực tập tại doanh nghiệp đỗ phỏng vấn, <strong>ghi nhận tín chỉ</strong>, thu nhập tới <strong>40–41 triệu đồng/tháng</strong>.</div>
+        </div>
+      </div>
+      <div class="tl-step">
+        <div class="tl-marker"><div class="tl-dot">6</div></div>
+        <div class="tl-card">
+          <div class="tl-card-header"><span class="tl-step-num">GIAI ĐOẠN 6</span><span class="tl-step-time">Visa D10</span></div>
+          <div class="tl-card-title">Chuyển visa tìm việc, ở lại làm việc</div>
+          <div class="tl-card-body">Sau tốt nghiệp chuyển visa <strong>D10</strong> tìm việc, hướng tới visa lao động chuyên môn <strong>E-7</strong>.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip-box">⚡ <strong>Điểm nhấn:</strong> Chỉ cần TOPIK 1 + chuyên cần tốt là đủ điều kiện chuyển tiếp chuyên ngành sau 6 tháng học tiếng — lộ trình học chuyên ngành nhanh hơn so với các chương trình học tiếng thông thường.</div>
+  </div>
+  <div class="page-footer-bar"></div>
+  <div class="page-num">5</div>
+</div>
+
+<!-- ═══════════════ PAGE 6: DEADLINES + FINANCE ═══════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="ph-left"><span class="ph-logo">🎓</span> Cẩm nang Tuyển sinh Đại học Daeduk</div>
+    <div class="ph-right">VISA D4-1 · DAEDUK</div>
+  </div>
+  <div class="side-bar"></div>
+  <div class="page-body">
+    <span class="section-badge">PHẦN 4</span>
+    <h2 class="page-title" style="margin-top:2px;">Hạn nộp hồ sơ &amp; tài chính</h2>
+
+    <h3 class="section-subtitle">📅 4 kỳ tuyển sinh mỗi năm</h3>
+    <table class="deadline-table">
+      <thead><tr><th>Kỳ nhập học</th><th>Hạn nộp hồ sơ</th><th>Chỉ tiêu</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Kỳ tháng 9</strong></td><td class="ddeadline">31/07</td><td>100 suất</td></tr>
+        <tr><td><strong>Kỳ tháng 12</strong></td><td class="ddeadline">31/10</td><td>100 suất</td></tr>
+        <tr><td><strong>Kỳ tháng 3</strong></td><td class="ddeadline">31/01</td><td>100 suất</td></tr>
+        <tr><td><strong>Kỳ tháng 6</strong></td><td class="ddeadline">30/04</td><td>100 suất</td></tr>
+      </tbody>
+    </table>
+    <div class="warn-box">⚠️ <strong>Cơ hội có giới hạn — đăng ký sớm để giữ suất.</strong> Hạn nộp có thể thay đổi, luôn xác nhận với bộ phận tuyển sinh.</div>
+
+    <div style="margin:10px 0;border-top:1px solid var(--light-gray);"></div>
+
+    <h3 class="section-subtitle">💳 Tài chính chương trình</h3>
+    <div class="fin-hero">
+      <div class="fh-label">Trọn gói dịch vụ</div>
+      <div class="fh-price">170 <small>triệu đồng</small></div>
+      <div class="fh-note">Bao gồm invoice học phí &amp; phí dịch vụ hồ sơ</div>
+    </div>
+    <div class="fin-cols">
+      <div class="fin-col in">
+        <div class="fin-col-title">✅ Đã bao gồm</div>
+        <div class="fin-item"><span class="ck">✓</span><span><strong>Invoice 06 tháng học phí tiếng Hàn</strong></span></div>
+        <div class="fin-item"><span class="ck">✓</span><span><strong>KTX 90 ngày</strong> + ăn sáng + ăn tối trong 90 ngày</span></div>
+        <div class="fin-item"><span class="ck">✓</span><span><strong>Vé máy bay</strong> — đã bao gồm</span></div>
+        <div class="fin-item"><span class="ck">✓</span><span><strong>Phí tư vấn hồ sơ</strong> — đã bao gồm</span></div>
+      </div>
+      <div class="fin-col out">
+        <div class="fin-col-title">⚠️ Chưa bao gồm</div>
+        <div class="fin-item"><span class="ck">✕</span><span><strong>Sổ K-Study: 8 triệu won</strong> (khoảng 140 triệu VND)</span></div>
+      </div>
+    </div>
+    <div class="tip-box">💡 <strong>Giải thích:</strong> Sổ K-Study là sổ tiết kiệm chứng minh tài chính theo yêu cầu visa, do gia đình mở cho sinh viên — là một phần bắt buộc trong hồ sơ xin visa D4-1/D2-1 tại Hàn Quốc.</div>
+  </div>
+  <div class="page-footer-bar"></div>
+  <div class="page-num">6</div>
+</div>
+
+<!-- ═══════════════ PAGE 7: 65 COMPANIES (1/2) ═══════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="ph-left"><span class="ph-logo">🎓</span> Cẩm nang Tuyển sinh Đại học Daeduk</div>
+    <div class="ph-right">VISA D4-1 · DAEDUK</div>
+  </div>
+  <div class="side-bar"></div>
+  <div class="page-body">
+    <span class="section-badge">PHẦN 5</span>
+    <h2 class="page-title" style="margin-top:2px;">Mạng lưới doanh nghiệp đối tác</h2>
+    <div class="company-note">
+      <strong>Đại học Daeduk vừa cập nhật danh sách doanh nghiệp kết nối của trường.</strong>
+      Đây là minh chứng cho mạng lưới hợp tác doanh nghiệp rộng lớn của Daeduk với các lĩnh vực: bán dẫn, linh kiện ô tô, đóng tàu, cơ khí, điện – điện tử, CNTT… Ngoài danh sách dưới đây, trường còn có <strong>16 doanh nghiệp đối tác khác</strong> cùng tham gia chương trình. <strong style="color:var(--accent);">★ = 4 doanh nghiệp công nghệ lõi của chương trình.</strong>
+    </div>
+    <div class="industry-chips">
+      <span class="ind-chip">🔧 Cơ khí – linh kiện ô tô</span>
+      <span class="ind-chip">💻 CNTT – Phần mềm</span>
+      <span class="ind-chip">🔬 Bán dẫn – Điện tử</span>
+      <span class="ind-chip">⚓ Đóng tàu</span>
+      <span class="ind-chip">💡 Điện – điện tử</span>
+      <span class="ind-chip">💇 Làm đẹp – Grooming</span>
+      <span class="ind-chip">🍽️ Ẩm thực – F&amp;B</span>
+      <span class="ind-chip">🏥 Chăm sóc sức khỏe</span>
+    </div>
+
+    <table class="company-table">
+      <thead><tr><th style="width:22px;">#</th><th>Tên tiếng Hàn</th><th>Tên tiếng Việt</th></tr></thead>
+      <tbody>
+        <tr><td class="c-num">1</td><td class="c-ko">(주)AR 테크놀로지</td><td class="c-vn">Công ty Cổ phần AR Technology</td></tr>
+        <tr><td class="c-num">2</td><td class="c-ko">(주)FDC</td><td class="c-vn">Công ty Cổ phần FDC</td></tr>
+        <tr><td class="c-num">3</td><td class="c-ko">그루밍랩아카데미애견미용학원</td><td class="c-vn">Học viện Grooming Map – Cơ sở Yangcheon Mok-dong</td></tr>
+        <tr><td class="c-num">4</td><td class="c-ko">대규정밀</td><td class="c-vn">Daekkung Precision</td></tr>
+        <tr><td class="c-num">5</td><td class="c-ko">더하이브헤어</td><td class="c-vn">The Hive Hair</td></tr>
+        <tr><td class="c-num">6</td><td class="c-ko">드림주야간보호센터</td><td class="c-vn">Trung tâm Chăm sóc Ban ngày &amp; Ban đêm Dream</td></tr>
+        <tr><td class="c-num">7</td><td class="c-ko">딤섬관</td><td class="c-vn">Nhà hàng Dimsum Gwan</td></tr>
+        <tr><td class="c-num">8</td><td class="c-ko">만년헬스</td><td class="c-vn">Mannyeon Health (Phòng tập Mannyeon)</td></tr>
+        <tr><td class="c-num">9</td><td class="c-ko">(주)모아소프트</td><td class="c-vn">Công ty Cổ phần MoreSoft</td></tr>
+        <tr><td class="c-num">10</td><td class="c-ko">바디포커스</td><td class="c-vn">Body Focus</td></tr>
+        <tr><td class="c-num">11</td><td class="c-ko">봉피규어스튜디오</td><td class="c-vn">Bong Figure Studio</td></tr>
+        <tr><td class="c-num">12</td><td class="c-ko">(주)블루스퀘어</td><td class="c-vn">Công ty Cổ phần Blue Square</td></tr>
+        <tr><td class="c-num">13</td><td class="c-ko">사랑누리 장애인단기보호센터</td><td class="c-vn">Trung tâm Chăm sóc Ngắn hạn Người khuyết tật Sarang Nuri</td></tr>
+        <tr><td class="c-num">14</td><td class="c-ko">선데이</td><td class="c-vn">Sunday</td></tr>
+        <tr><td class="c-num">15</td><td class="c-ko">(유)세종에코</td><td class="c-vn">Công ty TNHH Sejong Eco</td></tr>
+        <tr><td class="c-num">16</td><td class="c-ko">시리우스 반려견 교육센터</td><td class="c-vn">Trung tâm Huấn luyện Chó Cưng Sirius</td></tr>
+        <tr><td class="c-num">17</td><td class="c-ko">(주)쎄다코리아</td><td class="c-vn">Công ty Cổ phần Thunder Grooming</td></tr>
+        <tr><td class="c-num">18</td><td class="c-ko">(주)아이원테크</td><td class="c-vn">Công ty Cổ phần I-One Tech</td></tr>
+        <tr><td class="c-num">19</td><td class="c-ko">엣지디자인</td><td class="c-vn">Edge Design</td></tr>
+        <tr><td class="c-num">20</td><td class="c-ko">(주)이에이컴퍼니</td><td class="c-vn">Công ty Cổ phần EA Company</td></tr>
+        <tr><td class="c-num">21</td><td class="c-ko">(주)인커뮤니케이션즈</td><td class="c-vn">Công ty Cổ phần In Communications</td></tr>
+        <tr><td class="c-num">22</td><td class="c-ko">최선미디어</td><td class="c-vn">Choi Sun Media</td></tr>
+        <tr><td class="c-num">23</td><td class="c-ko">카스탈리엔</td><td class="c-vn">Kas Dalien</td></tr>
+        <tr><td class="c-num">24</td><td class="c-ko">(주)케이엘솔루션</td><td class="c-vn">Công ty Cổ phần KL Solution</td></tr>
+        <tr><td class="c-num">25</td><td class="c-ko">푸고</td><td class="c-vn">Pugo</td></tr>
+        <tr><td class="c-num">26</td><td class="c-ko">프리독 아카데미</td><td class="c-vn">Học viện FreeDog</td></tr>
+        <tr><td class="c-num">27</td><td class="c-ko">(주)프리퓨쳐</td><td class="c-vn">Công ty Cổ phần Free Future</td></tr>
+        <tr><td class="c-num">28</td><td class="c-ko">효인요양원</td><td class="c-vn">Viện dưỡng lão Hyoin</td></tr>
+        <tr><td class="c-num">29</td><td class="c-ko">흥덕제과</td><td class="c-vn">Hongdeok Bakery</td></tr>
+        <tr><td class="c-num">30</td><td class="c-ko">㈜디플랜</td><td class="c-vn">Công ty Cổ phần D-Plan</td></tr>
+        <tr><td class="c-num">31</td><td class="c-ko">루미원</td><td class="c-vn">Lumi One</td></tr>
+        <tr><td class="c-num">32</td><td class="c-ko">까마종</td><td class="c-vn">Kkamajong</td></tr>
+        <tr><td class="c-num">33</td><td class="c-ko">(주)청화팜</td><td class="c-vn">Công ty Cổ phần Cheonghwa Pharm</td></tr>
+        <tr><td class="c-num">34</td><td class="c-ko">(주)놋반</td><td class="c-vn">Công ty Cổ phần Dotdan</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="page-footer-bar"></div>
+  <div class="page-num">7</div>
+</div>
+
+<!-- ═══════════════ PAGE 8: 65 COMPANIES (2/2) ═══════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="ph-left"><span class="ph-logo">🎓</span> Cẩm nang Tuyển sinh Đại học Daeduk</div>
+    <div class="ph-right">VISA D4-1 · DAEDUK</div>
+  </div>
+  <div class="side-bar"></div>
+  <div class="page-body">
+    <span class="section-badge">PHẦN 5</span>
+    <h2 class="page-title" style="margin-top:2px;font-size:22px;">Mạng lưới doanh nghiệp đối tác <span style="font-weight:400;font-size:12px;color:var(--gray);text-transform:none;">(tiếp)</span></h2>
+
+    <table class="company-table">
+      <thead><tr><th style="width:22px;">#</th><th>Tên tiếng Hàn</th><th>Tên tiếng Việt</th></tr></thead>
+      <tbody>
+        <tr><td class="c-num">35</td><td class="c-ko">농업회사법인 (주)신우에프에스</td><td class="c-vn">Công ty Nông nghiệp Shinwoo FS</td></tr>
+        <tr><td class="c-num">36</td><td class="c-ko">(주)메치파워</td><td class="c-vn">Công ty Cổ phần Match Power</td></tr>
+        <tr class="core"><td class="c-num">37</td><td class="c-ko">(주)보은테크</td><td class="c-vn">Công ty Cổ phần Boeun Tech</td></tr>
+        <tr><td class="c-num">38</td><td class="c-ko">(주)신우에프에스 논산 1 공장</td><td class="c-vn">Nhà máy Nonsan số 1 – Công ty Shinwoo FS</td></tr>
+        <tr class="core"><td class="c-num">39</td><td class="c-ko">아이비텍㈜</td><td class="c-vn">Công ty Cổ phần I-Tech (IBTech)</td></tr>
+        <tr><td class="c-num">40</td><td class="c-ko">엘이디라이텍㈜</td><td class="c-vn">Công ty Cổ phần LED Litech</td></tr>
+        <tr><td class="c-num">41</td><td class="c-ko">(주)파인솔코리아</td><td class="c-vn">Công ty Cổ phần FineSol Korea</td></tr>
+        <tr><td class="c-num">42</td><td class="c-ko">(사)한국창의인성교육연구원</td><td class="c-vn">Viện Nghiên cứu Giáo dục Sáng tạo &amp; Nhân cách Hàn Quốc</td></tr>
+        <tr><td class="c-num">43</td><td class="c-ko">한국농어촌공사</td><td class="c-vn">Tổng công ty Cộng đồng Nông thôn Hàn Quốc</td></tr>
+        <tr><td class="c-num">44</td><td class="c-ko">우송어페럴</td><td class="c-vn">Woosong Apparel</td></tr>
+        <tr><td class="c-num">45</td><td class="c-ko">(주)넷타겟</td><td class="c-vn">Công ty Cổ phần NetGadget</td></tr>
+        <tr><td class="c-num">46</td><td class="c-ko">(주)디어소프트</td><td class="c-vn">Công ty Cổ phần DearSoft</td></tr>
+        <tr><td class="c-num">47</td><td class="c-ko">주하은 주식회사</td><td class="c-vn">Công ty Cổ phần Juhaeun</td></tr>
+        <tr><td class="c-num">48</td><td class="c-ko">(주)코라드미디어텍</td><td class="c-vn">Công ty Cổ phần Korad Mediatech</td></tr>
+        <tr><td class="c-num">49</td><td class="c-ko">(주)플러그에이아이</td><td class="c-vn">Công ty Cổ phần Plug AI</td></tr>
+        <tr><td class="c-num">50</td><td class="c-ko">바우컴퍼니㈜</td><td class="c-vn">Công ty Cổ phần Bau Company</td></tr>
+        <tr><td class="c-num">51</td><td class="c-ko">에스디㈜</td><td class="c-vn">Công ty Cổ phần SNI</td></tr>
+        <tr><td class="c-num">52</td><td class="c-ko">㈜인터텍</td><td class="c-vn">Công ty Cổ phần Intertech</td></tr>
+        <tr><td class="c-num">53</td><td class="c-ko">(주)NCES</td><td class="c-vn">Công ty Cổ phần NCES</td></tr>
+        <tr><td class="c-num">54</td><td class="c-ko">(주)빈체레바이오헬스</td><td class="c-vn">Công ty Cổ phần Vincere BioHealth</td></tr>
+        <tr><td class="c-num">55</td><td class="c-ko">(주)씨크릿우먼</td><td class="c-vn">Công ty Cổ phần Secret Woman</td></tr>
+        <tr><td class="c-num">56</td><td class="c-ko">에이피솔루션</td><td class="c-vn">AP Solution</td></tr>
+        <tr><td class="c-num">57</td><td class="c-ko">(주)더자이네트웍스</td><td class="c-vn">Công ty Cổ phần The Design Networks</td></tr>
+        <tr><td class="c-num">58</td><td class="c-ko">㈜지인</td><td class="c-vn">Công ty Cổ phần Jiin</td></tr>
+        <tr><td class="c-num">59</td><td class="c-ko">(주)에스엠엔테크</td><td class="c-vn">Công ty Cổ phần SMN Tech</td></tr>
+        <tr><td class="c-num">60</td><td class="c-ko">㈜에스엠엔테크</td><td class="c-vn">Công ty Cổ phần SMN Tech</td></tr>
+        <tr><td class="c-num">61</td><td class="c-ko">에스한텍</td><td class="c-vn">S Hantech</td></tr>
+        <tr><td class="c-num">62</td><td class="c-ko">사단법인 한일인재협력기구</td><td class="c-vn">Hiệp hội Hợp tác Phát triển Nhân tài Hàn Quốc – Nhật Bản</td></tr>
+        <tr><td class="c-num">63</td><td class="c-ko">경신금속㈜</td><td class="c-vn">Công ty Cổ phần Kyungshin Metal</td></tr>
+        <tr class="core"><td class="c-num">64</td><td class="c-ko">㈜건테크</td><td class="c-vn">Công ty Cổ phần Contech (Geon Tech)</td></tr>
+        <tr class="core"><td class="c-num">65</td><td class="c-ko">㈜서원산업</td><td class="c-vn">Công ty Cổ phần Seowon Industry</td></tr>
+      </tbody>
+    </table>
+
+    <div class="company-note" style="margin-top:10px;">📌 <strong>Lợi thế cho sinh viên:</strong> Sale &amp; tư vấn viên có thể sử dụng danh sách này để nhấn mạnh lợi thế của Đại học Daeduk trong việc kết nối doanh nghiệp — tạo cơ hội thực tập và việc làm sau tốt nghiệp cho học sinh, phụ huynh.</div>
+  </div>
+  <div class="page-footer-bar"></div>
+  <div class="page-num">8</div>
+</div>
+
+<!-- ═══════════════ PAGE 9: VISA ADVANTAGE + FAQ ═══════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="ph-left"><span class="ph-logo">🎓</span> Cẩm nang Tuyển sinh Đại học Daeduk</div>
+    <div class="ph-right">VISA D4-1 · DAEDUK</div>
+  </div>
+  <div class="side-bar"></div>
+  <div class="page-body">
+    <span class="section-badge">PHẦN 5</span>
+    <h2 class="page-title" style="margin-top:2px;font-size:24px;">Lợi thế xét duyệt visa</h2>
+
+    <div class="visa-box">
+      <div class="vb-head">
+        <span class="vb-tag">Cập nhật mới · 기업 확인서</span>
+        <h3>Giấy xác nhận doanh nghiệp Hàn Quốc</h3>
+        <p>Theo trao đổi với Giám đốc Trung tâm của trường, Daeduk bổ sung giấy xác nhận doanh nghiệp liên quan chương trình thực tập vào hồ sơ xin visa để nâng cao tỷ lệ phê duyệt.</p>
+      </div>
+      <div class="vb-body">
+        <ol>
+          <li><strong>Chứng minh chương trình liên kết thực tế</strong> với doanh nghiệp Hàn Quốc.</li>
+          <li><strong>Thể hiện sinh viên có định hướng thực tập</strong> và kết nối việc làm sau quá trình học.</li>
+          <li><strong>Tăng độ tin cậy của hồ sơ</strong>, từ đó hỗ trợ nâng cao tỷ lệ xét duyệt visa.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div style="margin:10px 0;border-top:1px solid var(--light-gray);"></div>
+
+    <span class="section-badge">FAQ</span>
+    <h2 class="page-title" style="margin-top:2px;font-size:24px;">Câu hỏi thường gặp</h2>
+    <div class="faq-grid">
+      <div class="faq-card"><strong>🗣️ Chưa biết tiếng Hàn có nộp được không?</strong><p>Được. Sang Hàn Quốc theo visa D4-1 học tiếng 6 tháng tại Viện Ngôn ngữ Đại học Daeduk. Chỉ cần TOPIK 1 và chuyên cần tốt là đủ điều kiện chuyển tiếp chuyên ngành.</p></div>
+      <div class="faq-card"><strong>💼 Lương thực tập 40–41 triệu có đúng không?</strong><p>Đúng, theo Biên bản ghi nhớ (MOU) giữa các bên. Mức lương và chế độ đãi ngộ được cam kết minh bạch theo quy định pháp luật lao động Hàn Quốc.</p></div>
+      <div class="faq-card"><strong>🎓 Sau khi học chuyên ngành làm gì?</strong><p>Sinh viên được doanh nghiệp phỏng vấn tuyển dụng trực tiếp, thực tập hưởng lương và ghi nhận tín chỉ. Sau tốt nghiệp chuyển D10 tìm việc, hướng tới visa E-7.</p></div>
+      <div class="faq-card"><strong>📝 Hồ sơ nộp ở đâu?</strong><p>Nộp tại đơn vị tuyển sinh chính thức được Đại học Daeduk cấp giấy chứng nhận đối tác (mã số 2026-인002). Liên hệ qua nhóm Zalo tư vấn của website để được rà soát hồ sơ miễn phí.</p></div>
+      <div class="faq-card"><strong>🏠 Ký túc xá như thế nào?</strong><p>Gói tài chính bao gồm KTX 90 ngày cùng ăn sáng – ăn tối trong 90 ngày đầu, giúp sinh viên ổn định chỗ ở ngay khi sang Hàn Quốc.</p></div>
+      <div class="faq-card"><strong>💰 Chứng minh tài chính ra sao?</strong><p>Cần sổ tiết kiệm K-Study 8 triệu won (khoảng 140 triệu VND) theo yêu cầu visa, ngoài gói dịch vụ 170 triệu. Chi tiết được tư vấn cụ thể theo từng hồ sơ.</p></div>
+    </div>
+
+    <div class="warn-box">⚠️ <strong>Lưu ý quan trọng:</strong> Thông tin trong cẩm nang được tổng hợp từ tài liệu chính thức của Đại học Daeduk. Mức thu nhập thực tập và cam kết đầu ra theo MOU. Điều kiện visa cuối cùng do Cục Xuất nhập cảnh Hàn Quốc xét duyệt — thông tin có thể thay đổi theo từng kỳ tuyển sinh.</div>
+  </div>
+  <div class="page-footer-bar"></div>
+  <div class="page-num">9</div>
+</div>
+
+<!-- ═══════════════ PAGE 10: BACK COVER ═══════════════ -->
+<div class="page page-cover">
+  <div class="page-body page-body-cover">
+    <div class="backcover-wrap">
+      <div class="backcover-accent-bar"></div>
+      <div class="backcover-bg" style="background-image:url('images/deaduk/backcover-daeduk.jpg');"></div>
+      <div class="backcover-overlay"></div>
+      <div class="backcover-top">
+        <div class="backcover-badge">NẮM BẮT CƠ HỘI</div>
+        <div class="backcover-title">Xây dựng tương lai<br>tại Hàn Quốc</div>
+        <div class="backcover-divider"></div>
+      </div>
+
+      <div class="backcover-stats">
+        <div class="bc-stat"><span class="bc-stat-num">100</span><span class="bc-stat-label">Suất/kỳ</span></div>
+        <div class="bc-stat"><span class="bc-stat-num">65+</span><span class="bc-stat-label">DN đối tác</span></div>
+        <div class="bc-stat"><span class="bc-stat-num">40–41tr</span><span class="bc-stat-label">Lương thực tập/tháng</span></div>
+        <div class="bc-stat"><span class="bc-stat-num">4</span><span class="bc-stat-label">Kỳ/năm</span></div>
+      </div>
+
+      <div class="backcover-quote">
+        <div class="bc-quote-mark">"</div>
+        <p>Đào tạo theo đơn đặt hàng doanh nghiệp — học đúng ngành, thực tập đúng công việc, xây dựng sự nghiệp vững chắc tại Hàn Quốc.</p>
+        <div class="bc-quote-author">대덕대학교 · DAEDUK UNIVERSITY</div>
+      </div>
+
+      <div class="backcover-cards">
+        <a class="bc-card" href="https://zalo.me/g/4x7gts4riwvmxthrcaaq" target="_blank">
+          <span class="bc-card-icon">💬</span>
+          <span class="bc-card-title">Tư vấn qua Zalo</span>
+          <span class="bc-card-desc">Rà soát hồ sơ miễn phí, giải đáp thắc mắc nhanh chóng</span>
+          <span class="bc-card-link">Mở Zalo →</span>
+        </a>
+        <a class="bc-card" href="https://thongtintruonghan.vercel.app/k-tech-bridge/" target="_blank">
+          <span class="bc-card-icon">🌐</span>
+          <span class="bc-card-title">Landing page</span>
+          <span class="bc-card-desc">K-TECH Bridge — chi tiết chương trình, chi phí, lộ trình</span>
+          <span class="bc-card-link">Xem chi tiết →</span>
+        </a>
+        <a class="bc-card" href="https://thongtintruonghan.vercel.app/" target="_blank">
+          <span class="bc-card-icon">🏫</span>
+          <span class="bc-card-title">Website trường Hàn</span>
+          <span class="bc-card-desc">Tra cứu 18 trường đối tác, visa D2-6, checklist hồ sơ</span>
+          <span class="bc-card-link">Truy cập →</span>
+        </a>
+      </div>
+
+      <div class="backcover-footer">
+        <div class="bc-footer-line"></div>
+        <div class="bc-footer-text">DAEDUK UNIVERSITY · DAEJEON, KOREA</div>
+        <div class="bc-footer-sub">68 Gajeong-ro, Yuseong-gu, Daejeon, Hàn Quốc · Tài liệu tuyển sinh chính thức</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

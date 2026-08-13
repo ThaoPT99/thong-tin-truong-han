@@ -14,20 +14,37 @@ const path = require('path');
 const API_BASE = 'https://thongtintruonghan.vercel.app/api';
 const OUTPUT = path.join(__dirname, '..', 'public', 'sach-tuyen-sinh-doi-tac.html');
 
-// ─── Unsplash images ──────────────────────────────────────
+// ─── Images ────────────────────────────────────────────────
 const IMG = {
-  cover:   'https://images.pexels.com/photos/10419064/pexels-photo-10419064.jpeg?auto=compress&cs=tinysrgb&w=800',
-  overview:'https://images.unsplash.com/photo-1523050854058-8df90110c7f1?w=800&q=80',
-  school:  'https://images.unsplash.com/photo-1562774053-701939374585?w=800&q=80',
+  cover:   'https://vklinks.vn/wp-content/uploads/2024/04/3ff5e169da27d72f19690e4ff551164c-819x1024.jpeg',
   study:   'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=400&q=80',
   campus:  'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400&q=80',
   korea:   'https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=400&q=80',
+};
 
-  legal:   'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=800&q=80',
-  route:   'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800&q=80',
-  future:  'https://images.unsplash.com/photo-1521791136064-7986c2924716?w=800&q=80',
-  decor:   'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&q=80',
-  campus2: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80',
+// ─── Link Catalog/Video đã sửa tay trong file (ưu tiên hơn API) ───
+// Người dùng đã chỉnh sửa trực tiếp các link này trong sach-tuyen-sinh-doi-tac.html.
+// Khi chạy lại script, các link này luôn được giữ nguyên (không phụ thuộc API).
+// Muốn đổi link: sửa ở đây HOẶC xoá dòng tương ứng để dùng link từ API.
+const LINK_OVERRIDES = {
+  'DongDuk': { catalog: 'https://drive.google.com/file/d/1jjenscO1WB2cBjLkAut7IxTSCLxDHUEt/view', video: 'https://www.youtube.com/watch?v=2BQlcfA0yMI', videoTitle: '2026년 동덕여자대학교 공식 홍보영상' },
+  'Induk': { catalog: 'https://ipsi.induk.ac.kr/ajax/CM_BB01_SVC/CM_BB01_R97.do?TABLE_ID=AP_BBS&PK_COL=46063&ATCH_SN=1&isTemp=false', video: 'https://www.youtube.com/watch?v=o6kt2V8GaBA', videoTitle: '2025학년도 인덕대학교 대표 홍보영상' },
+  'Sangmyung': { catalog: 'https://drive.google.com/file/d/1U79U2e7tqad3s4rHVBWOh1v7-bqe4Y76/view', video: 'https://www.youtube.com/watch?v=OG9F7sETG3M', videoTitle: '2026 상명대학교 홍보영상' },
+  'KyungGin': { catalog: 'https://drive.google.com/file/d/1koKmGXVjZmSBtiSRcqaMuf3blbO_w4W0/view', video: 'https://www.youtube.com/watch?v=Tu4Z6SDDleQ', videoTitle: '경인여자대학교 홍보영상' },
+  'Dongnam': { catalog: 'https://www.dongnam.ac.kr/bbs/ilec/243/VnpTRXpmaWJwL0JtVGlHK0tuVGtZQT09/download.do', video: 'https://www.youtube.com/watch?v=ssuiG3ITuL8', videoTitle: '2024 동남보건대학교 홍보영상' },
+  'Osan': { video: 'https://www.youtube.com/watch?v=Cz18VV91EvI', videoTitle: 'Introduction to Osan University Facilities' },
+  'YeonSung': { catalog: 'https://www.yeonsung.ac.kr/sites/en/file/23ys_ko_school.pdf', video: 'https://www.youtube.com/watch?v=uOYHoDm_oMY', videoTitle: '2022 연성대학교 공식홍보영상' },
+  'Busan Catholic': { catalog: 'https://drive.google.com/file/d/1c4XfGO424-5OINQI9YuaCNPYY4WXNeaC/view', video: 'https://www.youtube.com/watch?v=n1TR_jnKlqs', videoTitle: '부산가톨릭대학교 개교 60주년 홍보' },
+  'Dong-Eui': { catalog: 'https://drive.google.com/file/d/1OvD9XCX6dLBaIR6IKTdgtnfoT-Op3gU-/view', video: 'https://www.youtube.com/watch?v=EVspM9Kpw_I', videoTitle: '동의대학교 2019 공식 홍보영상' },
+  'Nữ Busan': { catalog: 'https://www.bwc.ac.kr/ipsi/upload/2027_guidelines.pdf', video: 'https://www.youtube.com/watch?v=Te_5wn3_ekU', videoTitle: '부산여자대학교 대학홍보영상' },
+  'Gwangju': { catalog: 'https://ie.gwangju.ac.kr/pages/gw_ie/file/file_2026_3.pdf', video: 'https://www.youtube.com/watch?v=18R7PuUszhs', videoTitle: '2025학년도 광주대학교 홍보영상' },
+  'Nambu': { video: 'https://www.youtube.com/watch?v=7KnbZz5KT4c', videoTitle: '남부대학교 소개' },
+  'Daewon': { catalog: 'https://drive.google.com/file/d/1UY4eFsyTNxAiOxseN5Ofxu5hfPNGE_P5/view', video: 'https://www.youtube.com/watch?v=Qcui82cohB4', videoTitle: '대원대학교 홍보영상' },
+  'Sengmyung': { catalog: 'https://biz.semyung.ac.kr/cmm/fms/FileDown.do?atchFileId=FILE_000000000223232&fileSn=0', video: 'https://www.youtube.com/watch?v=0TCsIPRjYQw', videoTitle: '2025 세명대학교 홍보영상' },
+  'Suncheon Jeil': { catalog: 'https://drive.google.com/file/d/1xVMO320agblD8atS_Mvj8jFenFePBDOz/view', video: 'https://www.youtube.com/watch?v=mua0KiVG_ok', videoTitle: '순천제일대학교 홍보영상' },
+  'Jeonju': { catalog: 'https://drive.google.com/file/d/1SRni65v84X5v6ujbKBsdLHbj2JHAZGpo/view', video: 'https://www.youtube.com/watch?v=DLkiMasLb3o', videoTitle: 'Welcome to Jeonju University | Study in Korea' },
+  'Gimhae': { catalog: 'https://drive.google.com/file/d/1Yy3ceBqYGYelV-tmfAl-9ZVprNvctmhN/view', video: 'https://www.youtube.com/watch?v=F7yRdJEyvd4', videoTitle: '2024학년도 김해대학교 공식 홍보영상' },
+  'Catholic Kwandong': { catalog: 'https://drive.google.com/file/d/1-udyYf1vbgkUrX1QMPNpsfJnUyxoUXfA/view', video: 'https://www.youtube.com/watch?v=xrbkiw3GTvM', videoTitle: '가톨릭관동대학교 70주년 기념 공식 홍보영상' },
 };
 
 // ─── Helpers ───────────────────────────────────────────────
@@ -96,6 +113,51 @@ function regionLabel(r) {
     ulsan:'Ulsan',sejong:'Sejong',jeju:'Jeju',
   };
   return map[r] || r || 'Đang cập nhật';
+}
+
+// Grid khu vực trang 6 — màu sắc & thứ tự theo đúng file đã sửa tay
+const GRID_NAME_OVERRIDE = { KyungGin: 'KyungGin (Nữ)' };
+// Thứ tự hiển thị trong ô "Khác" — giữ nguyên như file sửa tay
+const KHAC_ORDER = ['Suncheon Jeil', 'Catholic Kwandong', 'Daewon', 'Jeonju', 'Sengmyung', 'Gimhae'];
+
+function renderRegionGrid(schools) {
+  const groups = [
+    { label: 'Seoul',   border: '#2563eb', bg: 'linear-gradient(135deg,#dbeafe,#eff6ff)', color: '#1d4ed8', regions: ['seoul'] },
+    { label: 'Incheon', border: '#059669', bg: 'linear-gradient(135deg,#d1fae5,#ecfdf5)', color: '#065f46', regions: ['incheon'] },
+    { label: 'Gyeonggi',border: '#0891b2', bg: 'linear-gradient(135deg,#dbeafe,#eff6ff)', color: '#0f766e', regions: ['gyeonggi'] },
+    { label: 'Busan',   border: '#d97706', bg: 'linear-gradient(135deg,#fef3c7,#fffbeb)', color: '#92400e', regions: ['busan'] },
+    { label: 'Gwangju', border: '#7c3aed', bg: 'linear-gradient(135deg,#ede9fe,#f5f3ff)', color: '#6b21a8', regions: ['gwangju'] },
+  ];
+  const mainRegions = new Set(['seoul','incheon','gyeonggi','busan','gwangju']);
+  // Các khu vực còn lại gộp vào "Khác"
+  const khac = schools.filter(s => !mainRegions.has(s.region));
+  // Sắp theo thứ tự file sửa tay; trường lạ xếp cuối theo tên
+  khac.sort((a, b) => {
+    const ai = KHAC_ORDER.indexOf(a.name);
+    const bi = KHAC_ORDER.indexOf(b.name);
+    if (ai === -1 && bi === -1) return (a.name || '').localeCompare(b.name || '', 'vi');
+    if (ai === -1) return 1;
+    if (bi === -1) return -1;
+    return ai - bi;
+  });
+  const cells = [];
+  groups.forEach(g => {
+    const list = schools.filter(s => g.regions.includes(s.region));
+    if (!list.length) return;
+    cells.push({ label: g.label, border: g.border, bg: g.bg, color: g.color, list });
+  });
+  if (khac.length) {
+    cells.push({ label: 'Khác', border: '#be123c', bg: 'linear-gradient(135deg,#fce7f3,#fdf2f8)', color: '#be123c', list: khac });
+  }
+  const displayName = s => GRID_NAME_OVERRIDE[s.name] || s.name;
+  return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:6px;">' +
+    cells.map(c =>
+      '<div style="padding:6px 10px;background:' + c.bg + ';border-radius:4px;border-left:3px solid ' + c.border + ';">' +
+        '<div style="font-family:&#39;Montserrat&#39;,sans-serif;font-weight:700;font-size:9px;color:' + c.color + ';text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px;">📍 ' + esc(c.label) + '</div>' +
+        '<div style="font-size:10px;color:#333;line-height:1.5;">' + c.list.map(s => esc(displayName(s))).join(' · ') + '</div>' +
+      '</div>'
+    ).join('') +
+  '</div>';
 }
 
 function regionClass(r) {
@@ -173,9 +235,10 @@ async function main() {
   }
 
   // Transform
-  const schools = sanitizeData(raw).map(s => ({
+  const allSchools = sanitizeData(raw).map(s => ({
     id: s.slug || s.id,
     name: s.name || '',
+    visaType: s.visa_type || s.visaType || '',
     nameKr: s.name_kr || '',
     nameEn: s.name_en || '',
     system: s.system || '',
@@ -199,6 +262,19 @@ async function main() {
     partners: (s.partners || []).map(p => ({ code: p.code || '', name: p.name || '' })),
     mou: s.mou || '',
   }));
+
+  // Ưu tiên link đã sửa tay trong file (nếu có) hơn dữ liệu API
+  allSchools.forEach(s => {
+    const ov = LINK_OVERRIDES[s.name];
+    if (!ov) return;
+    if (ov.catalog) s.catalogUrl = ov.catalog;
+    if (ov.video) s.videoUrl = ov.video;
+    if (ov.videoTitle) s.videoTitle = ov.videoTitle;
+  });
+
+  // Cẩm nang chỉ dành cho chương trình D2-6 (18 trường)
+  const schools = allSchools.filter(s => s.visaType === 'D2-6');
+  console.log(`   → ${schools.length} D2-6 schools (excluded ${allSchools.length - schools.length} non-D2-6)`);
 
   // Sort by region then name
   const regionOrder = ['seoul','near-seoul','incheon','gyeonggi','busan','gwangju',
@@ -295,7 +371,6 @@ async function main() {
   const faqPage = compPage + 1 + 2;
   const appendixPage = compPage + 1 + 2 + 1;
   pages.push(page(`
-    <div class="toc-hero" style="background-image:url('${IMG.overview}');"></div>
     <div class="toc-overlay-row">
       <div class="toc-overlay-badge">NỘI DUNG</div>
       <div class="toc-overlay-title">MỤC LỤC</div>
@@ -377,7 +452,6 @@ async function main() {
 
   // ═══ SECTION: OVERVIEW ══════════════════════════════
   pages.push(page(`
-    <div class="section-hero" style="background-image:url('${IMG.overview}');"></div>
     <span class="section-badge">PHẦN 1</span>
     <h2 class="page-title" style="margin-top:2px;">Tổng quan chương trình D2-6</h2>
     <div class="body-text">
@@ -390,7 +464,6 @@ async function main() {
       <div class="info-card"><strong>🏫 Quy mô</strong><br>${schools.length} trường đối tác trên khắp Hàn Quốc.</div>
       <div class="info-card"><strong>🤝 Đối tác VN</strong><br>15+ trường CĐ/ĐH tại Việt Nam đã ký MOU.</div>
     </div>
-    <div class="section-hero" style="background-image:url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&q=80');margin-top:12px;"></div>
     <span class="section-badge">PHẦN 1</span>
     <h2 class="page-title" style="margin-top:2px;">Lợi ích chương trình D2-6</h2>
     <div class="card-grid-2">
@@ -403,7 +476,6 @@ async function main() {
 
   // ═══ SECTION: CONDITIONS & DOCUMENTS ═══════════════
   pages.push(page(`
-    <div class="section-hero" style="background-image:url('${IMG.legal}');"></div>
     <span class="section-badge">PHẦN 2</span>
     <h2 class="page-title" style="margin-top:2px;">Điều kiện &amp; Hồ sơ</h2>
     <h3 class="section-subtitle">Điều kiện tuyển sinh</h3>
@@ -429,7 +501,6 @@ async function main() {
 
   // ═══ SECTION: ROUTE ═══════════════════════════════
   pages.push(page(`
-    <div class="section-hero" style="background-image:url('${IMG.route}');"></div>
     <span class="section-badge">PHẦN 3</span>
     <h2 class="page-title" style="margin-top:2px;">Lộ trình xử lý hồ sơ</h2>
     <div class="body-text"><p>Quy trình <strong>5 bước</strong> dành cho đối tác khi tiếp nhận và xử lý hồ sơ học sinh đăng ký chương trình D2-6.</p></div>
@@ -556,11 +627,13 @@ async function main() {
 
   // ═══ SECTION: TIMELINE + SCHOOL DIRECTORY INTRO (merged) ═
   pages.push(page(`
-    <div class="section-hero" style="background-image:url('${IMG.future}');"></div>
-    <span class="section-badge">PHẦN 3</span>
-    <h2 class="page-title" style="margin-top:2px;">Định hướng dài hạn</h2>
-    <div class="body-text"><p>D2-6 không nên được nhìn như "đi cho nhanh", mà là bước đầu của lộ trình học chuyên ngành và phát triển sự nghiệp tại Hàn Quốc.</p></div>
-    <div class="route-bar">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+      <span style="display:inline-block;width:4px;height:18px;background:linear-gradient(180deg,var(--accent),var(--gold));border-radius:2px;"></span>
+      <span class="section-badge" style="margin-bottom:0;">PHẦN 3</span>
+    </div>
+    <h2 class="page-title" style="margin-top:2px;font-size:24px;">Định hướng dài hạn</h2>
+    <div class="body-text" style="margin-bottom:8px;"><p>D2-6 không nên được nhìn như "đi cho nhanh", mà là bước đầu của lộ trình học chuyên ngành và phát triển sự nghiệp tại Hàn Quốc.</p></div>
+    <div class="route-bar" style="margin-bottom:8px;">
       <div class="route-step r1"><span class="ri">🛂</span><span class="rl">D2-6</span><span class="rd">Trao đổi MOU</span></div>
       <div class="route-arrow">›</div>
       <div class="route-step r2"><span class="ri">🎓</span><span class="rl">D2-1/D2-2</span><span class="rd">CĐ (2-3n) / ĐH (4n)</span></div>
@@ -569,18 +642,29 @@ async function main() {
       <div class="route-arrow">›</div>
       <div class="route-step r4"><span class="ri">🏆</span><span class="rl">E-7</span><span class="rd">Làm việc chuyên môn</span></div>
     </div>
-    <div class="tip-box">⚡ <strong>Lời khuyên:</strong> Hãy định hướng ngay từ đầu về mục tiêu dài hạn. Chọn trường và ngành có tiềm năng chuyển E7.</div>
+    <div class="tip-box" style="margin-bottom:8px;padding:8px 10px;">⚡ <strong>Lời khuyên:</strong> Hãy định hướng ngay từ đầu về mục tiêu dài hạn. Chọn trường và ngành có tiềm năng chuyển E7.</div>
 
-    <div style="margin-top:10px;border-top:1px solid var(--light-gray);padding-top:8px;"></div>
-    <span class="section-badge">PHẦN 4</span>
-    <h2 class="page-title" style="margin-top:2px;font-size:22px;">Danh bạ ${schools.length} trường Hàn Quốc</h2>
-    <div class="body-text">
-      <p>Danh sách đầy đủ <strong>${schools.length} trường</strong> đang tuyển sinh D2-6. Mỗi trường được trình bày chi tiết ở các trang sau.</p>
+    <div style="margin:8px 0;border-top:1px solid var(--light-gray);"></div>
+
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
+      <span style="display:inline-block;width:4px;height:18px;background:linear-gradient(180deg,var(--accent),var(--gold));border-radius:2px;"></span>
+      <span class="section-badge" style="margin-bottom:0;">PHẦN 4</span>
     </div>
-    <div class="card-grid-3" style="margin-top:8px;">
-      <div class="info-card" style="text-align:center;padding:7px 8px;"><strong style="font-size:20px;">${schools.length}</strong><br>Trường đối tác</div>
-      <div class="info-card" style="text-align:center;padding:7px 8px;"><strong style="font-size:20px;">6+</strong><br>Khu vực khác nhau</div>
-      <div class="info-card" style="text-align:center;padding:7px 8px;"><strong style="font-size:20px;">15+</strong><br>Đối tác Việt Nam</div>
+    <h2 class="page-title" style="margin-top:2px;font-size:20px;">Danh bạ ${schools.length} trường Hàn Quốc</h2>
+    <div class="body-text" style="margin-bottom:6px;font-size:12px;">
+      <p>Danh sách đầy đủ <strong>${schools.length} trường</strong> đang tuyển sinh D2-6. Chi tiết từng trường ở các trang sau.</p>
+    </div>
+
+    ${renderRegionGrid(schools)}
+
+    <div class="toc-stats">
+      <div class="toc-stat"><span class="toc-stat-num">${schools.length}</span><span class="toc-stat-label">Trường đối tác</span></div>
+      <div class="toc-stat"><span class="toc-stat-num">6+</span><span class="toc-stat-label">Khu vực khác nhau</span></div>
+      <div class="toc-stat"><span class="toc-stat-num">15+</span><span class="toc-stat-label">Đối tác VN</span></div>
+    </div>
+
+    <div style="margin-top:6px;padding:5px 8px;background:var(--off-white);border:1px solid var(--light-gray);border-radius:4px;font-size:9px;color:var(--gray);text-align:center;">
+      📄 Xem chi tiết từng trường tại các trang 7 → ${6 + schoolTotalPages - 1}
     </div>
   `));
 
@@ -713,7 +797,6 @@ async function main() {
         <div style="margin-top:4px;">
           ${renderList(s.documents, '')}
         </div>
-        <div class="section-hero" style="background-image:url('${IMG.decor}');height:40px;margin-top:6px;opacity:0.3;"></div>
       `));
     }
   });
@@ -736,16 +819,12 @@ async function main() {
       return 'cl-level-tuy';
     }
 
-    function renderChecklistPage(groupNames, startPage) {
-      let currentPage = startPage;
+    function renderChecklistPage(groupNames, isFirst) {
       let rows = [];
-      let firstItem = true;
 
       groupNames.forEach(gName => {
         if (!grouped[gName]) return;
         const items = grouped[gName];
-        // Group header
-        if (firstItem) firstItem = false;
         rows.push(`<tr><td class="cl-group-label" colspan="4">📁 ${esc(gName)} (${items.length} mục)</td></tr>`);
         items.forEach(item => {
           const levelHtml = item.level
@@ -757,12 +836,11 @@ async function main() {
       });
 
       return page(`
-        <div class="section-hero" style="background-image:url('https://images.unsplash.com/photo-1455390582262-044cdead277a?w=800&q=80');"></div>
         <span class="section-badge">PHẦN 6</span>
-        <h2 class="page-title" style="margin-top:2px;">Checklist hồ sơ Visa D2-6</h2>
-        <div class="body-text" style="margin-bottom:6px;">
+        <h2 class="page-title" style="margin-top:2px;">Checklist hồ sơ Visa D2-6${isFirst ? '' : ' <span style="font-weight:400;font-size:13px;color:var(--gray);">(tiếp)</span>'}</h2>
+        ${isFirst ? `<div class="body-text" style="margin-bottom:6px;">
           <p>Danh sách <strong>${visaChecklist.length} mục</strong> hồ sơ cần chuẩn bị cho quy trình xin Visa D2-6, phân loại theo nhóm.</p>
-        </div>
+        </div>` : ''}
         <table class="checklist-table">
           <thead><tr><th style="width:22px;">#</th><th>Nội dung</th><th style="width:80px;">Phân loại</th></tr></thead>
           <tbody>${rows.join('')}</tbody>
@@ -771,18 +849,37 @@ async function main() {
       `);
     }
 
-    // Split into 2 pages if needed: first 3 groups + remaining 2 groups
-    const page1Groups = groupOrder.slice(0, 3);
-    const page2Groups = groupOrder.slice(3);
-
-    pages.push(renderChecklistPage(page1Groups));
-    if (page2Groups.some(g => grouped[g] && grouped[g].length > 0)) {
-      pages.push(renderChecklistPage(page2Groups));
+    // Phân trang: [visa + học tập] [tài chính] [nhân thân + bổ sung] — giống file đã sửa tay
+    const availableGroups = groupOrder.filter(g => grouped[g] && grouped[g].length > 0);
+    let checklistPages = [];
+    if (availableGroups.length >= 5) {
+      checklistPages = [availableGroups.slice(0, 2), availableGroups.slice(2, 3), availableGroups.slice(3)];
+    } else {
+      // Fallback: mỗi trang tối đa ~18 mục, không cắt giữa nhóm
+      const MAX_ITEMS_PER_PAGE = 18;
+      let curPage = [];
+      let curCount = 0;
+      availableGroups.forEach(g => {
+        const items = grouped[g] || [];
+        if (!items.length) return;
+        if (curPage.length && curCount + items.length > MAX_ITEMS_PER_PAGE) {
+          checklistPages.push(curPage);
+          curPage = [];
+          curCount = 0;
+        }
+        curPage.push(g);
+        curCount += items.length;
+      });
+      if (curPage.length) checklistPages.push(curPage);
     }
+
+    checklistPages.forEach((groups, idx) => {
+      pages.push(renderChecklistPage(groups, idx === 0));
+    });
   }
 
-  // ═══ PAGE: COMPARISON TABLE ═══════════════════════
-  let tableRows = schools.map((s, i) => {
+  // ═══ PAGE: COMPARISON TABLE (chia 2 trang nếu cần) ══════
+  const tableRows = schools.map((s, i) => {
     const tuitionShort = (s.tuition || '').replace(/\n/g, ' ').substring(0, 35) || '—';
     const ktxShort = (s.ktx || '').replace(/\n/g, ' ').substring(0, 30) || '—';
     let partnerStr = '—';
@@ -798,25 +895,9 @@ async function main() {
       <td>${s.majors.length}</td>
       <td>${partnerStr}</td>
     </tr>`;
-  }).join('');
+  });
 
-  pages.push(page(`
-    <div class="section-hero" style="background-image:url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80');"></div>
-    <span class="section-badge">PHẦN 5</span>
-    <h2 class="page-title" style="margin-top:2px;">Bảng so sánh các trường</h2>
-    <table class="compare-table">
-      <thead><tr>
-        <th>#</th>
-        <th>Trường</th>
-        <th>Hệ</th>
-        <th>Khu vực</th>
-        <th>Học phí</th>
-        <th>KTX</th>
-        <th>Ngành</th>
-        <th>Đối tác</th>
-      </tr></thead>
-      <tbody>${tableRows}</tbody>
-    </table>
+  const legendHtml = `
     <div class="table-legend">
       <strong>Khu vực:</strong>
       <span class="legend-item" style="border-left-color:#2563eb;">Seoul</span>
@@ -826,15 +907,39 @@ async function main() {
       <span class="legend-item" style="border-left-color:#0891b2;">Chungcheong</span>
       <span class="legend-item" style="border-left-color:#be123c;">Gyeongsang</span>
       <span class="legend-item" style="border-left-color:#15803d;">Gangwon</span>
-    </div>
-    <div class="section-hero" style="background-image:url('${IMG.campus2}');height:70px;margin-top:8px;opacity:0.3;"></div>
-  `));
+    </div>`;
+
+  // 18 dòng → chia 9 + 9 (trang 2 có tiêu đề "(tiếp)")
+  const perPage = Math.ceil(tableRows.length / 2);
+  const chunks = [tableRows.slice(0, perPage), tableRows.slice(perPage)].filter(c => c.length);
+  chunks.forEach((chunk, idx) => {
+    const isFirst = idx === 0;
+    pages.push(page(`
+      ${isFirst ? '<span class="section-badge">PHẦN 5</span>' : ''}
+      ${isFirst
+        ? '<h2 class="page-title" style="margin-top:2px;">Bảng so sánh các trường</h2>'
+        : '<h4 class="section-subtitle" style="margin-top:2px;">Bảng so sánh các trường <span style="font-weight:400;color:var(--gray);font-size:12px;">(tiếp)</span></h4>'}
+      <table class="compare-table">
+        <thead><tr>
+          <th>#</th>
+          <th>Trường</th>
+          <th>Hệ</th>
+          <th>Khu vực</th>
+          <th>Học phí</th>
+          <th>KTX</th>
+          <th>Ngành</th>
+          <th>Đối tác</th>
+        </tr></thead>
+        <tbody>${chunk.join('')}</tbody>
+      </table>
+      ${legendHtml}
+    `));
+  });
 
   // ═══ PAGE: FAQ / PARTNER NOTES ══════════════════
   const semesterInfo = 'Kỳ tháng 3/2027';
   const semesterNote = 'Hiện tại đang tuyển sinh kỳ tháng 3/2027. Thông tin kỳ tuyển sinh có thể thay đổi, vui lòng kiểm tra website để cập nhật mới nhất.';
   pages.push(page(`
-    <div class="faq-hero" style="background-image:url('https://images.unsplash.com/photo-1455390582262-044cdead277a?w=800&q=80');"></div>
     <span class="section-badge">📌 LƯU Ý</span>
     <h2 class="page-title" style="margin-top:2px;">Dành cho đối tác</h2>
     <div class="body-text"><p>Những điểm cần lưu ý khi tư vấn và xử lý hồ sơ D2-6 cho học sinh.</p></div>
@@ -887,7 +992,7 @@ async function main() {
   `));
 
   // ═══ PAGE: BACK COVER ══════════════════════════════
-  const backImg = 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&q=80';
+  const backImg = 'https://cdn-media.sforum.vn/storage/app/media/thanhhuyen/h%C3%ACnh%20%E1%BA%A3nh%20h%C3%A0n%20qu%E1%BB%91c/1/hinh-anh-han-quoc-1.jpg';
   pages.push(page(`
     <div class="backcover-wrap">
       <div class="backcover-bg" style="background-image:url('${backImg}');"></div>
@@ -909,6 +1014,7 @@ async function main() {
       <div class="backcover-quote">
         <div class="bc-quote-mark">"</div>
         <p>Đồng hành cùng đối tác trong việc cung cấp thông tin tuyển sinh chính xác, kịp thời và toàn diện về chương trình Visa D2-6 tại Hàn Quốc.</p>
+        <div class="bc-quote-author">Du học Hàn Quốc</div>
       </div>
 
       <div class="backcover-cards">
@@ -943,6 +1049,7 @@ async function main() {
 <title>Cẩm nang Tuyển sinh Du học Hàn Quốc</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Noto+Sans:wght@400;600;700&family=Libre+Baskerville:ital@0;1&display=swap" rel="stylesheet">
 <style>
+
 :root {
   --navy:  #1B3A6B;
   --accent:#C0272D;
@@ -958,7 +1065,7 @@ async function main() {
 body {
   background: #e9eef5;
   font-family: 'Noto Sans', sans-serif;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--text);
   line-height: 1.65;
 }
@@ -1009,6 +1116,14 @@ body {
     padding: 8px 0 40px;
     min-height: 0;
   }
+  .side-bar { display: none; }
+  .backcover-stats {
+    backdrop-filter: none;
+    background: rgba(255,255,255,0.15);
+  }
+  .bc-card {
+    background: rgba(255,255,255,0.12);
+  }
   .page-body-cover {
     padding: 0;
     min-height: 0;
@@ -1035,13 +1150,8 @@ body {
   .page-header {
     padding: 6px 0;
   }
-  .side-bar { display: none; }
-  .backcover-stats {
-    backdrop-filter: none;
-    background: rgba(255,255,255,0.15);
-  }
-  .bc-card {
-    background: rgba(255,255,255,0.12);
+  .cover-overlay {
+    background: linear-gradient(135deg, rgba(13,27,51,0.65) 0%, rgba(13,27,51,0.85) 100%);
   }
   .cover-tagline {
     backdrop-filter: none;
@@ -1062,12 +1172,12 @@ body {
   display: flex; align-items: center; justify-content: space-between;
   padding: 8px 24px;
   border-bottom: 1px solid var(--light-gray);
-  font-size: 10px;
+  font-size: 11px;
   color: var(--gray);
 }
 .ph-left { display: flex; align-items: center; gap: 6px; font-weight: 600; }
 .ph-logo { font-size: 14px; }
-.ph-right { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 9px; letter-spacing: 0.5px; color: var(--accent); }
+.ph-right { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 10px; letter-spacing: 0.5px; color: var(--accent); }
 
 /* ─── Side accent ─── */
 .side-bar {
@@ -1077,7 +1187,7 @@ body {
 
 /* ─── Body ─── */
 .page-body {
-  padding: 14px 24px 50px;
+  padding: 12px 20px 40px;
   min-height: 760px;
   position: relative;
 }
@@ -1098,22 +1208,16 @@ body {
 .cover-wrap {
   min-height: 842px; position: relative; overflow: hidden;
   display: flex; flex-direction: column;
-  background: linear-gradient(160deg, #0a1628 0%, #132044 40%, #1B3A6B 100%);
+  background: #0d1b33;
 }
 .cover-bg-img {
   position: absolute; inset:0;
   background-size: cover; background-position: center;
-  opacity: 0.25;
-  filter: saturate(0.7) brightness(0.8);
+  opacity: 1;
 }
 .cover-overlay {
-  position: absolute; inset:0;
-  background: linear-gradient(135deg, 
-    rgba(10,22,40,0.75) 0%, 
-    rgba(19,32,68,0.65) 30%, 
-    rgba(27,58,107,0.55) 60%, 
-    rgba(10,22,40,0.7) 100%
-  );
+  position: absolute; inset:0; z-index:1;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255,255,255,0.15) 100%);
 }
 .cover-accent-line {
   position: absolute; top: 0; left: 0; right: 0; z-index:3;
@@ -1128,19 +1232,21 @@ body {
 .cover-badge {
   display: inline-block; align-self:flex-start;
   padding: 6px 18px;
-  background: rgba(201,168,76,0.12);
+  background: rgba(0,0,0,0.55);
   border: 1px solid var(--gold);
   color: var(--gold);
   border-radius: 999px;
   font-family: 'Montserrat', sans-serif;
   font-weight: 700; font-size: 9px; letter-spacing: 2.5px;
   text-transform: uppercase; margin-bottom: 24px;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.6);
 }
 .cover-title {
   font-family: 'Montserrat', sans-serif;
   font-weight: 900; font-size: 48px; line-height: 1.08;
   color: white; margin-bottom: 4px;
   letter-spacing: -1px;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.4);
 }
 .cover-title .gold { color: var(--gold); }
 .cover-divider {
@@ -1150,9 +1256,10 @@ body {
   border-radius: 2px;
 }
 .cover-subtitle {
-  font-size: 13px; color: rgba(255,255,255,0.65);
+  font-size: 13px; color: rgba(255,255,255,0.85);
   margin-bottom: 10px; line-height: 1.6;
   max-width: 420px;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.3);
 }
 .cover-subtitle strong { color: var(--gold); }
 .cover-visa {
@@ -1160,13 +1267,13 @@ body {
   font-weight: 900; font-size: 60px; line-height: 1;
   color: var(--accent); letter-spacing: -2px;
   text-transform: uppercase; margin-bottom: 18px;
-  text-shadow: 0 2px 20px rgba(192,39,45,0.3);
+  text-shadow: 0 1px 6px rgba(0,0,0,0.4);
 }
 .cover-tagline {
   display: inline-block; align-self:flex-start;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.12);
-  backdrop-filter: blur(8px);
+  background: rgba(0,0,0,0.55);
+  border: 1px solid rgba(255,255,255,0.15);
+  backdrop-filter: blur(6px);
   padding: 14px 22px; max-width: 340px;
   border-radius: 6px;
 }
@@ -1175,11 +1282,13 @@ body {
   font-weight: 800; font-size: 11px; color: var(--gold);
   text-transform: uppercase; letter-spacing: 0.5px;
   margin-bottom: 4px;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.5);
 }
 .cover-tagline p {
   font-family: 'Libre Baskerville', serif;
-  font-style: italic; font-size: 10px; color: rgba(255,255,255,0.65);
+  font-style: italic; font-size: 10px; color: rgba(255,255,255,0.9);
   line-height: 1.5;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.4);
 }
 .cover-bottom-bar {
   position: absolute; bottom:0; left:0; right:0; z-index:3;
@@ -1191,8 +1300,9 @@ body {
 }
 .cover-bottom-bar span {
   font-family: 'Montserrat', sans-serif;
-  font-weight: 700; font-size: 9px; color: rgba(255,255,255,0.7);
+  font-weight: 700; font-size: 9px; color: rgba(255,255,255,0.8);
   letter-spacing: 2.5px; text-transform: uppercase;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.3);
 }
 .cover-bottom-bar .sep { color: rgba(255,255,255,0.15); }
 
@@ -1207,33 +1317,27 @@ body {
 .section-badge {
   display: inline-block;
   font-family: 'Montserrat', sans-serif;
-  font-weight: 700; font-size: 9px; letter-spacing: 1.5px;
+  font-weight: 700; font-size: 10px; letter-spacing: 1.5px;
   color: var(--accent); text-transform: uppercase;
   margin-bottom: 2px;
 }
 .section-subtitle {
   font-family: 'Montserrat', sans-serif;
-  font-weight: 700; font-size: 12px; text-transform: uppercase;
+  font-weight: 700; font-size: 13px; text-transform: uppercase;
   color: var(--navy); margin: 10px 0 4px;
   letter-spacing: 0.5px;
 }
 .section-title {
   font-family: 'Montserrat', sans-serif;
-  font-weight: 700; font-size: 10px; text-transform: uppercase;
+  font-weight: 700; font-size: 11px; text-transform: uppercase;
   color: var(--accent); letter-spacing: 0.3px;
   border-bottom: 2px solid var(--accent);
   padding-bottom: 2px; margin: 8px 0 4px;
 }
 
 /* ─── Body text ─── */
-.body-text { font-size: 12px; line-height: 1.7; color: #2a2a3a; }
+.body-text { font-size: 13px; line-height: 1.7; color: #2a2a3a; }
 .body-text p { margin-bottom: 6px; }
-
-/* ─── TOC ─── */
-.toc-hero {
-  width: 100%; height: 140px;
-  background-size: cover; background-position: center;
-  border-radius: 6px;
   position: relative;
 }
 .toc-overlay-row {
@@ -1276,7 +1380,7 @@ body {
 }
 .toc-group-title {
   font-family: 'Montserrat', sans-serif;
-  font-weight: 800; font-size: 9px;
+  font-weight: 800; font-size: 10px;
   color: var(--navy);
   padding: 6px 12px;
   background: var(--off-white);
@@ -1316,7 +1420,7 @@ body {
   line-height: 1.3;
 }
 .toc-item-desc {
-  font-size: 9px;
+  font-size: 10px;
   color: var(--gray);
   line-height: 1.3;
   margin-top: 1px;
@@ -1337,7 +1441,7 @@ body {
 .toc-item-badge {
   font-family: 'Montserrat', sans-serif;
   font-weight: 600;
-  font-size: 7px;
+  font-size: 8px;
   color: var(--gray);
   background: var(--off-white);
   padding: 1px 6px;
@@ -1382,7 +1486,7 @@ body {
   line-height: 1;
 }
 .toc-stat-label {
-  font-size: 8px;
+  font-size: 9px;
   color: var(--gray);
   text-transform: uppercase;
   letter-spacing: 0.3px;
@@ -1401,7 +1505,7 @@ body {
   background: var(--off-white);
   border: 1px solid var(--light-gray);
   border-radius: 4px;
-  font-size: 11px; line-height: 1.55;
+  font-size: 12px; line-height: 1.55;
   margin-bottom: 6px;
 }
 .info-card strong { color: var(--navy); display: block; margin-bottom: 2px; }
@@ -1412,13 +1516,13 @@ body {
   padding: 10px 12px;
   border-left: 3px solid var(--gold);
   background: #fffbeb;
-  font-size: 10px; margin: 8px 0; line-height: 1.55;
+  font-size: 11px; margin: 8px 0; line-height: 1.55;
 }
 .tip-box {
   padding: 10px 12px;
   border-left: 3px solid var(--blue);
   background: #f0f7ff;
-  font-size: 10px; margin: 8px 0; line-height: 1.55;
+  font-size: 11px; margin: 8px 0; line-height: 1.55;
 }
 
 /* ─── Timeline (Route) ─── */
@@ -1482,7 +1586,7 @@ body {
   letter-spacing: 0.5px;
 }
 .tl-step-time {
-  font-size: 9px;
+  font-size: 10px;
   color: var(--gray);
   font-weight: 600;
 }
@@ -1553,9 +1657,9 @@ body {
 .r4 { background: #fef3c7; border-radius: 0 6px 6px 0; } .r4 .rl { color: #b45309; }
 
 /* ─── Lists ─── */
-ol.num-list { padding-left: 18px; font-size: 11px; line-height: 1.6; }
+ol.num-list { padding-left: 18px; font-size: 12px; line-height: 1.6; }
 ol.num-list li { margin-bottom: 3px; }
-ul.dot-list { padding-left: 16px; font-size: 11px; line-height: 1.55; }
+ul.dot-list { padding-left: 16px; font-size: 12px; line-height: 1.55; }
 ul.dot-list li { margin-bottom: 2px; }
 ul.dot-list.compact { column-count: 2; column-gap: 12px; }
 .muted { color: var(--gray); font-style: italic; font-size: 10px; }
@@ -1579,7 +1683,7 @@ ul.dot-list.compact { column-count: 2; column-gap: 12px; }
 .sch-badge {
   display: inline-block;
   padding: 2px 8px; border-radius: 999px;
-  font-size: 8px; font-weight: 700; text-transform: uppercase;
+  font-size: 9px; font-weight: 700; text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 .badge-system { background: #dbeafe; color: #1d4ed8; }
@@ -1589,7 +1693,7 @@ ul.dot-list.compact { column-count: 2; column-gap: 12px; }
 .info-table-wrap { margin: 6px 0; }
 .info-table { width: 100%; border-collapse: collapse; font-size: 11px; }
 .info-table td { padding: 4px 8px; border-bottom: 1px solid var(--light-gray); vertical-align: top; }
-.info-table .il { font-weight: 700; color: var(--navy); width: 85px; font-size: 9px; white-space: nowrap; }
+.info-table .il { font-weight: 700; color: var(--navy); width: 85px; font-size: 10px; white-space: nowrap; }
 .info-table tr:nth-child(even) td { background: var(--off-white); }
 .info-table a { color: var(--blue); }
 
@@ -1614,15 +1718,15 @@ ul.dot-list.compact { column-count: 2; column-gap: 12px; }
   background: var(--navy); color: white;
   font-family: 'Montserrat', sans-serif;
   font-weight: 700; padding: 5px 6px; text-align: left;
-  font-size: 8px; text-transform: uppercase; letter-spacing: 0.3px;
+  font-size: 9px; text-transform: uppercase; letter-spacing: 0.3px;
 }
-.checklist-table td { padding: 3px 6px; border-bottom: 1px solid var(--light-gray); vertical-align: top; line-height: 1.4; font-size: 9px; }
+.checklist-table td { padding: 3px 6px; border-bottom: 1px solid var(--light-gray); vertical-align: top; line-height: 1.4; font-size: 10px; }
 .checklist-table tr:nth-child(even) td { background: var(--off-white); }
 .checklist-table .cl-stt { width: 22px; text-align: center; font-weight: 700; color: var(--accent); font-size: 9px; }
 .checklist-table .cl-level {
   display: inline-block;
   padding: 1px 5px; border-radius: 3px;
-  font-size: 7px; font-weight: 700; text-transform: uppercase;
+  font-size: 8px; font-weight: 700; text-transform: uppercase;
   letter-spacing: 0.3px;
 }
 .cl-level-bat-buoc { background: #fee2e2; color: #b91c1c; }
@@ -1644,7 +1748,7 @@ ul.dot-list.compact { column-count: 2; column-gap: 12px; }
   background: var(--navy); color: white;
   font-family: 'Montserrat', sans-serif;
   font-weight: 700; padding: 6px 5px; text-align: left;
-  font-size: 8px; text-transform: uppercase; letter-spacing: 0.3px;
+  font-size: 9px; text-transform: uppercase; letter-spacing: 0.3px;
 }
 .compare-table td { padding: 4px 5px; border-bottom: 1px solid var(--light-gray); vertical-align: top; line-height: 1.4; }
 .compare-table tr:nth-child(even) td { background: var(--off-white); }
@@ -1694,16 +1798,10 @@ ul.dot-list.compact { column-count: 2; column-gap: 12px; }
 }
 .rd-count {
   font-family: 'Montserrat', sans-serif;
-  font-size: 9px; font-weight: 600;
+  font-size: 10px; font-weight: 600;
   color: rgba(255,255,255,0.7);
   background: rgba(255,255,255,0.15);
   padding: 2px 8px;
-  border-radius: 999px;
-}
-
-/* ─── FAQ / Partner Notes ─── */
-.faq-hero {
-  width: 100%; height: 80px;
   background-size: cover; background-position: center;
   border-radius: 4px; margin-bottom: 6px;
 }
@@ -1749,17 +1847,15 @@ ul.dot-list.compact { column-count: 2; column-gap: 12px; }
 .backcover-wrap {
   min-height: 842px; position: relative; overflow: hidden;
   display: flex; flex-direction: column;
-  background: linear-gradient(160deg, #080f1d 0%, #0f1a2e 40%, #162a45 100%);
+  background: none;
 }
 .backcover-bg {
   position: absolute; inset:0;
   background-size: cover; background-position: center;
-  opacity: 0.25;
-  filter: saturate(0.5) brightness(0.6);
+  opacity: 1;
 }
 .backcover-overlay {
-  position: absolute; inset:0;
-  background: linear-gradient(180deg, rgba(8,15,29,0.65) 0%, rgba(15,26,46,0.55) 50%, rgba(22,42,69,0.7) 100%);
+  display: none;
 }
 .backcover-accent-bar {
   position: absolute; left:0; right:0; top:0;
@@ -1774,19 +1870,21 @@ ul.dot-list.compact { column-count: 2; column-gap: 12px; }
 .backcover-badge {
   display: inline-block;
   padding: 4px 14px;
-  background: rgba(201,168,76,0.1);
+  background: rgba(0,0,0,0.55);
   border: 1px solid rgba(201,168,76,0.3);
   border-radius: 999px;
   font-family: 'Montserrat', sans-serif;
   font-weight: 700; font-size: 8px; letter-spacing: 2px;
   color: var(--gold); text-transform: uppercase;
   margin-bottom: 10px;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.5);
 }
 .backcover-title {
   font-family: 'Montserrat', sans-serif;
   font-weight: 900; font-size: 36px;
   color: white; line-height: 1.1;
   letter-spacing: -0.5px;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.8), 0 4px 40px rgba(0,0,0,0.5);
 }
 .backcover-divider {
   width: 50px; height: 3px;
@@ -1798,7 +1896,7 @@ ul.dot-list.compact { column-count: 2; column-gap: 12px; }
   position: relative; z-index:2;
   display: flex; gap: 0;
   margin: 0 24px;
-  background: rgba(255,255,255,0.06);
+  background: rgba(0,0,0,0.35);
   border-radius: 10px;
   overflow: hidden;
   border: 1px solid rgba(255,255,255,0.08);
@@ -1816,13 +1914,15 @@ ul.dot-list.compact { column-count: 2; column-gap: 12px; }
   font-weight: 900; font-size: 30px;
   color: var(--gold);
   line-height: 1;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.4);
 }
 .bc-stat-label {
   font-family: 'Montserrat', sans-serif;
   font-weight: 600; font-size: 8px;
-  color: rgba(255,255,255,0.6);
+  color: rgba(255,255,255,0.8);
   text-transform: uppercase;
   letter-spacing: 1px;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.3);
 }
 .backcover-quote {
   position: relative; z-index:2;
@@ -1841,9 +1941,10 @@ ul.dot-list.compact { column-count: 2; column-gap: 12px; }
 .backcover-quote p {
   font-family: 'Libre Baskerville', serif;
   font-size: 12px; line-height: 1.65;
-  color: rgba(255,255,255,0.8);
+  color: rgba(255,255,255,0.9);
   font-style: italic;
   max-width: 90%;
+  text-shadow: 0 1px 10px rgba(0,0,0,0.6);
 }
 .backcover-quote .bc-quote-author {
   font-family: 'Montserrat', sans-serif;
@@ -1862,7 +1963,7 @@ ul.dot-list.compact { column-count: 2; column-gap: 12px; }
 .bc-card {
   flex: 1;
   padding: 14px;
-  background: rgba(255,255,255,0.06);
+  background: rgba(0,0,0,0.35);
   border: 1px solid rgba(255,255,255,0.1);
   border-radius: 8px;
   text-decoration: none;
@@ -1871,7 +1972,7 @@ ul.dot-list.compact { column-count: 2; column-gap: 12px; }
   transition: background 0.2s, border-color 0.2s;
 }
 .bc-card:hover { 
-  background: rgba(255,255,255,0.1); 
+  background: rgba(0,0,0,0.5); 
   border-color: rgba(201,168,76,0.3);
 }
 .bc-card-icon { font-size: 24px; }
@@ -1881,10 +1982,12 @@ ul.dot-list.compact { column-count: 2; column-gap: 12px; }
   color: white;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.4);
 }
 .bc-card-desc {
-  font-size: 9px; color: rgba(255,255,255,0.5);
+  font-size: 9px; color: rgba(255,255,255,0.7);
   line-height: 1.4;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.3);
 }
 .bc-card-link {
   font-family: 'Montserrat', sans-serif;
@@ -1906,15 +2009,17 @@ ul.dot-list.compact { column-count: 2; column-gap: 12px; }
 .bc-footer-text {
   font-family: 'Montserrat', sans-serif;
   font-weight: 700; font-size: 9px;
-  color: rgba(255,255,255,0.4);
+  color: rgba(255,255,255,0.6);
   letter-spacing: 1px;
   text-transform: uppercase;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.3);
 }
 .bc-footer-sub {
   font-size: 8px;
   color: rgba(255,255,255,0.25);
   margin-top: 3px;
 }
+
 </style>
 </head>
 <body>
