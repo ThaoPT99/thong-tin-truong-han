@@ -125,6 +125,11 @@ module.exports = async (req, res) => {
         throw error;
       }
 
+      // Trường đã tắt (is_active = false) → coi như không tồn tại với public
+      if (data.is_active === false) {
+        return res.status(404).json({ error: 'School not found' });
+      }
+
       // Fetch advisor profile separately (bypass RLS join issue)
       const advisorMap = await fetchAdvisorProfiles([data.id]);
       const advisorProfiles = advisorMap[data.id] ? [advisorMap[data.id]] : [];
@@ -169,6 +174,9 @@ module.exports = async (req, res) => {
         school_documents(*),
         school_partners(*)
       `) : supabase.from('schools').select('*');
+
+    // Chỉ hiển thị trường đang bật (admin xem qua /api/admin/schools)
+    baseQuery.eq('is_active', true);
 
     // Visa type filter
     if (visaTypeFilter) {

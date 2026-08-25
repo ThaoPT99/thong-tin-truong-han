@@ -66,7 +66,7 @@ async function handleAdvisor(req, res) {
   const similarCases = await fetchSimilarCases(profile);
 
   // ─── Filter schools by visa_type ───
-  let schoolsQuery = supabase.from('schools').select('*').order('slug');
+  let schoolsQuery = supabase.from('schools').select('*').eq('is_active', true).order('slug');
   if (vt === 'D4-1') {
     schoolsQuery = schoolsQuery.eq('visa_type', 'D4-1');
   } else {
@@ -386,6 +386,7 @@ async function handleTelegramSearchSchool(chatId, query) {
   const { data: schools, error } = await supabase
     .from('schools')
     .select(`*, school_conditions(text), school_majors(text), school_advantages(text), school_conversions(text), school_documents(text), school_partners(code, name)`)
+    .eq('is_active', true)
     .or(`name.ilike.%${searchTerm}%,name_kr.ilike.%${searchTerm}%,name_en.ilike.%${searchTerm}%,slug.ilike.%${searchTerm}%`)
     .limit(5);
 
@@ -548,6 +549,7 @@ async function handleTelegramSchoolList(chatId) {
   const { data: schools, error } = await supabase
     .from('schools')
     .select('slug, name, name_kr, system, region, location')
+    .eq('is_active', true)
     .order('slug');
 
   if (error || !schools || schools.length === 0) {
@@ -601,6 +603,7 @@ async function handleTelegramCompare(chatId, args) {
   const { data: schools } = await supabase
     .from('schools')
     .select(`*, school_conditions(text), school_majors(text), school_advantages(text), school_documents(text)`)
+    .eq('is_active', true)
     .or(`name.ilike.%${name1}%,name.ilike.%${name2}%`)
     .limit(10);
 
@@ -968,7 +971,7 @@ async function handleChatWeb(req, res) {
 
     // Lấy dữ liệu trường + visa checklist để AI có context trả lời
     const [schoolsRes, checklistRes, interviewsRes, semRes] = await Promise.all([
-      supabase.from('schools').select('slug, name, name_kr, system, location, tuition, ktx, quota, region, catalog_url, website, intro, school_conditions(text), school_majors(text), school_advantages(text)').order('slug'),
+      supabase.from('schools').select('slug, name, name_kr, system, location, tuition, ktx, quota, region, catalog_url, website, intro, school_conditions(text), school_majors(text), school_advantages(text)').eq('is_active', true).order('slug'),
       supabase.from('extra_visa_checklist').select('content, level, note').order('sort_order'),
       supabase.from('extra_interviews').select('content').order('sort_order'),
       supabase.from('semesters').select('ky, nam, title').eq('is_active', true).maybeSingle(),
@@ -1160,7 +1163,7 @@ const STUDENT_TOOLS = {
       limit: { type: 'number', description: 'Số kết quả tối đa (mặc định 5)', required: false, default: 5 },
     },
     handler: async function(params) {
-      var q = supabase.from('schools').select('id, slug, name, name_kr, system, location, region, tuition, ktx, quota, intro');
+      var q = supabase.from('schools').select('id, slug, name, name_kr, system, location, region, tuition, ktx, quota, intro').eq('is_active', true);
       if (params.query) q = q.or('name.ilike.%' + params.query + '%,name_kr.ilike.%' + params.query + '%,slug.ilike.%' + params.query + '%');
       if (params.region) q = q.eq('region', params.region);
       if (params.system) q = q.eq('visa_type', params.system);
@@ -1187,6 +1190,7 @@ const STUDENT_TOOLS = {
         .from('schools')
         .select('*, school_conditions(text), school_majors(text), school_advantages(text), school_conversions(text), school_documents(text), school_partners(code, name)')
         .eq('slug', params.slug)
+        .eq('is_active', true)
         .single();
       if (!school) return null;
       var { data: ap } = await supabase
@@ -1223,6 +1227,7 @@ const STUDENT_TOOLS = {
       var { data: schools } = await supabase
         .from('schools')
         .select('*, school_conditions(text), school_majors(text), school_advantages(text)')
+        .eq('is_active', true)
         .in('slug', [params.slug1, params.slug2]);
       if (!schools || schools.length < 2) return { error: 'Không tìm thấy đủ 2 trường' };
       var [s1, s2] = schools;
@@ -1506,7 +1511,7 @@ const STUDENT_TOOLS = {
       limit: { type: 'number', description: 'Số kết quả tối đa (mặc định 5)', required: false, default: 5 },
     },
     handler: async function(params) {
-      var q = supabase.from('schools').select('id, slug, name, name_kr, system, location, region, tuition, ktx, visa_type');
+      var q = supabase.from('schools').select('id, slug, name, name_kr, system, location, region, tuition, ktx, visa_type').eq('is_active', true);
       if (params.region) q = q.eq('region', params.region);
       if (params.system) q = q.eq('visa_type', params.system);
       q = q.limit(Math.min(params.limit || 5, 10));
@@ -1727,7 +1732,7 @@ async function handleStudentAgent(req, res) {
 
     // ─── Load schools + visa data for context ───
     const [schoolsRes, apRes] = await Promise.all([
-      supabase.from('schools').select('slug, name, name_kr, system, location, region, tuition, ktx').order('slug'),
+      supabase.from('schools').select('slug, name, name_kr, system, location, region, tuition, ktx').eq('is_active', true).order('slug'),
       supabase.from('school_advisor_profiles').select('school_id, gender, cost_level, visa_chance, job_opportunity, region, tags'),
     ]);
 

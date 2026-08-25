@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard — Admin Thông Tin Trường Hàn</title>
 <link rel="stylesheet" href="admin.css">
+<style>
+  .status-active { background:#d1fae5; color:#065f46; padding:2px 8px; border-radius:99px; font-size:11px; font-weight:600; white-space:nowrap; }
+  .status-inactive { background:#fef2f2; color:#991b1b; padding:2px 8px; border-radius:99px; font-size:11px; font-weight:600; white-space:nowrap; }
+</style>
 </head>
 <body>
 <script src="admin.js"></script>
@@ -115,11 +119,12 @@
                   <th>Vùng</th>
                   <th>Hệ</th>
                   <th>Chỉ tiêu</th>
+                  <th>Trạng thái</th>
                   <th>Hành động</th>
                 </tr>
               </thead>
               <tbody id="school-tbody">
-                <tr><td colspan="7" class="loading"><div class="spinner"></div> Đang tải...</td></tr>
+                <tr><td colspan="8" class="loading"><div class="spinner"></div> Đang tải...</td></tr>
               </tbody>
             </table>
           </div>
@@ -155,13 +160,13 @@ if (user) {
 // Load schools
 async function loadSchools() {
   try {
-    const res = await api('GET', '/schools?full=false');
+    const res = await api('GET', '/admin/schools');
     schools = res.data;
     renderStats();
     renderTable();
   } catch (err) {
     document.getElementById('school-tbody').innerHTML =
-      '<tr><td colspan="7" style="color:var(--danger);text-align:center;padding:40px;">Lỗi: ' + escapeHtml(err.message) + '</td></tr>';
+      '<tr><td colspan="8" style="color:var(--danger);text-align:center;padding:40px;">Lỗi: ' + escapeHtml(err.message) + '</td></tr>';
   }
 }
 
@@ -183,7 +188,7 @@ function renderTable(data) {
   const tbody = document.getElementById('school-tbody');
 
   if (list.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><p>Không có trường nào</p></div></td></tr>';
+    tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><p>Không có trường nào</p></div></td></tr>';
     return;
   }
 
@@ -195,7 +200,9 @@ function renderTable(data) {
       <td><span class="badge badge-region">${regionLabel(s.region)}</span></td>
       <td><span class="badge badge-system">${escapeHtml(s.system || '—')}</span></td>
       <td>${s.quota || 0}</td>
+      <td><span class="${s.is_active !== false ? 'status-active' : 'status-inactive'}">${s.is_active !== false ? 'Đang hiển thị' : 'Đã tắt'}</span></td>
       <td class="actions">
+        <button class="btn btn-outline btn-sm" onclick="toggleActive('${s.id}', ${s.is_active !== false})">${s.is_active !== false ? 'Tắt' : 'Bật'}</button>
         <button class="btn btn-outline btn-sm" onclick="window.location='editor.html?slug=${encodeURIComponent(s.slug)}'">Sửa</button>
         <button class="btn btn-danger btn-sm" onclick="showDeleteModal('${s.id}', '${escapeHtml(s.name)}')">Xoá</button>
       </td>
@@ -215,6 +222,17 @@ function filterTable() {
     (s.system && s.system.toLowerCase().includes(q))
   );
   renderTable(filtered);
+}
+
+// Toggle active (tắt/bật trường)
+async function toggleActive(id, currentActive) {
+  try {
+    await api('PUT', '/admin/schools/' + id, { isActive: !currentActive });
+    toast(!currentActive ? 'Đã bật trường' : 'Đã tắt trường (ẩn khỏi web)', 'success');
+    loadSchools();
+  } catch (err) {
+    toast('Lỗi: ' + err.message, 'error');
+  }
 }
 
 // Delete modal
